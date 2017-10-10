@@ -1,0 +1,529 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5527BAA01F8C714E00C40D05 /* coder_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5527BA9F1F8C714E00C40D05 /* coder_iOS.framework */; };
+		5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */; };
+		5527BAA91F8D37D600C40D05 /* SessionState.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA81F8D37D600C40D05 /* SessionState.m */; };
+		5527BAAC1F8D398A00C40D05 /* ParameterGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAAB1F8D398A00C40D05 /* ParameterGenerator.m */; };
+		5527BAAE1F8D3D3600C40D05 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5527BAAD1F8D3D3600C40D05 /* libgmp.a */; };
+		5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB01F8D4B1D00C40D05 /* NewAccountRequest.m */; };
+		557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238A91F8C43F600A13A14 /* AccountManager.m */; };
+		557238B31F8C6B0C00A13A14 /* NSData+HexEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238B21F8C6B0C00A13A14 /* NSData+HexEncode.m */; };
+		557238B51F8C6CD900A13A14 /* CryptoKitty_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 557238B41F8C6CD900A13A14 /* CryptoKitty_iOS.framework */; };
+		5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5881F8BBB4400F08BF5 /* AppDelegate.m */; };
+		5592A58C1F8BBB4400F08BF5 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A58B1F8BBB4400F08BF5 /* HomeViewController.m */; };
+		5592A5921F8BBB4400F08BF5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5592A5901F8BBB4400F08BF5 /* Main.storyboard */; };
+		5592A5941F8BBB4400F08BF5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5592A5931F8BBB4400F08BF5 /* Assets.xcassets */; };
+		5592A5971F8BBB4400F08BF5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5592A5951F8BBB4400F08BF5 /* LaunchScreen.storyboard */; };
+		5592A59A1F8BBB4500F08BF5 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5991F8BBB4500F08BF5 /* main.mm */; };
+		5592A5A41F8BBB4500F08BF5 /* pippip_native_iosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5A31F8BBB4500F08BF5 /* pippip_native_iosTests.m */; };
+		5592A5B01F8BC43C00F08BF5 /* ContactsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */; };
+		5592A5B31F8BC92E00F08BF5 /* MessagesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5B21F8BC92E00F08BF5 /* MessagesTableViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5592A5A01F8BBB4500F08BF5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5592A57C1F8BBB4400F08BF5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5592A5831F8BBB4400F08BF5;
+			remoteInfo = "pippip-native-ios";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		5527BA9F1F8C714E00C40D05 /* coder_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = coder_iOS.framework; sourceTree = "<group>"; };
+		5527BAA11F8D0AE200C40D05 /* PostPacket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PostPacket.h; sourceTree = "<group>"; };
+		5527BAA21F8D0C7B00C40D05 /* RESTDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RESTDelegate.h; sourceTree = "<group>"; };
+		5527BAA31F8D0D1200C40D05 /* NewAccountCreator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountCreator.h; sourceTree = "<group>"; };
+		5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountCreator.m; sourceTree = "<group>"; };
+		5527BAA61F8D36BA00C40D05 /* RESTResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RESTResponse.h; sourceTree = "<group>"; };
+		5527BAA71F8D37D600C40D05 /* SessionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SessionState.h; sourceTree = "<group>"; };
+		5527BAA81F8D37D600C40D05 /* SessionState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SessionState.m; sourceTree = "<group>"; };
+		5527BAAA1F8D398A00C40D05 /* ParameterGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParameterGenerator.h; sourceTree = "<group>"; };
+		5527BAAB1F8D398A00C40D05 /* ParameterGenerator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParameterGenerator.m; sourceTree = "<group>"; };
+		5527BAAD1F8D3D3600C40D05 /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgmp.a; sourceTree = "<group>"; };
+		5527BAAF1F8D4B1D00C40D05 /* NewAccountRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountRequest.h; sourceTree = "<group>"; };
+		5527BAB01F8D4B1D00C40D05 /* NewAccountRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountRequest.m; sourceTree = "<group>"; };
+		557238A81F8C43F600A13A14 /* AccountManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountManager.h; sourceTree = "<group>"; };
+		557238A91F8C43F600A13A14 /* AccountManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountManager.m; sourceTree = "<group>"; };
+		557238B11F8C6B0C00A13A14 /* NSData+HexEncode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+HexEncode.h"; sourceTree = "<group>"; };
+		557238B21F8C6B0C00A13A14 /* NSData+HexEncode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+HexEncode.m"; sourceTree = "<group>"; };
+		557238B41F8C6CD900A13A14 /* CryptoKitty_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CryptoKitty_iOS.framework; sourceTree = "<group>"; };
+		5592A5841F8BBB4400F08BF5 /* pippip-native-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pippip-native-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5592A5871F8BBB4400F08BF5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		5592A5881F8BBB4400F08BF5 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		5592A58A1F8BBB4400F08BF5 /* HomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
+		5592A58B1F8BBB4400F08BF5 /* HomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
+		5592A5911F8BBB4400F08BF5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		5592A5931F8BBB4400F08BF5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5592A5961F8BBB4400F08BF5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		5592A5981F8BBB4400F08BF5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5592A5991F8BBB4500F08BF5 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		5592A59F1F8BBB4500F08BF5 /* pippip-native-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pippip-native-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5592A5A31F8BBB4500F08BF5 /* pippip_native_iosTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = pippip_native_iosTests.m; sourceTree = "<group>"; };
+		5592A5A51F8BBB4500F08BF5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5592A5AE1F8BC43C00F08BF5 /* ContactsTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactsTableViewController.h; sourceTree = "<group>"; };
+		5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactsTableViewController.m; sourceTree = "<group>"; };
+		5592A5B11F8BC92E00F08BF5 /* MessagesTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessagesTableViewController.h; sourceTree = "<group>"; };
+		5592A5B21F8BC92E00F08BF5 /* MessagesTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessagesTableViewController.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5592A5811F8BBB4400F08BF5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5527BAA01F8C714E00C40D05 /* coder_iOS.framework in Frameworks */,
+				5527BAAE1F8D3D3600C40D05 /* libgmp.a in Frameworks */,
+				557238B51F8C6CD900A13A14 /* CryptoKitty_iOS.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5592A59C1F8BBB4500F08BF5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5592A57B1F8BBB4400F08BF5 = {
+			isa = PBXGroup;
+			children = (
+				5592A5861F8BBB4400F08BF5 /* pippip-native-ios */,
+				5592A5A21F8BBB4500F08BF5 /* pippip-native-iosTests */,
+				5592A5851F8BBB4400F08BF5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5592A5851F8BBB4400F08BF5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5592A5841F8BBB4400F08BF5 /* pippip-native-ios.app */,
+				5592A59F1F8BBB4500F08BF5 /* pippip-native-iosTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5592A5861F8BBB4400F08BF5 /* pippip-native-ios */ = {
+			isa = PBXGroup;
+			children = (
+				5592A5991F8BBB4500F08BF5 /* main.mm */,
+				557238A81F8C43F600A13A14 /* AccountManager.h */,
+				557238A91F8C43F600A13A14 /* AccountManager.m */,
+				5592A5871F8BBB4400F08BF5 /* AppDelegate.h */,
+				5592A5881F8BBB4400F08BF5 /* AppDelegate.m */,
+				5592A5AE1F8BC43C00F08BF5 /* ContactsTableViewController.h */,
+				5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */,
+				5592A58A1F8BBB4400F08BF5 /* HomeViewController.h */,
+				5592A58B1F8BBB4400F08BF5 /* HomeViewController.m */,
+				5592A5B11F8BC92E00F08BF5 /* MessagesTableViewController.h */,
+				5592A5B21F8BC92E00F08BF5 /* MessagesTableViewController.m */,
+				5527BAA31F8D0D1200C40D05 /* NewAccountCreator.h */,
+				5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */,
+				5527BAAF1F8D4B1D00C40D05 /* NewAccountRequest.h */,
+				5527BAB01F8D4B1D00C40D05 /* NewAccountRequest.m */,
+				557238B11F8C6B0C00A13A14 /* NSData+HexEncode.h */,
+				557238B21F8C6B0C00A13A14 /* NSData+HexEncode.m */,
+				5527BAAA1F8D398A00C40D05 /* ParameterGenerator.h */,
+				5527BAAB1F8D398A00C40D05 /* ParameterGenerator.m */,
+				5527BAA11F8D0AE200C40D05 /* PostPacket.h */,
+				5527BAA21F8D0C7B00C40D05 /* RESTDelegate.h */,
+				5527BAA61F8D36BA00C40D05 /* RESTResponse.h */,
+				5527BAA71F8D37D600C40D05 /* SessionState.h */,
+				5527BAA81F8D37D600C40D05 /* SessionState.m */,
+				5592A5901F8BBB4400F08BF5 /* Main.storyboard */,
+				5592A5931F8BBB4400F08BF5 /* Assets.xcassets */,
+				5592A5951F8BBB4400F08BF5 /* LaunchScreen.storyboard */,
+				5592A5981F8BBB4400F08BF5 /* Info.plist */,
+				5527BAAD1F8D3D3600C40D05 /* libgmp.a */,
+				5527BA9F1F8C714E00C40D05 /* coder_iOS.framework */,
+				557238B41F8C6CD900A13A14 /* CryptoKitty_iOS.framework */,
+			);
+			path = "pippip-native-ios";
+			sourceTree = "<group>";
+		};
+		5592A5A21F8BBB4500F08BF5 /* pippip-native-iosTests */ = {
+			isa = PBXGroup;
+			children = (
+				5592A5A31F8BBB4500F08BF5 /* pippip_native_iosTests.m */,
+				5592A5A51F8BBB4500F08BF5 /* Info.plist */,
+			);
+			path = "pippip-native-iosTests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5592A5831F8BBB4400F08BF5 /* pippip-native-ios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5592A5A81F8BBB4500F08BF5 /* Build configuration list for PBXNativeTarget "pippip-native-ios" */;
+			buildPhases = (
+				5592A5801F8BBB4400F08BF5 /* Sources */,
+				5592A5811F8BBB4400F08BF5 /* Frameworks */,
+				5592A5821F8BBB4400F08BF5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "pippip-native-ios";
+			productName = "pippip-native-ios";
+			productReference = 5592A5841F8BBB4400F08BF5 /* pippip-native-ios.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5592A59E1F8BBB4500F08BF5 /* pippip-native-iosTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5592A5AB1F8BBB4500F08BF5 /* Build configuration list for PBXNativeTarget "pippip-native-iosTests" */;
+			buildPhases = (
+				5592A59B1F8BBB4500F08BF5 /* Sources */,
+				5592A59C1F8BBB4500F08BF5 /* Frameworks */,
+				5592A59D1F8BBB4500F08BF5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5592A5A11F8BBB4500F08BF5 /* PBXTargetDependency */,
+			);
+			name = "pippip-native-iosTests";
+			productName = "pippip-native-iosTests";
+			productReference = 5592A59F1F8BBB4500F08BF5 /* pippip-native-iosTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5592A57C1F8BBB4400F08BF5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0900;
+				ORGANIZATIONNAME = seComm;
+				TargetAttributes = {
+					5592A5831F8BBB4400F08BF5 = {
+						CreatedOnToolsVersion = 9.0;
+						ProvisioningStyle = Automatic;
+					};
+					5592A59E1F8BBB4500F08BF5 = {
+						CreatedOnToolsVersion = 9.0;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 5592A5831F8BBB4400F08BF5;
+					};
+				};
+			};
+			buildConfigurationList = 5592A57F1F8BBB4400F08BF5 /* Build configuration list for PBXProject "pippip-native-ios" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5592A57B1F8BBB4400F08BF5;
+			productRefGroup = 5592A5851F8BBB4400F08BF5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5592A5831F8BBB4400F08BF5 /* pippip-native-ios */,
+				5592A59E1F8BBB4500F08BF5 /* pippip-native-iosTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5592A5821F8BBB4400F08BF5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5592A5971F8BBB4400F08BF5 /* LaunchScreen.storyboard in Resources */,
+				5592A5941F8BBB4400F08BF5 /* Assets.xcassets in Resources */,
+				5592A5921F8BBB4400F08BF5 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5592A59D1F8BBB4500F08BF5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5592A5801F8BBB4400F08BF5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */,
+				5527BAA91F8D37D600C40D05 /* SessionState.m in Sources */,
+				5592A5B31F8BC92E00F08BF5 /* MessagesTableViewController.m in Sources */,
+				5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */,
+				5592A5B01F8BC43C00F08BF5 /* ContactsTableViewController.m in Sources */,
+				557238B31F8C6B0C00A13A14 /* NSData+HexEncode.m in Sources */,
+				5592A59A1F8BBB4500F08BF5 /* main.mm in Sources */,
+				5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */,
+				5592A58C1F8BBB4400F08BF5 /* HomeViewController.m in Sources */,
+				557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */,
+				5527BAAC1F8D398A00C40D05 /* ParameterGenerator.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5592A59B1F8BBB4500F08BF5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5592A5A41F8BBB4500F08BF5 /* pippip_native_iosTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5592A5A11F8BBB4500F08BF5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5592A5831F8BBB4400F08BF5 /* pippip-native-ios */;
+			targetProxy = 5592A5A01F8BBB4500F08BF5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		5592A5901F8BBB4400F08BF5 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5592A5911F8BBB4400F08BF5 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		5592A5951F8BBB4400F08BF5 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5592A5961F8BBB4400F08BF5 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		5592A5A61F8BBB4500F08BF5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		5592A5A71F8BBB4500F08BF5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5592A5A91F8BBB4500F08BF5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = SP3EMN3UU4;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/pippip-native-ios",
+				);
+				INFOPLIST_FILE = "pippip-native-ios/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/pippip-native-ios",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.secomm.pippip-native-ios";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5592A5AA1F8BBB4500F08BF5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = SP3EMN3UU4;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/pippip-native-ios",
+				);
+				INFOPLIST_FILE = "pippip-native-ios/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/pippip-native-ios",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.secomm.pippip-native-ios";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5592A5AC1F8BBB4500F08BF5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = SP3EMN3UU4;
+				INFOPLIST_FILE = "pippip-native-iosTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.secomm.pippip-native-iosTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pippip-native-ios.app/pippip-native-ios";
+			};
+			name = Debug;
+		};
+		5592A5AD1F8BBB4500F08BF5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = SP3EMN3UU4;
+				INFOPLIST_FILE = "pippip-native-iosTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.secomm.pippip-native-iosTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pippip-native-ios.app/pippip-native-ios";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5592A57F1F8BBB4400F08BF5 /* Build configuration list for PBXProject "pippip-native-ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5592A5A61F8BBB4500F08BF5 /* Debug */,
+				5592A5A71F8BBB4500F08BF5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5592A5A81F8BBB4500F08BF5 /* Build configuration list for PBXNativeTarget "pippip-native-ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5592A5A91F8BBB4500F08BF5 /* Debug */,
+				5592A5AA1F8BBB4500F08BF5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5592A5AB1F8BBB4500F08BF5 /* Build configuration list for PBXNativeTarget "pippip-native-iosTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5592A5AC1F8BBB4500F08BF5 /* Debug */,
+				5592A5AD1F8BBB4500F08BF5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5592A57C1F8BBB4400F08BF5 /* Project object */;
+}
