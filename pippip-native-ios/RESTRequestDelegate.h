@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol RESTDelegate <NSObject>
+@protocol RESTRequestDelegate <NSObject>
 
 - (void) restError:(NSString*)error;
 
