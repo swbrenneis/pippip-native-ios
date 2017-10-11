@@ -10,6 +10,8 @@
 
 @interface NSData (HexEncode)
 
+- (instancetype)initWithHexString:(NSString*)hex;
+
 - (NSString*) encodeHexString;
 
 @end

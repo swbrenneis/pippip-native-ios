@@ -9,11 +9,14 @@
 #import "NewAccountCreator.h"
 #import "RESTResponse.h"
 #import "ParameterGenerator.h"
+#import "RESTSession.h"
+#import "NewAccountRequest.h"
+#import "NewAccountResponse.h"
 
 @interface NewAccountCreator ()
 {
     HomeViewController *homeController;
-    ParameterGenerator *generator;
+    RESTSession *session;
     id<RESTResponse> restResponse;
 }
 
@@ -32,9 +35,11 @@
 - (void)createAccount:(NSString *)accountName withPassphrase:(NSString *)passphrase {
 
     [homeController updateStatus:@"Generating user data"];
-    generator = [[ParameterGenerator alloc] init];
+    ParameterGenerator *generator = [[ParameterGenerator alloc] init];
     [generator generateParameters:accountName];
-    [self doAccountRequest];
+    _sessionState = generator;
+    session = [[RESTSession alloc] initWithState:generator];
+    [session startSession:self];
 
 }
 
@@ -59,6 +64,23 @@
 
     [restResponse processResponse:response];
 
+}
+
+- (void)responseComplete:(NSString *)error {
+    
+}
+
+- (void)sessionComplete {
+
+    NewAccountRequest *request = [[NewAccountRequest alloc] initWithState:_sessionState];
+    NewAccountResponse *response = [[NewAccountResponse alloc] initWithState:_sessionState
+                                                            responseDelegate:self];
+    [session doPost:request withDelegate:response];
+    
+}
+
+- (void)sessionError:(NSString*)error {
+    
 }
 
 @end

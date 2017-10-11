@@ -7,7 +7,19 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SessionState.h"
+#import "RESTRequestDelegate.h"
+#import "SessionDelegate.h"
+#import "PostPacket.h"
 
-@interface RESTSession : NSObject
+@interface RESTSession : NSObject <NSURLConnectionDelegate>
+
+@property (nonatomic, readonly) SessionState *sessionState;
+
+- (instancetype)initWithState:(SessionState*)state;
+
+- (void)doPost:(id<PostPacket>)packet withDelegate:(id<RESTRequestDelegate>)delegate;
+
+- (void)startSession:(id<SessionDelegate>)delegate;
 
 @end

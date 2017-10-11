@@ -8,7 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import "PostPacket.h"
+#import "SessionState.h"
 
 @interface NewAccountRequest : NSObject <PostPacket>
+
+- (instancetype)initWithState:(SessionState*)state;
 
 @end

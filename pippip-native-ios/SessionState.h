@@ -10,15 +10,20 @@
 
 @interface SessionState : NSObject
 
+// Server parameters
 @property (nonatomic) uint32_t sessionId;
 @property (nonatomic) uint64_t authToken;
+@property (nonatomic) NSData *accountRandom;
+
+// Generated parameters
 @property (nonatomic) NSString *publicId;
 @property (nonatomic) NSData *genpass;
 @property (nonatomic) NSData *authData;
 @property (nonatomic) NSData *enclaveKey;
 @property (nonatomic) NSData *contactsKey;
 @property (nonatomic) NSString *serverPublicKeyPEM;
-@property (nonatomic) NSString *userPrivateKeyPEM;  // Public key is included in provate key PEM.
+@property (nonatomic) NSString *userPrivateKeyPEM;
+@property (nonatomic) NSString *userPublicKeyPEM;
 
 - (instancetype)init;
 
