@@ -8,7 +8,7 @@
 
 #import "NewAccountResponse.h"
 #import "NSData+HexEncode.h"
-#import <CryptoKitty_iOS/CryptoKitty_iOS.h>
+#import <cryptokitty_native_ios/cryptokitty_native_ios.h>
 
 @interface NewAccountResponse ()
 {

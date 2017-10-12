@@ -38,6 +38,7 @@
     ParameterGenerator *generator = [[ParameterGenerator alloc] init];
     [generator generateParameters:accountName];
     _sessionState = generator;
+    [homeController updateStatus:@"Contacting the message server"];
     session = [[RESTSession alloc] initWithState:generator];
     [session startSession:self];
 
@@ -80,7 +81,16 @@
 }
 
 - (void)sessionError:(NSString*)error {
-    
+
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Message Server Error"
+                                                                   message:error
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Ok"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:nil];
+    [alert addAction:okAction];
+    [homeController presentViewController:alert animated:YES completion:nil];
+
 }
 
 @end

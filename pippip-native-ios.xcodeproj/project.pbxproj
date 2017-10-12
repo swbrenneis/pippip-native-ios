@@ -7,15 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5527BAA01F8C714E00C40D05 /* coder_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5527BA9F1F8C714E00C40D05 /* coder_iOS.framework */; };
+		552062CD1F8EB1740015A9A9 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 552062CA1F8EB1740015A9A9 /* libgmp.a */; };
+		552062CE1F8EC7120015A9A9 /* coder_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 552062C91F8EB1740015A9A9 /* coder_iOS.framework */; };
+		552062CF1F8EC7120015A9A9 /* coder_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 552062C91F8EB1740015A9A9 /* coder_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		552062D01F8EC7120015A9A9 /* cryptokitty_native_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 552062C81F8EB1740015A9A9 /* cryptokitty_native_ios.framework */; };
+		552062D11F8EC7120015A9A9 /* cryptokitty_native_ios.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 552062C81F8EB1740015A9A9 /* cryptokitty_native_ios.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */; };
 		5527BAA91F8D37D600C40D05 /* SessionState.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA81F8D37D600C40D05 /* SessionState.m */; };
 		5527BAAC1F8D398A00C40D05 /* ParameterGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAAB1F8D398A00C40D05 /* ParameterGenerator.m */; };
-		5527BAAE1F8D3D3600C40D05 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5527BAAD1F8D3D3600C40D05 /* libgmp.a */; };
 		5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB01F8D4B1D00C40D05 /* NewAccountRequest.m */; };
 		5527BAB41F8D58D300C40D05 /* RESTSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB31F8D58D300C40D05 /* RESTSession.m */; };
 		5527BAB81F8DB81B00C40D05 /* NewAccountResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB71F8DB81A00C40D05 /* NewAccountResponse.m */; };
-		5527BAC31F8DCA6800C40D05 /* CryptoKitty_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5527BAC21F8DCA6700C40D05 /* CryptoKitty_iOS.framework */; };
 		557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238A91F8C43F600A13A14 /* AccountManager.m */; };
 		557238B31F8C6B0C00A13A14 /* NSData+HexEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238B21F8C6B0C00A13A14 /* NSData+HexEncode.m */; };
 		5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5881F8BBB4400F08BF5 /* AppDelegate.m */; };
@@ -39,8 +41,25 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		552062D21F8EC7120015A9A9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				552062D11F8EC7120015A9A9 /* cryptokitty_native_ios.framework in Embed Frameworks */,
+				552062CF1F8EC7120015A9A9 /* coder_iOS.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		5527BA9F1F8C714E00C40D05 /* coder_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = coder_iOS.framework; sourceTree = "<group>"; };
+		552062C81F8EB1740015A9A9 /* cryptokitty_native_ios.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = cryptokitty_native_ios.framework; path = ../../../Library/Frameworks/cryptokitty_native_ios.framework; sourceTree = "<group>"; };
+		552062C91F8EB1740015A9A9 /* coder_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = coder_iOS.framework; path = ../../../Library/Frameworks/coder_iOS.framework; sourceTree = "<group>"; };
+		552062CA1F8EB1740015A9A9 /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgmp.a; path = ../../../Library/Frameworks/libgmp.a; sourceTree = "<group>"; };
 		5527BAA11F8D0AE200C40D05 /* PostPacket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PostPacket.h; sourceTree = "<group>"; };
 		5527BAA21F8D0C7B00C40D05 /* RESTRequestDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RESTRequestDelegate.h; sourceTree = "<group>"; };
 		5527BAA31F8D0D1200C40D05 /* NewAccountCreator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountCreator.h; sourceTree = "<group>"; };
@@ -50,7 +69,6 @@
 		5527BAA81F8D37D600C40D05 /* SessionState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SessionState.m; sourceTree = "<group>"; };
 		5527BAAA1F8D398A00C40D05 /* ParameterGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParameterGenerator.h; sourceTree = "<group>"; };
 		5527BAAB1F8D398A00C40D05 /* ParameterGenerator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParameterGenerator.m; sourceTree = "<group>"; };
-		5527BAAD1F8D3D3600C40D05 /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgmp.a; sourceTree = "<group>"; };
 		5527BAAF1F8D4B1D00C40D05 /* NewAccountRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountRequest.h; sourceTree = "<group>"; };
 		5527BAB01F8D4B1D00C40D05 /* NewAccountRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountRequest.m; sourceTree = "<group>"; };
 		5527BAB21F8D58D300C40D05 /* RESTSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RESTSession.h; sourceTree = "<group>"; };
@@ -59,7 +77,6 @@
 		5527BAB61F8DB81A00C40D05 /* NewAccountResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountResponse.h; sourceTree = "<group>"; };
 		5527BAB71F8DB81A00C40D05 /* NewAccountResponse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountResponse.m; sourceTree = "<group>"; };
 		5527BAB91F8DBBEB00C40D05 /* RESTResponseDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RESTResponseDelegate.h; sourceTree = "<group>"; };
-		5527BAC21F8DCA6700C40D05 /* CryptoKitty_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CryptoKitty_iOS.framework; sourceTree = "<group>"; };
 		557238A81F8C43F600A13A14 /* AccountManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountManager.h; sourceTree = "<group>"; };
 		557238A91F8C43F600A13A14 /* AccountManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountManager.m; sourceTree = "<group>"; };
 		557238B11F8C6B0C00A13A14 /* NSData+HexEncode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+HexEncode.h"; sourceTree = "<group>"; };
@@ -88,9 +105,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5527BAA01F8C714E00C40D05 /* coder_iOS.framework in Frameworks */,
-				5527BAAE1F8D3D3600C40D05 /* libgmp.a in Frameworks */,
-				5527BAC31F8DCA6800C40D05 /* CryptoKitty_iOS.framework in Frameworks */,
+				552062D01F8EC7120015A9A9 /* cryptokitty_native_ios.framework in Frameworks */,
+				552062CE1F8EC7120015A9A9 /* coder_iOS.framework in Frameworks */,
+				552062CD1F8EB1740015A9A9 /* libgmp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,12 +121,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		552062C71F8EB1740015A9A9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				552062C91F8EB1740015A9A9 /* coder_iOS.framework */,
+				552062C81F8EB1740015A9A9 /* cryptokitty_native_ios.framework */,
+				552062CA1F8EB1740015A9A9 /* libgmp.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		5592A57B1F8BBB4400F08BF5 = {
 			isa = PBXGroup;
 			children = (
 				5592A5861F8BBB4400F08BF5 /* pippip-native-ios */,
 				5592A5A21F8BBB4500F08BF5 /* pippip-native-iosTests */,
 				5592A5851F8BBB4400F08BF5 /* Products */,
+				552062C71F8EB1740015A9A9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -125,7 +153,6 @@
 		5592A5861F8BBB4400F08BF5 /* pippip-native-ios */ = {
 			isa = PBXGroup;
 			children = (
-				5527BAC21F8DCA6700C40D05 /* CryptoKitty_iOS.framework */,
 				5592A5991F8BBB4500F08BF5 /* main.mm */,
 				557238A81F8C43F600A13A14 /* AccountManager.h */,
 				557238A91F8C43F600A13A14 /* AccountManager.m */,
@@ -160,8 +187,6 @@
 				5592A5931F8BBB4400F08BF5 /* Assets.xcassets */,
 				5592A5951F8BBB4400F08BF5 /* LaunchScreen.storyboard */,
 				5592A5981F8BBB4400F08BF5 /* Info.plist */,
-				5527BAAD1F8D3D3600C40D05 /* libgmp.a */,
-				5527BA9F1F8C714E00C40D05 /* coder_iOS.framework */,
 			);
 			path = "pippip-native-ios";
 			sourceTree = "<group>";
@@ -185,6 +210,7 @@
 				5592A5801F8BBB4400F08BF5 /* Sources */,
 				5592A5811F8BBB4400F08BF5 /* Frameworks */,
 				5592A5821F8BBB4400F08BF5 /* Resources */,
+				552062D21F8EC7120015A9A9 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -444,12 +470,14 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/pippip-native-ios",
+					"$(USER_LIBRARY_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = "pippip-native-ios/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/pippip-native-ios",
+					"$(USER_LIBRARY_DIR)/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.secomm.pippip-native-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -466,12 +494,14 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/pippip-native-ios",
+					"$(USER_LIBRARY_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = "pippip-native-ios/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/pippip-native-ios",
+					"$(USER_LIBRARY_DIR)/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.secomm.pippip-native-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
