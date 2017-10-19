@@ -1,4 +1,5 @@
-pippip-native-ios.xcodeproj/xcuserdata/stevebrenneis.xcuserdatad
+pippip-native-ios.xcodeproj/xcuserdata
+pippip-native-ios.xcodeproj/project.xcworkspace/xcuserdata
 pippip-native-ios/*framework
 pippip-native-ios/libgmp.a
 .DS_Store
