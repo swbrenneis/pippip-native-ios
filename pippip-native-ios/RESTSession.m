@@ -63,14 +63,20 @@
         }
         else {
             NSError *jsonError;
-            NSDictionary *response = [NSJSONSerialization JSONObjectWithData:data
+            NSDictionary *responseJson = [NSJSONSerialization JSONObjectWithData:data
                                                                      options:NSJSONReadingMutableLeaves
                                                                        error:&jsonError];
-            if (response == nil) {
+            if (responseJson == nil) {
                 [restDelegate restError:jsonError.localizedDescription];
             }
             else {
-                [restDelegate restResponse:response];
+                NSString *message = [responseJson objectForKey:@"message"];
+                if (message != nil) {
+                    [restDelegate restError:message];
+                }
+                else {
+                    [restDelegate restResponse:responseJson];
+                }
             }
         }
     };
@@ -118,11 +124,17 @@
         }
         else {
             NSString *sessionId = [json objectForKey:@"sessionId"];
+            NSString *serverPublicKeyPEM = [json objectForKey:@"serverPublicKey"];
             if (sessionId == nil) {
                 [sessionDelegate sessionError:@"Invalid server response, missing session ID"];
             }
+            if (serverPublicKeyPEM == nil) {
+                [sessionDelegate sessionError:@"Invalid server response, missing public key"];
+            }
             else {
                 _sessionState.sessionId = [sessionId intValue];
+                CKPEMCodec *pem = [[CKPEMCodec alloc] init];
+                _sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
                 [sessionDelegate sessionComplete];
             }
         }

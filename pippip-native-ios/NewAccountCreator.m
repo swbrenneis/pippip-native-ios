@@ -50,7 +50,7 @@
 
 - (void)restError:(NSString*)error {
 
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Pippip Server Error"
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Message Server Error"
                                                                    message:error
                                                             preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Ok"
@@ -61,13 +61,22 @@
 
 }
 
-- (void)restResponse:(NSDictionary*)response {
+- (void)responseComplete:(NSDictionary*)response {
 
     [restResponse processResponse:response];
 
 }
 
-- (void)responseComplete:(NSString *)error {
+- (void)errorResponse:(NSString *)error {
+
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Pippip Request Error"
+                                                                   message:error
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Ok"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction *action){}];
+    [alert addAction:okAction];
+    [homeController presentViewController:alert animated:YES completion:nil];
     
 }
 

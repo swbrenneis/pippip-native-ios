@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <cryptokitty_native_ios/cryptokitty_native_ios.h>
 
 @interface SessionState : NSObject
 
@@ -21,7 +22,7 @@
 @property (nonatomic) NSData *authData;
 @property (nonatomic) NSData *enclaveKey;
 @property (nonatomic) NSData *contactsKey;
-@property (nonatomic) NSString *serverPublicKeyPEM;
+@property (nonatomic) CKRSAPublicKey *serverPublicKey;
 @property (nonatomic) NSString *userPrivateKeyPEM;
 @property (nonatomic) NSString *userPublicKeyPEM;
 

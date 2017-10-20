@@ -31,7 +31,7 @@
             hexStr[(i*2)+1] = (lower - 0x0a) + 'a';
         }
     }
-    return [[NSString alloc] initWithUTF8String:toHex];
+    return [[NSString alloc] initWithUTF8String:hexStr];
 
 }
 

@@ -29,20 +29,19 @@
 }
 
 - (void)restError:(NSString *)error {
-    [responseDelegate responseComplete:error];
+    [responseDelegate errorResponse:error];
 }
 
 - (void)restResponse:(NSDictionary *)response {
 
     NSString *error = [response objectForKey:@"error"];
     if (error != nil) {
-        [responseDelegate responseComplete:error];
+        [responseDelegate errorResponse:error];
     }
     else {
-        sessionState.serverPublicKeyPEM = [response objectForKey:@"serverPublicKey"];
         NSString *encrypted = [response objectForKey:@"encrypted"];
-        if (sessionState.serverPublicKeyPEM == nil || encrypted == nil) {
-            [responseDelegate responseComplete:@"Invalid server response"];
+        if (encrypted == nil) {
+            [responseDelegate errorResponse:@"Invalid server response"];
         }
         else {
             NSData *data = [[NSData alloc] initWithHexString:encrypted];

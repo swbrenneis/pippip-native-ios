@@ -10,6 +10,8 @@
 
 @protocol RESTResponseDelegate <NSObject>
 
-- (void)responseComplete:(NSString*)error;
+- (void)errorResponse:(NSString*)error;
+
+- (void)responseComplete:(NSDictionary*)json;
 
 @end

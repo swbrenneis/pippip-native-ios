@@ -7,6 +7,8 @@
 //
 
 #import "NewAccountRequest.h"
+#import "NSData+HexEncode.h"
+#import <cryptokitty_native_ios/cryptokitty_native_ios.h>
 
 @interface NewAccountRequest ()
 {
@@ -28,10 +30,10 @@
     NSMutableDictionary *packet = [[NSMutableDictionary alloc] init];
     [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
                forKey:@"sessionId"];
-    [packet setObject:sessionState.publicId
-               forKey:@"publicId"];
     [packet setObject:sessionState.userPublicKeyPEM
                forKey:@"userPublicKey"];
+    [packet setObject:sessionState.publicId
+               forKey:@"publicId"];
     return packet;
 
 }
@@ -41,7 +43,7 @@
 }
 
 - (NSString*)restURL {
-    return @"https://pippip.io:2880/io.pippip.rest/NewAccountRequest";
+    return @"https://pippip.secomm.cc/authenticator/new-account-request";
 }
 
 @end
