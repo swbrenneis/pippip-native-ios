@@ -45,7 +45,7 @@
             }
         };
 
-    NSURL *sessionURL = [NSURL URLWithString:@"https://pippip.io:2880/io.pippip.rest/SessionRequest"];
+    NSURL *sessionURL = [NSURL URLWithString:@"https://pippip.secomm.cc/authenticator/session-request"];
     NSURLSessionDataTask *sessionTask = [urlSession dataTaskWithURL:sessionURL
                                                   completionHandler:sessionCompletion];
     [sessionTask resume];
@@ -108,14 +108,18 @@
         [sessionDelegate sessionError:jsonError.localizedDescription];
     }
     else {
-        NSString *error = [json objectForKey:@"error"];
+        NSString *error = [json objectForKey:@"error"];         // Request error.
+        NSString *message = [json objectForKey:@"message"];     // API Gateway error
         if (error != nil) {
             [sessionDelegate sessionError:error];
+        }
+        if (message != nil) {
+            [sessionDelegate sessionError:message];
         }
         else {
             NSString *sessionId = [json objectForKey:@"sessionId"];
             if (sessionId == nil) {
-                [sessionDelegate sessionError:@"Invalid server response"];
+                [sessionDelegate sessionError:@"Invalid server response, missing session ID"];
             }
             else {
                 _sessionState.sessionId = [sessionId intValue];
