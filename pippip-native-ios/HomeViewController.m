@@ -32,6 +32,10 @@
     [super viewDidLoad];
 
     accountManager = [AccountManager loadAccounts];
+    _activityIndicator = [[UIActivityIndicatorView alloc] init];
+    _activityIndicator.hidesWhenStopped = YES;
+    [self.view addSubview:_activityIndicator];
+    _activityIndicator.center = self.view.center;
 
     // Connect the picker.
     self.accountPickerView.delegate = self;
@@ -40,12 +44,13 @@
     // Enable sign in if there are accounts on this device. Set the status accordingly.
     if (accountManager.accountNames.count == 0) {
         [self.authButton setEnabled:NO];
-        [self updateStatus:@"Please create a new account"];
+        _defaultMessage = @"Please create a new account";
     }
     else {
         [self.authButton setEnabled:YES];
-        [self updateStatus:@"Sign in or create a new account"];
+        _defaultMessage = @"Sign in or create a new account";
     }
+    [self updateStatus:_defaultMessage];
 
 }
 
@@ -169,7 +174,8 @@
 
 - (void)createAccount {
 
-    NewAccountCreator *creator = [[NewAccountCreator alloc] initWithController:self];
+    [_activityIndicator startAnimating];
+    NewAccountCreator *creator = [[NewAccountCreator alloc] initWithViewController:self];
     [creator createAccount:currentAccount withPassphrase:currentPassphrase];
 
 }
@@ -181,7 +187,11 @@
 }
 
 - (void)updateStatus:(NSString*)status {
-    [_statusLabel setText:status];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.statusLabel setText:status];
+    });
+
 }
 
 @end

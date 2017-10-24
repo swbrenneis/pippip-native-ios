@@ -7,15 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "RESTResponseDelegate.h"
-#import "SessionDelegate.h"
+#import "RequestProcess.h"
 #import "HomeViewController.h"
+#import "RESTSession.h"
 
-@interface NewAccountCreator : NSObject <RESTResponseDelegate, SessionDelegate>
+@interface NewAccountCreator : NSObject <RequestProcess>
 
-@property (weak, nonatomic) SessionState *sessionState;
+@property (nonatomic, readonly) id<RequestStep> firstStep;
+@property (nonatomic, readonly) id<RequestStep> nextStep;
+@property (nonatomic, readonly) RESTSession *session;
+@property (nonatomic) SessionState *sessionState;
 
-- (instancetype) initWithController:(HomeViewController*)controller;
+- (instancetype) initWithViewController:(HomeViewController*)controller;
 
 - (void) createAccount:(NSString*)accountName withPassphrase:(NSString*)passphrase;
 

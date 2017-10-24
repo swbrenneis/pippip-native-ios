@@ -28,8 +28,12 @@
 - (NSDictionary*)restPacket {
 
     NSMutableDictionary *packet = [[NSMutableDictionary alloc] init];
+    [packet setObject:@"Authenticator" forKey:@"applicationName"];
+    [packet setObject:@"NewAccountRequest" forKey:@"messageType"];
     [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
                forKey:@"sessionId"];
+    [packet setObject:[NSString stringWithFormat:@"%d", 0]
+               forKey:@"authToken"];
     [packet setObject:sessionState.userPublicKeyPEM
                forKey:@"userPublicKey"];
     [packet setObject:sessionState.publicId

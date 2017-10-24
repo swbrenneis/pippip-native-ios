@@ -35,6 +35,8 @@
     CKRSAKeyPairGenerator *gen = [[CKRSAKeyPairGenerator alloc] init];
     CKRSAKeyPair *pair = [gen generateKeyPair:2048];
     CKPEMCodec *pem = [[CKPEMCodec alloc] init];
+    self.userPrivateKey = pair.privateKey;
+    self.userPublicKey = pair.publicKey;
     self.userPrivateKeyPEM = [pem encodePrivateKey:pair.privateKey withPublicKey:pair.publicKey];
     self.userPublicKeyPEM = [pem encodePublicKey:pair.publicKey];
 
