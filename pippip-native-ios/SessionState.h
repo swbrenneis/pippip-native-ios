@@ -15,6 +15,7 @@
 @property (nonatomic) uint32_t sessionId;
 @property (nonatomic) uint64_t authToken;
 @property (nonatomic) NSData *accountRandom;
+@property (nonatomic) CKRSAPublicKey *serverPublicKey;
 
 // Generated parameters
 @property (nonatomic) NSString *publicId;
@@ -22,8 +23,9 @@
 @property (nonatomic) NSData *authData;
 @property (nonatomic) NSData *enclaveKey;
 @property (nonatomic) NSData *contactsKey;
-@property (nonatomic) CKRSAPublicKey *serverPublicKey;
+@property (nonatomic) CKRSAPrivateKey *userPrivateKey;
 @property (nonatomic) NSString *userPrivateKeyPEM;
+@property (nonatomic) CKRSAPublicKey *userPublicKey;
 @property (nonatomic) NSString *userPublicKeyPEM;
 
 - (instancetype)init;

@@ -7,12 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "RESTRequestDelegate.h"
-#import "RESTResponseDelegate.h"
+#import "RESTResponse.h"
 #import "SessionState.h"
 
-@interface NewAccountResponse : NSObject <RESTRequestDelegate>
+@interface NewAccountResponse : NSObject <RESTResponse>
 
-- (instancetype)initWithState:(SessionState*)state responseDelegate:(id<RESTResponseDelegate>)delegate;
+- (instancetype)initWithState:(SessionState*)state;
 
 @end

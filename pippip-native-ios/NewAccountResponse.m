@@ -13,44 +13,43 @@
 @interface NewAccountResponse ()
 {
     SessionState *sessionState;
-    id<RESTResponseDelegate> responseDelegate;
 }
 @end
 
 @implementation NewAccountResponse
 
-- (instancetype)initWithState:(SessionState *)state responseDelegate:(id<RESTResponseDelegate>)delegate {
+- (instancetype)initWithState:(SessionState *)state {
     self = [super init];
 
     sessionState = state;
-    responseDelegate = delegate;
     return self;
 
 }
 
-- (void)restError:(NSString *)error {
-    [responseDelegate errorResponse:error];
-}
+- (BOOL)processResponse:(NSDictionary *)response errorDelegate:(id<ErrorDelegate>)errorDelegate {
 
-- (void)restResponse:(NSDictionary *)response {
-
+    NSString *dataStr = [response objectForKey:@"data"];
     NSString *error = [response objectForKey:@"error"];
     if (error != nil) {
-        [responseDelegate errorResponse:error];
+        [errorDelegate responseError:error];
+        return NO;
+    }
+    if (dataStr == nil) {
+        [errorDelegate responseError:@"Invalid server response"];
+        return NO;
     }
     else {
-        NSString *encrypted = [response objectForKey:@"encrypted"];
-        if (encrypted == nil) {
-            [responseDelegate errorResponse:@"Invalid server response"];
+        NSError *error = nil;
+        NSData *data = [NSData dataWithHexString:dataStr withError:&error];
+        if (error != nil) {
+            [errorDelegate responseError:[error localizedDescription]];
+            return NO;
         }
         else {
-            NSData *data = [[NSData alloc] initWithHexString:encrypted];
             CKRSACodec *codec = [[CKRSACodec alloc] initWithData:data];
-            CKPEMCodec *pem = [[CKPEMCodec alloc] init];
-            CKRSAPrivateKey *pk = [pem decodePrivateKey:sessionState.userPrivateKeyPEM];
-            [codec decrypt:pk];
+            [codec decrypt:sessionState.userPrivateKey];
             sessionState.accountRandom = [codec getBlock];
-            [responseDelegate responseComplete:nil];
+            return YES;
         }
     }
 

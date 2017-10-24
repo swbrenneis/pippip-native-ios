@@ -7,9 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ErrorDelegate.h"
 
 @protocol RESTResponse <NSObject>
 
-- (void)processResponse:(NSDictionary*)response;
+- (BOOL)processResponse:(NSDictionary*)response errorDelegate:(id<ErrorDelegate>)delegate;
 
 @end

@@ -18,6 +18,7 @@
 		5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB01F8D4B1D00C40D05 /* NewAccountRequest.m */; };
 		5527BAB41F8D58D300C40D05 /* RESTSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB31F8D58D300C40D05 /* RESTSession.m */; };
 		5527BAB81F8DB81B00C40D05 /* NewAccountResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB71F8DB81A00C40D05 /* NewAccountResponse.m */; };
+		5533325B1F9AE2D700F441E4 /* AlertErrorDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */; };
 		557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238A91F8C43F600A13A14 /* AccountManager.m */; };
 		557238B31F8C6B0C00A13A14 /* NSData+HexEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238B21F8C6B0C00A13A14 /* NSData+HexEncode.m */; };
 		5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5881F8BBB4400F08BF5 /* AppDelegate.m */; };
@@ -29,6 +30,7 @@
 		5592A5A41F8BBB4500F08BF5 /* pippip_native_iosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5A31F8BBB4500F08BF5 /* pippip_native_iosTests.m */; };
 		5592A5B01F8BC43C00F08BF5 /* ContactsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */; };
 		5592A5B31F8BC92E00F08BF5 /* MessagesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5B21F8BC92E00F08BF5 /* MessagesTableViewController.m */; };
+		55DB42131F9ABEA8001D8CB1 /* AccountRequestStep.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB42121F9ABEA8001D8CB1 /* AccountRequestStep.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,7 +63,6 @@
 		552062C91F8EB1740015A9A9 /* coder_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = coder_iOS.framework; path = ../../../Library/Frameworks/coder_iOS.framework; sourceTree = "<group>"; };
 		552062CA1F8EB1740015A9A9 /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgmp.a; path = ../../../Library/Frameworks/libgmp.a; sourceTree = "<group>"; };
 		5527BAA11F8D0AE200C40D05 /* PostPacket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PostPacket.h; sourceTree = "<group>"; };
-		5527BAA21F8D0C7B00C40D05 /* RESTRequestDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RESTRequestDelegate.h; sourceTree = "<group>"; };
 		5527BAA31F8D0D1200C40D05 /* NewAccountCreator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountCreator.h; sourceTree = "<group>"; };
 		5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountCreator.m; sourceTree = "<group>"; };
 		5527BAA61F8D36BA00C40D05 /* RESTResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RESTResponse.h; sourceTree = "<group>"; };
@@ -76,7 +77,10 @@
 		5527BAB51F8D5B9500C40D05 /* SessionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SessionDelegate.h; sourceTree = "<group>"; };
 		5527BAB61F8DB81A00C40D05 /* NewAccountResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountResponse.h; sourceTree = "<group>"; };
 		5527BAB71F8DB81A00C40D05 /* NewAccountResponse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountResponse.m; sourceTree = "<group>"; };
-		5527BAB91F8DBBEB00C40D05 /* RESTResponseDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RESTResponseDelegate.h; sourceTree = "<group>"; };
+		553332581F9AD83A00F441E4 /* RequestProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestProcess.h; sourceTree = "<group>"; };
+		553332591F9AE2D700F441E4 /* AlertErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertErrorDelegate.h; sourceTree = "<group>"; };
+		5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertErrorDelegate.m; sourceTree = "<group>"; };
+		5533325C1F9B779300F441E4 /* ErrorCodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ErrorCodes.h; sourceTree = "<group>"; };
 		557238A81F8C43F600A13A14 /* AccountManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountManager.h; sourceTree = "<group>"; };
 		557238A91F8C43F600A13A14 /* AccountManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountManager.m; sourceTree = "<group>"; };
 		557238B11F8C6B0C00A13A14 /* NSData+HexEncode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+HexEncode.h"; sourceTree = "<group>"; };
@@ -98,6 +102,10 @@
 		5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactsTableViewController.m; sourceTree = "<group>"; };
 		5592A5B11F8BC92E00F08BF5 /* MessagesTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessagesTableViewController.h; sourceTree = "<group>"; };
 		5592A5B21F8BC92E00F08BF5 /* MessagesTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessagesTableViewController.m; sourceTree = "<group>"; };
+		55DB42101F9ABCA7001D8CB1 /* RequestStep.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestStep.h; sourceTree = "<group>"; };
+		55DB42111F9ABEA8001D8CB1 /* AccountRequestStep.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountRequestStep.h; sourceTree = "<group>"; };
+		55DB42121F9ABEA8001D8CB1 /* AccountRequestStep.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountRequestStep.m; sourceTree = "<group>"; };
+		55DB42141F9ABF8C001D8CB1 /* ErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ErrorDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,10 +164,15 @@
 				5592A5991F8BBB4500F08BF5 /* main.mm */,
 				557238A81F8C43F600A13A14 /* AccountManager.h */,
 				557238A91F8C43F600A13A14 /* AccountManager.m */,
+				55DB42111F9ABEA8001D8CB1 /* AccountRequestStep.h */,
+				55DB42121F9ABEA8001D8CB1 /* AccountRequestStep.m */,
 				5592A5871F8BBB4400F08BF5 /* AppDelegate.h */,
 				5592A5881F8BBB4400F08BF5 /* AppDelegate.m */,
 				5592A5AE1F8BC43C00F08BF5 /* ContactsTableViewController.h */,
 				5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */,
+				55DB42141F9ABF8C001D8CB1 /* ErrorDelegate.h */,
+				553332591F9AE2D700F441E4 /* AlertErrorDelegate.h */,
+				5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */,
 				5592A58A1F8BBB4400F08BF5 /* HomeViewController.h */,
 				5592A58B1F8BBB4400F08BF5 /* HomeViewController.m */,
 				5592A5B11F8BC92E00F08BF5 /* MessagesTableViewController.h */,
@@ -175,8 +188,8 @@
 				5527BAAA1F8D398A00C40D05 /* ParameterGenerator.h */,
 				5527BAAB1F8D398A00C40D05 /* ParameterGenerator.m */,
 				5527BAA11F8D0AE200C40D05 /* PostPacket.h */,
-				5527BAA21F8D0C7B00C40D05 /* RESTRequestDelegate.h */,
-				5527BAB91F8DBBEB00C40D05 /* RESTResponseDelegate.h */,
+				553332581F9AD83A00F441E4 /* RequestProcess.h */,
+				55DB42101F9ABCA7001D8CB1 /* RequestStep.h */,
 				5527BAA61F8D36BA00C40D05 /* RESTResponse.h */,
 				5527BAB21F8D58D300C40D05 /* RESTSession.h */,
 				5527BAB31F8D58D300C40D05 /* RESTSession.m */,
@@ -187,6 +200,7 @@
 				5592A5931F8BBB4400F08BF5 /* Assets.xcassets */,
 				5592A5951F8BBB4400F08BF5 /* LaunchScreen.storyboard */,
 				5592A5981F8BBB4400F08BF5 /* Info.plist */,
+				5533325C1F9B779300F441E4 /* ErrorCodes.h */,
 			);
 			path = "pippip-native-ios";
 			sourceTree = "<group>";
@@ -306,6 +320,7 @@
 				5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */,
 				5527BAA91F8D37D600C40D05 /* SessionState.m in Sources */,
 				5592A5B31F8BC92E00F08BF5 /* MessagesTableViewController.m in Sources */,
+				5533325B1F9AE2D700F441E4 /* AlertErrorDelegate.m in Sources */,
 				5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */,
 				5592A5B01F8BC43C00F08BF5 /* ContactsTableViewController.m in Sources */,
 				5527BAB81F8DB81B00C40D05 /* NewAccountResponse.m in Sources */,
@@ -314,6 +329,7 @@
 				5592A59A1F8BBB4500F08BF5 /* main.mm in Sources */,
 				5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */,
 				5592A58C1F8BBB4400F08BF5 /* HomeViewController.m in Sources */,
+				55DB42131F9ABEA8001D8CB1 /* AccountRequestStep.m in Sources */,
 				557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */,
 				5527BAAC1F8D398A00C40D05 /* ParameterGenerator.m in Sources */,
 			);

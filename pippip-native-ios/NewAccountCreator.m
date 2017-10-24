@@ -7,24 +7,19 @@
 //
 
 #import "NewAccountCreator.h"
-#import "RESTResponse.h"
 #import "ParameterGenerator.h"
-#import "RESTSession.h"
-#import "NewAccountRequest.h"
-#import "NewAccountResponse.h"
+#import "AccountRequestStep.h"
 
 @interface NewAccountCreator ()
 {
     HomeViewController *homeController;
-    RESTSession *session;
-    id<RESTResponse> restResponse;
 }
 
 @end
 
 @implementation NewAccountCreator
 
-- (instancetype)initWithController:(HomeViewController *)controller {
+- (instancetype)initWithViewController:(HomeViewController *)controller {
     self = [super init];
 
     homeController = controller;
@@ -34,72 +29,30 @@
 
 - (void)createAccount:(NSString *)accountName withPassphrase:(NSString *)passphrase {
 
+    // Generate the user parameters.
     [homeController updateStatus:@"Generating user data"];
     ParameterGenerator *generator = [[ParameterGenerator alloc] init];
     [generator generateParameters:accountName];
     _sessionState = generator;
+
+    // Set up processing steps.
+    _firstStep = [[AccountRequestStep alloc] initWithState:_sessionState
+                                        withViewController:homeController];
+    _nextStep = nil;
+
+    // Start the session.
     [homeController updateStatus:@"Contacting the message server"];
-    session = [[RESTSession alloc] initWithState:generator];
-    [session startSession:self];
+    _session = [[RESTSession alloc] init];
+    [_session startSession:self];
 
 }
 
-- (void)doAccountRequest {
+- (void)sessionComplete:(BOOL)success {
     
 }
 
-- (void)restError:(NSString*)error {
-
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Message Server Error"
-                                                                   message:error
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Ok"
-                                                       style:UIAlertActionStyleDefault
-                                                     handler:^(UIAlertAction *action){}];
-    [alert addAction:okAction];
-    [homeController presentViewController:alert animated:YES completion:nil];
-
-}
-
-- (void)responseComplete:(NSDictionary*)response {
-
-    [restResponse processResponse:response];
-
-}
-
-- (void)errorResponse:(NSString *)error {
-
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Pippip Request Error"
-                                                                   message:error
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Ok"
-                                                       style:UIAlertActionStyleDefault
-                                                     handler:^(UIAlertAction *action){}];
-    [alert addAction:okAction];
-    [homeController presentViewController:alert animated:YES completion:nil];
+- (void)stepComplete:(BOOL)success {
     
-}
-
-- (void)sessionComplete {
-
-    NewAccountRequest *request = [[NewAccountRequest alloc] initWithState:_sessionState];
-    NewAccountResponse *response = [[NewAccountResponse alloc] initWithState:_sessionState
-                                                            responseDelegate:self];
-    [session doPost:request withDelegate:response];
-    
-}
-
-- (void)sessionError:(NSString*)error {
-
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Message Server Error"
-                                                                   message:error
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Ok"
-                                                       style:UIAlertActionStyleDefault
-                                                     handler:nil];
-    [alert addAction:okAction];
-    [homeController presentViewController:alert animated:YES completion:nil];
-
 }
 
 @end
