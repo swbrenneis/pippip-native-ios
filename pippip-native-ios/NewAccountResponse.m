@@ -29,9 +29,9 @@
 - (BOOL)processResponse:(NSDictionary *)response errorDelegate:(id<ErrorDelegate>)errorDelegate {
 
     NSString *dataStr = [response objectForKey:@"data"];
-    NSString *error = [response objectForKey:@"error"];
-    if (error != nil) {
-        [errorDelegate responseError:error];
+    NSString *errorStr = [response objectForKey:@"error"];
+    if (errorStr != nil) {
+        [errorDelegate responseError:errorStr];
         return NO;
     }
     if (dataStr == nil) {
@@ -47,7 +47,11 @@
         }
         else {
             CKRSACodec *codec = [[CKRSACodec alloc] initWithData:data];
-            [codec decrypt:sessionState.userPrivateKey];
+            [codec decrypt:sessionState.userPrivateKey withError:&error];
+            if (error != nil) {
+                [errorDelegate responseError:[error localizedDescription]];
+                return NO;
+            }
             sessionState.accountRandom = [codec getBlock];
             return YES;
         }

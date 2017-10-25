@@ -11,6 +11,9 @@
 
 @interface SessionState : NSObject
 
+// Authentication state parameters
+@property (nonatomic) BOOL authenticated;
+
 // Server parameters
 @property (nonatomic) uint32_t sessionId;
 @property (nonatomic) uint64_t authToken;
@@ -20,6 +23,7 @@
 // Generated parameters
 @property (nonatomic) NSString *publicId;
 @property (nonatomic) NSData *genpass;
+@property (nonatomic) NSData *svpswSalt;    // Server vault passphrase salt.
 @property (nonatomic) NSData *authData;
 @property (nonatomic) NSData *enclaveKey;
 @property (nonatomic) NSData *contactsKey;

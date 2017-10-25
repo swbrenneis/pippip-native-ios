@@ -18,5 +18,7 @@
 
 - (void)updateStatus:(NSString*)status;
 
+- (void)updateActivityIndicator:(BOOL)start;
+
 @end
 

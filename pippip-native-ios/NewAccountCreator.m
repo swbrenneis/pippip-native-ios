@@ -9,6 +9,7 @@
 #import "NewAccountCreator.h"
 #import "ParameterGenerator.h"
 #import "AccountRequestStep.h"
+#import "AccountFinishStep.h"
 
 @interface NewAccountCreator ()
 {
@@ -51,8 +52,34 @@
     
 }
 
+// This will be called after the new account request completes
 - (void)stepComplete:(BOOL)success {
-    
+
+    if (_nextStep == nil) {
+        if (success) {
+            _nextStep = [[AccountFinishStep alloc] initWithState:_sessionState
+                                              withViewController:homeController];
+            [homeController updateStatus:@"Finishing account creation"];
+        }
+        else {
+            [homeController updateActivityIndicator:NO];
+            NSString *status = [homeController defaultMessage];
+            [homeController updateStatus:status];
+        }
+    }
+    else {
+        if (success) {
+            [homeController updateStatus:@"Account created. Online"];
+        }
+        else {
+            NSString *status = [homeController defaultMessage];
+            [homeController updateStatus:status];
+        }
+        [homeController updateActivityIndicator:NO];
+        _sessionState.authenticated = success;
+        [homeController authenticated:_sessionState];
+    }
+
 }
 
 @end

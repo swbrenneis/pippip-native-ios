@@ -15,6 +15,7 @@
 
     _sessionId = 0;
     _authToken = 0;
+    _authenticated = NO;
 
     return self;
 }

@@ -37,7 +37,7 @@
         if (c >= 'a' && c <= 'f') {
             nib = (c - 'a') + 10;
         }
-        if (c >= 'A' && c <= 'F') {
+        else if (c >= 'A' && c <= 'F') {
             nib = (c - 'A') + 10;
         }
         else if (c >= '0' && c <= '9') {
@@ -65,7 +65,7 @@
             }
         }
     }
-    return [NSData dataWithBytes:wbytes length:workingLength];
+    return [NSData dataWithBytes:wbytes length:workingLength / 2];
 
 }
 

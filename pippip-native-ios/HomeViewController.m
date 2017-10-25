@@ -20,6 +20,7 @@
 
 @property (weak, nonatomic) IBOutlet UIPickerView *accountPickerView;
 @property (weak, nonatomic) IBOutlet UISwitch *defaultAccountSwitch;
+@property (weak, nonatomic) IBOutlet UILabel *defaultAccountLabel;
 @property (weak, nonatomic) IBOutlet UIButton *authButton;
 @property (weak, nonatomic) IBOutlet UIButton *createAccountButton;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
@@ -32,7 +33,7 @@
     [super viewDidLoad];
 
     accountManager = [AccountManager loadAccounts];
-    _activityIndicator = [[UIActivityIndicatorView alloc] init];
+    _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _activityIndicator.hidesWhenStopped = YES;
     [self.view addSubview:_activityIndicator];
     _activityIndicator.center = self.view.center;
@@ -43,11 +44,15 @@
 
     // Enable sign in if there are accounts on this device. Set the status accordingly.
     if (accountManager.accountNames.count == 0) {
-        [self.authButton setEnabled:NO];
+        [self.authButton setHidden:YES];
+        [self.defaultAccountLabel setHidden:YES];
+        [self.defaultAccountSwitch setHidden:YES];
         _defaultMessage = @"Please create a new account";
     }
     else {
-        [self.authButton setEnabled:YES];
+        [self.authButton setHidden:NO];
+        [self.defaultAccountLabel setHidden:NO];
+        [self.defaultAccountSwitch setHidden:NO];
         _defaultMessage = @"Sign in or create a new account";
     }
     [self updateStatus:_defaultMessage];
@@ -191,6 +196,21 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.statusLabel setText:status];
     });
+
+}
+
+- (void)updateActivityIndicator:(BOOL)start {
+
+    if (start) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.activityIndicator startAnimating];
+        });
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.activityIndicator stopAnimating];
+        });
+    }
 
 }
 

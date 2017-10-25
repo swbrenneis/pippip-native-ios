@@ -10,6 +10,8 @@
 
 @interface MessagesTableViewController ()
 
+@property (weak, nonatomic) IBOutlet UITabBarItem *messagesTabBarItem;
+
 @end
 
 @implementation MessagesTableViewController

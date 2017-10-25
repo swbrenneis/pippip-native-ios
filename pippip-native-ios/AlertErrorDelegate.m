@@ -67,7 +67,7 @@
 - (void)updateViewStatus {
 
     if ([view isKindOfClass:[HomeViewController class]]) {
-        [[(HomeViewController*)view activityIndicator] stopAnimating];
+        [(HomeViewController*)view updateActivityIndicator:NO];
         NSString *status = [(HomeViewController*)view defaultMessage];
         [(HomeViewController*)view updateStatus:status];
     }

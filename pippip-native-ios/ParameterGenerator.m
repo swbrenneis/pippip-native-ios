@@ -19,6 +19,9 @@
     // Create generated password.
     self.genpass = [rnd nextBytes:20];
 
+    // Create the server vault passphrase salt.
+    self.svpswSalt = [rnd nextBytes:8];
+
     // Create GCM authentication data.
     CKSHA256 *digest = [[CKSHA256 alloc] init];
     self.authData = [digest digest:self.genpass];

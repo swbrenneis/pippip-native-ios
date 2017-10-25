@@ -4,7 +4,8 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -31,7 +32,7 @@
                                     <constraint firstAttribute="height" constant="90" id="dK9-8R-Rwz"/>
                                 </constraints>
                             </pickerView>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="5IU-BI-eMf">
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="5IU-BI-eMf">
                                 <rect key="frame" x="44" y="402" width="51" height="31"/>
                                 <color key="onTintColor" red="0.96995741130000002" green="0.44106519220000001" blue="0.31569552420000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </switch>
@@ -101,6 +102,7 @@
                             <constraint firstItem="INa-UA-yNI" firstAttribute="leading" secondItem="29r-ie-nIQ" secondAttribute="leading" id="s83-98-ozL"/>
                             <constraint firstItem="PQr-Ze-W5v" firstAttribute="trailing" secondItem="wf7-cj-6TS" secondAttribute="trailing" constant="16" id="vlo-iS-hpD"/>
                             <constraint firstItem="29r-ie-nIQ" firstAttribute="top" secondItem="INa-UA-yNI" secondAttribute="bottom" constant="8" symbolic="YES" id="wm9-he-04U"/>
+                            <constraint firstItem="t2T-c5-Ydh" firstAttribute="width" secondItem="tsR-hK-woN" secondAttribute="height" multiplier="344:667" id="zY8-g1-8RG"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="PQr-Ze-W5v"/>
                     </view>
@@ -109,6 +111,7 @@
                         <outlet property="accountPickerView" destination="PzL-sk-MRW" id="D8V-GM-wgb"/>
                         <outlet property="authButton" destination="INa-UA-yNI" id="riL-e3-3As"/>
                         <outlet property="createAccountButton" destination="29r-ie-nIQ" id="BWe-oO-hrZ"/>
+                        <outlet property="defaultAccountLabel" destination="y1k-6H-YrN" id="QQC-2R-EWs"/>
                         <outlet property="defaultAccountSwitch" destination="5IU-BI-eMf" id="GNn-aw-w5R"/>
                         <outlet property="statusLabel" destination="wf7-cj-6TS" id="kwZ-pC-msn"/>
                     </connections>
@@ -140,7 +143,7 @@
                             <outlet property="delegate" destination="Vsz-ZI-C1O" id="52K-Kf-EvJ"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" systemItem="contacts" id="QHc-cu-y9h"/>
+                    <tabBarItem key="tabBarItem" enabled="NO" systemItem="contacts" id="QHc-cu-y9h"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Foh-0R-zX6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -188,7 +191,10 @@
                             <outlet property="delegate" destination="DX8-6Y-FRo" id="CIS-4y-xhk"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Messages" image="icons8-Message Filled-50" selectedImage="icons8-Message Filled-50" id="Ftp-pL-deN"/>
+                    <tabBarItem key="tabBarItem" enabled="NO" title="Messages" image="icons8-Message Filled-50" selectedImage="icons8-Message Filled-50" id="Ftp-pL-deN"/>
+                    <connections>
+                        <outlet property="messagesTabBarItem" destination="Ftp-pL-deN" id="w3U-Te-is5"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gsW-xu-IBx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
