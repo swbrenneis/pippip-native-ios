@@ -10,9 +10,6 @@
 		551A183C1FA0F84C0050C93C /* AccountFinishStep.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183B1FA0F84C0050C93C /* AccountFinishStep.m */; };
 		551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183E1FA0FA030050C93C /* NewAccountFinish.m */; };
 		551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A18411FA0FA740050C93C /* NewAccountFinal.m */; };
-		552062CD1F8EB1740015A9A9 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 552062CA1F8EB1740015A9A9 /* libgmp.a */; };
-		552062CE1F8EC7120015A9A9 /* coder_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 552062C91F8EB1740015A9A9 /* coder_iOS.framework */; };
-		552062CF1F8EC7120015A9A9 /* coder_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 552062C91F8EB1740015A9A9 /* coder_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		552062D01F8EC7120015A9A9 /* cryptokitty_native_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 552062C81F8EB1740015A9A9 /* cryptokitty_native_ios.framework */; };
 		552062D11F8EC7120015A9A9 /* cryptokitty_native_ios.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 552062C81F8EB1740015A9A9 /* cryptokitty_native_ios.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */; };
@@ -54,7 +51,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				552062D11F8EC7120015A9A9 /* cryptokitty_native_ios.framework in Embed Frameworks */,
-				552062CF1F8EC7120015A9A9 /* coder_iOS.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -123,8 +119,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				552062D01F8EC7120015A9A9 /* cryptokitty_native_ios.framework in Frameworks */,
-				552062CE1F8EC7120015A9A9 /* coder_iOS.framework in Frameworks */,
-				552062CD1F8EB1740015A9A9 /* libgmp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

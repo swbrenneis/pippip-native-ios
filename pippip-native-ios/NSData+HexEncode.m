@@ -65,6 +65,7 @@
             }
         }
     }
+
     return [NSData dataWithBytes:wbytes length:workingLength / 2];
 
 }
