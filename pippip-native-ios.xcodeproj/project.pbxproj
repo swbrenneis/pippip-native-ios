@@ -10,11 +10,8 @@
 		551A183C1FA0F84C0050C93C /* AccountFinishStep.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183B1FA0F84C0050C93C /* AccountFinishStep.m */; };
 		551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183E1FA0FA030050C93C /* NewAccountFinish.m */; };
 		551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A18411FA0FA740050C93C /* NewAccountFinal.m */; };
-		552062CD1F8EB1740015A9A9 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 552062CA1F8EB1740015A9A9 /* libgmp.a */; };
-		552062CE1F8EC7120015A9A9 /* coder_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 552062C91F8EB1740015A9A9 /* coder_iOS.framework */; };
+		551A184A1FA138EE0050C93C /* cryptokitty_native_ios.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 551A18471FA138D30050C93C /* cryptokitty_native_ios.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		552062CF1F8EC7120015A9A9 /* coder_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 552062C91F8EB1740015A9A9 /* coder_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		552062D01F8EC7120015A9A9 /* cryptokitty_native_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 552062C81F8EB1740015A9A9 /* cryptokitty_native_ios.framework */; };
-		552062D11F8EC7120015A9A9 /* cryptokitty_native_ios.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 552062C81F8EB1740015A9A9 /* cryptokitty_native_ios.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */; };
 		5527BAA91F8D37D600C40D05 /* SessionState.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA81F8D37D600C40D05 /* SessionState.m */; };
 		5527BAAC1F8D398A00C40D05 /* ParameterGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAAB1F8D398A00C40D05 /* ParameterGenerator.m */; };
@@ -53,7 +50,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				552062D11F8EC7120015A9A9 /* cryptokitty_native_ios.framework in Embed Frameworks */,
+				551A184A1FA138EE0050C93C /* cryptokitty_native_ios.framework in Embed Frameworks */,
 				552062CF1F8EC7120015A9A9 /* coder_iOS.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -68,7 +65,7 @@
 		551A183E1FA0FA030050C93C /* NewAccountFinish.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountFinish.m; sourceTree = "<group>"; };
 		551A18401FA0FA740050C93C /* NewAccountFinal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinal.h; sourceTree = "<group>"; };
 		551A18411FA0FA740050C93C /* NewAccountFinal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountFinal.m; sourceTree = "<group>"; };
-		552062C81F8EB1740015A9A9 /* cryptokitty_native_ios.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = cryptokitty_native_ios.framework; path = ../../../Library/Frameworks/cryptokitty_native_ios.framework; sourceTree = "<group>"; };
+		551A18471FA138D30050C93C /* cryptokitty_native_ios.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = cryptokitty_native_ios.framework; path = "../../../Library/Developer/Xcode/DerivedData/cryptokitty-native-ios-ajmqmiuuoymdgyabhdckkcprgbzs/Build/Products/Debug-iphoneos/cryptokitty_native_ios.framework"; sourceTree = "<group>"; };
 		552062C91F8EB1740015A9A9 /* coder_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = coder_iOS.framework; path = ../../../Library/Frameworks/coder_iOS.framework; sourceTree = "<group>"; };
 		552062CA1F8EB1740015A9A9 /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgmp.a; path = ../../../Library/Frameworks/libgmp.a; sourceTree = "<group>"; };
 		5527BAA11F8D0AE200C40D05 /* PostPacket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PostPacket.h; sourceTree = "<group>"; };
@@ -122,9 +119,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				552062D01F8EC7120015A9A9 /* cryptokitty_native_ios.framework in Frameworks */,
-				552062CE1F8EC7120015A9A9 /* coder_iOS.framework in Frameworks */,
-				552062CD1F8EB1740015A9A9 /* libgmp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,8 +135,8 @@
 		552062C71F8EB1740015A9A9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				551A18471FA138D30050C93C /* cryptokitty_native_ios.framework */,
 				552062C91F8EB1740015A9A9 /* coder_iOS.framework */,
-				552062C81F8EB1740015A9A9 /* cryptokitty_native_ios.framework */,
 				552062CA1F8EB1740015A9A9 /* libgmp.a */,
 			);
 			name = Frameworks;
@@ -423,6 +417,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -442,6 +437,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-fembed-bitcode";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -478,6 +474,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -490,6 +487,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "-fembed-bitcode";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -513,8 +511,8 @@
 					"$(PROJECT_DIR)/pippip-native-ios",
 					"$(USER_LIBRARY_DIR)/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.secomm.PippipMessaging;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.secomm.pippip;
+				PRODUCT_NAME = PippipMessaging;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -537,8 +535,8 @@
 					"$(PROJECT_DIR)/pippip-native-ios",
 					"$(USER_LIBRARY_DIR)/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.secomm.PippipMessaging;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.secomm.pippip;
+				PRODUCT_NAME = PippipMessaging;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
