@@ -66,8 +66,10 @@
         }
     }
 
-    return [NSData dataWithBytes:wbytes length:workingLength / 2];
-
+    NSData *result = [NSData dataWithBytes:wbytes length:workingLength / 2];
+    free(wbytes);
+    return result;
+    
 }
 
 - (NSString*) encodeHexString {

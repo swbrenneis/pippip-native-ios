@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <cryptokitty_native_ios/cryptokitty_native_ios.h>
+#import "CKRSAPublicKey.h"
+#import "CKRSAPrivateKey.h"
 
 @interface SessionState : NSObject
 

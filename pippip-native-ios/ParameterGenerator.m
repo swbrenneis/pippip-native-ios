@@ -8,7 +8,12 @@
 
 #import "ParameterGenerator.h"
 #import "NSData+HexEncode.h"
-#import <cryptokitty_native_ios/cryptokitty_native_ios.h>
+#import "CKSecureRandom.h"
+#import "CKRSAKeyPair.h"
+#import "CKRSAKeyPairGenerator.h"
+#import "CKSHA1.h"
+#import "CKSHA256.h"
+#import "CKPEMCodec.h"
 
 @implementation ParameterGenerator
 

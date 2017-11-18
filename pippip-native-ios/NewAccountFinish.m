@@ -8,7 +8,7 @@
 
 #import "NewAccountFinish.h"
 #import "NSData+HexEncode.h"
-#import <cryptokitty_native_ios/cryptokitty_native_ios.h>
+#import "CKRSACodec.h"
 
 @interface NewAccountFinish ()
 {
@@ -29,7 +29,7 @@
 
     NSMutableDictionary *packet = [[NSMutableDictionary alloc] init];
     [packet setObject:@"Authenticator" forKey:@"applicationName"];
-    [packet setObject:@"NewAccountRequest" forKey:@"messageType"];
+    [packet setObject:@"NewAccountFinish" forKey:@"messageType"];
     [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
                forKey:@"sessionId"];
     [packet setObject:[NSString stringWithFormat:@"%d", 0]

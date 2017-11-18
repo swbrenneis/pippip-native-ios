@@ -67,7 +67,7 @@
             [homeController updateStatus:status];
         }
     }
-    else {
+    else {  // Next step not nil, request succeeded.
         if (success) {
             [homeController updateStatus:@"Account created. Online"];
         }

@@ -11,6 +11,7 @@
 #import "PostPacket.h"
 #import "RequestStep.h"
 #import "SessionState.h"
+#import "CKPEMCodec.h"
 #import "stdio.h"
 
 @interface RESTSession () {

@@ -8,7 +8,7 @@
 
 #import "AccountManager.h"
 #import "NSData+HexEncode.h"
-#import <cryptokitty_native_ios/cryptokitty_native_ios.h>
+#import "CKSHA1.h"
 
 @interface AccountManager ()
 {
