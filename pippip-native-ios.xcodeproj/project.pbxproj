@@ -17,6 +17,7 @@
 		5527BAB41F8D58D300C40D05 /* RESTSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB31F8D58D300C40D05 /* RESTSession.m */; };
 		5527BAB81F8DB81B00C40D05 /* NewAccountResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB71F8DB81A00C40D05 /* NewAccountResponse.m */; };
 		5533325B1F9AE2D700F441E4 /* AlertErrorDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */; };
+		553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55AA556D1FA1527C00A7026B /* libgmp.a */; };
 		557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238A91F8C43F600A13A14 /* AccountManager.m */; };
 		557238B31F8C6B0C00A13A14 /* NSData+HexEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238B21F8C6B0C00A13A14 /* NSData+HexEncode.m */; };
 		5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5881F8BBB4400F08BF5 /* AppDelegate.m */; };
@@ -76,7 +77,6 @@
 		55AA55661FA14D7100A7026B /* Base64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55481FA14D7100A7026B /* Base64.cc */; };
 		55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55491FA14D7100A7026B /* RSAPrivateKey.cc */; };
 		55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA554A1FA14D7100A7026B /* BigInteger.cc */; };
-		55AA556E1FA152AB00A7026B /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55AA556D1FA1527C00A7026B /* libgmp.a */; };
 		55DB42131F9ABEA8001D8CB1 /* AccountRequestStep.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB42121F9ABEA8001D8CB1 /* AccountRequestStep.m */; };
 /* End PBXBuildFile section */
 
@@ -279,6 +279,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
