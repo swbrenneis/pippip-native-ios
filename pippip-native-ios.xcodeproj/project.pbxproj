@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		551A183C1FA0F84C0050C93C /* AccountFinishStep.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183B1FA0F84C0050C93C /* AccountFinishStep.m */; };
 		551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183E1FA0FA030050C93C /* NewAccountFinish.m */; };
 		551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A18411FA0FA740050C93C /* NewAccountFinal.m */; };
 		5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */; };
@@ -77,7 +76,6 @@
 		55AA55661FA14D7100A7026B /* Base64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55481FA14D7100A7026B /* Base64.cc */; };
 		55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55491FA14D7100A7026B /* RSAPrivateKey.cc */; };
 		55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA554A1FA14D7100A7026B /* BigInteger.cc */; };
-		55DB42131F9ABEA8001D8CB1 /* AccountRequestStep.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB42121F9ABEA8001D8CB1 /* AccountRequestStep.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,8 +102,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		551A183A1FA0F84C0050C93C /* AccountFinishStep.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountFinishStep.h; sourceTree = "<group>"; };
-		551A183B1FA0F84C0050C93C /* AccountFinishStep.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountFinishStep.m; sourceTree = "<group>"; };
 		551A183D1FA0FA030050C93C /* NewAccountFinish.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinish.h; sourceTree = "<group>"; };
 		551A183E1FA0FA030050C93C /* NewAccountFinish.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountFinish.m; sourceTree = "<group>"; };
 		551A18401FA0FA740050C93C /* NewAccountFinal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinal.h; sourceTree = "<group>"; };
@@ -268,9 +264,6 @@
 		55AA554B1FA14D7100A7026B /* KeyPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyPair.h; sourceTree = "<group>"; };
 		55AA55691FA14E5900A7026B /* gmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmp.h; sourceTree = "<group>"; };
 		55AA556D1FA1527C00A7026B /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgmp.a; sourceTree = "<group>"; };
-		55DB42101F9ABCA7001D8CB1 /* RequestStep.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestStep.h; sourceTree = "<group>"; };
-		55DB42111F9ABEA8001D8CB1 /* AccountRequestStep.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountRequestStep.h; sourceTree = "<group>"; };
-		55DB42121F9ABEA8001D8CB1 /* AccountRequestStep.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountRequestStep.m; sourceTree = "<group>"; };
 		55DB42141F9ABF8C001D8CB1 /* ErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ErrorDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -326,12 +319,8 @@
 				55AA54E41FA14B8900A7026B /* cryptokitty */,
 				55AA54C01FA14ACE00A7026B /* coder */,
 				5592A5991F8BBB4500F08BF5 /* main.mm */,
-				551A183A1FA0F84C0050C93C /* AccountFinishStep.h */,
-				551A183B1FA0F84C0050C93C /* AccountFinishStep.m */,
 				557238A81F8C43F600A13A14 /* AccountManager.h */,
 				557238A91F8C43F600A13A14 /* AccountManager.m */,
-				55DB42111F9ABEA8001D8CB1 /* AccountRequestStep.h */,
-				55DB42121F9ABEA8001D8CB1 /* AccountRequestStep.m */,
 				5592A5871F8BBB4400F08BF5 /* AppDelegate.h */,
 				5592A5881F8BBB4400F08BF5 /* AppDelegate.m */,
 				5592A5AE1F8BC43C00F08BF5 /* ContactsTableViewController.h */,
@@ -360,7 +349,6 @@
 				5527BAAB1F8D398A00C40D05 /* ParameterGenerator.m */,
 				5527BAA11F8D0AE200C40D05 /* PostPacket.h */,
 				553332581F9AD83A00F441E4 /* RequestProcess.h */,
-				55DB42101F9ABCA7001D8CB1 /* RequestStep.h */,
 				5527BAA61F8D36BA00C40D05 /* RESTResponse.h */,
 				5527BAB21F8D58D300C40D05 /* RESTSession.h */,
 				5527BAB31F8D58D300C40D05 /* RESTSession.m */,
@@ -683,7 +671,6 @@
 				55AA554E1FA14D7100A7026B /* GCM.cc in Sources */,
 				55AA554F1FA14D7100A7026B /* RSA.cc in Sources */,
 				55AA55521FA14D7100A7026B /* OAEPrsaes.cc in Sources */,
-				551A183C1FA0F84C0050C93C /* AccountFinishStep.m in Sources */,
 				5527BAB41F8D58D300C40D05 /* RESTSession.m in Sources */,
 				55AA55611FA14D7100A7026B /* PKCS1rsassa.cc in Sources */,
 				5592A59A1F8BBB4500F08BF5 /* main.mm in Sources */,
@@ -699,7 +686,6 @@
 				55AA55021FA14C1300A7026B /* CKRSAKeyPairGenerator.mm in Sources */,
 				55AA55501FA14D7100A7026B /* PSSmgf1.cc in Sources */,
 				55AA55531FA14D7100A7026B /* CCSecureRandom.cc in Sources */,
-				55DB42131F9ABEA8001D8CB1 /* AccountRequestStep.m in Sources */,
 				55AA55601FA14D7100A7026B /* IosSecureRandom.cc in Sources */,
 				55AA554D1FA14D7100A7026B /* RSAPublicKey.cc in Sources */,
 				551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */,

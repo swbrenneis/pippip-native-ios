@@ -8,22 +8,37 @@
 
 #import "NewAccountCreator.h"
 #import "ParameterGenerator.h"
-#import "AccountRequestStep.h"
-#import "AccountFinishStep.h"
+#import "NewAccountRequest.h"
+#import "NewAccountResponse.h"
+#import "NewAccountFinish.h"
+#import "NewAccountFinal.h"
+#import "AlertErrorDelegate.h"
+#import "CKPEMCodec.h"
+
+typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
 @interface NewAccountCreator ()
 {
+
     HomeViewController *homeController;
+    ProcessStep step;
+
 }
 
 @end
 
 @implementation NewAccountCreator
 
+@synthesize errorDelegate;
+@synthesize postPacket;
+
 - (instancetype)initWithViewController:(HomeViewController *)controller {
     self = [super init];
 
     homeController = controller;
+    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:homeController
+                                                              withTitle:@"New Account Creation Error"];
+    
     return self;
 
 }
@@ -36,11 +51,6 @@
     [generator generateParameters:accountName];
     _sessionState = generator;
 
-    // Set up processing steps.
-    _firstStep = [[AccountRequestStep alloc] initWithState:_sessionState
-                                        withViewController:homeController];
-    _nextStep = nil;
-
     // Start the session.
     [homeController updateStatus:@"Contacting the message server"];
     _session = [[RESTSession alloc] init];
@@ -48,37 +58,76 @@
 
 }
 
-- (void)sessionComplete:(BOOL)success {
-    
+- (void) doFinish {
+
+    step = FINISH;
+    postPacket = [[NewAccountFinish alloc] initWithState:_sessionState];
+    [homeController updateStatus:@"Finishing account creation"];
+    [_session doPost];
+
 }
 
 // This will be called after the new account request completes
-- (void)stepComplete:(BOOL)success {
+- (void)postComplete:(NSDictionary*)response {
 
-    if (_nextStep == nil) {
-        if (success) {
-            _nextStep = [[AccountFinishStep alloc] initWithState:_sessionState
-                                              withViewController:homeController];
-            [homeController updateStatus:@"Finishing account creation"];
+    if (response != nil) {
+        switch (step) {
+            case REQUEST:
+                if ([self validateResponse:response]) {
+                    [self doFinish];
+                }
+                break;
+            case FINISH:
+                if ([self validateFinish:response]) {
+                    [homeController updateStatus:@"Account created. Online"];
+                    [homeController updateActivityIndicator:NO];
+                    _sessionState.authenticated = YES;
+                    [homeController authenticated:_sessionState];
+                }
+                break;
+        }
+
+    }
+
+}
+
+- (void)sessionComplete:(NSDictionary*)response {
+
+    if (response != nil) {
+        NSString *sessionId = [response objectForKey:@"sessionId"];
+        NSString *serverPublicKeyPEM = [response objectForKey:@"serverPublicKey"];
+        if (sessionId == nil) {
+            [errorDelegate sessionError:@"Invalid server response, missing session ID"];
+        }
+        else if (serverPublicKeyPEM == nil) {
+            [errorDelegate sessionError:@"Invalid server response, missing public key"];
         }
         else {
-            [homeController updateActivityIndicator:NO];
-            NSString *status = [homeController defaultMessage];
-            [homeController updateStatus:status];
+            _sessionState.sessionId = [sessionId intValue];
+            CKPEMCodec *pem = [[CKPEMCodec alloc] init];
+            _sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
+            step = REQUEST;
+            postPacket = [[NewAccountRequest alloc] initWithState:_sessionState];
+            [homeController updateStatus:@"Requesting account"];
+            [_session doPost];
         }
     }
-    else {  // Next step not nil, request succeeded.
-        if (success) {
-            [homeController updateStatus:@"Account created. Online"];
-        }
-        else {
-            NSString *status = [homeController defaultMessage];
-            [homeController updateStatus:status];
-        }
-        [homeController updateActivityIndicator:NO];
-        _sessionState.authenticated = success;
-        [homeController authenticated:_sessionState];
-    }
+
+}
+
+- (BOOL) validateFinish:(NSDictionary*)response {
+
+    NewAccountFinal *accountFinal = [[NewAccountFinal alloc] initWithState:_sessionState];
+    return [accountFinal processResponse:response
+                           errorDelegate:errorDelegate];
+
+}
+
+- (BOOL) validateResponse:(NSDictionary*)response {
+
+    NewAccountResponse *accountResponse = [[NewAccountResponse alloc] initWithState:_sessionState];
+    return [accountResponse processResponse:response
+                              errorDelegate:errorDelegate];
 
 }
 

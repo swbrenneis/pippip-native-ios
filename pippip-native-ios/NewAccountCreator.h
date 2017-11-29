@@ -13,8 +13,6 @@
 
 @interface NewAccountCreator : NSObject <RequestProcess>
 
-@property (nonatomic, readonly) id<RequestStep> firstStep;
-@property (nonatomic, readonly) id<RequestStep> nextStep;
 @property (nonatomic, readonly) RESTSession *session;
 @property (nonatomic) SessionState *sessionState;
 

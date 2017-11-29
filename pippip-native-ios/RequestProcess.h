@@ -9,18 +9,20 @@
 #import <Foundation/Foundation.h>
 #import "SessionState.h"
 
-@protocol RequestStep;
+@protocol ErrorDelegate;
+@protocol PostPacket;
+@protocol RESTResponse;
 
 @protocol RequestProcess <NSObject>
 
 @required
 
-@property (nonatomic, readonly) id<RequestStep> firstStep;
-@property (nonatomic, readonly) id<RequestStep> nextStep;
+@property (nonatomic, readonly) id<ErrorDelegate> errorDelegate;
+@property (nonatomic, readonly) id<PostPacket> postPacket;
 @property (nonatomic) SessionState *sessionState;
 
-- (void)sessionComplete:(BOOL)success;
+- (void)sessionComplete:(NSDictionary*)response;
 
-- (void)stepComplete:(BOOL)success;
+- (void)postComplete:(NSDictionary*)response;
 
 @end

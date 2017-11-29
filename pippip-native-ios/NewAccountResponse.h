@@ -12,6 +12,6 @@
 
 @interface NewAccountResponse : NSObject <RESTResponse>
 
-- (instancetype)initWithState:(SessionState*)state;
+- (instancetype) initWithState:(SessionState*)state;
 
 @end
