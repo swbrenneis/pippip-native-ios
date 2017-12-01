@@ -7,13 +7,12 @@
 //
 
 #import "NewAccountCreator.h"
-#import "ParameterGenerator.h"
 #import "NewAccountRequest.h"
 #import "NewAccountResponse.h"
 #import "NewAccountFinish.h"
 #import "NewAccountFinal.h"
 #import "AlertErrorDelegate.h"
-#import "UserVault.h"
+#import "AccountManager.h"
 #import "CKPEMCodec.h"
 
 typedef enum STEP { REQUEST, FINISH } ProcessStep;
@@ -23,8 +22,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
     HomeViewController *homeController;
     ProcessStep step;
-    NSString *accountName;
-    NSString *passPhrase;
+    AccountManager *accountManager;
 
 }
 
@@ -46,16 +44,11 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
 }
 
-- (void)createAccount:(NSString *)userName withPassphrase:(NSString *)passphrase {
+- (void)createAccount:(AccountManager*)manager {
 
-    accountName = userName;
-    passPhrase = passphrase;
-    // Generate the user parameters.
+    accountManager = manager;
     [homeController updateStatus:@"Generating user data"];
-    ParameterGenerator *generator = [[ParameterGenerator alloc] init];
-    [generator generateParameters:accountName];
-    _sessionState = generator;
-
+    [accountManager generateParameters];
     // Start the session.
     [homeController updateStatus:@"Contacting the message server"];
     _session = [[RESTSession alloc] init];
@@ -66,7 +59,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 - (void) doFinish {
 
     step = FINISH;
-    postPacket = [[NewAccountFinish alloc] initWithState:_sessionState];
+    postPacket = [[NewAccountFinish alloc] initWithState:accountManager.sessionState];
     [homeController updateStatus:@"Finishing account creation"];
     [_session doPost];
 
@@ -84,11 +77,11 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
                 break;
             case FINISH:
                 if ([self validateFinish:response]) {
-                    [self storeVault];
+                    [accountManager storeVault];
                     [homeController updateStatus:@"Account created. Online"];
                     [homeController updateActivityIndicator:NO];
-                    _sessionState.authenticated = YES;
-                    [homeController authenticated:_sessionState];
+                    accountManager.sessionState.authenticated = YES;
+                    [homeController authenticated];
                 }
                 break;
         }
@@ -109,11 +102,11 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
             [errorDelegate sessionError:@"Invalid server response, missing public key"];
         }
         else {
-            _sessionState.sessionId = [sessionId intValue];
+            accountManager.sessionState.sessionId = [sessionId intValue];
             CKPEMCodec *pem = [[CKPEMCodec alloc] init];
-            _sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
+            accountManager.sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
             step = REQUEST;
-            postPacket = [[NewAccountRequest alloc] initWithState:_sessionState];
+            postPacket = [[NewAccountRequest alloc] initWithState:accountManager.sessionState];
             [homeController updateStatus:@"Requesting account"];
             [_session doPost];
         }
@@ -121,28 +114,9 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
 }
 
-- (void) storeVault {
-
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docPath = [paths objectAtIndex:0];
-    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
-    NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:accountName];
-
-    UserVault *vault = [[UserVault alloc] initWithState:_sessionState];
-    NSData *vaultData = [vault encode:passPhrase];
-
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager createDirectoryAtPath:vaultsPath
-           withIntermediateDirectories:NO
-                            attributes:nil
-                                 error:nil];
-    [vaultData writeToFile:vaultPath atomically:YES];
-
-}
-
 - (BOOL) validateFinish:(NSDictionary*)response {
 
-    NewAccountFinal *accountFinal = [[NewAccountFinal alloc] initWithState:_sessionState];
+    NewAccountFinal *accountFinal = [[NewAccountFinal alloc] initWithState:accountManager.sessionState];
     return [accountFinal processResponse:response
                            errorDelegate:errorDelegate];
 
@@ -150,7 +124,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
 - (BOOL) validateResponse:(NSDictionary*)response {
 
-    NewAccountResponse *accountResponse = [[NewAccountResponse alloc] initWithState:_sessionState];
+    NewAccountResponse *accountResponse = [[NewAccountResponse alloc] initWithState:accountManager.sessionState];
     return [accountResponse processResponse:response
                               errorDelegate:errorDelegate];
 

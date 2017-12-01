@@ -13,6 +13,7 @@
 #include "EncodingException.h"
 #include "BadParameterException.h"
 #include "AuthenticationException.h"
+#include "OutOfRangeException.h"
 
 GCMCodec::GCMCodec() {
     
@@ -44,6 +45,9 @@ void GCMCodec::decrypt(const coder::ByteArray& key, const coder::ByteArray& ad) 
     }
     catch (AuthenticationException& e) {
         throw EncodingException(e);
+    }
+    catch (coder::OutOfRangeException& e) {
+        throw EncodingException("Array parameters out of range");
     }
     
 }

@@ -28,28 +28,31 @@
     return self;
 }
 
-- (void) decode:(NSData*)data withPassword:(NSString *)password {
+- (void) decode:(NSData*)data withPassword:(NSString *)password withError:(NSError**)error {
 
     CKSHA256 *digest = [[CKSHA256 alloc] init];
     NSData *authData = [password dataUsingEncoding:NSUTF8StringEncoding];
     NSData *vaultKey = [digest digest:authData];
     
     CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:data];
-    NSError *error;
-    [codec decrypt:vaultKey withAuthData:authData withError:&error];
-    sessionState.publicId = [codec getString];
-    sessionState.genpass = [codec getBlock];
-    sessionState.svpswSalt = [codec getBlock];
-    sessionState.authData = [codec getBlock];
-    sessionState.enclaveKey = [codec getBlock];
-    sessionState.contactsKey = [codec getBlock];
-    sessionState.userPrivateKeyPEM = [codec getString];
-    sessionState.userPublicKeyPEM = [codec getString];
-
-    CKPEMCodec *pem = [[CKPEMCodec alloc] init];
-    sessionState.userPrivateKey = [pem decodePrivateKey:sessionState.userPrivateKeyPEM];
-    sessionState.userPublicKey = [pem decodePublicKey:sessionState.userPublicKeyPEM];
+    [codec decrypt:vaultKey withAuthData:authData withError:error];
     
+    if (*error == nil) {
+        sessionState.publicId = [codec getString];
+        sessionState.accountRandom = [codec getBlock];
+        sessionState.genpass = [codec getBlock];
+        sessionState.svpswSalt = [codec getBlock];
+        sessionState.authData = [codec getBlock];
+        sessionState.enclaveKey = [codec getBlock];
+        sessionState.contactsKey = [codec getBlock];
+        sessionState.userPrivateKeyPEM = [codec getString];
+        sessionState.userPublicKeyPEM = [codec getString];
+        
+        CKPEMCodec *pem = [[CKPEMCodec alloc] init];
+        sessionState.userPrivateKey = [pem decodePrivateKey:sessionState.userPrivateKeyPEM];
+        sessionState.userPublicKey = [pem decodePublicKey:sessionState.userPublicKeyPEM];
+    }
+
 }
 
 - (NSData*) encode:(NSString*)password {
@@ -60,6 +63,7 @@
     
     CKGCMCodec *codec = [[CKGCMCodec alloc] init];
     [codec putString:sessionState.publicId];
+    [codec putBlock:sessionState.accountRandom];
     [codec putBlock:sessionState.genpass];
     [codec putBlock:sessionState.svpswSalt];
     [codec putBlock:sessionState.authData];

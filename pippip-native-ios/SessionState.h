@@ -33,6 +33,9 @@
 @property (nonatomic) CKRSAPublicKey *userPublicKey;
 @property (nonatomic) NSString *userPublicKeyPEM;
 
+// Authentication parameters
+@property (nonatomic) NSData *authRandom;
+
 - (instancetype)init;
 
 @end

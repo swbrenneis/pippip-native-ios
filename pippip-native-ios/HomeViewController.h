@@ -14,7 +14,7 @@
 @property (nonatomic, readonly) NSString *defaultMessage;
 @property (nonatomic) UIActivityIndicatorView *activityIndicator;
 
-- (void)authenticated:(SessionState*)state;
+- (void)authenticated;
 
 - (void)updateStatus:(NSString*)status;
 

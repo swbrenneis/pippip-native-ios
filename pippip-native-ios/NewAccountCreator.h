@@ -10,14 +10,14 @@
 #import "RequestProcess.h"
 #import "HomeViewController.h"
 #import "RESTSession.h"
+#import "AccountManager.h"
 
 @interface NewAccountCreator : NSObject <RequestProcess>
 
 @property (nonatomic, readonly) RESTSession *session;
-@property (nonatomic) SessionState *sessionState;
 
 - (instancetype) initWithViewController:(HomeViewController*)controller;
 
-- (void) createAccount:(NSString*)accountName withPassphrase:(NSString*)passphrase;
+- (void) createAccount:(AccountManager*)manager;
 
 @end

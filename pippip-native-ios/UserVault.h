@@ -13,7 +13,7 @@
 
 - (instancetype) initWithState:(SessionState*)state;
 
--(void) decode:(NSData*)data withPassword:(NSString*) password;
+-(void) decode:(NSData*)data withPassword:(NSString*) password withError:(NSError**)error;
 
 - (NSData*) encode:(NSString*) password;
 

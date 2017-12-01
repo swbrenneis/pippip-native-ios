@@ -9,12 +9,11 @@
 #import "HomeViewController.h"
 #import "AccountManager.h"
 #import "NewAccountCreator.h"
+#import "Authenticator.h"
 
 @interface HomeViewController ()
 {
     AccountManager *accountManager;
-    NSString *currentAccount;
-    NSString *currentPassphrase;
 
 }
 
@@ -32,7 +31,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    accountManager = [AccountManager loadAccounts];
+    accountManager = [AccountManager loadManager];
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _activityIndicator.hidesWhenStopped = YES;
     [self.view addSubview:_activityIndicator];
@@ -51,6 +50,7 @@
     }
     else {
         [self.authButton setHidden:NO];
+        [self.authButton setEnabled:YES];
         [self.defaultAccountLabel setHidden:NO];
         [self.defaultAccountSwitch setHidden:NO];
         _defaultMessage = @"Sign in or create a new account";
@@ -90,12 +90,48 @@
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
 
     if (row < accountManager.accountNames.count) {
-        currentAccount = accountManager.accountNames[row];
+        accountManager.currentAccount = accountManager.accountNames[row];
     }
 
 }
 
 - (IBAction)authClicked:(UIButton *)sender {
+
+    UIAlertController *dialog = [UIAlertController alertControllerWithTitle:@"Authentication"
+                                                                    message:accountManager.currentAccount
+                                                             preferredStyle:UIAlertControllerStyleAlert];
+
+    [dialog addTextFieldWithConfigurationHandler:^(UITextField* textField) {
+        textField.placeholder = @"Passphrase";
+        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    }];
+
+    UIAlertAction *createAction = [UIAlertAction actionWithTitle:@"Log In"
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction *action) {
+                                                             accountManager.currentPassphrase = dialog.textFields[0].text;
+                                                             [self authenticate];
+                                                         }];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:^(UIAlertAction* action) {
+                                                         accountManager.currentPassphrase = nil;
+                                                         }];
+    
+    [dialog addAction:createAction];
+    [dialog addAction:cancelAction];
+    
+    [self presentViewController:dialog animated:YES completion:nil];
+    
+}
+
+- (void) authenticate {
+
+    [_activityIndicator startAnimating];
+    Authenticator *auth = [[Authenticator alloc] initWithViewController:self];
+    [auth authenticate:accountManager];
+    
 }
 
 /*
@@ -140,13 +176,12 @@
     UIAlertAction *createAction = [UIAlertAction actionWithTitle:@"Create"
                                                            style:UIAlertActionStyleDefault
                                                          handler:^(UIAlertAction *action) {
-                                                             currentAccount = dialog.textFields[0].text;
-                                                             currentPassphrase = dialog.textFields[1].text;
-                                                             if (currentAccount == nil || currentAccount.length == 0) {
+                                                             accountManager.currentAccount = dialog.textFields[0].text;
+                                                             accountManager.currentPassphrase = dialog.textFields[1].text;
+                                                             if (accountManager.currentAccount == nil || accountManager.currentAccount.length == 0) {
                                                                  accountNameAlert();
                                                              }
-                                                             else if (currentPassphrase == nil ||
-                                                                      currentPassphrase.length == 0){
+                                                             else if (accountManager.currentPassphrase == nil || accountManager.currentPassphrase.length == 0){
                                                                  passphraseAlert();
                                                              }
                                                              else {
@@ -157,8 +192,8 @@
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
                                                            style:UIAlertActionStyleCancel
                                                          handler:^(UIAlertAction* action) {
-                                                             currentAccount = nil;
-                                                             currentPassphrase = nil;
+                                                             accountManager.currentAccount = nil;
+                                                             accountManager.currentPassphrase = nil;
                                                          }];
     
     [dialog addTextFieldWithConfigurationHandler:^(UITextField* textField) {
@@ -181,11 +216,11 @@
 
     [_activityIndicator startAnimating];
     NewAccountCreator *creator = [[NewAccountCreator alloc] initWithViewController:self];
-    [creator createAccount:currentAccount withPassphrase:currentPassphrase];
+    [creator createAccount:accountManager];
 
 }
 
-- (void)authenticated:(SessionState *)state {
+- (void)authenticated {
 
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         [_authButton setTitle:@"Sign out" forState:UIControlStateNormal];

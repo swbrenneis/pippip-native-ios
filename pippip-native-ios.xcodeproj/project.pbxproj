@@ -78,6 +78,8 @@
 		55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA554A1FA14D7100A7026B /* BigInteger.cc */; };
 		55FA87391FD059AF00FB96C0 /* UserVault.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87381FD059AF00FB96C0 /* UserVault.m */; };
 		55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */; };
+		55FA873F1FD187CD00FB96C0 /* Authenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873E1FD187CD00FB96C0 /* Authenticator.m */; };
+		55FA87421FD1AE5800FB96C0 /* AuthenticationRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87411FD1AE5800FB96C0 /* AuthenticationRequest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -271,6 +273,10 @@
 		55FA87381FD059AF00FB96C0 /* UserVault.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserVault.m; sourceTree = "<group>"; };
 		55FA873A1FD05E9800FB96C0 /* CKGCMCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKGCMCodec.h; sourceTree = "<group>"; };
 		55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKGCMCodec.mm; sourceTree = "<group>"; };
+		55FA873D1FD187CD00FB96C0 /* Authenticator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Authenticator.h; sourceTree = "<group>"; };
+		55FA873E1FD187CD00FB96C0 /* Authenticator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Authenticator.m; sourceTree = "<group>"; };
+		55FA87401FD1AE5800FB96C0 /* AuthenticationRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationRequest.h; sourceTree = "<group>"; };
+		55FA87411FD1AE5800FB96C0 /* AuthenticationRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AuthenticationRequest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -329,6 +335,10 @@
 				557238A91F8C43F600A13A14 /* AccountManager.m */,
 				5592A5871F8BBB4400F08BF5 /* AppDelegate.h */,
 				5592A5881F8BBB4400F08BF5 /* AppDelegate.m */,
+				55FA87401FD1AE5800FB96C0 /* AuthenticationRequest.h */,
+				55FA87411FD1AE5800FB96C0 /* AuthenticationRequest.m */,
+				55FA873D1FD187CD00FB96C0 /* Authenticator.h */,
+				55FA873E1FD187CD00FB96C0 /* Authenticator.m */,
 				5592A5AE1F8BC43C00F08BF5 /* ContactsTableViewController.h */,
 				5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */,
 				5533325C1F9B779300F441E4 /* ErrorCodes.h */,
@@ -687,6 +697,7 @@
 				5592A59A1F8BBB4500F08BF5 /* main.mm in Sources */,
 				5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */,
 				55AA55651FA14D7100A7026B /* Random.cc in Sources */,
+				55FA873F1FD187CD00FB96C0 /* Authenticator.m in Sources */,
 				55AA55511FA14D7100A7026B /* RSAPrivateModKey.cc in Sources */,
 				55AA55621FA14D7100A7026B /* RSAKeyPairGenerator.cc in Sources */,
 				55AA55631FA14D7100A7026B /* RSAPrivateCrtKey.cc in Sources */,
@@ -702,6 +713,7 @@
 				55AA554D1FA14D7100A7026B /* RSAPublicKey.cc in Sources */,
 				551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */,
 				55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */,
+				55FA87421FD1AE5800FB96C0 /* AuthenticationRequest.m in Sources */,
 				557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */,
 				55AA54DA1FA14B1E00A7026B /* ByteArrayInputStream.cc in Sources */,
 				5527BAAC1F8D398A00C40D05 /* ParameterGenerator.m in Sources */,

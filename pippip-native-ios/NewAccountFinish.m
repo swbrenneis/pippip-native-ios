@@ -28,8 +28,6 @@
 - (NSDictionary*)restPacket {
 
     NSMutableDictionary *packet = [[NSMutableDictionary alloc] init];
-    [packet setObject:@"Authenticator" forKey:@"applicationName"];
-    [packet setObject:@"NewAccountFinish" forKey:@"messageType"];
     [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
                forKey:@"sessionId"];
     [packet setObject:[NSString stringWithFormat:@"%d", 0]
@@ -47,7 +45,7 @@
 }
 
 - (double)restTimeout {
-    return 10.0;
+    return 30.0;
 }
 
 - (NSString*)restURL {

@@ -19,7 +19,6 @@
 
 @property (nonatomic, readonly) id<ErrorDelegate> errorDelegate;
 @property (nonatomic, readonly) id<PostPacket> postPacket;
-@property (nonatomic) SessionState *sessionState;
 
 - (void)sessionComplete:(NSDictionary*)response;
 

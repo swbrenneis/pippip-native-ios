@@ -7,25 +7,28 @@
 //
 
 #import "AccountManager.h"
+#import "UserVault.h"
+#import "ParameterGenerator.h"
 #import "NSData+HexEncode.h"
 #import "CKSHA1.h"
 
 @interface AccountManager ()
 {
     NSMutableDictionary *vaultMap;
+    
 }
 
 @end
 
 @implementation AccountManager
 
-+ (AccountManager*)loadAccounts {
++ (AccountManager*)loadManager {
 
     AccountManager *manager = [[AccountManager alloc] init];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docPath = [paths objectAtIndex:0];
     NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
-    [manager loadFromFile:vaultsPath];
+    [manager loadAccounts:vaultsPath];
     return manager;
     
 }
@@ -40,6 +43,38 @@
 
 }
 
+- (void) generateParameters {
+    
+    ParameterGenerator *generator = [[ParameterGenerator alloc] init];
+    [generator generateParameters:_currentAccount];
+    _sessionState = generator;
+    
+}
+
+- (void) loadSessionState:(NSError**)error {
+
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docPath = [paths objectAtIndex:0];
+    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
+    NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:_currentAccount];
+    NSData *vaultData = [NSData dataWithContentsOfFile:vaultPath];
+
+    _sessionState = [[SessionState alloc] init];
+    UserVault *vault = [[UserVault alloc] initWithState:_sessionState];
+    [vault decode:vaultData withPassword:_currentPassphrase withError:error];
+
+}
+
+- (void) loadAccounts:(NSString*)vaultsPath {
+
+    _accountNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:vaultsPath
+                                                                       error:nil];
+    if (_accountNames.count > 0) {
+        _currentAccount = _accountNames[0];
+    }
+
+}
+
 - (void)storeAccounts {
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -49,11 +84,23 @@
 
 }
 
-- (void)loadFromFile:(NSString*)filePath {
-
-    _accountNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:filePath
-                                                                        error:nil];
-
+- (void) storeVault {
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docPath = [paths objectAtIndex:0];
+    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
+    NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:_currentAccount];
+    
+    UserVault *vault = [[UserVault alloc] initWithState:_sessionState];
+    NSData *vaultData = [vault encode:_currentPassphrase];
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager createDirectoryAtPath:vaultsPath
+           withIntermediateDirectories:NO
+                            attributes:nil
+                                 error:nil];
+    [vaultData writeToFile:vaultPath atomically:YES];
+    
 }
 
 - (NSString*)getVaultName:(NSString *)accountName {
