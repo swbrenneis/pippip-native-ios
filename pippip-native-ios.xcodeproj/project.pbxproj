@@ -76,6 +76,8 @@
 		55AA55661FA14D7100A7026B /* Base64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55481FA14D7100A7026B /* Base64.cc */; };
 		55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55491FA14D7100A7026B /* RSAPrivateKey.cc */; };
 		55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA554A1FA14D7100A7026B /* BigInteger.cc */; };
+		55FA87391FD059AF00FB96C0 /* UserVault.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87381FD059AF00FB96C0 /* UserVault.m */; };
+		55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -265,6 +267,10 @@
 		55AA55691FA14E5900A7026B /* gmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmp.h; sourceTree = "<group>"; };
 		55AA556D1FA1527C00A7026B /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgmp.a; sourceTree = "<group>"; };
 		55DB42141F9ABF8C001D8CB1 /* ErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ErrorDelegate.h; sourceTree = "<group>"; };
+		55FA87371FD059AF00FB96C0 /* UserVault.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserVault.h; sourceTree = "<group>"; };
+		55FA87381FD059AF00FB96C0 /* UserVault.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserVault.m; sourceTree = "<group>"; };
+		55FA873A1FD05E9800FB96C0 /* CKGCMCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKGCMCodec.h; sourceTree = "<group>"; };
+		55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKGCMCodec.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -355,6 +361,8 @@
 				5527BAB51F8D5B9500C40D05 /* SessionDelegate.h */,
 				5527BAA71F8D37D600C40D05 /* SessionState.h */,
 				5527BAA81F8D37D600C40D05 /* SessionState.m */,
+				55FA87371FD059AF00FB96C0 /* UserVault.h */,
+				55FA87381FD059AF00FB96C0 /* UserVault.m */,
 				5592A5901F8BBB4400F08BF5 /* Main.storyboard */,
 				5592A5931F8BBB4400F08BF5 /* Assets.xcassets */,
 				5592A5951F8BBB4400F08BF5 /* LaunchScreen.storyboard */,
@@ -417,6 +425,8 @@
 		55AA54E51FA14B9600A7026B /* Wrappers */ = {
 			isa = PBXGroup;
 			children = (
+				55FA873A1FD05E9800FB96C0 /* CKGCMCodec.h */,
+				55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */,
 				55AA54F91FA14C1300A7026B /* CKPEMCodec.h */,
 				55AA54EA1FA14C1200A7026B /* CKPEMCodec.mm */,
 				55AA54E81FA14C1200A7026B /* CKRSACodec.h */,
@@ -630,6 +640,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */,
 				55AA554C1FA14D7100A7026B /* DigestBase.cc in Sources */,
 				5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */,
 				5527BAA91F8D37D600C40D05 /* SessionState.m in Sources */,
@@ -683,6 +694,7 @@
 				55AA55571FA14D7100A7026B /* DHKeyExchange.cc in Sources */,
 				55AA54FB1FA14C1300A7026B /* CKRSAPublicKey.m in Sources */,
 				5592A58C1F8BBB4400F08BF5 /* HomeViewController.m in Sources */,
+				55FA87391FD059AF00FB96C0 /* UserVault.m in Sources */,
 				55AA55021FA14C1300A7026B /* CKRSAKeyPairGenerator.mm in Sources */,
 				55AA55501FA14D7100A7026B /* PSSmgf1.cc in Sources */,
 				55AA55531FA14D7100A7026B /* CCSecureRandom.cc in Sources */,

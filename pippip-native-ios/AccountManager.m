@@ -20,12 +20,12 @@
 @implementation AccountManager
 
 + (AccountManager*)loadAccounts {
-    
+
     AccountManager *manager = [[AccountManager alloc] init];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docsDir = paths[0];
-    NSString *accountsPath = [NSString stringWithFormat:@"%@/accounts", docsDir];
-    [manager loadFromFile:accountsPath];
+    NSString *docPath = [paths objectAtIndex:0];
+    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
+    [manager loadFromFile:vaultsPath];
     return manager;
     
 }
@@ -51,8 +51,8 @@
 
 - (void)loadFromFile:(NSString*)filePath {
 
-    vaultMap = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
-    _accountNames = [vaultMap allKeys];
+    _accountNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:filePath
+                                                                        error:nil];
 
 }
 

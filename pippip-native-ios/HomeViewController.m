@@ -187,7 +187,9 @@
 
 - (void)authenticated:(SessionState *)state {
 
-    [_authButton setTitle:@"Sign out" forState:UIControlStateNormal];
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        [_authButton setTitle:@"Sign out" forState:UIControlStateNormal];
+    }];
 
 }
 

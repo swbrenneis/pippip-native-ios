@@ -10,5 +10,6 @@
 #define ErrorCodes_h
 
 static const NSInteger RSA_DECRYPTION_ERROR = 10;
+static const NSInteger GCM_DECRYPTION_ERROR = 11;
 
 #endif /* ErrorCodes_h */

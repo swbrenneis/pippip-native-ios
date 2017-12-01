@@ -13,6 +13,7 @@
 #import "NewAccountFinish.h"
 #import "NewAccountFinal.h"
 #import "AlertErrorDelegate.h"
+#import "UserVault.h"
 #import "CKPEMCodec.h"
 
 typedef enum STEP { REQUEST, FINISH } ProcessStep;
@@ -22,6 +23,8 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
     HomeViewController *homeController;
     ProcessStep step;
+    NSString *accountName;
+    NSString *passPhrase;
 
 }
 
@@ -43,8 +46,10 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
 }
 
-- (void)createAccount:(NSString *)accountName withPassphrase:(NSString *)passphrase {
+- (void)createAccount:(NSString *)userName withPassphrase:(NSString *)passphrase {
 
+    accountName = userName;
+    passPhrase = passphrase;
     // Generate the user parameters.
     [homeController updateStatus:@"Generating user data"];
     ParameterGenerator *generator = [[ParameterGenerator alloc] init];
@@ -79,6 +84,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
                 break;
             case FINISH:
                 if ([self validateFinish:response]) {
+                    [self storeVault];
                     [homeController updateStatus:@"Account created. Online"];
                     [homeController updateActivityIndicator:NO];
                     _sessionState.authenticated = YES;
@@ -112,6 +118,25 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
             [_session doPost];
         }
     }
+
+}
+
+- (void) storeVault {
+
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docPath = [paths objectAtIndex:0];
+    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
+    NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:accountName];
+
+    UserVault *vault = [[UserVault alloc] initWithState:_sessionState];
+    NSData *vaultData = [vault encode:passPhrase];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager createDirectoryAtPath:vaultsPath
+           withIntermediateDirectories:NO
+                            attributes:nil
+                                 error:nil];
+    [vaultData writeToFile:vaultPath atomically:YES];
 
 }
 
