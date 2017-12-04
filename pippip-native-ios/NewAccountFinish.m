@@ -30,8 +30,6 @@
     NSMutableDictionary *packet = [[NSMutableDictionary alloc] init];
     [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
                forKey:@"sessionId"];
-    [packet setObject:[NSString stringWithFormat:@"%d", 0]
-               forKey:@"authToken"];
 
     CKRSACodec *codec = [[CKRSACodec alloc] init];
     [codec putBlock:sessionState.genpass];

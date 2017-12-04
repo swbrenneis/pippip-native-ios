@@ -34,7 +34,8 @@
 @property (nonatomic) NSString *userPublicKeyPEM;
 
 // Authentication parameters
-@property (nonatomic) NSData *authRandom;
+@property (nonatomic) NSData *clientAuthRandom;
+@property (nonatomic) NSData *serverAuthRandom;
 
 - (instancetype)init;
 

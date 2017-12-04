@@ -80,6 +80,10 @@
 		55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */; };
 		55FA873F1FD187CD00FB96C0 /* Authenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873E1FD187CD00FB96C0 /* Authenticator.m */; };
 		55FA87421FD1AE5800FB96C0 /* AuthenticationRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87411FD1AE5800FB96C0 /* AuthenticationRequest.m */; };
+		55FA87451FD5CA4F00FB96C0 /* AuthenticationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87441FD5CA4F00FB96C0 /* AuthenticationResponse.m */; };
+		55FA87481FD5E58E00FB96C0 /* ClientAuthChallenge.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87471FD5E58E00FB96C0 /* ClientAuthChallenge.m */; };
+		55FA874B1FD5E5AC00FB96C0 /* ServerAuthChallenge.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA874A1FD5E5AC00FB96C0 /* ServerAuthChallenge.m */; };
+		55FA874E1FD5F10500FB96C0 /* CKHMAC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA874D1FD5F10500FB96C0 /* CKHMAC.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -277,6 +281,14 @@
 		55FA873E1FD187CD00FB96C0 /* Authenticator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Authenticator.m; sourceTree = "<group>"; };
 		55FA87401FD1AE5800FB96C0 /* AuthenticationRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationRequest.h; sourceTree = "<group>"; };
 		55FA87411FD1AE5800FB96C0 /* AuthenticationRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AuthenticationRequest.m; sourceTree = "<group>"; };
+		55FA87431FD5CA4F00FB96C0 /* AuthenticationResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationResponse.h; sourceTree = "<group>"; };
+		55FA87441FD5CA4F00FB96C0 /* AuthenticationResponse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AuthenticationResponse.m; sourceTree = "<group>"; };
+		55FA87461FD5E58E00FB96C0 /* ClientAuthChallenge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClientAuthChallenge.h; sourceTree = "<group>"; };
+		55FA87471FD5E58E00FB96C0 /* ClientAuthChallenge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClientAuthChallenge.m; sourceTree = "<group>"; };
+		55FA87491FD5E5AC00FB96C0 /* ServerAuthChallenge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServerAuthChallenge.h; sourceTree = "<group>"; };
+		55FA874A1FD5E5AC00FB96C0 /* ServerAuthChallenge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ServerAuthChallenge.m; sourceTree = "<group>"; };
+		55FA874C1FD5F10500FB96C0 /* CKHMAC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKHMAC.h; sourceTree = "<group>"; };
+		55FA874D1FD5F10500FB96C0 /* CKHMAC.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKHMAC.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -337,8 +349,12 @@
 				5592A5881F8BBB4400F08BF5 /* AppDelegate.m */,
 				55FA87401FD1AE5800FB96C0 /* AuthenticationRequest.h */,
 				55FA87411FD1AE5800FB96C0 /* AuthenticationRequest.m */,
+				55FA87431FD5CA4F00FB96C0 /* AuthenticationResponse.h */,
+				55FA87441FD5CA4F00FB96C0 /* AuthenticationResponse.m */,
 				55FA873D1FD187CD00FB96C0 /* Authenticator.h */,
 				55FA873E1FD187CD00FB96C0 /* Authenticator.m */,
+				55FA87461FD5E58E00FB96C0 /* ClientAuthChallenge.h */,
+				55FA87471FD5E58E00FB96C0 /* ClientAuthChallenge.m */,
 				5592A5AE1F8BC43C00F08BF5 /* ContactsTableViewController.h */,
 				5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */,
 				5533325C1F9B779300F441E4 /* ErrorCodes.h */,
@@ -368,6 +384,8 @@
 				5527BAA61F8D36BA00C40D05 /* RESTResponse.h */,
 				5527BAB21F8D58D300C40D05 /* RESTSession.h */,
 				5527BAB31F8D58D300C40D05 /* RESTSession.m */,
+				55FA87491FD5E5AC00FB96C0 /* ServerAuthChallenge.h */,
+				55FA874A1FD5E5AC00FB96C0 /* ServerAuthChallenge.m */,
 				5527BAB51F8D5B9500C40D05 /* SessionDelegate.h */,
 				5527BAA71F8D37D600C40D05 /* SessionState.h */,
 				5527BAA81F8D37D600C40D05 /* SessionState.m */,
@@ -441,6 +459,8 @@
 				55AA54EA1FA14C1200A7026B /* CKPEMCodec.mm */,
 				55AA54E81FA14C1200A7026B /* CKRSACodec.h */,
 				55AA54ED1FA14C1200A7026B /* CKRSACodec.mm */,
+				55FA874C1FD5F10500FB96C0 /* CKHMAC.h */,
+				55FA874D1FD5F10500FB96C0 /* CKHMAC.mm */,
 				55AA54EF1FA14C1300A7026B /* CKRSAKeyPair.h */,
 				55AA54EC1FA14C1200A7026B /* CKRSAKeyPair.m */,
 				55AA54F21FA14C1300A7026B /* CKRSAKeyPairGenerator.h */,
@@ -652,12 +672,14 @@
 			files = (
 				55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */,
 				55AA554C1FA14D7100A7026B /* DigestBase.cc in Sources */,
+				55FA874B1FD5E5AC00FB96C0 /* ServerAuthChallenge.m in Sources */,
 				5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */,
 				5527BAA91F8D37D600C40D05 /* SessionState.m in Sources */,
 				55AA555B1FA14D7100A7026B /* GCMCodec.cc in Sources */,
 				55AA55011FA14C1300A7026B /* CKSHA256.mm in Sources */,
 				55AA54FC1FA14C1300A7026B /* CKRSAKeyPair.m in Sources */,
 				55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */,
+				55FA87481FD5E58E00FB96C0 /* ClientAuthChallenge.m in Sources */,
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
 				55AA55581FA14D7100A7026B /* HMAC.cc in Sources */,
@@ -666,6 +688,7 @@
 				55AA54E11FA14B1E00A7026B /* Unsigned64.cc in Sources */,
 				55AA54E01FA14B1E00A7026B /* Unsigned32.cc in Sources */,
 				55AA54FE1FA14C1300A7026B /* CKSecureRandom.mm in Sources */,
+				55FA874E1FD5F10500FB96C0 /* CKHMAC.mm in Sources */,
 				55AA54FD1FA14C1300A7026B /* CKRSACodec.mm in Sources */,
 				55AA555A1FA14D7100A7026B /* PrivateKey.cc in Sources */,
 				55AA555E1FA14D7100A7026B /* SHA384.cc in Sources */,
@@ -709,6 +732,7 @@
 				55AA55021FA14C1300A7026B /* CKRSAKeyPairGenerator.mm in Sources */,
 				55AA55501FA14D7100A7026B /* PSSmgf1.cc in Sources */,
 				55AA55531FA14D7100A7026B /* CCSecureRandom.cc in Sources */,
+				55FA87451FD5CA4F00FB96C0 /* AuthenticationResponse.m in Sources */,
 				55AA55601FA14D7100A7026B /* IosSecureRandom.cc in Sources */,
 				55AA554D1FA14D7100A7026B /* RSAPublicKey.cc in Sources */,
 				551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */,

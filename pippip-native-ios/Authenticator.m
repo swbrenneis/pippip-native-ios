@@ -10,6 +10,7 @@
 #import "AlertErrorDelegate.h"
 #import "UserVault.h"
 #import "AuthenticationRequest.h"
+#import "AuthenticationResponse.h"
 #import "CKPEMCodec.h"
 
 typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
@@ -58,6 +59,34 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
 
 }
 
+- (void)doChallenge {
+    
+}
+
+- (void)postComplete:(NSDictionary*)response {
+    
+    if (response != nil) {
+        switch (step) {
+            case REQUEST:
+                if ([self validateResponse:response]) {
+                    [self doChallenge];
+                }
+                break;
+/*            case FINISH:
+                if ([self validateFinish:response]) {
+                    [accountManager storeVault];
+                    [homeController updateStatus:@"Account created. Online"];
+                    [homeController updateActivityIndicator:NO];
+                    accountManager.sessionState.authenticated = YES;
+                    [homeController authenticated];
+                }
+                break; */
+        }
+        
+    }
+    
+}
+
 - (void)sessionComplete:(NSDictionary*)response {
     
     if (response != nil) {
@@ -82,5 +111,12 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
     
 }
 
+- (BOOL) validateResponse:(NSDictionary*)response {
+    
+    AuthenticationResponse *authResponse = [[AuthenticationResponse alloc] initWithState:accountManager.sessionState];
+    return [authResponse processResponse:response
+                           errorDelegate:errorDelegate];
+    
+}
 
 @end

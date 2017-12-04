@@ -31,16 +31,14 @@
     NSMutableDictionary *packet = [[NSMutableDictionary alloc] init];
     [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
                forKey:@"sessionId"];
-    [packet setObject:[NSString stringWithFormat:@"%d", 0]
-               forKey:@"authToken"];
 
     CKSecureRandom *rnd = [[CKSecureRandom alloc] init];
-    sessionState.authRandom = [rnd nextBytes:32];
+    sessionState.clientAuthRandom = [rnd nextBytes:32];
     CKRSACodec *codec = [[CKRSACodec alloc] init];
     [codec putString:sessionState.publicId];
     [codec putBlock:sessionState.accountRandom];
     [codec putBlock:sessionState.svpswSalt];
-    [codec putBlock:sessionState.authRandom];
+    [codec putBlock:sessionState.clientAuthRandom];
     NSData *data = [codec encrypt:sessionState.serverPublicKey];
     [packet setObject:[data encodeHexString] forKey:@"data"];
 
@@ -49,7 +47,7 @@
 }
 
 - (double)restTimeout {
-    return 10.0;
+    return 20.0;
 }
 
 - (NSString*)restURL {
