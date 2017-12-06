@@ -11,6 +11,8 @@
 #import "UserVault.h"
 #import "AuthenticationRequest.h"
 #import "AuthenticationResponse.h"
+#import "ClientAuthChallenge.h"
+#import "ServerAuthChallenge.h"
 #import "CKPEMCodec.h"
 
 typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
@@ -59,7 +61,16 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
 
 }
 
+- (void) doAuthorized {
+
+}
+
 - (void)doChallenge {
+
+    step = CHALLENGE;
+    postPacket = [[ClientAuthChallenge alloc] initWithState:accountManager.sessionState];
+    [homeController updateStatus:@"Performing challenge"];
+    [_session doPost];
     
 }
 
@@ -70,6 +81,11 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
             case REQUEST:
                 if ([self validateResponse:response]) {
                     [self doChallenge];
+                }
+                break;
+            case CHALLENGE:
+                if ([self validateChallenge:response]) {
+                    [self doAuthorized];
                 }
                 break;
 /*            case FINISH:
@@ -108,6 +124,14 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
             [_session doPost];
         }
     }
+    
+}
+
+- (BOOL) validateChallenge:(NSDictionary*)response {
+    
+    ServerAuthChallenge *authChallenge = [[ServerAuthChallenge alloc] initWithState:accountManager.sessionState];
+    return [authChallenge processResponse:response
+                           errorDelegate:errorDelegate];
     
 }
 

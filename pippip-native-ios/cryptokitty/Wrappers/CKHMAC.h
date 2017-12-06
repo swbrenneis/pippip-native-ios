@@ -12,6 +12,8 @@
 
 - (instancetype) initWithSHA256;
 
+- (BOOL) authenticate:(NSData*)message;
+
 - (NSData*) getHMAC;
 
 - (void) setKey:(NSData*)key;

@@ -34,6 +34,14 @@
     delete hmac;
 }
 
+- (BOOL) authenticate:(NSData *)message {
+
+    coder::ByteArray hmacMessage(reinterpret_cast<const uint8_t*>(message.bytes), message.length);
+    return hmac->authenticate(hmacMessage) ? YES : NO;
+
+
+}
+
 - (NSData*) getHMAC {
 
     coder::ByteArray hmacBytes(hmac->getHMAC());

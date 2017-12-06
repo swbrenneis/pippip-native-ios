@@ -9,6 +9,9 @@
 #import "ClientAuthChallenge.h"
 #import "CKSHA256.h"
 #import "CKHMAC.h"
+#import "CKRSAPrivateKey.h"
+#import "CKSignature.h"
+#import "NSData+HexEncode.h"
 
 @interface ClientAuthChallenge ()
 {
@@ -36,7 +39,7 @@
                forKey:@"sessionId"];
 
     [self s2k];
-    CKHMAC *mac = [[CKHMAC alloc] init];
+    CKHMAC *mac = [[CKHMAC alloc] initWithSHA256];
     [mac setKey:hmacKey];
     NSMutableData *message = [NSMutableData data];
     [message appendData:sessionState.clientAuthRandom];
@@ -44,6 +47,11 @@
     [message appendData:[tag dataUsingEncoding:NSUTF8StringEncoding]];
     [mac setMessage:message];
     NSData *hmac = [mac getHMAC];
+    [packet setObject:[hmac encodeHexString] forKey:@"hmac"];
+
+    CKSignature *sig = [[CKSignature alloc] initWithSHA256];
+    NSData *signature = [sig sign:sessionState.userPrivateKey withMessage:message];
+    [packet setObject:[signature encodeHexString] forKey:@"signature"];
 
     return packet;
 
@@ -62,7 +70,7 @@
     NSData *genpass = sessionState.genpass;
     unsigned char c;
     [genpass getBytes:&c range:NSMakeRange(genpass.length-1, 1)];
-    unsigned long count =  c & 0x0f;
+    long count =  c & 0x0f;
     if (count == 0) {
         count = 0x0c;
     }

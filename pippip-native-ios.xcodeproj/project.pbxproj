@@ -76,6 +76,7 @@
 		55AA55661FA14D7100A7026B /* Base64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55481FA14D7100A7026B /* Base64.cc */; };
 		55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55491FA14D7100A7026B /* RSAPrivateKey.cc */; };
 		55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA554A1FA14D7100A7026B /* BigInteger.cc */; };
+		55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */; };
 		55FA87391FD059AF00FB96C0 /* UserVault.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87381FD059AF00FB96C0 /* UserVault.m */; };
 		55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */; };
 		55FA873F1FD187CD00FB96C0 /* Authenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873E1FD187CD00FB96C0 /* Authenticator.m */; };
@@ -272,6 +273,8 @@
 		55AA554B1FA14D7100A7026B /* KeyPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyPair.h; sourceTree = "<group>"; };
 		55AA55691FA14E5900A7026B /* gmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmp.h; sourceTree = "<group>"; };
 		55AA556D1FA1527C00A7026B /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgmp.a; sourceTree = "<group>"; };
+		55CBAE5E1FD62E8D00C73A2B /* CKSignature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKSignature.h; sourceTree = "<group>"; };
+		55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKSignature.mm; sourceTree = "<group>"; };
 		55DB42141F9ABF8C001D8CB1 /* ErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ErrorDelegate.h; sourceTree = "<group>"; };
 		55FA87371FD059AF00FB96C0 /* UserVault.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserVault.h; sourceTree = "<group>"; };
 		55FA87381FD059AF00FB96C0 /* UserVault.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserVault.m; sourceTree = "<group>"; };
@@ -455,12 +458,12 @@
 			children = (
 				55FA873A1FD05E9800FB96C0 /* CKGCMCodec.h */,
 				55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */,
+				55FA874C1FD5F10500FB96C0 /* CKHMAC.h */,
+				55FA874D1FD5F10500FB96C0 /* CKHMAC.mm */,
 				55AA54F91FA14C1300A7026B /* CKPEMCodec.h */,
 				55AA54EA1FA14C1200A7026B /* CKPEMCodec.mm */,
 				55AA54E81FA14C1200A7026B /* CKRSACodec.h */,
 				55AA54ED1FA14C1200A7026B /* CKRSACodec.mm */,
-				55FA874C1FD5F10500FB96C0 /* CKHMAC.h */,
-				55FA874D1FD5F10500FB96C0 /* CKHMAC.mm */,
 				55AA54EF1FA14C1300A7026B /* CKRSAKeyPair.h */,
 				55AA54EC1FA14C1200A7026B /* CKRSAKeyPair.m */,
 				55AA54F21FA14C1300A7026B /* CKRSAKeyPairGenerator.h */,
@@ -475,6 +478,8 @@
 				55AA54F51FA14C1300A7026B /* CKSHA1.mm */,
 				55AA54F01FA14C1300A7026B /* CKSHA256.h */,
 				55AA54F61FA14C1300A7026B /* CKSHA256.mm */,
+				55CBAE5E1FD62E8D00C73A2B /* CKSignature.h */,
+				55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */,
 				55AA54F71FA14C1300A7026B /* ErrorCodes.h */,
 			);
 			path = Wrappers;
@@ -741,6 +746,7 @@
 				557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */,
 				55AA54DA1FA14B1E00A7026B /* ByteArrayInputStream.cc in Sources */,
 				5527BAAC1F8D398A00C40D05 /* ParameterGenerator.m in Sources */,
+				55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */,
 				55AA55561FA14D7100A7026B /* PEMCodec.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
