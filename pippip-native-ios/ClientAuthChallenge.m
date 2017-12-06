@@ -45,12 +45,14 @@
     [message appendData:sessionState.clientAuthRandom];
     NSString *tag = @"secomm server";
     [message appendData:[tag dataUsingEncoding:NSUTF8StringEncoding]];
+    NSString *msgStr = [message encodeHexString];
     [mac setMessage:message];
     NSData *hmac = [mac getHMAC];
+    NSString *hmacStr = [hmac encodeHexString];
     [packet setObject:[hmac encodeHexString] forKey:@"hmac"];
 
     CKSignature *sig = [[CKSignature alloc] initWithSHA256];
-    NSData *signature = [sig sign:sessionState.userPrivateKey withMessage:message];
+    NSData *signature = [sig sign:sessionState.userPrivateKey withMessage:hmac];
     [packet setObject:[signature encodeHexString] forKey:@"signature"];
 
     return packet;
@@ -78,7 +80,7 @@
 
     NSMutableData *message = [NSMutableData data];
     [message appendData:genpass];
-    NSString *secomm = @"secomm.org";
+    NSString *secomm = @"@secomm.org";
     [message appendData:[secomm dataUsingEncoding:NSUTF8StringEncoding]];
     [message appendData:sessionState.accountRandom];
     
@@ -92,7 +94,7 @@
         count = count - 32 - message.length;
     }
     hmacKey = hash;
-    
+
 }
 
 @end

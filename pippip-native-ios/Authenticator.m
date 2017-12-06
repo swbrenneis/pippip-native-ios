@@ -13,6 +13,7 @@
 #import "AuthenticationResponse.h"
 #import "ClientAuthChallenge.h"
 #import "ServerAuthChallenge.h"
+#import "ServerAuthorized.h"
 #import "CKPEMCodec.h"
 
 typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
@@ -63,6 +64,11 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
 
 - (void) doAuthorized {
 
+    step = CHALLENGE;
+    postPacket = [[ServerAuthorized alloc] initWithState:accountManager.sessionState];
+    [homeController updateStatus:@"Authorizing server"];
+    [_session doPost];
+    
 }
 
 - (void)doChallenge {
@@ -88,15 +94,14 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
                     [self doAuthorized];
                 }
                 break;
-/*            case FINISH:
-                if ([self validateFinish:response]) {
-                    [accountManager storeVault];
-                    [homeController updateStatus:@"Account created. Online"];
+            case AUTHORIZED:
+                if ([self validateAuth:response]) {
+                    [homeController updateStatus:@"Account authenticated. Online"];
                     [homeController updateActivityIndicator:NO];
                     accountManager.sessionState.authenticated = YES;
                     [homeController authenticated];
                 }
-                break; */
+                break;
         }
         
     }
@@ -127,11 +132,19 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
     
 }
 
+- (BOOL) validateAuth:(NSDictionary*)response {
+    
+    ServerAuthChallenge *authChallenge = [[ServerAuthChallenge alloc] initWithState:accountManager.sessionState];
+    return [authChallenge processResponse:response
+                            errorDelegate:errorDelegate];
+    
+}
+
 - (BOOL) validateChallenge:(NSDictionary*)response {
     
     ServerAuthChallenge *authChallenge = [[ServerAuthChallenge alloc] initWithState:accountManager.sessionState];
     return [authChallenge processResponse:response
-                           errorDelegate:errorDelegate];
+                            errorDelegate:errorDelegate];
     
 }
 

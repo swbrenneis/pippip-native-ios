@@ -77,6 +77,8 @@
 		55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55491FA14D7100A7026B /* RSAPrivateKey.cc */; };
 		55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA554A1FA14D7100A7026B /* BigInteger.cc */; };
 		55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */; };
+		55DB7F451FD8692C00B4D262 /* ServerAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */; };
+		55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */; };
 		55FA87391FD059AF00FB96C0 /* UserVault.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87381FD059AF00FB96C0 /* UserVault.m */; };
 		55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */; };
 		55FA873F1FD187CD00FB96C0 /* Authenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873E1FD187CD00FB96C0 /* Authenticator.m */; };
@@ -276,6 +278,10 @@
 		55CBAE5E1FD62E8D00C73A2B /* CKSignature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKSignature.h; sourceTree = "<group>"; };
 		55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKSignature.mm; sourceTree = "<group>"; };
 		55DB42141F9ABF8C001D8CB1 /* ErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ErrorDelegate.h; sourceTree = "<group>"; };
+		55DB7F431FD8692C00B4D262 /* ServerAuthorized.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServerAuthorized.h; sourceTree = "<group>"; };
+		55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ServerAuthorized.m; sourceTree = "<group>"; };
+		55DB7F461FD86AF800B4D262 /* ClientAuthorized.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClientAuthorized.h; sourceTree = "<group>"; };
+		55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClientAuthorized.m; sourceTree = "<group>"; };
 		55FA87371FD059AF00FB96C0 /* UserVault.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserVault.h; sourceTree = "<group>"; };
 		55FA87381FD059AF00FB96C0 /* UserVault.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserVault.m; sourceTree = "<group>"; };
 		55FA873A1FD05E9800FB96C0 /* CKGCMCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKGCMCodec.h; sourceTree = "<group>"; };
@@ -358,6 +364,8 @@
 				55FA873E1FD187CD00FB96C0 /* Authenticator.m */,
 				55FA87461FD5E58E00FB96C0 /* ClientAuthChallenge.h */,
 				55FA87471FD5E58E00FB96C0 /* ClientAuthChallenge.m */,
+				55DB7F461FD86AF800B4D262 /* ClientAuthorized.h */,
+				55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */,
 				5592A5AE1F8BC43C00F08BF5 /* ContactsTableViewController.h */,
 				5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */,
 				5533325C1F9B779300F441E4 /* ErrorCodes.h */,
@@ -389,6 +397,8 @@
 				5527BAB31F8D58D300C40D05 /* RESTSession.m */,
 				55FA87491FD5E5AC00FB96C0 /* ServerAuthChallenge.h */,
 				55FA874A1FD5E5AC00FB96C0 /* ServerAuthChallenge.m */,
+				55DB7F431FD8692C00B4D262 /* ServerAuthorized.h */,
+				55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */,
 				5527BAB51F8D5B9500C40D05 /* SessionDelegate.h */,
 				5527BAA71F8D37D600C40D05 /* SessionState.h */,
 				5527BAA81F8D37D600C40D05 /* SessionState.m */,
@@ -697,6 +707,7 @@
 				55AA54FD1FA14C1300A7026B /* CKRSACodec.mm in Sources */,
 				55AA555A1FA14D7100A7026B /* PrivateKey.cc in Sources */,
 				55AA555E1FA14D7100A7026B /* SHA384.cc in Sources */,
+				55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */,
 				55AA55541FA14D7100A7026B /* SHA256.cc in Sources */,
 				55AA54E31FA14B1E00A7026B /* Int16.cc in Sources */,
 				55AA555F1FA14D7100A7026B /* DERCodec.cc in Sources */,
@@ -726,6 +737,7 @@
 				5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */,
 				55AA55651FA14D7100A7026B /* Random.cc in Sources */,
 				55FA873F1FD187CD00FB96C0 /* Authenticator.m in Sources */,
+				55DB7F451FD8692C00B4D262 /* ServerAuthorized.m in Sources */,
 				55AA55511FA14D7100A7026B /* RSAPrivateModKey.cc in Sources */,
 				55AA55621FA14D7100A7026B /* RSAKeyPairGenerator.cc in Sources */,
 				55AA55631FA14D7100A7026B /* RSAPrivateCrtKey.cc in Sources */,

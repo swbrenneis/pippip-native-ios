@@ -58,20 +58,22 @@
             return NO;
         }
 
-        CKSignature *sig = [[CKSignature alloc] init];
+        CKSignature *sig = [[CKSignature alloc] initWithSHA256];
         if (![sig verify:sessionState.serverPublicKey withMessage:hmac withSignature:signature]) {
             [errorDelegate responseError:@"Signature not verified"];
             return NO;
         }
 
-        CKHMAC *mac = [[CKHMAC alloc] init];
+        [self s2k];
+        CKHMAC *mac = [[CKHMAC alloc] initWithSHA256];
         [mac setKey:hmacKey];
         NSMutableData *message = [NSMutableData data];
         [message appendData:sessionState.serverAuthRandom];
         NSString *tag = @"secomm client";
         [message appendData:[tag dataUsingEncoding:NSUTF8StringEncoding]];
+        [mac setMessage:message];
         if (![mac authenticate:hmac]) {
-            [errorDelegate responseError:@"Authentication failed"];
+            [errorDelegate responseError:@"Server authentication failed"];
             return NO;
         }
         else {
@@ -79,7 +81,7 @@
         }
 
     }
-
+    
 }
 
 - (void) s2k {
@@ -87,7 +89,7 @@
     NSData *genpass = sessionState.genpass;
     unsigned char c;
     [genpass getBytes:&c range:NSMakeRange(genpass.length-1, 1)];
-    unsigned long count =  c & 0x0f;
+    long count =  c & 0x0f;
     if (count == 0) {
         count = 0x0c;
     }
@@ -95,7 +97,7 @@
     
     NSMutableData *message = [NSMutableData data];
     [message appendData:genpass];
-    NSString *secomm = @"secomm.org";
+    NSString *secomm = @"@secomm.org";
     [message appendData:[secomm dataUsingEncoding:NSUTF8StringEncoding]];
     [message appendData:sessionState.accountRandom];
     
