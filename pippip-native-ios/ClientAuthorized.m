@@ -29,10 +29,14 @@
 - (BOOL)processResponse:(NSDictionary *)response errorDelegate:(id<ErrorDelegate>)errorDelegate {
     
     NSString *errorStr = [response objectForKey:@"error"];
+    NSNumber *authToken = [response objectForKey:@"authToken"];
+    sessionState.authToken = [authToken longLongValue];
     if (errorStr != nil) {
         [errorDelegate responseError:errorStr];
         return NO;
     }
+
+    return YES;
 
 }
 

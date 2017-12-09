@@ -14,6 +14,7 @@
 #import "ClientAuthChallenge.h"
 #import "ServerAuthChallenge.h"
 #import "ServerAuthorized.h"
+#import "ClientAuthorized.h"
 #import "CKPEMCodec.h"
 
 typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
@@ -64,7 +65,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
 
 - (void) doAuthorized {
 
-    step = CHALLENGE;
+    step = AUTHORIZED;
     postPacket = [[ServerAuthorized alloc] initWithState:accountManager.sessionState];
     [homeController updateStatus:@"Authorizing server"];
     [_session doPost];
@@ -96,10 +97,8 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
                 break;
             case AUTHORIZED:
                 if ([self validateAuth:response]) {
-                    [homeController updateStatus:@"Account authenticated. Online"];
-                    [homeController updateActivityIndicator:NO];
                     accountManager.sessionState.authenticated = YES;
-                    [homeController authenticated];
+                    [homeController authenticated:@"Account authenticated. Online"];
                 }
                 break;
         }
@@ -134,8 +133,8 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED } ProcessStep;
 
 - (BOOL) validateAuth:(NSDictionary*)response {
     
-    ServerAuthChallenge *authChallenge = [[ServerAuthChallenge alloc] initWithState:accountManager.sessionState];
-    return [authChallenge processResponse:response
+    ClientAuthorized *authorized = [[ClientAuthorized alloc] initWithState:accountManager.sessionState];
+    return [authorized processResponse:response
                             errorDelegate:errorDelegate];
     
 }

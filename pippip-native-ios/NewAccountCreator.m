@@ -78,10 +78,8 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
             case FINISH:
                 if ([self validateFinish:response]) {
                     [accountManager storeVault];
-                    [homeController updateStatus:@"Account created. Online"];
-                    [homeController updateActivityIndicator:NO];
                     accountManager.sessionState.authenticated = YES;
-                    [homeController authenticated];
+                    [homeController authenticated:@"Account created. Online"];
                 }
                 break;
         }

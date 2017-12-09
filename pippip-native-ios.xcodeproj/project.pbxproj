@@ -79,6 +79,7 @@
 		55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */; };
 		55DB7F451FD8692C00B4D262 /* ServerAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */; };
 		55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */; };
+		55DB7F4B1FDB350800B4D262 /* CreateAccountDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F4A1FDB350800B4D262 /* CreateAccountDialog.m */; };
 		55FA87391FD059AF00FB96C0 /* UserVault.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87381FD059AF00FB96C0 /* UserVault.m */; };
 		55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */; };
 		55FA873F1FD187CD00FB96C0 /* Authenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873E1FD187CD00FB96C0 /* Authenticator.m */; };
@@ -282,6 +283,8 @@
 		55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ServerAuthorized.m; sourceTree = "<group>"; };
 		55DB7F461FD86AF800B4D262 /* ClientAuthorized.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClientAuthorized.h; sourceTree = "<group>"; };
 		55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClientAuthorized.m; sourceTree = "<group>"; };
+		55DB7F491FDB350800B4D262 /* CreateAccountDialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CreateAccountDialog.h; sourceTree = "<group>"; };
+		55DB7F4A1FDB350800B4D262 /* CreateAccountDialog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CreateAccountDialog.m; sourceTree = "<group>"; };
 		55FA87371FD059AF00FB96C0 /* UserVault.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserVault.h; sourceTree = "<group>"; };
 		55FA87381FD059AF00FB96C0 /* UserVault.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserVault.m; sourceTree = "<group>"; };
 		55FA873A1FD05E9800FB96C0 /* CKGCMCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKGCMCodec.h; sourceTree = "<group>"; };
@@ -368,6 +371,8 @@
 				55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */,
 				5592A5AE1F8BC43C00F08BF5 /* ContactsTableViewController.h */,
 				5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */,
+				55DB7F491FDB350800B4D262 /* CreateAccountDialog.h */,
+				55DB7F4A1FDB350800B4D262 /* CreateAccountDialog.m */,
 				5533325C1F9B779300F441E4 /* ErrorCodes.h */,
 				55DB42141F9ABF8C001D8CB1 /* ErrorDelegate.h */,
 				553332591F9AE2D700F441E4 /* AlertErrorDelegate.h */,
@@ -754,6 +759,7 @@
 				55AA554D1FA14D7100A7026B /* RSAPublicKey.cc in Sources */,
 				551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */,
 				55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */,
+				55DB7F4B1FDB350800B4D262 /* CreateAccountDialog.m in Sources */,
 				55FA87421FD1AE5800FB96C0 /* AuthenticationRequest.m in Sources */,
 				557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */,
 				55AA54DA1FA14B1E00A7026B /* ByteArrayInputStream.cc in Sources */,

@@ -14,7 +14,9 @@
 @property (nonatomic, readonly) NSString *defaultMessage;
 @property (nonatomic) UIActivityIndicatorView *activityIndicator;
 
-- (void)authenticated;
+- (void)authenticated:(NSString*)message;
+
+- (void) createAccount;
 
 - (void)updateStatus:(NSString*)status;
 

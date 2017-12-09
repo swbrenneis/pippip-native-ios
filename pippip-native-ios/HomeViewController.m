@@ -10,6 +10,7 @@
 #import "AccountManager.h"
 #import "NewAccountCreator.h"
 #import "Authenticator.h"
+#import "CreateAccountDialog.h"
 
 @interface HomeViewController ()
 {
@@ -134,81 +135,11 @@
     
 }
 
-/*
- * Could this be any uglier?
- * TODO Clean it up.
- */
 - (IBAction)createAccountClicked:(UIButton *)sender {
 
-    void (^accountNameAlert)(void) = ^{
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid Account Name"
-                                                                       message:@"Empty account names are not permitted"
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Ok"
-                                                           style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction *action){}];
-        [alert addAction:okAction];
-        [self presentViewController:alert animated:YES completion:nil];
-    };
-    
-    void (^passphraseAlert)(void) = ^{
-        NSString *message = @"Empty passphrases are not recommended\nTap 'Ok' to continue, 'Cancel' to enter a passphrase";
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Empty Passphrase"
-                                                                       message:message
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Ok"
-                                                           style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction *action){
-                                                             [self createAccount];
-                                                         }];
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
-                                                               style:UIAlertActionStyleCancel
-                                                             handler:^(UIAlertAction *action){}];
-        [alert addAction:okAction];
-        [alert addAction:cancelAction];
-        [self presentViewController:alert animated:YES completion:nil];
-    };
-    
-    UIAlertController *dialog = [UIAlertController alertControllerWithTitle:@"Create A New Account"
-                                                                    message:@"Enter an account name and passphrase"
-                                                             preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction *createAction = [UIAlertAction actionWithTitle:@"Create"
-                                                           style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction *action) {
-                                                             accountManager.currentAccount = dialog.textFields[0].text;
-                                                             accountManager.currentPassphrase = dialog.textFields[1].text;
-                                                             if (accountManager.currentAccount == nil || accountManager.currentAccount.length == 0) {
-                                                                 accountNameAlert();
-                                                             }
-                                                             else if (accountManager.currentPassphrase == nil || accountManager.currentPassphrase.length == 0){
-                                                                 passphraseAlert();
-                                                             }
-                                                             else {
-                                                                 [self createAccount];
-                                                             }
-                                                         }];
-    
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
-                                                           style:UIAlertActionStyleCancel
-                                                         handler:^(UIAlertAction* action) {
-                                                             accountManager.currentAccount = nil;
-                                                             accountManager.currentPassphrase = nil;
-                                                         }];
-    
-    [dialog addTextFieldWithConfigurationHandler:^(UITextField* textField) {
-        textField.placeholder = @"Account name";
-        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
-    }];
-    [dialog addTextFieldWithConfigurationHandler:^(UITextField* textField) {
-        textField.placeholder = @"Passphrase";
-        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
-    }];
-    
-    [dialog addAction:createAction];
-    [dialog addAction:cancelAction];
-    
-    [self presentViewController:dialog animated:YES completion:nil];
+    CreateAccountDialog *dialog = [[CreateAccountDialog alloc] initWithViewController:self
+                                                                   withAccountManager:accountManager];
+    [dialog present];
 
 }
 
@@ -220,11 +151,14 @@
 
 }
 
-- (void)authenticated {
+- (void)authenticated:(NSString*)message {
 
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        [_authButton setTitle:@"Sign out" forState:UIControlStateNormal];
-    }];
+    [self updateActivityIndicator:NO];
+    [self updateStatus:message];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.authButton setTitle:@"Sign out" forState:UIControlStateNormal];
+        [self.createAccountButton setHidden:YES];
+    });
 
 }
 
