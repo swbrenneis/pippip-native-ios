@@ -15,6 +15,7 @@
 @property (nonatomic) NSString *currentAccount;
 @property (nonatomic) NSString *currentPassphrase;
 @property (nonatomic) SessionState *sessionState;
+@property (nonatomic) NSMutableDictionary *config;
 
 + (AccountManager*)loadManager;
 
@@ -24,7 +25,13 @@
 
 - (NSString*)getVaultName:(NSString*)accountName;
 
+- (void) loadConfig;
+
 - (void) loadSessionState:(NSError**)error;
+
+- (void) setDefaultConfig;
+
+- (void) storeConfig;
 
 - (void) storeVault;
 

@@ -97,6 +97,7 @@
 
 - (IBAction)signoutClicked:(UIButton *)sender {
 
+    [_accountManager storeConfig];
     Authenticator *auth = [[Authenticator alloc] initWithViewController:self];
     [auth logout:_accountManager];
     _accountManager.sessionState.authenticated = NO;
@@ -104,7 +105,7 @@
     [self.authButton setHidden:NO];
     [self.accountPickerView setHidden:NO];
     [self.signoutButton setHidden:YES];
-    [self.statusLabel setText:_defaultMessage];
+    [self updateStatus:@"Sign in or create a new account"];
 
 }
 

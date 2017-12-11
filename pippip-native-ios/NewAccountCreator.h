@@ -15,6 +15,8 @@
 @interface NewAccountCreator : NSObject <RequestProcess>
 
 @property (nonatomic, readonly) RESTSession *session;
+@property (weak, nonatomic) AccountManager *accountManager;
+@property (weak, nonatomic) HomeViewController *viewController;
 
 - (instancetype) initWithViewController:(HomeViewController*)controller;
 

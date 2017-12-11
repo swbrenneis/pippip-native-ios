@@ -14,7 +14,6 @@
 
 @interface RESTSession () {
 
-    id<RequestProcess> requestProcess;
     NSURLSessionConfiguration *sessionConfig;
     NSURLSession *urlSession;
 
@@ -33,9 +32,7 @@
 
 }
 
-- (void)startSession:(id<RequestProcess>)process {
-
-    requestProcess = process;
+- (void)startSession {
 
     // Session completion block.
     void (^sessionCompletion)(NSData*, NSURLResponse*, NSError*) =
@@ -101,13 +98,13 @@
                     [self postFailed:message];
                 }
                 else {
-                    [requestProcess postComplete:responseJson];
+                    [_requestProcess postComplete:responseJson];
                 }
             }
         }
     };
 
-    id<PostPacket> packet = requestProcess.postPacket;
+    id<PostPacket> packet = _requestProcess.postPacket;
     NSDictionary *packetData = [packet restPacket];
     NSError *jsonError = nil;
     NSData *json = [NSJSONSerialization dataWithJSONObject:packetData
@@ -129,15 +126,15 @@
 
 - (void)postFailed:(NSString*)error {
 
-    [requestProcess.errorDelegate postMethodError:error];
-    [requestProcess postComplete:nil];
+    [_requestProcess.errorDelegate postMethodError:error];
+    [_requestProcess postComplete:nil];
 
 }
 
 - (void)sessionFailed:(NSString*)error {
 
-    [requestProcess.errorDelegate sessionError:error];
-    [requestProcess sessionComplete:nil];
+    [_requestProcess.errorDelegate sessionError:error];
+    [_requestProcess sessionComplete:nil];
 
 }
 
@@ -145,11 +142,11 @@
 
         NSString *error = [sessionResponse objectForKey:@"error"];         // Session request error.
         if (error != nil) {
-            [requestProcess.errorDelegate sessionError:error];
-            [requestProcess sessionComplete:nil];
+            [_requestProcess.errorDelegate sessionError:error];
+            [_requestProcess sessionComplete:nil];
         }
         else {
-            [requestProcess sessionComplete:sessionResponse];
+            [_requestProcess sessionComplete:sessionResponse];
         }
 
 }

@@ -20,9 +20,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 @interface NewAccountCreator ()
 {
 
-    HomeViewController *homeController;
     ProcessStep step;
-    AccountManager *accountManager;
 
 }
 
@@ -36,31 +34,32 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 - (instancetype)initWithViewController:(HomeViewController *)controller {
     self = [super init];
 
-    homeController = controller;
-    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:homeController
+    _viewController = controller;
+    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
                                                               withTitle:@"New Account Creation Error"];
-    
+    _session = [[RESTSession alloc] init];
+    _session.requestProcess = self;
+
     return self;
 
 }
 
 - (void)createAccount:(AccountManager*)manager {
 
-    accountManager = manager;
-    [homeController updateStatus:@"Generating user data"];
-    [accountManager generateParameters];
+    _accountManager = manager;
+    [_viewController updateStatus:@"Generating user data"];
+    [_accountManager generateParameters];
     // Start the session.
-    [homeController updateStatus:@"Contacting the message server"];
-    _session = [[RESTSession alloc] init];
-    [_session startSession:self];
+    [_viewController updateStatus:@"Contacting the message server"];
+    [_session startSession];
 
 }
 
 - (void) doFinish {
 
     step = FINISH;
-    postPacket = [[NewAccountFinish alloc] initWithState:accountManager.sessionState];
-    [homeController updateStatus:@"Finishing account creation"];
+    postPacket = [[NewAccountFinish alloc] initWithState:_accountManager.sessionState];
+    [_viewController updateStatus:@"Finishing account creation"];
     [_session doPost];
 
 }
@@ -77,9 +76,11 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
                 break;
             case FINISH:
                 if ([self validateFinish:response]) {
-                    [accountManager storeVault];
-                    accountManager.sessionState.authenticated = YES;
-                    [homeController authenticated:@"Account created. Online"];
+                    [_accountManager storeVault];
+                    [_accountManager setDefaultConfig];
+                    [_accountManager storeConfig];
+                    _accountManager.sessionState.authenticated = YES;
+                    [_viewController authenticated:@"Account created. Online"];
                 }
                 break;
         }
@@ -100,12 +101,12 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
             [errorDelegate sessionError:@"Invalid server response, missing public key"];
         }
         else {
-            accountManager.sessionState.sessionId = [sessionId intValue];
+            _accountManager.sessionState.sessionId = [sessionId intValue];
             CKPEMCodec *pem = [[CKPEMCodec alloc] init];
-            accountManager.sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
+            _accountManager.sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
             step = REQUEST;
-            postPacket = [[NewAccountRequest alloc] initWithState:accountManager.sessionState];
-            [homeController updateStatus:@"Requesting account"];
+            postPacket = [[NewAccountRequest alloc] initWithState:_accountManager.sessionState];
+            [_viewController updateStatus:@"Requesting account"];
             [_session doPost];
         }
     }
@@ -114,7 +115,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
 - (BOOL) validateFinish:(NSDictionary*)response {
 
-    NewAccountFinal *accountFinal = [[NewAccountFinal alloc] initWithState:accountManager.sessionState];
+    NewAccountFinal *accountFinal = [[NewAccountFinal alloc] initWithState:_accountManager.sessionState];
     return [accountFinal processResponse:response
                            errorDelegate:errorDelegate];
 
@@ -122,7 +123,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
 - (BOOL) validateResponse:(NSDictionary*)response {
 
-    NewAccountResponse *accountResponse = [[NewAccountResponse alloc] initWithState:accountManager.sessionState];
+    NewAccountResponse *accountResponse = [[NewAccountResponse alloc] initWithState:_accountManager.sessionState];
     return [accountResponse processResponse:response
                               errorDelegate:errorDelegate];
 

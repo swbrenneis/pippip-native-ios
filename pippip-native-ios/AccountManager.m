@@ -51,20 +51,6 @@
     
 }
 
-- (void) loadSessionState:(NSError**)error {
-
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docPath = [paths objectAtIndex:0];
-    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
-    NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:_currentAccount];
-    NSData *vaultData = [NSData dataWithContentsOfFile:vaultPath];
-
-    _sessionState = [[SessionState alloc] init];
-    UserVault *vault = [[UserVault alloc] initWithState:_sessionState];
-    [vault decode:vaultData withPassword:_currentPassphrase withError:error];
-
-}
-
 - (void) loadAccounts:(NSString*)vaultsPath {
 
     _accountNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:vaultsPath
@@ -72,6 +58,56 @@
     if (_accountNames.count > 0) {
         _currentAccount = _accountNames[0];
     }
+
+}
+
+- (void) loadConfig {
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docPath = [paths objectAtIndex:0];
+    NSString *configsPath = [docPath stringByAppendingPathComponent:@"PippipConfig"];
+    NSString *plistName = [_currentAccount stringByAppendingString:@".plist"];
+    NSString *configPath = [configsPath stringByAppendingPathComponent:plistName];
+
+    if (![[NSFileManager defaultManager] fileExistsAtPath:configPath]) {
+        [self setDefaultConfig];
+    }
+    else {
+        NSData *plistData = [[NSFileManager defaultManager] contentsAtPath:configPath];
+        NSError *error = nil;
+        _config = [NSPropertyListSerialization propertyListWithData:plistData
+                                                            options:NSPropertyListMutableContainersAndLeaves
+                                                             format:nil
+                                                              error:&error];
+        if (error != nil) {
+            NSLog(@"Error reading properties: %@", [error localizedDescription]);
+            [self setDefaultConfig];
+        }
+    }
+
+}
+
+- (void) loadSessionState:(NSError**)error {
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docPath = [paths objectAtIndex:0];
+    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
+    NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:_currentAccount];
+    NSData *vaultData = [NSData dataWithContentsOfFile:vaultPath];
+    
+    _sessionState = [[SessionState alloc] init];
+    UserVault *vault = [[UserVault alloc] initWithState:_sessionState];
+    [vault decode:vaultData withPassword:_currentPassphrase withError:error];
+    
+}
+
+- (void)setDefaultConfig {
+    
+    NSString *contactPolicy = @"Friends";
+    _config = [NSMutableDictionary dictionaryWithObjects:
+                   [NSArray arrayWithObjects:contactPolicy, @YES, nil]
+                                          forKeys:
+                   [NSArray arrayWithObjects:@"contactPolicy", @"loadContacts", nil]];
 
 }
 
@@ -84,8 +120,30 @@
 
 }
 
+- (void) storeConfig {
+
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docPath = [paths objectAtIndex:0];
+    NSString *configsPath = [docPath stringByAppendingPathComponent:@"PippipConfig"];
+    NSString *plistName = [_currentAccount stringByAppendingString:@".plist"];
+    NSString *configPath = [configsPath stringByAppendingPathComponent:plistName];
+
+    NSError *error = nil;
+    NSData *configData = [NSPropertyListSerialization dataWithPropertyList:_config
+                                                                    format:NSPropertyListXMLFormat_v1_0
+                                                                   options:0
+                                                                     error:&error];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager createDirectoryAtPath:configsPath
+           withIntermediateDirectories:NO
+                            attributes:nil
+                                 error:nil];
+    [configData writeToFile:configPath atomically:YES];
+
+}
+
 - (void) storeVault {
-    
+
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docPath = [paths objectAtIndex:0];
     NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];

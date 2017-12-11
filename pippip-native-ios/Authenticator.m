@@ -44,7 +44,9 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     _viewController = controller;
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
                                                              withTitle:@"Authentication Error"];
-    
+    _session = [[RESTSession alloc] init];
+    _session.requestProcess = self;
+
     return self;
     
 }
@@ -58,8 +60,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
         step = REQUEST;
         // Start the session.
         [_viewController updateStatus:@"Contacting the message server"];
-        _session = [[RESTSession alloc] init];
-        [_session startSession:self];
+        [_session startSession];
     }
     else {
         [errorDelegate sessionError:@"Invalid passphrase"];
@@ -111,11 +112,12 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
             case AUTHORIZED:
                 if ([self validateAuth:response]) {
                     _accountManager.sessionState.authenticated = YES;
+                    [_accountManager loadConfig];
                     [_viewController authenticated:@"Account authenticated. Online"];
                 }
                 break;
             case LOGOUT:
-                // Nothing to do here.
+                // Nothing to do.
                 break;
         }
         

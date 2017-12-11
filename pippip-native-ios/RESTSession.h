@@ -15,6 +15,8 @@
 
 - (void)doPost;
 
-- (void)startSession:(id<RequestProcess>)process;
+- (void)startSession;
+
+@property (nonatomic) id<RequestProcess> requestProcess;
 
 @end

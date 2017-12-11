@@ -19,6 +19,7 @@
 		553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55AA556D1FA1527C00A7026B /* libgmp.a */; };
 		554C17341FDC7F49009434F5 /* TabBarDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17331FDC7F49009434F5 /* TabBarDelegate.m */; };
 		554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17361FDD5990009434F5 /* MoreTableViewController.m */; };
+		5570AD191FDF039B00724B34 /* ContactPolicyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5570AD181FDF039B00724B34 /* ContactPolicyViewController.m */; };
 		557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238A91F8C43F600A13A14 /* AccountManager.m */; };
 		557238B31F8C6B0C00A13A14 /* NSData+HexEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238B21F8C6B0C00A13A14 /* NSData+HexEncode.m */; };
 		5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5881F8BBB4400F08BF5 /* AppDelegate.m */; };
@@ -146,6 +147,8 @@
 		554C17331FDC7F49009434F5 /* TabBarDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TabBarDelegate.m; sourceTree = "<group>"; };
 		554C17351FDD5990009434F5 /* MoreTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoreTableViewController.h; sourceTree = "<group>"; };
 		554C17361FDD5990009434F5 /* MoreTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MoreTableViewController.m; sourceTree = "<group>"; };
+		5570AD171FDF039B00724B34 /* ContactPolicyViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactPolicyViewController.h; sourceTree = "<group>"; };
+		5570AD181FDF039B00724B34 /* ContactPolicyViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactPolicyViewController.m; sourceTree = "<group>"; };
 		557238A81F8C43F600A13A14 /* AccountManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountManager.h; sourceTree = "<group>"; };
 		557238A91F8C43F600A13A14 /* AccountManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountManager.m; sourceTree = "<group>"; };
 		557238B11F8C6B0C00A13A14 /* NSData+HexEncode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+HexEncode.h"; sourceTree = "<group>"; };
@@ -386,6 +389,8 @@
 				55FA87471FD5E58E00FB96C0 /* ClientAuthChallenge.m */,
 				55DB7F461FD86AF800B4D262 /* ClientAuthorized.h */,
 				55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */,
+				5570AD171FDF039B00724B34 /* ContactPolicyViewController.h */,
+				5570AD181FDF039B00724B34 /* ContactPolicyViewController.m */,
 				5592A5AE1F8BC43C00F08BF5 /* ContactsTableViewController.h */,
 				5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */,
 				55DB7F491FDB350800B4D262 /* CreateAccountDialog.h */,
@@ -726,6 +731,7 @@
 				55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */,
 				55FA87481FD5E58E00FB96C0 /* ClientAuthChallenge.m in Sources */,
 				554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */,
+				5570AD191FDF039B00724B34 /* ContactPolicyViewController.m in Sources */,
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
 				55AA55581FA14D7100A7026B /* HMAC.cc in Sources */,

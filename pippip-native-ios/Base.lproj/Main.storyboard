@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="49e-Tb-3d3">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -72,7 +72,7 @@
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" red="0.35682046413421631" green="0.3568871021270752" blue="0.35681626200675964" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.35682865977287292" green="0.35688453912734985" blue="0.35681644082069397" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="bXa-Yl-sJj" firstAttribute="width" secondItem="INa-UA-yNI" secondAttribute="width" id="0ML-d8-1sl"/>
                             <constraint firstItem="29r-ie-nIQ" firstAttribute="centerX" secondItem="tsR-hK-woN" secondAttribute="centerX" id="0rI-Qy-u0V"/>
@@ -186,6 +186,50 @@
             </objects>
             <point key="canvasLocation" x="2191" y="1557"/>
         </scene>
+        <!--Contact Policy View Controller-->
+        <scene sceneID="gR9-8F-9hq">
+            <objects>
+                <viewController id="Xja-rg-lUY" customClass="ContactPolicyViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Sdf-Uj-AnH">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O2a-5E-5Yb">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem title="Contact Policy" id="enC-I3-hVn">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="save" id="r9B-PW-6DA">
+                                            <connections>
+                                                <segue destination="mwP-Xu-NPe" kind="unwind" unwindAction="saveContactPolicy:" id="RSy-CS-7ES"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" systemItem="cancel" id="idR-Ef-JxB">
+                                            <connections>
+                                                <segue destination="mwP-Xu-NPe" kind="unwind" unwindAction="unwindToMoreViewController:" id="die-j7-Zti"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lhm-Bi-2gM">
+                                <rect key="frame" x="0.0" y="91" width="375" height="162"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.3568286598" green="0.35688453910000001" blue="0.35681644080000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </pickerView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.3568286598" green="0.35688453910000001" blue="0.35681644080000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <viewLayoutGuide key="safeArea" id="VEt-Xu-7mY"/>
+                    </view>
+                    <connections>
+                        <outlet property="policyPickerView" destination="lhm-Bi-2gM" id="aWG-ui-CQS"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qyF-T0-Cde" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="mwP-Xu-NPe" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="2234" y="2215"/>
+        </scene>
         <!--More Table View Controller-->
         <scene sceneID="zUo-ww-Rz5">
             <objects>
@@ -233,6 +277,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="Xja-rg-lUY" kind="show" id="hSM-OU-ID3"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="dZq-Pt-Ea6" style="IBUITableViewCellStyleDefault" id="Doy-IF-0mP">
                                         <rect key="frame" x="0.0" y="143.5" width="375" height="44"/>

@@ -7,8 +7,12 @@
 //
 
 #import "MoreTableViewController.h"
+#import "AccountManager.h"
+#import "AppDelegate.h"
 
 @interface MoreTableViewController ()
+
+@property (weak, nonatomic) AccountManager *accountManager;
 
 @end
 
@@ -22,6 +26,11 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+
+    // Get the account manager
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _accountManager = delegate.accountManager;
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -30,6 +39,12 @@
 }
 
 - (IBAction) unwindToMoreViewController:(UIStoryboardSegue*)segue {
+}
+
+- (IBAction)saveContactPolicy:(UIStoryboardSegue*)segue {
+
+    [_accountManager storeConfig];
+
 }
 
 #pragma mark - Table view data source
