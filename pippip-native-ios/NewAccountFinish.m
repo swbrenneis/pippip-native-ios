@@ -12,8 +12,11 @@
 
 @interface NewAccountFinish ()
 {
-    SessionState *sessionState;
+
 }
+
+@property (weak, nonatomic) SessionState *sessionState;
+
 @end
 
 @implementation NewAccountFinish
@@ -21,21 +24,21 @@
 - (instancetype)initWithState:(SessionState*)state {
     self = [super init];
     
-    sessionState = state;
+    _sessionState = state;
     return self;
 }
 
 - (NSDictionary*)restPacket {
 
     NSMutableDictionary *packet = [[NSMutableDictionary alloc] init];
-    [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
+    [packet setObject:[NSString stringWithFormat:@"%d", _sessionState.sessionId]
                forKey:@"sessionId"];
 
     CKRSACodec *codec = [[CKRSACodec alloc] init];
-    [codec putBlock:sessionState.genpass];
-    [codec putBlock:sessionState.enclaveKey];
-    [codec putBlock:sessionState.svpswSalt];
-    NSData *data = [codec encrypt:sessionState.serverPublicKey];
+    [codec putBlock:_sessionState.genpass];
+    [codec putBlock:_sessionState.enclaveKey];
+    [codec putBlock:_sessionState.svpswSalt];
+    NSData *data = [codec encrypt:_sessionState.serverPublicKey];
     [packet setObject:[data encodeHexString] forKey:@"data"];
 
     return packet;
@@ -43,7 +46,7 @@
 }
 
 - (double)restTimeout {
-    return 30.0;
+    return 20.0;
 }
 
 - (NSString*)restURL {

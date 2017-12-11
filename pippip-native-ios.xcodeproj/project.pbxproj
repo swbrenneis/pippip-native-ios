@@ -17,6 +17,8 @@
 		5527BAB81F8DB81B00C40D05 /* NewAccountResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB71F8DB81A00C40D05 /* NewAccountResponse.m */; };
 		5533325B1F9AE2D700F441E4 /* AlertErrorDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */; };
 		553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55AA556D1FA1527C00A7026B /* libgmp.a */; };
+		554C17341FDC7F49009434F5 /* TabBarDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17331FDC7F49009434F5 /* TabBarDelegate.m */; };
+		554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17361FDD5990009434F5 /* MoreTableViewController.m */; };
 		557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238A91F8C43F600A13A14 /* AccountManager.m */; };
 		557238B31F8C6B0C00A13A14 /* NSData+HexEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238B21F8C6B0C00A13A14 /* NSData+HexEncode.m */; };
 		5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5881F8BBB4400F08BF5 /* AppDelegate.m */; };
@@ -76,6 +78,9 @@
 		55AA55661FA14D7100A7026B /* Base64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55481FA14D7100A7026B /* Base64.cc */; };
 		55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55491FA14D7100A7026B /* RSAPrivateKey.cc */; };
 		55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA554A1FA14D7100A7026B /* BigInteger.cc */; };
+		55B781A41FDD77F800330B80 /* PublicIdTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B781A31FDD77F800330B80 /* PublicIdTableViewController.m */; };
+		55B781A71FDDA63900330B80 /* AccountsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B781A61FDDA63900330B80 /* AccountsTableViewController.m */; };
+		55B781AA1FDE161E00330B80 /* Logout.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B781A91FDE161E00330B80 /* Logout.m */; };
 		55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */; };
 		55DB7F451FD8692C00B4D262 /* ServerAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */; };
 		55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */; };
@@ -137,6 +142,10 @@
 		553332591F9AE2D700F441E4 /* AlertErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertErrorDelegate.h; sourceTree = "<group>"; };
 		5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertErrorDelegate.m; sourceTree = "<group>"; };
 		5533325C1F9B779300F441E4 /* ErrorCodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ErrorCodes.h; sourceTree = "<group>"; };
+		554C17321FDC7F49009434F5 /* TabBarDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TabBarDelegate.h; sourceTree = "<group>"; };
+		554C17331FDC7F49009434F5 /* TabBarDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TabBarDelegate.m; sourceTree = "<group>"; };
+		554C17351FDD5990009434F5 /* MoreTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoreTableViewController.h; sourceTree = "<group>"; };
+		554C17361FDD5990009434F5 /* MoreTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MoreTableViewController.m; sourceTree = "<group>"; };
 		557238A81F8C43F600A13A14 /* AccountManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountManager.h; sourceTree = "<group>"; };
 		557238A91F8C43F600A13A14 /* AccountManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountManager.m; sourceTree = "<group>"; };
 		557238B11F8C6B0C00A13A14 /* NSData+HexEncode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+HexEncode.h"; sourceTree = "<group>"; };
@@ -276,6 +285,12 @@
 		55AA554B1FA14D7100A7026B /* KeyPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyPair.h; sourceTree = "<group>"; };
 		55AA55691FA14E5900A7026B /* gmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmp.h; sourceTree = "<group>"; };
 		55AA556D1FA1527C00A7026B /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgmp.a; sourceTree = "<group>"; };
+		55B781A21FDD77F800330B80 /* PublicIdTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PublicIdTableViewController.h; sourceTree = "<group>"; };
+		55B781A31FDD77F800330B80 /* PublicIdTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PublicIdTableViewController.m; sourceTree = "<group>"; };
+		55B781A51FDDA63900330B80 /* AccountsTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountsTableViewController.h; sourceTree = "<group>"; };
+		55B781A61FDDA63900330B80 /* AccountsTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountsTableViewController.m; sourceTree = "<group>"; };
+		55B781A81FDE161E00330B80 /* Logout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logout.h; sourceTree = "<group>"; };
+		55B781A91FDE161E00330B80 /* Logout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Logout.m; sourceTree = "<group>"; };
 		55CBAE5E1FD62E8D00C73A2B /* CKSignature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKSignature.h; sourceTree = "<group>"; };
 		55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKSignature.mm; sourceTree = "<group>"; };
 		55DB42141F9ABF8C001D8CB1 /* ErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ErrorDelegate.h; sourceTree = "<group>"; };
@@ -357,6 +372,8 @@
 				5592A5991F8BBB4500F08BF5 /* main.mm */,
 				557238A81F8C43F600A13A14 /* AccountManager.h */,
 				557238A91F8C43F600A13A14 /* AccountManager.m */,
+				55B781A51FDDA63900330B80 /* AccountsTableViewController.h */,
+				55B781A61FDDA63900330B80 /* AccountsTableViewController.m */,
 				5592A5871F8BBB4400F08BF5 /* AppDelegate.h */,
 				5592A5881F8BBB4400F08BF5 /* AppDelegate.m */,
 				55FA87401FD1AE5800FB96C0 /* AuthenticationRequest.h */,
@@ -379,8 +396,12 @@
 				5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */,
 				5592A58A1F8BBB4400F08BF5 /* HomeViewController.h */,
 				5592A58B1F8BBB4400F08BF5 /* HomeViewController.m */,
+				55B781A81FDE161E00330B80 /* Logout.h */,
+				55B781A91FDE161E00330B80 /* Logout.m */,
 				5592A5B11F8BC92E00F08BF5 /* MessagesTableViewController.h */,
 				5592A5B21F8BC92E00F08BF5 /* MessagesTableViewController.m */,
+				554C17351FDD5990009434F5 /* MoreTableViewController.h */,
+				554C17361FDD5990009434F5 /* MoreTableViewController.m */,
 				5527BAA31F8D0D1200C40D05 /* NewAccountCreator.h */,
 				5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */,
 				551A18401FA0FA740050C93C /* NewAccountFinal.h */,
@@ -396,6 +417,8 @@
 				5527BAAA1F8D398A00C40D05 /* ParameterGenerator.h */,
 				5527BAAB1F8D398A00C40D05 /* ParameterGenerator.m */,
 				5527BAA11F8D0AE200C40D05 /* PostPacket.h */,
+				55B781A21FDD77F800330B80 /* PublicIdTableViewController.h */,
+				55B781A31FDD77F800330B80 /* PublicIdTableViewController.m */,
 				553332581F9AD83A00F441E4 /* RequestProcess.h */,
 				5527BAA61F8D36BA00C40D05 /* RESTResponse.h */,
 				5527BAB21F8D58D300C40D05 /* RESTSession.h */,
@@ -407,6 +430,8 @@
 				5527BAB51F8D5B9500C40D05 /* SessionDelegate.h */,
 				5527BAA71F8D37D600C40D05 /* SessionState.h */,
 				5527BAA81F8D37D600C40D05 /* SessionState.m */,
+				554C17321FDC7F49009434F5 /* TabBarDelegate.h */,
+				554C17331FDC7F49009434F5 /* TabBarDelegate.m */,
 				55FA87371FD059AF00FB96C0 /* UserVault.h */,
 				55FA87381FD059AF00FB96C0 /* UserVault.m */,
 				5592A5901F8BBB4400F08BF5 /* Main.storyboard */,
@@ -700,9 +725,11 @@
 				55AA54FC1FA14C1300A7026B /* CKRSAKeyPair.m in Sources */,
 				55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */,
 				55FA87481FD5E58E00FB96C0 /* ClientAuthChallenge.m in Sources */,
+				554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */,
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
 				55AA55581FA14D7100A7026B /* HMAC.cc in Sources */,
+				554C17341FDC7F49009434F5 /* TabBarDelegate.m in Sources */,
 				55AA54DE1FA14B1E00A7026B /* ByteStreamCodec.cc in Sources */,
 				55AA55001FA14C1300A7026B /* CKSHA1.mm in Sources */,
 				55AA54E11FA14B1E00A7026B /* Unsigned64.cc in Sources */,
@@ -712,6 +739,7 @@
 				55AA54FD1FA14C1300A7026B /* CKRSACodec.mm in Sources */,
 				55AA555A1FA14D7100A7026B /* PrivateKey.cc in Sources */,
 				55AA555E1FA14D7100A7026B /* SHA384.cc in Sources */,
+				55B781AA1FDE161E00330B80 /* Logout.m in Sources */,
 				55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */,
 				55AA55541FA14D7100A7026B /* SHA256.cc in Sources */,
 				55AA54E31FA14B1E00A7026B /* Int16.cc in Sources */,
@@ -720,6 +748,7 @@
 				55AA55551FA14D7100A7026B /* SHA512.cc in Sources */,
 				55AA54FA1FA14C1300A7026B /* CKPEMCodec.mm in Sources */,
 				551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */,
+				55B781A41FDD77F800330B80 /* PublicIdTableViewController.m in Sources */,
 				55AA555C1FA14D7100A7026B /* AES.cc in Sources */,
 				55AA54DB1FA14B1E00A7026B /* ByteArrayOutputStream.cc in Sources */,
 				5533325B1F9AE2D700F441E4 /* AlertErrorDelegate.m in Sources */,
@@ -750,6 +779,7 @@
 				55AA55571FA14D7100A7026B /* DHKeyExchange.cc in Sources */,
 				55AA54FB1FA14C1300A7026B /* CKRSAPublicKey.m in Sources */,
 				5592A58C1F8BBB4400F08BF5 /* HomeViewController.m in Sources */,
+				55B781A71FDDA63900330B80 /* AccountsTableViewController.m in Sources */,
 				55FA87391FD059AF00FB96C0 /* UserVault.m in Sources */,
 				55AA55021FA14C1300A7026B /* CKRSAKeyPairGenerator.mm in Sources */,
 				55AA55501FA14D7100A7026B /* PSSmgf1.cc in Sources */,

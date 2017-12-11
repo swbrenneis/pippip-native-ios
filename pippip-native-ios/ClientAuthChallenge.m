@@ -45,10 +45,8 @@
     [message appendData:sessionState.clientAuthRandom];
     NSString *tag = @"secomm server";
     [message appendData:[tag dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *msgStr = [message encodeHexString];
     [mac setMessage:message];
     NSData *hmac = [mac getHMAC];
-    NSString *hmacStr = [hmac encodeHexString];
     [packet setObject:[hmac encodeHexString] forKey:@"hmac"];
 
     CKSignature *sig = [[CKSignature alloc] initWithSHA256];

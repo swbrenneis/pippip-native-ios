@@ -16,10 +16,11 @@
 @interface Authenticator : NSObject <RequestProcess>
 
 @property (nonatomic, readonly) RESTSession *session;
-@property (nonatomic) SessionState *sessionState;
 
 - (instancetype) initWithViewController:(HomeViewController*)controller;
 
 - (void) authenticate:(AccountManager*)manager;
+
+- (void) logout:(AccountManager*)accountManager;
 
 @end
