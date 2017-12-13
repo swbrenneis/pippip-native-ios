@@ -7,8 +7,15 @@
 //
 
 #import "ContactsTableViewController.h"
+#import "AppDelegate.h"
+#import "ContactManager.h"
 
 @interface ContactsTableViewController ()
+{
+    ContactEntity *addedContact;
+}
+
+@property (weak, nonatomic) ContactManager *contactManager;
 
 @end
 
@@ -22,6 +29,11 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+
+    // Get the contact manager
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _contactManager = delegate.contactManager;
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -29,27 +41,48 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)unwindToContactsTable:(UIStoryboardSegue*)seque {
+}
+
+- (IBAction)requestContact:(UIStoryboardSegue*)segue {
+
+}
+
+- (void)addContact:(ContactEntity *)entity {
+
+    addedContact = entity;
+
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Incomplete implementation, return the number of sections
-    return 0;
+
+    return 1;
+
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete implementation, return the number of rows
-    return 0;
+
+    return [_contactManager count];
+
 }
 
-/*
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell" forIndexPath:indexPath];
     
-    // Configure the cell...
-    
+    ContactEntity *entity = [_contactManager entityAtIndex:indexPath.item];
+    if (entity != nil) {
+        cell.textLabel.text = entity.publicId;
+        cell.detailTextLabel.text = entity.nickname;
+    }
+    else {
+        NSLog(@"Contact index %ld out of range", (long)indexPath.item);
+    }
+
     return cell;
+
 }
-*/
 
 /*
 // Override to support conditional editing of the table view.

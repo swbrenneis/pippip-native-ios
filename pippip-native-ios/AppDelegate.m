@@ -19,6 +19,8 @@
     // Override point for customization after application launch.
     
     _accountManager = [AccountManager loadManager];
+    _contactManager = [[ContactManager alloc] initWithAccountManager:_accountManager];
+
     return YES;
 
 }
