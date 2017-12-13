@@ -9,14 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "RequestProcess.h"
 #import "HomeViewController.h"
-#import "RESTSession.h"
 #import "AccountManager.h"
 
 @interface NewAccountCreator : NSObject <RequestProcess>
-
-@property (nonatomic, readonly) RESTSession *session;
-@property (weak, nonatomic) AccountManager *accountManager;
-@property (weak, nonatomic) HomeViewController *viewController;
 
 - (instancetype) initWithViewController:(HomeViewController*)controller;
 

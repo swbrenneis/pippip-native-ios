@@ -12,10 +12,12 @@ typedef enum { PENDING, ACCEPTED, REJECTED } Status;
 
 @interface ContactEntity : NSObject
 
-- (instancetype) initWithPublicId:(NSString*)puId withNickname:(NSString*)nick;
-
 @property (nonatomic, readonly) NSString *nickname;
 @property (nonatomic, readonly) NSString *publicId;
 @property (nonatomic) Status status;
+
+- (instancetype) initWithPublicId:(NSString*)puId withNickname:(NSString*)nick;
+
+- (NSString*) imageName;
 
 @end

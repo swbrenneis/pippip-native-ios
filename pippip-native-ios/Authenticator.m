@@ -7,6 +7,7 @@
 //
 
 #import "Authenticator.h"
+#import "RESTSession.h"
 #import "AlertErrorDelegate.h"
 #import "UserVault.h"
 #import "AuthenticationRequest.h"
@@ -24,6 +25,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 {
 
     ProcessStep step;
+    RESTSession *session;
     
 }
 
@@ -44,8 +46,8 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     _viewController = controller;
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
                                                              withTitle:@"Authentication Error"];
-    _session = [[RESTSession alloc] init];
-    _session.requestProcess = self;
+    session = [[RESTSession alloc] init];
+    session.requestProcess = self;
 
     return self;
     
@@ -60,7 +62,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
         step = REQUEST;
         // Start the session.
         [_viewController updateStatus:@"Contacting the message server"];
-        [_session startSession];
+        [session startSession];
     }
     else {
         [errorDelegate sessionError:@"Invalid passphrase"];
@@ -73,7 +75,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     step = AUTHORIZED;
     postPacket = [[ServerAuthorized alloc] initWithState:_accountManager.sessionState];
     [_viewController updateStatus:@"Authorizing server"];
-    [_session doPost];
+    [session doPost];
     
 }
 
@@ -82,7 +84,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     step = CHALLENGE;
     postPacket = [[ClientAuthChallenge alloc] initWithState:_accountManager.sessionState];
     [_viewController updateStatus:@"Performing challenge"];
-    [_session doPost];
+    [session doPost];
     
 }
 
@@ -91,7 +93,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     step = LOGOUT;
     postPacket = [[Logout alloc] initWithState:accountManager.sessionState];
     [_viewController updateStatus:@"Logging out"];
-    [_session doPost];
+    [session doPost];
     
 }
 
@@ -143,7 +145,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
             step = REQUEST;
             postPacket = [[AuthenticationRequest alloc] initWithState:_accountManager.sessionState];
             [_viewController updateStatus:@"Requesting authentication"];
-            [_session doPost];
+            [session doPost];
         }
     }
     

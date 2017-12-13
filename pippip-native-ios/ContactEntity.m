@@ -21,4 +21,17 @@
 
 }
 
+- (NSString*) imageName {
+
+    switch (_status) {
+        case ACCEPTED:
+            return @"approved";
+        case REJECTED:
+            return @"rejected";
+        case PENDING:
+            return @"pending";
+    }
+
+}
+
 @end

@@ -33,6 +33,7 @@
     // Get the contact manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _contactManager = delegate.contactManager;
+    [_contactManager setViewController:self];
 
 }
 
@@ -75,6 +76,7 @@
     if (entity != nil) {
         cell.textLabel.text = entity.publicId;
         cell.detailTextLabel.text = entity.nickname;
+        cell.imageView.image = [UIImage imageNamed:[entity imageName]];
     }
     else {
         NSLog(@"Contact index %ld out of range", (long)indexPath.item);

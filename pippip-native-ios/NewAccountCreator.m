@@ -7,6 +7,7 @@
 //
 
 #import "NewAccountCreator.h"
+#import "RESTSession.h"
 #import "NewAccountRequest.h"
 #import "NewAccountResponse.h"
 #import "NewAccountFinish.h"
@@ -21,8 +22,12 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 {
 
     ProcessStep step;
+    RESTSession *session;
 
 }
+
+@property (weak, nonatomic) AccountManager *accountManager;
+@property (weak, nonatomic) HomeViewController *viewController;
 
 @end
 
@@ -37,8 +42,8 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
     _viewController = controller;
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
                                                               withTitle:@"New Account Creation Error"];
-    _session = [[RESTSession alloc] init];
-    _session.requestProcess = self;
+    session = [[RESTSession alloc] init];
+    session.requestProcess = self;
 
     return self;
 
@@ -51,7 +56,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
     [_accountManager generateParameters];
     // Start the session.
     [_viewController updateStatus:@"Contacting the message server"];
-    [_session startSession];
+    [session startSession];
 
 }
 
@@ -60,7 +65,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
     step = FINISH;
     postPacket = [[NewAccountFinish alloc] initWithState:_accountManager.sessionState];
     [_viewController updateStatus:@"Finishing account creation"];
-    [_session doPost];
+    [session doPost];
 
 }
 
@@ -107,7 +112,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
             step = REQUEST;
             postPacket = [[NewAccountRequest alloc] initWithState:_accountManager.sessionState];
             [_viewController updateStatus:@"Requesting account"];
-            [_session doPost];
+            [session doPost];
         }
     }
 
