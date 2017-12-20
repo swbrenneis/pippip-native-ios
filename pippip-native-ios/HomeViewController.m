@@ -11,6 +11,9 @@
 #import "Authenticator.h"
 #import "CreateAccountDialog.h"
 #import "AppDelegate.h"
+#import "SessionState.h"
+#import "AccountManager.h"
+
 #import "TabBarDelegate.h"
 
 @interface HomeViewController ()
@@ -24,6 +27,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *createAccountButton;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet UIButton *signoutButton;
+
+@property (nonatomic) UIActivityIndicatorView *activityIndicator;
+@property (weak, nonatomic) AccountManager *accountManager;
 
 @end
 

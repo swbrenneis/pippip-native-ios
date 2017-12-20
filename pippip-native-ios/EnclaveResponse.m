@@ -28,7 +28,7 @@
     
 }
 
-- (BOOL)processResponse:(NSDictionary *)response errorDelegate:(id<ErrorDelegate>)errorDelegate {
+- (BOOL)processResponse:(NSDictionary*)response errorDelegate:(id<ErrorDelegate>)errorDelegate {
     
     NSString *responseStr = [response objectForKey:@"response"];
     NSString *errorStr = [response objectForKey:@"error"];

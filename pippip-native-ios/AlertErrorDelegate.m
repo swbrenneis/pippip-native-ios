@@ -15,7 +15,6 @@
     UIViewController *view;
 }
 
-
 @end
 
 @implementation AlertErrorDelegate
@@ -37,31 +36,41 @@
 
 - (void)getMethodError:(NSString*)error {
 
-    alert.message = error;
-    [view presentViewController:alert animated:YES completion:nil];
-    [self updateViewStatus];
-
+    dispatch_async(dispatch_get_main_queue(), ^{
+        alert.message = error;
+        [view presentViewController:alert animated:YES completion:nil];
+        [self updateViewStatus];
+    });
 }
 
 - (void)postMethodError:(NSString*)error {
 
-    alert.message = error;
-    [view presentViewController:alert animated:YES completion:nil];
-    [self updateViewStatus];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        alert.message = error;
+        [view presentViewController:alert animated:YES completion:nil];
+        [self updateViewStatus];
+    });
+
 }
 
 - (void)sessionError:(NSString*)error {
     
-    alert.message = error;
-    [view presentViewController:alert animated:YES completion:nil];
-    [self updateViewStatus];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        alert.message = error;
+        [view presentViewController:alert animated:YES completion:nil];
+        [self updateViewStatus];
+    });
+
 }
 
 - (void)responseError:(NSString*)error {
     
-    alert.message = error;
-    [view presentViewController:alert animated:YES completion:nil];
-    [self updateViewStatus];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        alert.message = error;
+        [view presentViewController:alert animated:YES completion:nil];
+        [self updateViewStatus];
+    });
+
 }
 
 - (void)updateViewStatus {

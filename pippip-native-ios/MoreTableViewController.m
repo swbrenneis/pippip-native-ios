@@ -8,11 +8,16 @@
 
 #import "MoreTableViewController.h"
 #import "AccountManager.h"
+#import "ContactManager.h"
 #import "AppDelegate.h"
+#import "NicknameViewController.h"
 
 @interface MoreTableViewController ()
 
 @property (weak, nonatomic) AccountManager *accountManager;
+@property (weak, nonatomic) ContactManager *contactManager;
+
+@property (nonatomic) UIActivityIndicatorView *activityIndicator;
 
 @end
 
@@ -21,15 +26,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    _activityIndicator.hidesWhenStopped = YES;
+    [self.view addSubview:_activityIndicator];
+    _activityIndicator.center = self.view.center;
 
     // Get the account manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _accountManager = delegate.accountManager;
+    _contactManager = delegate.contactManager;
     
 }
 
@@ -54,7 +59,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 3;
+    return 4;
 }
 
 /*

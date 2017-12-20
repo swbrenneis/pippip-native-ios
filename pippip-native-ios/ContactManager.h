@@ -10,17 +10,26 @@
 #import "RequestProcess.h"
 #import "AccountManager.h"
 #import "ContactEntity.h"
+#import "ResponseConsumer.h"
 
 @interface ContactManager : NSObject<RequestProcess>
 
-- (instancetype) initWithAccountManager:(AccountManager*)manager;
+- (instancetype)initWithAccountManager:(AccountManager*)manager;
 
-- (NSInteger) count;
+- (NSInteger)count;
 
-- (ContactEntity*) entityAtIndex:(NSInteger)index;
+- (NSString*)currentNickname;
 
-- (void) setViewController:(UIViewController*)controller;
+- (void)checkNickname:(NSString*)nickname;
 
-- (void) requestContact:(ContactEntity*)entity;
+- (ContactEntity*)entityAtIndex:(NSInteger)index;
+
+- (void)setNickname:(NSString*)nickname;
+
+- (void)setResponseConsumer:(id<ResponseConsumer>)consumer;
+
+- (void)setViewController:(UIViewController*)controller;
+
+- (void)requestContact:(ContactEntity*)entity;
 
 @end

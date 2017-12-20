@@ -14,6 +14,6 @@
 
 - (NSDictionary*)restPacket;
 
-- (double) restTimeout;
+- (double)restTimeout;
 
 @end
