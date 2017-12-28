@@ -9,13 +9,16 @@
 #import "ContactPolicyViewController.h"
 #import "AppDelegate.h"
 #import "AccountManager.h"
+#import "ContactManager.h"
 
 @interface ContactPolicyViewController ()
 {
     NSArray *policyNames;
+    NSArray *policyValues;
 }
 
 @property (weak, nonatomic) AccountManager *accountManager;
+@property (weak, nonatomic) ContactManager *contactManager;
 
 @property (weak, nonatomic) IBOutlet UIPickerView *policyPickerView;
 
@@ -33,13 +36,17 @@
     // Get the account manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _accountManager = delegate.accountManager;
-    
+    _contactManager = delegate.contactManager;
+    [_contactManager setViewController:self];
+    [_contactManager setResponseConsumer:self];
+
     policyNames = [NSArray arrayWithObjects:@"Public", @"Friends", @"Friends of Friends", nil];
-    NSString *currentPolicy = [_accountManager.config objectForKey:@"contactPolicy"];
+    policyValues = [NSArray arrayWithObjects:@"public", @"whitelist", @"acquaintance", nil];
+    NSString *currentPolicy = _accountManager.config[@"contactPolicy"];
     int index = 0;
-    for (id name in policyNames) {
-        NSString *pname = (NSString*)name;
-        if ([pname isEqualToString:currentPolicy]) {
+    for (id name in policyValues) {
+        NSString *pvalue = (NSString*)name;
+        if ([pvalue isEqualToString:currentPolicy]) {
             [_policyPickerView selectRow:index inComponent:0 animated:YES];
         }
         index++;
@@ -79,9 +86,25 @@
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     
     if (row < 3) {
-        _accountManager.config[@"contactPolicy"] = policyNames[row];
+        _accountManager.config[@"contactPolicy"] = policyValues[row];
     }
     
+}
+
+- (void)response:(NSDictionary *)info {
+
+    NSString *result = info[@"result"];
+    if ([result isEqualToString:@"policySet"]) {
+        [_accountManager storeConfig];
+        [self performSegueWithIdentifier:@"unwindAfterSave" sender:self];
+    }
+
+}
+
+- (IBAction)saveContactPolicy:(UIBarButtonItem *)sender {
+
+    [_contactManager setContactPolicy];
+
 }
 
 /*

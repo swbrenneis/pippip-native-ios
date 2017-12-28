@@ -86,19 +86,15 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
         EnclaveResponse *enclaveResponse = [[EnclaveResponse alloc] initWithState:_accountManager.sessionState];
         [enclaveResponse processResponse:response errorDelegate:errorDelegate];
         NSDictionary *contactResponse = [enclaveResponse getResponse];
-        if (contactResponse != nil) {
-            NSString *method = contactResponse[@"method"];
-            NSDictionary *info = contactResponse[@"response"];
-            if (responseConsumer != nil) {
-                [responseConsumer response:info withMethod:method];
-            }
+        if (contactResponse != nil && responseConsumer != nil) {
+                [responseConsumer response:contactResponse];
         }
     }
 
 }
 
 - (void)requestContact:(ContactEntity*)entity {
-    
+
     EnclaveRequest *request = [[EnclaveRequest alloc] initWithState:_accountManager.sessionState];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 
@@ -124,6 +120,15 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     postPacket = enclaveRequest;
     [session doPost];
     
+}
+
+- (void)setContactPolicy {
+
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"SetContactPolicy";
+    request[@"policy"] = _accountManager.config[@"contactPolicy"];
+    [self sendRequest:request];
+
 }
 
 - (void)setNickname:(NSString *)nickname {

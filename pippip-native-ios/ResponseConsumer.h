@@ -10,7 +10,7 @@
 
 @protocol ResponseConsumer <NSObject>
 
-- (void)response:(NSDictionary*)info withMethod:(NSString*)method;
+- (void)response:(NSDictionary*)info;
 
 @end
 

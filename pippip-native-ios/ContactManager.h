@@ -24,6 +24,8 @@
 
 - (ContactEntity*)entityAtIndex:(NSInteger)index;
 
+- (void)setContactPolicy;
+
 - (void)setNickname:(NSString*)nickname;
 
 - (void)setResponseConsumer:(id<ResponseConsumer>)consumer;

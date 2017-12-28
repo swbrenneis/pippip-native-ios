@@ -11,6 +11,9 @@
 #import "ContactManager.h"
 
 @interface NicknameViewController ()
+{
+    NSString *method;
+}
 
 @property (weak, nonatomic) IBOutlet UITextField *nicknameTextField;
 @property (weak, nonatomic) IBOutlet UILabel *availableLabel;
@@ -51,27 +54,38 @@
     return _nicknameTextField.text;
 }
 
-- (void)response:(NSDictionary *)info withMethod:(NSString *)method {
+- (void)response:(NSDictionary *)info {
 
     if ([method isEqualToString:@"CheckNickname"]) {
         NSString *result = info[@"result"];
-        if ([result isEqualToString:@"available"]) {
-            _availableLabel.text = @"Nickname Is Available";
-            [_availableLabel setHidden:NO];
-        }
-        else if ([result isEqualToString:@"exists"]) {
-            _availableLabel.text = @"Nickname Is Not Available";
-            [_availableLabel setHidden:NO];
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([result isEqualToString:@"available"]) {
+                _availableLabel.text = @"Nickname Is Available";
+                [_availableLabel setHidden:NO];
+            }
+            else if ([result isEqualToString:@"exists"]) {
+                _availableLabel.text = @"Nickname Is Not Available";
+                [_availableLabel setHidden:NO];
+            }
+        });
+    }
+    else {
+        
     }
 
 }
 
 - (IBAction)saveNickname:(UIBarButtonItem *)sender {
+
+    method = @"SetNickname";
+    [_contactManager setResponseConsumer:self];
+    [_contactManager setNickname:_nicknameTextField.text];
+
 }
 
 - (IBAction)checkNickname:(UIButton *)sender {
 
+    method = @"CheckNickname";
     [_availableLabel setHidden:YES];
     [_contactManager setResponseConsumer:self];
     [_contactManager checkNickname:_nicknameTextField.text];

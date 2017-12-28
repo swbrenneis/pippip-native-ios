@@ -46,12 +46,6 @@
 - (IBAction) unwindToMoreViewController:(UIStoryboardSegue*)segue {
 }
 
-- (IBAction)saveContactPolicy:(UIStoryboardSegue*)segue {
-
-    [_accountManager storeConfig];
-
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {

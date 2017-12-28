@@ -28,10 +28,10 @@
     
 }
 
-- (BOOL)processResponse:(NSDictionary*)response errorDelegate:(id<ErrorDelegate>)errorDelegate {
+- (BOOL)processResponse:(NSDictionary*)enclaveResponse errorDelegate:(id<ErrorDelegate>)errorDelegate {
     
-    NSString *responseStr = [response objectForKey:@"response"];
-    NSString *errorStr = [response objectForKey:@"error"];
+    NSString *responseStr = [enclaveResponse objectForKey:@"response"];
+    NSString *errorStr = [enclaveResponse objectForKey:@"error"];
     if (errorStr != nil) {
         [errorDelegate responseError:errorStr];
         return NO;

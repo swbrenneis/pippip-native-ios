@@ -321,7 +321,7 @@
                                         <barButtonItem key="leftBarButtonItem" systemItem="save" id="r9B-PW-6DA">
                                             <color key="tintColor" red="0.22256201510000001" green="0.94480079409999995" blue="0.82728129630000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <connections>
-                                                <segue destination="mwP-Xu-NPe" kind="unwind" unwindAction="saveContactPolicy:" id="RSy-CS-7ES"/>
+                                                <action selector="saveContactPolicy:" destination="Xja-rg-lUY" id="Wwz-v0-bgF"/>
                                             </connections>
                                         </barButtonItem>
                                         <barButtonItem key="rightBarButtonItem" systemItem="cancel" id="idR-Ef-JxB">
@@ -351,6 +351,7 @@
                     </view>
                     <connections>
                         <outlet property="policyPickerView" destination="lhm-Bi-2gM" id="aWG-ui-CQS"/>
+                        <segue destination="mwP-Xu-NPe" kind="unwind" identifier="unwindAfterSave" unwindAction="unwindToMoreViewController:" id="GJU-Rz-4fo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qyF-T0-Cde" userLabel="First Responder" sceneMemberID="firstResponder"/>
