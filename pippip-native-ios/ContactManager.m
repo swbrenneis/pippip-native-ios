@@ -23,7 +23,6 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     NSArray<ContactEntity*> *entities;
     RESTSession *session;
     ContactRequest contactRequest;
-    NSString *pendingNickname;
     id<ResponseConsumer> responseConsumer;
 
 }
@@ -48,6 +47,16 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 }
 
+- (void)addFriend:(NSString *)publicId {
+    
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"UpdateWhitelist";
+    request[@"action"] = @"add";
+    request[@"id"] = publicId;
+    [self sendRequest:request];
+    
+}
+
 - (NSInteger) count {
 
     return 0;
@@ -57,15 +66,6 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 - (NSString*)currentNickname {
 
     return _accountManager.config[@"nickname"];
-
-}
-
-- (void)checkNickname:(NSString *)nickname {
-    
-    NSMutableDictionary *request = [NSMutableDictionary dictionary];
-    request[@"method"] = @"CheckNickname";
-    request[@"nickname"] = nickname;
-    [self sendRequest:request];
 
 }
 
@@ -80,14 +80,24 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 }
 
+- (void)matchNickname:(NSString *)nickname {
+    
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"MatchNickname";
+    request[@"nickname"] = nickname;
+    [self sendRequest:request];
+    
+}
+
 - (void)postComplete:(NSDictionary*)response {
 
     if (response != nil) {
         EnclaveResponse *enclaveResponse = [[EnclaveResponse alloc] initWithState:_accountManager.sessionState];
-        [enclaveResponse processResponse:response errorDelegate:errorDelegate];
-        NSDictionary *contactResponse = [enclaveResponse getResponse];
-        if (contactResponse != nil && responseConsumer != nil) {
+        if ([enclaveResponse processResponse:response errorDelegate:errorDelegate]) {
+            NSDictionary *contactResponse = [enclaveResponse getResponse];
+            if (contactResponse != nil && responseConsumer != nil) {
                 [responseConsumer response:contactResponse];
+            }
         }
     }
 
@@ -133,10 +143,11 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 - (void)setNickname:(NSString *)nickname {
 
-    pendingNickname = nickname;
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
     request[@"method"] = @"SetNickname";
-    request[@"newNickname"] = nickname;
+    if (nickname != nil) {
+        request[@"newNickname"] = nickname;
+    }
     NSString *oldNickname = _accountManager.config[@"nickname"];
     if (oldNickname != nil) {
         request[@"oldNickname"] = oldNickname;

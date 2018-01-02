@@ -12,17 +12,19 @@
 #import "ContactEntity.h"
 #import "ResponseConsumer.h"
 
-@interface ContactManager : NSObject<RequestProcess>
+@interface ContactManager : NSObject <RequestProcess>
 
 - (instancetype)initWithAccountManager:(AccountManager*)manager;
+
+- (void)addFriend:(NSString*)publicId;
 
 - (NSInteger)count;
 
 - (NSString*)currentNickname;
 
-- (void)checkNickname:(NSString*)nickname;
-
 - (ContactEntity*)entityAtIndex:(NSInteger)index;
+
+- (void)matchNickname:(NSString*)nickname;
 
 - (void)setContactPolicy;
 

@@ -16,6 +16,10 @@
 		5527BAB41F8D58D300C40D05 /* RESTSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB31F8D58D300C40D05 /* RESTSession.m */; };
 		5527BAB81F8DB81B00C40D05 /* NewAccountResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB71F8DB81A00C40D05 /* NewAccountResponse.m */; };
 		5533325B1F9AE2D700F441E4 /* AlertErrorDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */; };
+		5537898C1FF568B50043BCF4 /* WhitelistTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5537898B1FF568B50043BCF4 /* WhitelistTableViewController.m */; };
+		5537898F1FF579EC0043BCF4 /* WhitelistTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5537898E1FF579EC0043BCF4 /* WhitelistTableViewCell.m */; };
+		553789921FF583490043BCF4 /* AddFriendViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 553789911FF583490043BCF4 /* AddFriendViewController.m */; };
+		553789951FF58B0F0043BCF4 /* WhitelistManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 553789941FF58B0F0043BCF4 /* WhitelistManager.m */; };
 		553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55AA556D1FA1527C00A7026B /* libgmp.a */; };
 		554C17341FDC7F49009434F5 /* TabBarDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17331FDC7F49009434F5 /* TabBarDelegate.m */; };
 		554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17361FDD5990009434F5 /* MoreTableViewController.m */; };
@@ -149,6 +153,14 @@
 		553332591F9AE2D700F441E4 /* AlertErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertErrorDelegate.h; sourceTree = "<group>"; };
 		5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertErrorDelegate.m; sourceTree = "<group>"; };
 		5533325C1F9B779300F441E4 /* ErrorCodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ErrorCodes.h; sourceTree = "<group>"; };
+		5537898A1FF568B50043BCF4 /* WhitelistTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhitelistTableViewController.h; sourceTree = "<group>"; };
+		5537898B1FF568B50043BCF4 /* WhitelistTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WhitelistTableViewController.m; sourceTree = "<group>"; };
+		5537898D1FF579EC0043BCF4 /* WhitelistTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhitelistTableViewCell.h; sourceTree = "<group>"; };
+		5537898E1FF579EC0043BCF4 /* WhitelistTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WhitelistTableViewCell.m; sourceTree = "<group>"; };
+		553789901FF583490043BCF4 /* AddFriendViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddFriendViewController.h; sourceTree = "<group>"; };
+		553789911FF583490043BCF4 /* AddFriendViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddFriendViewController.m; sourceTree = "<group>"; };
+		553789931FF58B0F0043BCF4 /* WhitelistManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhitelistManager.h; sourceTree = "<group>"; };
+		553789941FF58B0F0043BCF4 /* WhitelistManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WhitelistManager.m; sourceTree = "<group>"; };
 		554C17321FDC7F49009434F5 /* TabBarDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TabBarDelegate.h; sourceTree = "<group>"; };
 		554C17331FDC7F49009434F5 /* TabBarDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TabBarDelegate.m; sourceTree = "<group>"; };
 		554C17351FDD5990009434F5 /* MoreTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoreTableViewController.h; sourceTree = "<group>"; };
@@ -398,6 +410,8 @@
 				55B781A61FDDA63900330B80 /* AccountsTableViewController.m */,
 				55B781B11FE0A4F600330B80 /* AddContactViewController.h */,
 				55B781B21FE0A4F600330B80 /* AddContactViewController.m */,
+				553789901FF583490043BCF4 /* AddFriendViewController.h */,
+				553789911FF583490043BCF4 /* AddFriendViewController.m */,
 				553332591F9AE2D700F441E4 /* AlertErrorDelegate.h */,
 				5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */,
 				5592A5871F8BBB4400F08BF5 /* AppDelegate.h */,
@@ -471,6 +485,12 @@
 				554C17331FDC7F49009434F5 /* TabBarDelegate.m */,
 				55FA87371FD059AF00FB96C0 /* UserVault.h */,
 				55FA87381FD059AF00FB96C0 /* UserVault.m */,
+				553789931FF58B0F0043BCF4 /* WhitelistManager.h */,
+				553789941FF58B0F0043BCF4 /* WhitelistManager.m */,
+				5537898D1FF579EC0043BCF4 /* WhitelistTableViewCell.h */,
+				5537898E1FF579EC0043BCF4 /* WhitelistTableViewCell.m */,
+				5537898A1FF568B50043BCF4 /* WhitelistTableViewController.h */,
+				5537898B1FF568B50043BCF4 /* WhitelistTableViewController.m */,
 				5592A5901F8BBB4400F08BF5 /* Main.storyboard */,
 				5592A5931F8BBB4400F08BF5 /* Assets.xcassets */,
 				5592A5951F8BBB4400F08BF5 /* LaunchScreen.storyboard */,
@@ -765,9 +785,11 @@
 				55B3911F1FE17383004DAFF7 /* EnclaveResponse.m in Sources */,
 				55FA87481FD5E58E00FB96C0 /* ClientAuthChallenge.m in Sources */,
 				554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */,
+				553789951FF58B0F0043BCF4 /* WhitelistManager.m in Sources */,
 				5570AD191FDF039B00724B34 /* ContactPolicyViewController.m in Sources */,
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
 				55B781B31FE0A4F600330B80 /* AddContactViewController.m in Sources */,
+				553789921FF583490043BCF4 /* AddFriendViewController.m in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
 				55AA55581FA14D7100A7026B /* HMAC.cc in Sources */,
 				554C17341FDC7F49009434F5 /* TabBarDelegate.m in Sources */,
@@ -779,6 +801,7 @@
 				55FA874E1FD5F10500FB96C0 /* CKHMAC.mm in Sources */,
 				55AA54FD1FA14C1300A7026B /* CKRSACodec.mm in Sources */,
 				55AA555A1FA14D7100A7026B /* PrivateKey.cc in Sources */,
+				5537898F1FF579EC0043BCF4 /* WhitelistTableViewCell.m in Sources */,
 				55AA555E1FA14D7100A7026B /* SHA384.cc in Sources */,
 				55B781AA1FDE161E00330B80 /* Logout.m in Sources */,
 				55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */,
@@ -793,6 +816,7 @@
 				55B781A41FDD77F800330B80 /* PublicIdTableViewController.m in Sources */,
 				55AA555C1FA14D7100A7026B /* AES.cc in Sources */,
 				55AA54DB1FA14B1E00A7026B /* ByteArrayOutputStream.cc in Sources */,
+				5537898C1FF568B50043BCF4 /* WhitelistTableViewController.m in Sources */,
 				5533325B1F9AE2D700F441E4 /* AlertErrorDelegate.m in Sources */,
 				55B781AD1FE018FC00330B80 /* ContactManager.m in Sources */,
 				5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */,

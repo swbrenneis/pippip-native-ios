@@ -64,6 +64,13 @@
         [errorDelegate responseError:[error localizedDescription]];
         return NO;
     }
+
+    NSString *errorResponse = response[@"error"];
+    if (errorResponse != nil) {
+        [errorDelegate responseError:errorResponse];
+        return NO;
+    }
+
     return YES;
     
 }

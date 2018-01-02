@@ -5,6 +5,7 @@
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -118,14 +119,9 @@
                         <navigationBar key="tableHeaderView" contentMode="scaleToFill" id="y3v-BJ-mJW">
                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                            <color key="barTintColor" red="0.35682046410000001" green="0.35688710210000002" blue="0.356816262" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            <textAttributes key="titleTextAttributes">
-                                <color key="textColor" red="0.22188299889999999" green="0.94472599030000004" blue="0.82762825490000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </textAttributes>
                             <items>
                                 <navigationItem title="Contacts" id="sJK-K1-aYp">
                                     <barButtonItem key="rightBarButtonItem" systemItem="add" id="Mfq-Ek-XYX">
-                                        <color key="tintColor" red="0.22188299889999999" green="0.94472599030000004" blue="0.82762825490000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <connections>
                                             <segue destination="ztr-Sb-D94" kind="show" id="fQR-F6-nXf"/>
                                         </connections>
@@ -180,20 +176,14 @@
                         <subviews>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BNH-va-tia">
                                 <rect key="frame" x="0.0" y="30" width="375" height="44"/>
-                                <color key="barTintColor" red="0.3568286598" green="0.35688453910000001" blue="0.35681644080000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <textAttributes key="titleTextAttributes">
-                                    <color key="textColor" red="0.22256201510000001" green="0.94480079409999995" blue="0.82728129630000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </textAttributes>
                                 <items>
                                     <navigationItem title="Add A Contact" id="kXQ-gC-tdu">
                                         <barButtonItem key="leftBarButtonItem" systemItem="done" id="rwo-kp-6fj">
-                                            <color key="tintColor" red="0.22188299889999999" green="0.94472599030000004" blue="0.82762825490000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <connections>
                                                 <segue destination="09H-YN-fh0" kind="unwind" unwindAction="requestContact:" id="eM6-1Y-Xr0"/>
                                             </connections>
                                         </barButtonItem>
                                         <barButtonItem key="rightBarButtonItem" systemItem="cancel" id="615-B9-f6M">
-                                            <color key="tintColor" red="0.22188299889999999" green="0.94472599030000004" blue="0.82762825490000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <connections>
                                                 <segue destination="09H-YN-fh0" kind="unwind" unwindAction="unwindToContactsTable:" id="gXW-DS-pFM"/>
                                             </connections>
@@ -204,23 +194,23 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Or" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xPd-oL-iQ3">
                                 <rect key="frame" x="178" y="194" width="19" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Public ID" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Wq2-aJ-NyU">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Public ID" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="Wq2-aJ-NyU">
                                 <rect key="frame" x="25" y="240" width="325" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Nickname" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="niR-4X-gaP">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Nickname" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="niR-4X-gaP">
                                 <rect key="frame" x="25" y="139" width="325" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                         </subviews>
-                        <color key="backgroundColor" red="0.35682046413421631" green="0.3568871021270752" blue="0.35681626200675964" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="iph-rc-uqH" firstAttribute="trailing" secondItem="Wq2-aJ-NyU" secondAttribute="trailing" constant="25" id="2zr-MJ-nwG"/>
                             <constraint firstItem="niR-4X-gaP" firstAttribute="top" secondItem="BNH-va-tia" secondAttribute="bottom" constant="65" id="9FG-M8-teX"/>
@@ -257,14 +247,9 @@
                         <navigationBar key="tableHeaderView" contentMode="scaleToFill" id="Tt1-tB-87N">
                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                            <color key="barTintColor" red="0.3568286598" green="0.35688453910000001" blue="0.35681644080000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            <textAttributes key="titleTextAttributes">
-                                <color key="textColor" red="0.22256201510000001" green="0.94480079409999995" blue="0.82728129630000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </textAttributes>
                             <items>
                                 <navigationItem title="Accounts" id="PqE-K7-1o7">
                                     <barButtonItem key="leftBarButtonItem" systemItem="done" id="72G-kF-SyL">
-                                        <color key="tintColor" red="0.22256201510000001" green="0.94480079409999995" blue="0.82728129630000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <connections>
                                             <segue destination="Tha-Lf-LVO" kind="unwind" unwindAction="unwindToMoreViewController:" id="3RW-F2-GLM"/>
                                         </connections>
@@ -312,20 +297,14 @@
                         <subviews>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O2a-5E-5Yb">
                                 <rect key="frame" x="0.0" y="45" width="375" height="44"/>
-                                <color key="barTintColor" red="0.3568286598" green="0.35688453910000001" blue="0.35681644080000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <textAttributes key="titleTextAttributes">
-                                    <color key="textColor" red="0.22256201510000001" green="0.94480079409999995" blue="0.82728129630000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </textAttributes>
                                 <items>
                                     <navigationItem title="Contact Policy" id="enC-I3-hVn">
                                         <barButtonItem key="leftBarButtonItem" systemItem="save" id="r9B-PW-6DA">
-                                            <color key="tintColor" red="0.22256201510000001" green="0.94480079409999995" blue="0.82728129630000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <connections>
                                                 <action selector="saveContactPolicy:" destination="Xja-rg-lUY" id="Wwz-v0-bgF"/>
                                             </connections>
                                         </barButtonItem>
                                         <barButtonItem key="rightBarButtonItem" systemItem="cancel" id="idR-Ef-JxB">
-                                            <color key="tintColor" red="0.22256201505661011" green="0.94480079412460327" blue="0.82728129625320435" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <connections>
                                                 <segue destination="mwP-Xu-NPe" kind="unwind" unwindAction="unwindToMoreViewController:" id="die-j7-Zti"/>
                                             </connections>
@@ -335,10 +314,10 @@
                             </navigationBar>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lhm-Bi-2gM">
                                 <rect key="frame" x="28" y="104" width="320" height="216"/>
-                                <color key="backgroundColor" red="0.3568286598" green="0.35688453910000001" blue="0.35681644080000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </pickerView>
                         </subviews>
-                        <color key="backgroundColor" red="0.3568286598" green="0.35688453910000001" blue="0.35681644080000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="O2a-5E-5Yb" firstAttribute="centerX" secondItem="Sdf-Uj-AnH" secondAttribute="centerX" id="4MN-dc-1sB"/>
                             <constraint firstItem="O2a-5E-5Yb" firstAttribute="centerX" secondItem="Sdf-Uj-AnH" secondAttribute="centerX" id="4lc-o8-AXT"/>
@@ -430,8 +409,28 @@
                                             <segue destination="aF7-58-mZL" kind="show" id="DeI-YK-UnS"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="e3k-5p-8AC" style="IBUITableViewCellStyleDefault" id="ywx-ul-YVq">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="ppe-hg-2Bo" style="IBUITableViewCellStyleDefault" id="JbE-Er-ttV">
                                         <rect key="frame" x="0.0" y="187.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="JbE-Er-ttV" id="vYO-g1-m6N">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Edit Friends List" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ppe-hg-2Bo">
+                                                    <rect key="frame" x="16" y="0.0" width="343" height="43.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="vN7-uz-pFe" kind="show" id="WfX-ob-1w2"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="e3k-5p-8AC" style="IBUITableViewCellStyleDefault" id="ywx-ul-YVq">
+                                        <rect key="frame" x="0.0" y="231.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ywx-ul-YVq" id="ENH-TY-g4z">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
@@ -473,7 +472,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Nickname" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Xqa-R4-d01">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Nickname" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="Xqa-R4-d01">
                                 <rect key="frame" x="25" y="154" width="325" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -481,20 +480,14 @@
                             </textField>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tb0-cz-kOT">
                                 <rect key="frame" x="0.0" y="45" width="375" height="44"/>
-                                <color key="barTintColor" red="0.35682046413421631" green="0.3568871021270752" blue="0.35681626200675964" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <textAttributes key="titleTextAttributes">
-                                    <color key="textColor" red="0.23756849765777588" green="0.90529924631118774" blue="0.79632073640823364" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </textAttributes>
                                 <items>
                                     <navigationItem title="Set Nickname" id="cke-e4-UPT">
                                         <barButtonItem key="leftBarButtonItem" systemItem="save" id="VSt-2G-Xvz">
-                                            <color key="tintColor" red="0.23756849769999999" green="0.90529924630000003" blue="0.79632073640000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <connections>
                                                 <action selector="saveNickname:" destination="aF7-58-mZL" id="cne-Hs-a9P"/>
                                             </connections>
                                         </barButtonItem>
                                         <barButtonItem key="rightBarButtonItem" systemItem="cancel" id="Y1a-GO-oyC">
-                                            <color key="tintColor" red="0.23756849769999999" green="0.90529924630000003" blue="0.79632073640000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <connections>
                                                 <segue destination="HZ4-da-D4W" kind="unwind" unwindAction="unwindToMoreViewController:" id="sP5-ax-giV"/>
                                             </connections>
@@ -503,47 +496,191 @@
                                 </items>
                             </navigationBar>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="V3M-Fg-X2o">
-                                <rect key="frame" x="25" y="209" width="325" height="30"/>
+                                <rect key="frame" x="127" y="209" width="121" height="30"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                <state key="normal" title="Check Nickname">
-                                    <color key="titleColor" red="0.23756849769999999" green="0.90529924630000003" blue="0.79632073640000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </state>
+                                <state key="normal" title="Check Nickname"/>
                                 <connections>
                                     <action selector="checkNickname:" destination="aF7-58-mZL" eventType="touchUpInside" id="6zT-TW-Dfq"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nickname Not Available" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ax7-iK-xas">
-                                <rect key="frame" x="97" y="264" width="180.5" height="21"/>
+                                <rect key="frame" x="97" y="264" width="181" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Trc-h3-xMh">
+                                <rect key="frame" x="127" y="310" width="122" height="30"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                <state key="normal" title="Delete Nickname">
+                                    <color key="titleColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="deleteNickname:" destination="aF7-58-mZL" eventType="touchUpInside" id="qoq-u2-m20"/>
+                                </connections>
+                            </button>
                         </subviews>
-                        <color key="backgroundColor" red="0.35682046410000001" green="0.35688710210000002" blue="0.356816262" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="V3M-Fg-X2o" firstAttribute="centerX" secondItem="Olx-Iu-WnV" secondAttribute="centerX" id="1Fe-pg-MLp"/>
                             <constraint firstItem="Tb0-cz-kOT" firstAttribute="trailing" secondItem="Nw4-up-H9w" secondAttribute="trailing" id="4rz-VH-HLf"/>
-                            <constraint firstItem="Ax7-iK-xas" firstAttribute="top" secondItem="V3M-Fg-X2o" secondAttribute="bottom" constant="25" id="9eF-4T-S2E"/>
+                            <constraint firstItem="Trc-h3-xMh" firstAttribute="centerX" secondItem="Olx-Iu-WnV" secondAttribute="centerX" id="8db-XW-80b"/>
                             <constraint firstItem="Xqa-R4-d01" firstAttribute="leading" secondItem="Nw4-up-H9w" secondAttribute="leading" constant="25" id="BDZ-5B-UUA"/>
                             <constraint firstItem="Ax7-iK-xas" firstAttribute="centerX" secondItem="Olx-Iu-WnV" secondAttribute="centerX" id="JXp-ZB-t4C"/>
-                            <constraint firstItem="V3M-Fg-X2o" firstAttribute="trailing" secondItem="Xqa-R4-d01" secondAttribute="trailing" id="Zrp-wz-S8j"/>
-                            <constraint firstItem="V3M-Fg-X2o" firstAttribute="leading" secondItem="Xqa-R4-d01" secondAttribute="leading" id="bjo-YS-Pmo"/>
                             <constraint firstItem="Nw4-up-H9w" firstAttribute="trailing" secondItem="Xqa-R4-d01" secondAttribute="trailing" constant="25" id="izC-qH-c1u"/>
                             <constraint firstItem="Xqa-R4-d01" firstAttribute="top" secondItem="Tb0-cz-kOT" secondAttribute="bottom" constant="65" id="lvQ-UI-4wu"/>
                             <constraint firstItem="Tb0-cz-kOT" firstAttribute="leading" secondItem="Nw4-up-H9w" secondAttribute="leading" id="m20-oN-SsF"/>
+                            <constraint firstItem="Ax7-iK-xas" firstAttribute="top" secondItem="V3M-Fg-X2o" secondAttribute="bottom" constant="25" id="rOd-SI-C0o"/>
                             <constraint firstItem="Tb0-cz-kOT" firstAttribute="top" secondItem="Nw4-up-H9w" secondAttribute="top" constant="25" id="sp1-Uq-hls"/>
-                            <constraint firstItem="V3M-Fg-X2o" firstAttribute="top" secondItem="Xqa-R4-d01" secondAttribute="bottom" constant="25" id="t35-oe-FEH"/>
+                            <constraint firstItem="Trc-h3-xMh" firstAttribute="top" secondItem="Ax7-iK-xas" secondAttribute="bottom" constant="25" id="sr8-RS-YLJ"/>
+                            <constraint firstItem="V3M-Fg-X2o" firstAttribute="top" secondItem="Xqa-R4-d01" secondAttribute="bottom" constant="25" id="xln-Wk-DLD"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Nw4-up-H9w"/>
                     </view>
                     <connections>
                         <outlet property="availableLabel" destination="Ax7-iK-xas" id="JHb-aE-baX"/>
                         <outlet property="nicknameTextField" destination="Xqa-R4-d01" id="ZzX-UU-uea"/>
+                        <segue destination="HZ4-da-D4W" kind="unwind" identifier="unwindAfterSave" unwindAction="unwindToMoreViewController:" id="Czp-Mt-Uj5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tq9-q2-biP" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="HZ4-da-D4W" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="2232.8000000000002" y="2920.3898050974517"/>
+        </scene>
+        <!--Whitelist Table View Controller-->
+        <scene sceneID="35b-fe-wP3">
+            <objects>
+                <tableViewController id="vN7-uz-pFe" customClass="WhitelistTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="Mpv-9E-4C9">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <navigationBar key="tableFooterView" contentMode="scaleToFill" id="7n4-1J-Lyw">
+                            <rect key="frame" x="0.0" y="96" width="375" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <items>
+                                <navigationItem title="Edit Friends List" id="ODb-st-8Ed">
+                                    <barButtonItem key="leftBarButtonItem" systemItem="done" id="2rt-bm-T6t">
+                                        <connections>
+                                            <segue destination="HWU-Rq-Jbk" kind="unwind" unwindAction="unwindToMoreViewController:" id="IGy-WF-bS8"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem key="rightBarButtonItem" systemItem="add" id="v7H-ZI-h2O">
+                                        <connections>
+                                            <segue destination="YAu-56-e5C" kind="show" id="T8b-UE-bos"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </navigationItem>
+                            </items>
+                        </navigationBar>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="WhitelistCell" rowHeight="68" id="4SZ-Yn-bin" customClass="WhitelistTableViewCell">
+                                <rect key="frame" x="0.0" y="28" width="375" height="68"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4SZ-Yn-bin" id="OKl-kJ-1tj">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="67.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nickname" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Yn-BQ-pLH">
+                                            <rect key="frame" x="31" y="14" width="80" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Public ID" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EQc-hQ-ai0">
+                                            <rect key="frame" x="31" y="38" width="68" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="5Yn-BQ-pLH" firstAttribute="leading" secondItem="OKl-kJ-1tj" secondAttribute="leadingMargin" constant="15" id="MMX-M2-c7V"/>
+                                        <constraint firstItem="EQc-hQ-ai0" firstAttribute="top" secondItem="5Yn-BQ-pLH" secondAttribute="bottom" constant="3" id="gwl-LO-6Wi"/>
+                                        <constraint firstItem="5Yn-BQ-pLH" firstAttribute="top" secondItem="OKl-kJ-1tj" secondAttribute="topMargin" constant="3" id="jB7-0M-icT"/>
+                                        <constraint firstItem="EQc-hQ-ai0" firstAttribute="leading" secondItem="5Yn-BQ-pLH" secondAttribute="leading" id="nUQ-3f-3Hp"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="nicknameLabel" destination="5Yn-BQ-pLH" id="N9o-rE-xNb"/>
+                                    <outlet property="publicIdLabel" destination="EQc-hQ-ai0" id="4bI-QQ-TMA"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="vN7-uz-pFe" id="Nzp-uF-G3Y"/>
+                            <outlet property="delegate" destination="vN7-uz-pFe" id="JRg-7N-r2a"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="g9w-oX-pKO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="HWU-Rq-Jbk" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="2232.8000000000002" y="3780.3598200899555"/>
+        </scene>
+        <!--Add Friend View Controller-->
+        <scene sceneID="hRw-z8-31Z">
+            <objects>
+                <viewController id="YAu-56-e5C" customClass="AddFriendViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="DuK-sZ-yaK">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="etN-Ps-T64">
+                                <rect key="frame" x="0.0" y="25" width="375" height="44"/>
+                                <items>
+                                    <navigationItem title="Add Friend" id="5QV-fM-ia2">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="X7x-ch-f8i">
+                                            <connections>
+                                                <action selector="friendAdded:" destination="YAu-56-e5C" id="Cv6-OH-Mdq"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" systemItem="cancel" id="v7U-fZ-6mr">
+                                            <connections>
+                                                <segue destination="14A-gv-03u" kind="unwind" unwindAction="unwindToWhitelistViewController:" id="51G-sB-mdv"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Nickname" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="qvg-i9-uyB">
+                                <rect key="frame" x="25" y="84" width="325" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Public ID" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="qo0-CX-co1">
+                                <rect key="frame" x="25" y="124" width="325" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="qo0-CX-co1" firstAttribute="leading" secondItem="qvg-i9-uyB" secondAttribute="leading" id="6pW-2K-NFx"/>
+                            <constraint firstItem="etN-Ps-T64" firstAttribute="top" secondItem="DuK-sZ-yaK" secondAttribute="top" constant="25" id="EYs-9y-9HG"/>
+                            <constraint firstItem="qvg-i9-uyB" firstAttribute="leading" secondItem="q3i-hO-y3s" secondAttribute="leading" constant="25" id="Mue-sj-lyP"/>
+                            <constraint firstItem="etN-Ps-T64" firstAttribute="leading" secondItem="DuK-sZ-yaK" secondAttribute="leading" id="Tua-j7-Pjt"/>
+                            <constraint firstAttribute="trailing" secondItem="etN-Ps-T64" secondAttribute="trailing" id="fKX-u5-VRW"/>
+                            <constraint firstItem="qo0-CX-co1" firstAttribute="top" secondItem="qvg-i9-uyB" secondAttribute="bottom" constant="10" id="hCM-ha-v0R"/>
+                            <constraint firstItem="qvg-i9-uyB" firstAttribute="centerX" secondItem="DuK-sZ-yaK" secondAttribute="centerX" id="hND-Is-FtK"/>
+                            <constraint firstItem="qvg-i9-uyB" firstAttribute="top" secondItem="etN-Ps-T64" secondAttribute="bottom" constant="15" id="lVn-Um-XBe"/>
+                            <constraint firstItem="qo0-CX-co1" firstAttribute="centerX" secondItem="DuK-sZ-yaK" secondAttribute="centerX" id="q6T-9c-Nlz"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="q3i-hO-y3s"/>
+                    </view>
+                    <connections>
+                        <outlet property="nicknameTextField" destination="qvg-i9-uyB" id="Y7j-Rg-o9C"/>
+                        <outlet property="publicIdTextField" destination="qo0-CX-co1" id="luC-Pe-bfs"/>
+                        <segue destination="14A-gv-03u" kind="unwind" identifier="addFriendDone" unwindAction="unwindAfterAddFriend:" id="F73-Lu-vle"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1s6-fH-e14" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="14A-gv-03u" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="3080.8000000000002" y="3779.4602698650679"/>
         </scene>
         <!--Public Id Table View Controller-->
         <scene sceneID="tKW-DB-ig5">
@@ -556,11 +693,9 @@
                         <navigationBar key="tableHeaderView" contentMode="scaleToFill" id="Yke-9h-16a">
                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                            <color key="barTintColor" red="0.35682046410000001" green="0.35688710210000002" blue="0.356816262" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <items>
-                                <navigationItem id="4l4-be-3xA">
+                                <navigationItem title="Your Public ID" id="4l4-be-3xA">
                                     <barButtonItem key="leftBarButtonItem" systemItem="done" id="SPK-Fp-fqV">
-                                        <color key="tintColor" red="0.22188299889999999" green="0.94472599030000004" blue="0.82762825490000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <connections>
                                             <segue destination="ITy-P7-o54" kind="unwind" unwindAction="unwindToMoreViewController:" id="qV2-zS-kD9"/>
                                         </connections>
@@ -605,7 +740,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lWa-hJ-ni3" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="ITy-P7-o54" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2233" y="3599"/>
+            <point key="canvasLocation" x="2233" y="4596"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">

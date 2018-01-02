@@ -9,16 +9,19 @@
 #import "NicknameViewController.h"
 #import "AppDelegate.h"
 #import "ContactManager.h"
+#import "AccountManager.h"
 
 @interface NicknameViewController ()
 {
     NSString *method;
+    NSString *pendingNickname;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *nicknameTextField;
 @property (weak, nonatomic) IBOutlet UILabel *availableLabel;
 
 @property (weak, nonatomic) ContactManager *contactManager;
+@property (weak, nonatomic) AccountManager *accountManager;
 
 @end
 
@@ -41,6 +44,7 @@
 
     // Get the contact manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _accountManager = delegate.accountManager;
     _contactManager = delegate.contactManager;
 
 }
@@ -50,45 +54,101 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)doDeleteNickname {
+
+    method = @"SetNickname";
+    pendingNickname = nil;
+    [_contactManager setResponseConsumer:self];
+    [_contactManager setNickname:nil];
+    
+}
+
 - (NSString*) getNickname {
     return _nicknameTextField.text;
 }
 
+- (void)noNicknameAlert {
+
+    _nicknameTextField.text = [_contactManager currentNickname];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Nickname Error"
+                                                                   message:@"Please enter a nickname"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:nil];
+    [alert addAction:okAction];
+    [self presentViewController:alert animated:YES completion:nil];
+
+}
+
 - (void)response:(NSDictionary *)info {
 
-    if ([method isEqualToString:@"CheckNickname"]) {
-        NSString *result = info[@"result"];
+    NSString *result = info[@"result"];
+    if ([method isEqualToString:@"MatchNickname"]) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            if ([result isEqualToString:@"available"]) {
+            if ([result isEqualToString:@"not matched"]) {
                 _availableLabel.text = @"Nickname Is Available";
                 [_availableLabel setHidden:NO];
             }
-            else if ([result isEqualToString:@"exists"]) {
+            else if ([result isEqualToString:@"matched"]) {
                 _availableLabel.text = @"Nickname Is Not Available";
                 [_availableLabel setHidden:NO];
             }
         });
     }
     else {
-        
+        _accountManager.config[@"nickname"] = pendingNickname;
+        [_accountManager storeConfig];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self performSegueWithIdentifier:@"unwindAfterSave" sender:self];
+        });
     }
 
 }
 
 - (IBAction)saveNickname:(UIBarButtonItem *)sender {
 
-    method = @"SetNickname";
-    [_contactManager setResponseConsumer:self];
-    [_contactManager setNickname:_nicknameTextField.text];
+    if (_nicknameTextField.text != nil && _nicknameTextField.text.length > 0) {
+        method = @"SetNickname";
+        pendingNickname = _nicknameTextField.text;
+        [_contactManager setResponseConsumer:self];
+        [_contactManager setNickname:_nicknameTextField.text];
+    }
+    else {
+        [self noNicknameAlert];
+    }
 
 }
 
 - (IBAction)checkNickname:(UIButton *)sender {
 
-    method = @"CheckNickname";
-    [_availableLabel setHidden:YES];
-    [_contactManager setResponseConsumer:self];
-    [_contactManager checkNickname:_nicknameTextField.text];
+    if (_nicknameTextField.text != nil && _nicknameTextField.text.length > 0) {
+        method = @"MatchNickname";
+        [_availableLabel setHidden:YES];
+        [_contactManager setResponseConsumer:self];
+        [_contactManager matchNickname:_nicknameTextField.text];
+    }
+    else {
+        [self noNicknameAlert];
+    }
+
+}
+
+- (IBAction)deleteNickname:(UIButton *)sender {
+
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Delete Nickname"
+                                                                   message:@"You are about to delete this nickname. Are you sure?"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *noAction = [UIAlertAction actionWithTitle:@"No"
+                                                       style:UIAlertActionStyleCancel
+                                                     handler:nil];
+    UIAlertAction *yesAction = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDestructive
+                                                      handler:^(UIAlertAction *action){
+                                                          [self doDeleteNickname];
+                                                      }];
+    [alert addAction:noAction];
+    [alert addAction:yesAction];
+    [self presentViewController:alert animated:YES completion:nil];
 
 }
 
