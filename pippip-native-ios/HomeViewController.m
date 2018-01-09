@@ -105,7 +105,7 @@
 
     [_accountManager storeConfig];
     Authenticator *auth = [[Authenticator alloc] initWithViewController:self];
-    [auth logout:_accountManager];
+    [auth logout];
     _accountManager.sessionState.authenticated = NO;
     [self.createAccountButton setHidden:NO];
     [self.authButton setHidden:NO];
@@ -150,7 +150,7 @@
 
     [_activityIndicator startAnimating];
     Authenticator *auth = [[Authenticator alloc] initWithViewController:self];
-    [auth authenticate:_accountManager];
+    [auth authenticate];
     
 }
 

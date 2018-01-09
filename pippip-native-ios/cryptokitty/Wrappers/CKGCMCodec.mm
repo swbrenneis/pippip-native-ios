@@ -78,7 +78,15 @@
     
 }
 
--(NSString*)getString {
+- (NSInteger)getInt {
+
+    int64_t number;
+    *gcmCodec >> number;
+    return number;
+
+}
+
+- (NSString*)getString {
     
     std::string str;
     *gcmCodec >> str;
@@ -91,6 +99,12 @@
     coder::ByteArray bytes(reinterpret_cast<const uint8_t*>(block.bytes), block.length);
     *gcmCodec << bytes;
     
+}
+
+- (void)putInt:(NSInteger)number {
+
+    *gcmCodec << static_cast<int64_t>(number);
+
 }
 
 - (void)putString:(NSString *)str {

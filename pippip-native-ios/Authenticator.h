@@ -8,16 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import "RequestProcess.h"
-#import "SessionState.h"
 #import "HomeViewController.h"
-#import "AccountManager.h"
 
 @interface Authenticator : NSObject <RequestProcess>
 
 - (instancetype) initWithViewController:(HomeViewController*)controller;
 
-- (void) authenticate:(AccountManager*)manager;
+- (void) authenticate;
 
-- (void) logout:(AccountManager*)accountManager;
+- (void) logout;
 
 @end

@@ -11,6 +11,9 @@
 #import "ContactManager.h"
 
 @interface AddFriendViewController ()
+{
+    NSString *action;
+}
 
 @property (weak, nonatomic) ContactManager *contactManager;
 
@@ -32,21 +35,65 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Navigation
+- (void)addFriendComplete:(NSDictionary*)response {
+
+    NSString *result = response[@"result"];
+    if ([result isEqualToString:@"added"]) {
+        UIAlertController *alert =
+            [UIAlertController alertControllerWithTitle:@"Friend Added"
+                                                message:@"This friend has been added to your friends list"
+                                         preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction *action) {
+                                                             [self performSegueWithIdentifier:@"addFriendDone" sender:self];
+                                                         }];
+        [alert addAction:okAction];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self presentViewController:alert animated:YES completion:nil];
+        });
+    }
+    else if ([result isEqualToString:@"exists"]) {
+        UIAlertController *alert =
+            [UIAlertController alertControllerWithTitle:@"Friend Not Added"
+                                                message:@"This friend is already in your friends list"
+                                         preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:nil];
+        [alert addAction:okAction];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self presentViewController:alert animated:YES completion:nil];
+        });
+    }
+    else {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Contact Error"
+                                                                       message:@"Invalid server response"
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:nil];
+        [alert addAction:okAction];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self presentViewController:alert animated:YES completion:nil];
+        });
+    }
+
+}
 
 - (IBAction)friendAdded:(id)sender {
 
     NSString *nickname = _nicknameTextField.text;
     NSString *publicId = _publicIdTextField.text;
+    [_contactManager setViewController:self];
+    [_contactManager setResponseConsumer:self];
     if (nickname.length != 0) {
-        [_contactManager setResponseConsumer:self];
-        [_contactManager setViewController:self];
-        [_contactManager matchNickname:_nicknameTextField.text];
+        action = @"MatchNickname";
+        [_contactManager matchNickname:nickname];
     }
     else if (publicId.length != 0) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self performSegueWithIdentifier:@"addFriendDone" sender:self];
-        });
+        action = @"UpdateWhitelist";
+        [_contactManager addFriend:publicId];
     }
     else {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid Friend ID"
@@ -61,14 +108,16 @@
 
 }
 
-- (void)response:(NSDictionary *)info {
+- (void)matchNicknameComplete:(NSDictionary*)response {
 
-    NSString *result = info[@"result"];
+    NSString *result = response[@"result"];
     if ([result isEqualToString:@"matched"]) {
+        action = @"UpdateWhitelist";
+        NSString *matchedId = response[@"publicId"];
         dispatch_async(dispatch_get_main_queue(), ^{
-            _publicIdTextField.text = info[@"publicId"];
-            [self performSegueWithIdentifier:@"addFriendDone" sender:self];
+            _publicIdTextField.text = matchedId;
         });
+        [_contactManager addFriend:matchedId];
     }
     else {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid Friend ID"
@@ -78,13 +127,25 @@
                                                            style:UIAlertActionStyleDefault
                                                          handler:nil];
         [alert addAction:okAction];
-
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             [self presentViewController:alert animated:YES completion:nil];
         });
     }
 
 }
+
+- (void)response:(NSDictionary *)info {
+
+    if ([action isEqualToString:@"MatchNickname"]) {
+        [self matchNicknameComplete:info];
+    }
+    else {
+        [self addFriendComplete:info];
+    }
+
+}
+
 /*
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

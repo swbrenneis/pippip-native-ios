@@ -7,10 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ContactEntity.h"
 
 @interface ContactsTableViewController : UITableViewController
-
-- (void) addContact:(ContactEntity*)entity;
 
 @end

@@ -16,10 +16,8 @@
 
 @interface WhitelistTableViewController ()
 {
-    NSArray *whitelist;
-    NSArray *whitelistNicknames;
-    WhitelistManager *whitelistManager;
-
+    NSDictionary *deletedEntity;
+    NSIndexPath *deletedIndex;
 }
 
 @property (weak, nonatomic) AccountManager *accountManager;
@@ -42,13 +40,12 @@
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _accountManager = delegate.accountManager;
     _contactManager = delegate.contactManager;
-    whitelist = _accountManager.config[@"whitelist"];
-    if (whitelist == nil) {
-        whitelist = [NSArray array];
-    }
-    else {
-        whitelistNicknames = _accountManager.config[@"whitelistNicknames"];
-    }
+
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+
+    [self.tableView reloadData];
 
 }
 
@@ -58,7 +55,20 @@
 }
 
 - (void) response:(NSDictionary *)info {
-    
+
+    NSString *result = info[@"result"];
+    if ([result isEqualToString:@"not found"]) {
+        NSString *publicId = deletedEntity[@"publicId"];
+        NSLog(@"%@ %@ %@", @"Friend", publicId, @"not found on server");
+    }
+
+    [_accountManager deleteWhitelistEntry:deletedEntity];
+    [_accountManager storeConfig];
+    UITableView *tableView = self.tableView;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [tableView deleteRowsAtIndexPaths:@[deletedIndex] withRowAnimation:UITableViewRowAnimationFade];
+    });
+
 }
 
 #pragma mark - Table view data source
@@ -71,7 +81,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return whitelist.count;
+    return [_accountManager whitelistCount];
 
 }
 
@@ -80,32 +90,33 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"WhitelistCell" forIndexPath:indexPath];
     WhitelistTableViewCell *whitelistCell = (WhitelistTableViewCell*)cell;
 
-    whitelistCell.nicknameLabel.text = whitelistNicknames[indexPath.item];
-    whitelistCell.publicIdLabel.text = whitelist[indexPath.item];
+    NSDictionary *entity = [_accountManager whitelistEntryAtIndex:indexPath.item];
+    whitelistCell.nicknameLabel.text = entity[@"nickname"];
+    whitelistCell.publicIdLabel.text = entity[@"publicId"];
 
     return cell;
 }
 
-
-/*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the specified item to be editable.
     return YES;
 }
-*/
 
-/*
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        deletedEntity = [_accountManager whitelistEntryAtIndex:indexPath.item];
+        deletedIndex = indexPath;
+        NSString *publicId = deletedEntity[@"publicId"];
+        [_contactManager setResponseConsumer:self];
+        [_contactManager setViewController:self];
+        [_contactManager deleteFriend:publicId];
+        //[tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
-*/
 
 /*
 // Override to support rearranging the table view.
@@ -129,9 +140,12 @@
 - (IBAction) unwindAfterAddFriend:(UIStoryboardSegue*)segue {
 
     AddFriendViewController *view = (AddFriendViewController*)segue.sourceViewController;
-    [_contactManager setViewController:self];
+    NSString *nickname = view.nicknameTextField.text;
     NSString *publicId = view.publicIdTextField.text;
-    [_contactManager addFriend:publicId];
+    NSMutableDictionary *entity = [NSMutableDictionary dictionaryWithObjectsAndKeys:nickname, @"nickname", publicId, @"publicId", nil];
+    [_accountManager addWhitelistEntry:entity];
+    [_accountManager storeConfig];
+    [self.view setNeedsDisplay];
 
 }
 

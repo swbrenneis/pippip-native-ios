@@ -18,9 +18,13 @@
 
 - (NSData*)getBlock;
 
+- (NSInteger)getInt;
+
 - (NSString*)getString;
 
 - (void)putBlock:(NSData*)block;
+
+- (void)putInt:(NSInteger)number;
 
 - (void)putString:(NSString*)str;
 

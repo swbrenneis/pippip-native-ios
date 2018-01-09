@@ -7,6 +7,10 @@
 //
 
 #import "Authenticator.h"
+#import "AppDelegate.h"
+#import "AccountManager.h"
+#import "ContactManager.h"
+#import "SessionState.h"
 #import "RESTSession.h"
 #import "AlertErrorDelegate.h"
 #import "UserVault.h"
@@ -29,8 +33,8 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     
 }
 
-@property (weak, nonatomic) SessionState *sessionState;
 @property (weak, nonatomic) AccountManager *accountManager;
+@property (weak, nonatomic) ContactManager *contactManager;
 @property (weak, nonatomic) HomeViewController *viewController;
 
 @end
@@ -49,13 +53,16 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     session = [[RESTSession alloc] init];
     session.requestProcess = self;
 
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _accountManager = delegate.accountManager;
+    _contactManager = delegate.contactManager;
+
     return self;
     
 }
 
-- (void) authenticate:(AccountManager *)manager {
+- (void) authenticate {
 
-    _accountManager = manager;
     NSError *error = nil;
     [_accountManager loadSessionState:&error];
     if (error == nil) {
@@ -88,10 +95,10 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     
 }
 
-- (void) logout:(AccountManager*)accountManager {
+- (void) logout {
 
     step = LOGOUT;
-    postPacket = [[Logout alloc] initWithState:accountManager.sessionState];
+    postPacket = [[Logout alloc] initWithState:_accountManager.sessionState];
     [_viewController updateStatus:@"Logging out"];
     [session doPost];
     
@@ -115,6 +122,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
                 if ([self validateAuth:response]) {
                     _accountManager.sessionState.authenticated = YES;
                     [_accountManager loadConfig];
+                    [_contactManager loadContacts];
                     [_viewController authenticated:@"Account authenticated. Online"];
                 }
                 break;

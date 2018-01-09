@@ -30,7 +30,7 @@
 -(void)viewDidAppear:(BOOL)animated {
 
     [_availableLabel setHidden:YES];
-    NSString *nickname = [_contactManager currentNickname];
+    NSString *nickname = [_accountManager getConfigItem:@"nickname"];
     if (nickname != nil) {
         _nicknameTextField.text = nickname;
     }
@@ -69,7 +69,7 @@
 
 - (void)noNicknameAlert {
 
-    _nicknameTextField.text = [_contactManager currentNickname];
+    _nicknameTextField.text = [_accountManager getConfigItem:@"nickname"];
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Nickname Error"
                                                                    message:@"Please enter a nickname"
                                                             preferredStyle:UIAlertControllerStyleAlert];
@@ -97,7 +97,7 @@
         });
     }
     else {
-        _accountManager.config[@"nickname"] = pendingNickname;
+        [_accountManager setConfigItem:pendingNickname withKey:@"nickname"];
         [_accountManager storeConfig];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self performSegueWithIdentifier:@"unwindAfterSave" sender:self];

@@ -9,24 +9,27 @@
 #import <UIKit/UIKit.h>
 #import "RequestProcess.h"
 #import "AccountManager.h"
-#import "ContactEntity.h"
 #import "ResponseConsumer.h"
 
 @interface ContactManager : NSObject <RequestProcess>
 
 - (instancetype)initWithAccountManager:(AccountManager*)manager;
 
+- (void)addContact:(NSMutableDictionary*)entity;
+
 - (void)addFriend:(NSString*)publicId;
 
-- (NSInteger)count;
+- (NSInteger)contactCount;
 
-- (NSString*)currentNickname;
+- (void)deleteFriend:(NSString*)publicId;
 
-- (ContactEntity*)entityAtIndex:(NSInteger)index;
+- (NSDictionary*)contactAtIndex:(NSInteger)index;
+
+- (void)loadContacts;
 
 - (void)matchNickname:(NSString*)nickname;
 
-- (void)setContactPolicy;
+- (void)setContactPolicy:(NSString*)policy;
 
 - (void)setNickname:(NSString*)nickname;
 
@@ -34,6 +37,8 @@
 
 - (void)setViewController:(UIViewController*)controller;
 
-- (void)requestContact:(ContactEntity*)entity;
+- (void)storeContacts;
+
+- (void)requestContact:(NSString*)publicId;
 
 @end

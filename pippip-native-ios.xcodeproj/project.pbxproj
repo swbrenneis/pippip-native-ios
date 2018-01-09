@@ -20,6 +20,7 @@
 		5537898F1FF579EC0043BCF4 /* WhitelistTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5537898E1FF579EC0043BCF4 /* WhitelistTableViewCell.m */; };
 		553789921FF583490043BCF4 /* AddFriendViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 553789911FF583490043BCF4 /* AddFriendViewController.m */; };
 		553789951FF58B0F0043BCF4 /* WhitelistManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 553789941FF58B0F0043BCF4 /* WhitelistManager.m */; };
+		553789982002C2B20043BCF4 /* ContactDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 553789972002C2B20043BCF4 /* ContactDatabase.m */; };
 		553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55AA556D1FA1527C00A7026B /* libgmp.a */; };
 		554C17341FDC7F49009434F5 /* TabBarDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17331FDC7F49009434F5 /* TabBarDelegate.m */; };
 		554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17361FDD5990009434F5 /* MoreTableViewController.m */; };
@@ -90,7 +91,6 @@
 		55B781A71FDDA63900330B80 /* AccountsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B781A61FDDA63900330B80 /* AccountsTableViewController.m */; };
 		55B781AA1FDE161E00330B80 /* Logout.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B781A91FDE161E00330B80 /* Logout.m */; };
 		55B781AD1FE018FC00330B80 /* ContactManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B781AC1FE018FC00330B80 /* ContactManager.m */; };
-		55B781B01FE09FDD00330B80 /* ContactEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B781AF1FE09FDD00330B80 /* ContactEntity.m */; };
 		55B781B31FE0A4F600330B80 /* AddContactViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B781B21FE0A4F600330B80 /* AddContactViewController.m */; };
 		55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */; };
 		55DB7F451FD8692C00B4D262 /* ServerAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */; };
@@ -161,6 +161,8 @@
 		553789911FF583490043BCF4 /* AddFriendViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddFriendViewController.m; sourceTree = "<group>"; };
 		553789931FF58B0F0043BCF4 /* WhitelistManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhitelistManager.h; sourceTree = "<group>"; };
 		553789941FF58B0F0043BCF4 /* WhitelistManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WhitelistManager.m; sourceTree = "<group>"; };
+		553789962002C2B20043BCF4 /* ContactDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactDatabase.h; sourceTree = "<group>"; };
+		553789972002C2B20043BCF4 /* ContactDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactDatabase.m; sourceTree = "<group>"; };
 		554C17321FDC7F49009434F5 /* TabBarDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TabBarDelegate.h; sourceTree = "<group>"; };
 		554C17331FDC7F49009434F5 /* TabBarDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TabBarDelegate.m; sourceTree = "<group>"; };
 		554C17351FDD5990009434F5 /* MoreTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoreTableViewController.h; sourceTree = "<group>"; };
@@ -321,8 +323,6 @@
 		55B781A91FDE161E00330B80 /* Logout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Logout.m; sourceTree = "<group>"; };
 		55B781AB1FE018FC00330B80 /* ContactManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactManager.h; sourceTree = "<group>"; };
 		55B781AC1FE018FC00330B80 /* ContactManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactManager.m; sourceTree = "<group>"; };
-		55B781AE1FE09FDD00330B80 /* ContactEntity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactEntity.h; sourceTree = "<group>"; };
-		55B781AF1FE09FDD00330B80 /* ContactEntity.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactEntity.m; sourceTree = "<group>"; };
 		55B781B11FE0A4F600330B80 /* AddContactViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddContactViewController.h; sourceTree = "<group>"; };
 		55B781B21FE0A4F600330B80 /* AddContactViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddContactViewController.m; sourceTree = "<group>"; };
 		55CBAE5E1FD62E8D00C73A2B /* CKSignature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKSignature.h; sourceTree = "<group>"; };
@@ -426,8 +426,8 @@
 				55FA87471FD5E58E00FB96C0 /* ClientAuthChallenge.m */,
 				55DB7F461FD86AF800B4D262 /* ClientAuthorized.h */,
 				55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */,
-				55B781AE1FE09FDD00330B80 /* ContactEntity.h */,
-				55B781AF1FE09FDD00330B80 /* ContactEntity.m */,
+				553789962002C2B20043BCF4 /* ContactDatabase.h */,
+				553789972002C2B20043BCF4 /* ContactDatabase.m */,
 				55B781AB1FE018FC00330B80 /* ContactManager.h */,
 				55B781AC1FE018FC00330B80 /* ContactManager.m */,
 				5570AD171FDF039B00724B34 /* ContactPolicyViewController.h */,
@@ -801,6 +801,7 @@
 				55FA874E1FD5F10500FB96C0 /* CKHMAC.mm in Sources */,
 				55AA54FD1FA14C1300A7026B /* CKRSACodec.mm in Sources */,
 				55AA555A1FA14D7100A7026B /* PrivateKey.cc in Sources */,
+				553789982002C2B20043BCF4 /* ContactDatabase.m in Sources */,
 				5537898F1FF579EC0043BCF4 /* WhitelistTableViewCell.m in Sources */,
 				55AA555E1FA14D7100A7026B /* SHA384.cc in Sources */,
 				55B781AA1FDE161E00330B80 /* Logout.m in Sources */,
@@ -809,7 +810,6 @@
 				55AA54E31FA14B1E00A7026B /* Int16.cc in Sources */,
 				55AA555F1FA14D7100A7026B /* DERCodec.cc in Sources */,
 				5592A5B31F8BC92E00F08BF5 /* MessagesTableViewController.m in Sources */,
-				55B781B01FE09FDD00330B80 /* ContactEntity.m in Sources */,
 				55AA55551FA14D7100A7026B /* SHA512.cc in Sources */,
 				55AA54FA1FA14C1300A7026B /* CKPEMCodec.mm in Sources */,
 				551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */,

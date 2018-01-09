@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ContactEntity.h"
+#import "ResponseConsumer.h"
 
-@interface AddContactViewController : UIViewController
+@interface AddContactViewController : UIViewController <ResponseConsumer>
+
+@property (nonatomic) NSMutableDictionary *addedContact;
 
 @end

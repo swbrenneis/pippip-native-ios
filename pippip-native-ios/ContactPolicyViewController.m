@@ -15,6 +15,7 @@
 {
     NSArray *policyNames;
     NSArray *policyValues;
+    NSString *selectedPolicy;
 }
 
 @property (weak, nonatomic) AccountManager *accountManager;
@@ -42,7 +43,12 @@
 
     policyNames = [NSArray arrayWithObjects:@"Public", @"Friends", @"Friends of Friends", nil];
     policyValues = [NSArray arrayWithObjects:@"public", @"whitelist", @"acquaintance", nil];
-    NSString *currentPolicy = _accountManager.config[@"contactPolicy"];
+
+}
+
+-(void)viewDidAppear:(BOOL)animated {
+
+    NSString *currentPolicy = [_accountManager getConfigItem:@"contactPolicy"];
     int index = 0;
     for (id name in policyValues) {
         NSString *pvalue = (NSString*)name;
@@ -75,18 +81,14 @@
     
     NSString *policyName = policyNames[row];
     return [[NSAttributedString alloc] initWithString:policyName
-                                           attributes:@{NSForegroundColorAttributeName:
-                                                            [UIColor colorWithDisplayP3Red:246
-                                                                                     green:88
-                                                                                      blue:59
-                                                                                     alpha:1.0]}];
+                                           attributes:@{NSForegroundColorAttributeName: [UIColor blackColor]}];
 
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     
     if (row < 3) {
-        _accountManager.config[@"contactPolicy"] = policyValues[row];
+        selectedPolicy = policyValues[row];
     }
     
 }
@@ -95,6 +97,7 @@
 
     NSString *result = info[@"result"];
     if ([result isEqualToString:@"policySet"]) {
+        [_accountManager setConfigItem:selectedPolicy withKey:@"contactPolicy"];
         [_accountManager storeConfig];
         [self performSegueWithIdentifier:@"unwindAfterSave" sender:self];
     }
@@ -103,7 +106,7 @@
 
 - (IBAction)saveContactPolicy:(UIBarButtonItem *)sender {
 
-    [_contactManager setContactPolicy];
+    [_contactManager setContactPolicy:selectedPolicy];
 
 }
 

@@ -15,24 +15,35 @@
 @property (nonatomic) NSString *currentAccount;
 @property (nonatomic) NSString *currentPassphrase;
 @property (nonatomic) SessionState *sessionState;
-@property (nonatomic) NSMutableDictionary *config;
 
-+ (AccountManager*)loadManager;
++(AccountManager*)loadManager;
 
 - (void)addAccount:(NSString*)name;
 
-- (void) generateParameters;
+- (void)addWhitelistEntry:(NSDictionary*)entity;
+
+- (void)deleteWhitelistEntry:(NSDictionary*)entity;
+
+- (void)generateParameters;
+
+- (id)getConfigItem:(NSString*)key;
 
 - (NSString*)getVaultName:(NSString*)accountName;
 
-- (void) loadConfig;
+- (void)loadConfig;
 
-- (void) loadSessionState:(NSError**)error;
+- (void)loadSessionState:(NSError**)error;
 
-- (void) setDefaultConfig;
+- (void)setConfigItem:(id)item withKey:(NSString*)key;
 
-- (void) storeConfig;
+- (void)setDefaultConfig;
 
-- (void) storeVault;
+- (void)storeConfig;
+
+- (void)storeVault;
+
+- (NSInteger)whitelistCount;
+
+- (NSDictionary*)whitelistEntryAtIndex:(NSInteger)index;
 
 @end

@@ -9,10 +9,11 @@
 #import "ContactsTableViewController.h"
 #import "AppDelegate.h"
 #import "ContactManager.h"
+#import "AddContactViewController.h"
 
 @interface ContactsTableViewController ()
 {
-    ContactEntity *addedContact;
+    NSDictionary *addedContact;
 }
 
 @property (weak, nonatomic) ContactManager *contactManager;
@@ -37,22 +38,24 @@
 
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    
+    [self.tableView reloadData];
+    
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)unwindToContactsTable:(UIStoryboardSegue*)seque {
-}
+- (IBAction)unwindAfterRequestAdded:(UIStoryboardSegue*)segue {
 
-- (IBAction)requestContact:(UIStoryboardSegue*)segue {
-
-}
-
-- (void)addContact:(ContactEntity *)entity {
-
-    addedContact = entity;
-
+    AddContactViewController *view = (AddContactViewController*)segue.sourceViewController;
+    [_contactManager addContact:view.addedContact];
+    [_contactManager storeContacts];
+    [self.view setNeedsDisplay];
+    
 }
 
 #pragma mark - Table view data source
@@ -65,18 +68,18 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return [_contactManager count];
+    return [_contactManager contactCount];
 
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell" forIndexPath:indexPath];
     
-    ContactEntity *entity = [_contactManager entityAtIndex:indexPath.item];
+    NSDictionary *entity = [_contactManager contactAtIndex:indexPath.item];
     if (entity != nil) {
-        cell.textLabel.text = entity.publicId;
-        cell.detailTextLabel.text = entity.nickname;
-        cell.imageView.image = [UIImage imageNamed:[entity imageName]];
+        cell.textLabel.text = entity[@"publicId"];
+        cell.detailTextLabel.text = entity[@"nickname"];
+        cell.imageView.image = [UIImage imageNamed:entity[@"status"]];
     }
     else {
         NSLog(@"Contact index %ld out of range", (long)indexPath.item);

@@ -12,6 +12,7 @@
 #import "EnclaveResponse.h"
 #import "SessionState.h"
 #import "AlertErrorDelegate.h"
+#import "ContactDatabase.h"
 #import "NSData+HexEncode.h"
 #import "CKGCMCodec.h"
 
@@ -20,7 +21,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 @interface ContactManager ()
 {
 
-    NSArray<ContactEntity*> *entities;
+    ContactDatabase *contacts;
     RESTSession *session;
     ContactRequest contactRequest;
     id<ResponseConsumer> responseConsumer;
@@ -41,14 +42,22 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     self = [super init];
 
     _accountManager = manager;
+    contacts = [[ContactDatabase alloc] initWithAccountManager:manager];
     session = [[RESTSession alloc] init];
     session.requestProcess = self;
     return self;
 
 }
 
+- (void)addContact:(NSMutableDictionary *)entity {
+
+    NSString *publicId = entity[@"publicId"];
+    [contacts addContact:entity withId:publicId];
+
+}
+
 - (void)addFriend:(NSString *)publicId {
-    
+
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
     request[@"method"] = @"UpdateWhitelist";
     request[@"action"] = @"add";
@@ -57,26 +66,31 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     
 }
 
-- (NSInteger) count {
+- (NSInteger) contactCount {
 
-    return 0;
-
-}
-
-- (NSString*)currentNickname {
-
-    return _accountManager.config[@"nickname"];
+    return [contacts contactCount];
 
 }
 
-- (ContactEntity*) entityAtIndex:(NSInteger)index {
+- (void)deleteFriend:(NSString *)publicId {
 
-    if (index >= entities.count) {
-        return nil;
-    }
-    else {
-        return entities[index];
-    }
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"UpdateWhitelist";
+    request[@"action"] = @"delete";
+    request[@"id"] = publicId;
+    [self sendRequest:request];
+
+}
+
+- (NSDictionary*)contactAtIndex:(NSInteger)index {
+
+    return [contacts getContactByIndex:index];
+
+}
+
+- (void)loadContacts {
+
+    [contacts loadContacts];
 
 }
 
@@ -103,19 +117,13 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 }
 
-- (void)requestContact:(ContactEntity*)entity {
+- (void)requestContact:(NSString*)publicId {
 
-    EnclaveRequest *request = [[EnclaveRequest alloc] initWithState:_accountManager.sessionState];
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-
-    dict[@"request"] = @"RequestContact";
-    dict[@"publicId"] = entity.publicId;
-    if (entity.nickname != nil) {
-        dict[@"nickname"] = entity.nickname;
-    }
-    postPacket = request;
-    [session doPost];
-
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"RequestContact";
+    request[@"id"] = publicId;
+    [self sendRequest:request];
+    
 }
 
 - (void)sessionComplete:(NSDictionary*)response {
@@ -132,11 +140,11 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     
 }
 
-- (void)setContactPolicy {
+- (void)setContactPolicy:(NSString*)policy {
 
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
     request[@"method"] = @"SetContactPolicy";
-    request[@"policy"] = _accountManager.config[@"contactPolicy"];
+    request[@"policy"] = policy;
     [self sendRequest:request];
 
 }
@@ -148,7 +156,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     if (nickname != nil) {
         request[@"newNickname"] = nickname;
     }
-    NSString *oldNickname = _accountManager.config[@"nickname"];
+    NSString *oldNickname = [_accountManager getConfigItem:@"nickname"];
     if (oldNickname != nil) {
         request[@"oldNickname"] = oldNickname;
     }
@@ -165,6 +173,12 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     _viewController = controller;
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
                                                              withTitle:@"Contact Error"];
+
+}
+
+- (void)storeContacts {
+
+    [contacts storeContacts];
 
 }
 
