@@ -77,8 +77,16 @@
     
     NSDictionary *entity = [_contactManager contactAtIndex:indexPath.item];
     if (entity != nil) {
-        cell.textLabel.text = entity[@"publicId"];
-        cell.detailTextLabel.text = entity[@"nickname"];
+        NSString *nickname = entity[@"nickname"];
+        NSString *publicId = entity[@"publicId"];
+        if (nickname == nil) {
+            cell.textLabel.text = publicId;
+            cell.detailTextLabel.text = @"";
+        }
+        else {
+            cell.textLabel.text = nickname;
+            cell.detailTextLabel.text = publicId;
+        }
         cell.imageView.image = [UIImage imageNamed:entity[@"status"]];
     }
     else {

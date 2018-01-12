@@ -24,6 +24,7 @@
 		553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55AA556D1FA1527C00A7026B /* libgmp.a */; };
 		554C17341FDC7F49009434F5 /* TabBarDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17331FDC7F49009434F5 /* TabBarDelegate.m */; };
 		554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17361FDD5990009434F5 /* MoreTableViewController.m */; };
+		555E22FD2006C8CD0098A099 /* RequestsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 555E22FC2006C8CD0098A099 /* RequestsTableViewController.m */; };
 		5570AD191FDF039B00724B34 /* ContactPolicyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5570AD181FDF039B00724B34 /* ContactPolicyViewController.m */; };
 		557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238A91F8C43F600A13A14 /* AccountManager.m */; };
 		557238B31F8C6B0C00A13A14 /* NSData+HexEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238B21F8C6B0C00A13A14 /* NSData+HexEncode.m */; };
@@ -167,6 +168,8 @@
 		554C17331FDC7F49009434F5 /* TabBarDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TabBarDelegate.m; sourceTree = "<group>"; };
 		554C17351FDD5990009434F5 /* MoreTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoreTableViewController.h; sourceTree = "<group>"; };
 		554C17361FDD5990009434F5 /* MoreTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MoreTableViewController.m; sourceTree = "<group>"; };
+		555E22FB2006C8CD0098A099 /* RequestsTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestsTableViewController.h; sourceTree = "<group>"; };
+		555E22FC2006C8CD0098A099 /* RequestsTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RequestsTableViewController.m; sourceTree = "<group>"; };
 		5570AD171FDF039B00724B34 /* ContactPolicyViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactPolicyViewController.h; sourceTree = "<group>"; };
 		5570AD181FDF039B00724B34 /* ContactPolicyViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactPolicyViewController.m; sourceTree = "<group>"; };
 		557238A81F8C43F600A13A14 /* AccountManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountManager.h; sourceTree = "<group>"; };
@@ -470,6 +473,8 @@
 				55B781A21FDD77F800330B80 /* PublicIdTableViewController.h */,
 				55B781A31FDD77F800330B80 /* PublicIdTableViewController.m */,
 				553332581F9AD83A00F441E4 /* RequestProcess.h */,
+				555E22FB2006C8CD0098A099 /* RequestsTableViewController.h */,
+				555E22FC2006C8CD0098A099 /* RequestsTableViewController.m */,
 				5579D45B1FE8491C007BCFE4 /* ResponseConsumer.h */,
 				5527BAA61F8D36BA00C40D05 /* RESTResponse.h */,
 				5527BAB21F8D58D300C40D05 /* RESTSession.h */,
@@ -850,6 +855,7 @@
 				55B781A71FDDA63900330B80 /* AccountsTableViewController.m in Sources */,
 				55FA87391FD059AF00FB96C0 /* UserVault.m in Sources */,
 				55AA55021FA14C1300A7026B /* CKRSAKeyPairGenerator.mm in Sources */,
+				555E22FD2006C8CD0098A099 /* RequestsTableViewController.m in Sources */,
 				55AA55501FA14D7100A7026B /* PSSmgf1.cc in Sources */,
 				55AA55531FA14D7100A7026B /* CCSecureRandom.cc in Sources */,
 				55FA87451FD5CA4F00FB96C0 /* AuthenticationResponse.m in Sources */,

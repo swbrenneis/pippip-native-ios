@@ -93,6 +93,12 @@
 
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+
+    [self.accountPickerView reloadAllComponents];
+
+}
+
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
 
     if (row < _accountManager.accountNames.count) {
@@ -111,6 +117,7 @@
     [self.authButton setHidden:NO];
     [self.accountPickerView setHidden:NO];
     [self.signoutButton setHidden:YES];
+    [self.accountPickerView reloadAllComponents];
     [self updateStatus:@"Sign in or create a new account"];
 
 }
@@ -149,6 +156,7 @@
 - (void) authenticate {
 
     [_activityIndicator startAnimating];
+    [_createAccountButton setHidden:YES];
     Authenticator *auth = [[Authenticator alloc] initWithViewController:self];
     [auth authenticate];
     
