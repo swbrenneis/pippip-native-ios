@@ -24,12 +24,12 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     ContactDatabase *contacts;
     RESTSession *session;
     ContactRequest contactRequest;
-    id<ResponseConsumer> responseConsumer;
 
 }
 
 @property (weak, nonatomic) AccountManager *accountManager;
 @property (weak, nonatomic) UIViewController *viewController;
+@property (weak, nonatomic) id<ResponseConsumer> responseConsumer;
 
 @end
 
@@ -49,10 +49,21 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 }
 
+- (void)acknowledgeRequest:(NSString *)response withId:(NSString *)publicId{
+
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"AcknowledgeRequest";
+    request[@"id"] = publicId;
+    request[@"response"] = response;
+    [self sendRequest:request];
+    
+}
+
 - (void)addContact:(NSMutableDictionary *)entity {
 
     NSString *publicId = entity[@"publicId"];
     [contacts addContact:entity withId:publicId];
+    [contacts storeContacts];
 
 }
 
@@ -72,20 +83,74 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 }
 
-- (void)deleteFriend:(NSString *)publicId {
+- (NSDictionary*)contactAtIndex:(NSInteger)index {
 
+    return [contacts getContactByIndex:index];
+
+}
+
+- (void)createNickname:(NSString *)nickname {
+    
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"SetNickname";
+    if (nickname != nil) {
+        request[@"newNickname"] = nickname;
+    }
+    NSString *oldNickname = [_accountManager getConfigItem:@"nickname"];
+    if (oldNickname != nil) {
+        request[@"oldNickname"] = oldNickname;
+    }
+    [self sendRequest:request];
+    
+}
+
+- (void)deleteContact:(NSString *)publicId {
+
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"DeleteContact";
+    request[@"publicId"] = publicId;
+    [self sendRequest:request];
+    
+}
+
+- (void)deleteFriend:(NSString *)publicId {
+    
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
     request[@"method"] = @"UpdateWhitelist";
     request[@"action"] = @"delete";
     request[@"id"] = publicId;
     [self sendRequest:request];
+    
+}
+
+- (void)deleteLocalContact:(NSString *)publicId {
+
+    [contacts deleteContact:publicId];
+    [contacts storeContacts];
 
 }
 
-- (NSDictionary*)contactAtIndex:(NSInteger)index {
+- (NSMutableDictionary*)getContact:(NSString *)publicId {
 
-    return [contacts getContactByIndex:index];
+    return [contacts getContact:publicId];
 
+}
+
+- (void)getNickname:(NSString *)publicId {
+
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"GetNickname";
+    request[@"publicId"] = publicId;
+    [self sendRequest:request];
+    
+}
+
+- (void)getRequests {
+
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"GetPendingRequests";
+    [self sendRequest:request];
+    
 }
 
 - (void)loadContacts {
@@ -109,8 +174,8 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
         EnclaveResponse *enclaveResponse = [[EnclaveResponse alloc] initWithState:_accountManager.sessionState];
         if ([enclaveResponse processResponse:response errorDelegate:errorDelegate]) {
             NSDictionary *contactResponse = [enclaveResponse getResponse];
-            if (contactResponse != nil && responseConsumer != nil) {
-                [responseConsumer response:contactResponse];
+            if (contactResponse != nil && _responseConsumer != nil) {
+                [_responseConsumer response:contactResponse];
             }
         }
     }
@@ -126,10 +191,6 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     
 }
 
-- (void)sessionComplete:(NSDictionary*)response {
-    // Nothing to do here. Session is already established.
-}
-
 - (void)sendRequest:(NSDictionary*)request {
     
     EnclaveRequest *enclaveRequest = [[EnclaveRequest alloc] initWithState:_accountManager.sessionState];
@@ -138,6 +199,10 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     postPacket = enclaveRequest;
     [session doPost];
     
+}
+
+- (void)sessionComplete:(NSDictionary*)response {
+    // Nothing to do here. Session is already established.
 }
 
 - (void)setContactPolicy:(NSString*)policy {
@@ -149,23 +214,23 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 }
 
-- (void)setNickname:(NSString *)nickname {
+- (void)setContacts:(NSMutableArray *)newContacts {
 
-    NSMutableDictionary *request = [NSMutableDictionary dictionary];
-    request[@"method"] = @"SetNickname";
-    if (nickname != nil) {
-        request[@"newNickname"] = nickname;
-    }
-    NSString *oldNickname = [_accountManager getConfigItem:@"nickname"];
-    if (oldNickname != nil) {
-        request[@"oldNickname"] = oldNickname;
-    }
-    [self sendRequest:request];
+    [contacts syncContacts:newContacts];
+    [contacts storeContacts];
+
+}
+
+- (void)setNickname:(NSString *)nickname withPublicId:(NSString *)publicId {
+
+    NSMutableDictionary *entity = [contacts getContact:publicId];
+    entity[@"nickname"] = nickname;
+    [contacts storeContacts];
 
 }
 
 - (void)setResponseConsumer:(id<ResponseConsumer>)consumer {
-    responseConsumer = consumer;
+    _responseConsumer = consumer;
 }
 
 - (void)setViewController:(UIViewController *)controller {
@@ -179,6 +244,14 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 - (void)storeContacts {
 
     [contacts storeContacts];
+
+}
+
+- (void)syncContacts {
+    
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"GetAllContacts";
+    [self sendRequest:request];
 
 }
 

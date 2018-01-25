@@ -13,15 +13,15 @@
 
 @interface ContactPolicyViewController ()
 {
-    NSArray *policyNames;
-    NSArray *policyValues;
+
     NSString *selectedPolicy;
+
 }
 
 @property (weak, nonatomic) AccountManager *accountManager;
 @property (weak, nonatomic) ContactManager *contactManager;
 
-@property (weak, nonatomic) IBOutlet UIPickerView *policyPickerView;
+@property (weak, nonatomic) IBOutlet UISwitch *contactPolicySwitch;
 
 @end
 
@@ -31,31 +31,21 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    _policyPickerView.delegate = self;
-    _policyPickerView.dataSource = self;
-    
     // Get the account manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _accountManager = delegate.accountManager;
     _contactManager = delegate.contactManager;
-    [_contactManager setViewController:self];
-    [_contactManager setResponseConsumer:self];
-
-    policyNames = [NSArray arrayWithObjects:@"Public", @"Friends", @"Friends of Friends", nil];
-    policyValues = [NSArray arrayWithObjects:@"public", @"whitelist", @"acquaintance", nil];
 
 }
 
--(void)viewDidAppear:(BOOL)animated {
+-(void)viewWillAppear:(BOOL)animated {
 
-    NSString *currentPolicy = [_accountManager getConfigItem:@"contactPolicy"];
-    int index = 0;
-    for (id name in policyValues) {
-        NSString *pvalue = (NSString*)name;
-        if ([pvalue isEqualToString:currentPolicy]) {
-            [_policyPickerView selectRow:index inComponent:0 animated:YES];
-        }
-        index++;
+    selectedPolicy = [_accountManager getConfigItem:@"contactPolicy"];
+    if ([selectedPolicy isEqualToString:@"public"]) {
+        [_contactPolicySwitch setOn:YES animated:YES];
+    }
+    else {
+        [_contactPolicySwitch setOn:NO animated:YES];
     }
 
 }
@@ -63,34 +53,6 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-// Picker view column count
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView*)pickerView {
-    return 1;
-}
-
-// Picker view row count.
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    return 3;
-}
-
-- (NSAttributedString*)pickerView:(UIPickerView *)pickerView
-            attributedTitleForRow:(NSInteger)row
-                     forComponent:(NSInteger)component {
-    
-    NSString *policyName = policyNames[row];
-    return [[NSAttributedString alloc] initWithString:policyName
-                                           attributes:@{NSForegroundColorAttributeName: [UIColor blackColor]}];
-
-}
-
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    
-    if (row < 3) {
-        selectedPolicy = policyValues[row];
-    }
-    
 }
 
 - (void)response:(NSDictionary *)info {
@@ -103,9 +65,21 @@
     }
 
 }
+- (IBAction)policyChanged:(UISwitch *)sender {
+
+    if (sender.on) {
+        selectedPolicy = @"public";
+    }
+    else {
+        selectedPolicy = @"whitelist";
+    }
+
+}
 
 - (IBAction)saveContactPolicy:(UIBarButtonItem *)sender {
 
+    [_contactManager setViewController:self];
+    [_contactManager setResponseConsumer:self];
     [_contactManager setContactPolicy:selectedPolicy];
 
 }

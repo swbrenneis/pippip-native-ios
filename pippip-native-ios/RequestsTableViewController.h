@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ResponseConsumer.h"
 
-@interface RequestsTableViewController : UITableViewController
+@interface RequestsTableViewController : UITableViewController <ResponseConsumer>
 
 @end

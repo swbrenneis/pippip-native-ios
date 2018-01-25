@@ -10,6 +10,9 @@
 #import "AppDelegate.h"
 
 @interface AccountsTableViewController ()
+{
+    NSArray *accountNames;
+}
 
 @end
 
@@ -29,6 +32,12 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+
+    accountNames = [_accountManager loadAccounts:NO];
+
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -42,14 +51,14 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return _accountManager.accountNames.count;
+    return accountNames.count;
 
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AccountCell" forIndexPath:indexPath];
     
-    cell.textLabel.text = _accountManager.accountNames[indexPath.item];
+    cell.textLabel.text = accountNames[indexPath.item];
 
     return cell;
 }
@@ -57,7 +66,7 @@
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the specified item to be editable.
-    NSString *toEdit = _accountManager.accountNames[indexPath.item];
+    NSString *toEdit = accountNames[indexPath.item];
     return ![toEdit isEqualToString:_accountManager.currentAccount];
 
 }

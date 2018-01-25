@@ -30,6 +30,13 @@
 
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+
+    _nicknameTextField.text = @"";
+    _publicIdTextField.text = @"";
+
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

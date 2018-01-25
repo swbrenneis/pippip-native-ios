@@ -48,6 +48,34 @@
 
 }
 
+- (NSMutableDictionary*)decodeContact:(NSDictionary*)encoded {
+
+    NSMutableDictionary *contact = [NSMutableDictionary dictionary];
+    contact[@"publicId"] = encoded[@"publicId"];
+    contact[@"status"] = encoded[@"status"];
+    NSString *nickname = encoded[@"nickname"];
+    if (nickname != nil) {
+        contact[@"nickname"] = nickname;
+    }
+    contact[@"currentIndex"] = encoded[@"currentIndex"];
+    contact[@"currentSequence"] = encoded[@"currentSequence"];
+    contact[@"timestamp"] = encoded[@"timestamp"];
+    NSString *authData = encoded[@"authData"];
+    if (authData != nil) {
+        contact[@"authData"] = [[NSData alloc] initWithBase64EncodedString:authData options:0];
+        NSArray *encodedKeys = encoded[@"messageKeys"];
+        NSMutableArray *messageKeys = [NSMutableArray array];
+        for (NSString *encodedKey in encodedKeys) {
+            NSData *key = [[NSData alloc] initWithBase64EncodedString:encodedKey options:0];
+            [messageKeys addObject:key];
+        }
+        contact[@"messageKeys"] = messageKeys;
+    }
+
+    return contact;
+
+}
+
 - (void)decodeDatabase:(NSData*)encoded withError:(NSError**) error {
 
     *error = nil;
@@ -65,9 +93,10 @@
                                                                            options:NSJSONReadingMutableContainers
                                                                              error:error];
             if (contact != nil) {
-                contact[@"index"] = [NSNumber numberWithInteger:index];
-                database[publicId] = contact;
-                [indexed addObject:contact];
+                NSMutableDictionary *decoded = [self decodeContact:contact];
+                decoded[@"index"] = [NSNumber numberWithInteger:index];
+                database[publicId] = decoded;
+                [indexed addObject:decoded];
                 index++;
             }
         }
@@ -84,6 +113,34 @@
 
 }
 
+- (NSDictionary*)encodeContact:(NSDictionary*)contact {
+
+    NSMutableDictionary *encoded = [NSMutableDictionary dictionary];
+    encoded[@"publicId"] = contact[@"publicId"];
+    encoded[@"status"] = contact[@"status"];
+    NSString *nickname = contact[@"nickname"];
+    if (nickname != nil) {
+        encoded[@"nickname"] = nickname;
+    }
+    encoded[@"currentIndex"] = contact[@"currentIndex"];
+    encoded[@"currentSequence"] = contact[@"currentSequence"];
+    encoded[@"timestamp"] = contact[@"timestamp"];
+    NSData *authData = contact[@"authData"];
+    if (authData != nil) {
+        encoded[@"authData"] = [authData base64EncodedStringWithOptions:0];
+        NSArray *messageKeys = contact[@"messageKeys"];
+        NSMutableArray *encodedKeys = [NSMutableArray array];
+        for (NSData *key in messageKeys) {
+            NSString *encodedKey = [key base64EncodedStringWithOptions:0];
+            [encodedKeys addObject:encodedKey];
+        }
+        encoded[@"messageKeys"] = encodedKeys;
+    }
+
+    return encoded;
+
+}
+
 - (NSData*)encodeDatabase {
 
     SessionState *state = _accountManager.sessionState;
@@ -93,10 +150,9 @@
     NSEnumerator *enumerator = [database keyEnumerator];
     while ((key = [enumerator nextObject])) {
         NSMutableDictionary *contact = database[key];
-        // Remove the index before storing
-        [contact removeObjectForKey:@"index"];
+        NSDictionary *encoded = [self encodeContact:contact];
         NSError *jsonError;
-        NSData *json = [NSJSONSerialization dataWithJSONObject:contact
+        NSData *json = [NSJSONSerialization dataWithJSONObject:encoded
                                                        options:0
                                                          error:&jsonError];
         // TODO Handle errors
@@ -153,6 +209,17 @@
         NSString *dbFileName = [_accountManager.currentAccount stringByAppendingString:@".contacts"];
         NSString *contactsPath = [configsPath stringByAppendingPathComponent:dbFileName];
         [encoded writeToFile:contactsPath atomically:YES];
+    }
+
+}
+
+- (void)syncContacts:(NSMutableArray *)synched {
+
+    [indexed removeAllObjects];
+    [database removeAllObjects];
+    for (NSMutableDictionary *entity in synched) {
+        [indexed addObject:entity];
+        database[entity[@"publicId"]] = entity;
     }
 
 }

@@ -19,7 +19,7 @@
 @interface HomeViewController ()
 {
     TabBarDelegate *tabBarDelegate;
-
+    NSArray *accountNames;
 }
 
 @property (weak, nonatomic) IBOutlet UIPickerView *accountPickerView;
@@ -51,17 +51,31 @@
     self.accountPickerView.delegate = self;
     self.accountPickerView.dataSource = self;
 
-    // Enable sign in if there are accounts on this device. Set the status accordingly.
-    if (_accountManager.accountNames.count == 0) {
-        [self.authButton setHidden:YES];
-        _defaultMessage = @"Please create a new account";
+
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+
+    accountNames = [_accountManager loadAccounts:NO];
+    if (!_accountManager.sessionState.authenticated) {
+        // Enable sign in if there are accounts on this device. Set the status accordingly.
+        if (accountNames.count == 0) {
+            [self.authButton setHidden:YES];
+            _defaultMessage = @"Please create a new account";
+        }
+        else {
+            [self.authButton setHidden:NO];
+            _defaultMessage = @"Sign in or create a new account";
+        }
+        [self.signoutButton setHidden:YES];
+        [self updateStatus:_defaultMessage];
     }
     else {
-        [self.authButton setHidden:NO];
-        _defaultMessage = @"Sign in or create a new account";
+        [self.createAccountButton setHidden:YES];
+        [self.authButton setHidden:YES];
+        [self.accountPickerView setHidden:YES];
+        [self.signoutButton setHidden:NO];
     }
-    [self.signoutButton setHidden:YES];
-    [self updateStatus:_defaultMessage];
 
 }
 
@@ -77,13 +91,13 @@
 
 // Picker view row count.
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    return _accountManager.accountNames.count;
+    return accountNames.count;
 }
 
 - (NSAttributedString*)pickerView:(UIPickerView *)pickerView
             attributedTitleForRow:(NSInteger)row forComponent:(NSInteger)component {
 
-    NSString *accountName = _accountManager.accountNames[row];
+    NSString *accountName = accountNames[row];
     return [[NSAttributedString alloc] initWithString:accountName
                                            attributes:@{NSForegroundColorAttributeName:
                                                             [UIColor colorWithDisplayP3Red:246
@@ -93,16 +107,10 @@
 
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-
-    [self.accountPickerView reloadAllComponents];
-
-}
-
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
 
-    if (row < _accountManager.accountNames.count) {
-        _accountManager.currentAccount = _accountManager.accountNames[row];
+    if (row < accountNames.count) {
+        _accountManager.currentAccount = accountNames[row];
     }
 
 }
@@ -110,6 +118,8 @@
 - (IBAction)signoutClicked:(UIButton *)sender {
 
     [_accountManager storeConfig];
+    [_accountManager loadAccounts:NO];
+    [_accountPickerView reloadAllComponents];
     Authenticator *auth = [[Authenticator alloc] initWithViewController:self];
     [auth logout];
     _accountManager.sessionState.authenticated = NO;

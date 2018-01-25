@@ -11,14 +11,13 @@
 
 @interface AccountManager : NSObject
 
-@property (nonatomic) NSArray *accountNames;
 @property (nonatomic) NSString *currentAccount;
 @property (nonatomic) NSString *currentPassphrase;
 @property (nonatomic) SessionState *sessionState;
 
 +(AccountManager*)loadManager;
 
-- (void)addAccount:(NSString*)name;
+//- (void)addAccount:(NSString*)name;
 
 - (void)addWhitelistEntry:(NSDictionary*)entity;
 
@@ -28,7 +27,9 @@
 
 - (id)getConfigItem:(NSString*)key;
 
-- (NSString*)getVaultName:(NSString*)accountName;
+//- (NSString*)getVaultName:(NSString*)accountName;
+
+- (NSArray*) loadAccounts:(BOOL)setCurrentAccount;
 
 - (void)loadConfig;
 

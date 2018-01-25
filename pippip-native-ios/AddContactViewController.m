@@ -36,6 +36,13 @@
     
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+
+    _nicknameText.text = @"";
+    _publicIdText.text = @"";
+
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -45,8 +52,10 @@
 
     NSString *result = response[@"result"];
     if ([result isEqualToString:@"pending"]) {
-        _addedContact = [NSMutableDictionary dictionaryWithObjectsAndKeys:publicId, @"publicId",
-                                                                            @"pending", @"status", nil];
+        _addedContact = [NSMutableDictionary dictionary];
+        _addedContact[@"publicId"] = response[@"requestedContactId"];
+        _addedContact[@"status"] = result;
+        _addedContact[@"timestamp"] = response[@"timestamp"];
         if (nickname != nil && nickname.length > 0) {
             _addedContact[@"nickname"] =nickname;
         }

@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "ResponseConsumer.h"
 
-@interface ContactPolicyViewController : UIViewController<UIPickerViewDelegate, UIPickerViewDataSource, ResponseConsumer>
+@interface ContactPolicyViewController : UIViewController <ResponseConsumer>
 
 @end

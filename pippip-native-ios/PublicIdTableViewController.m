@@ -22,7 +22,7 @@
     // Get the account manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     AccountManager *accountManager = delegate.accountManager;
-    _publicIdCellTitle.text = [accountManager.sessionState.publicId uppercaseString];
+    _publicIdCellTitle.text = accountManager.sessionState.publicId;
 
 }
 

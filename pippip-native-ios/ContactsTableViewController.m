@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 #import "ContactManager.h"
 #import "AddContactViewController.h"
+#import "ContactDetailViewController.h"
 
 @interface ContactsTableViewController ()
 {
@@ -49,6 +50,52 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)response:(NSDictionary *)info {
+
+    NSArray *contacts = info[@"contacts"];
+    NSMutableArray *synched = [NSMutableArray array];
+    for (NSDictionary *entity in contacts) {
+        NSMutableDictionary *localContact = [_contactManager getContact:entity[@"publicId"]];
+        if (localContact != nil) {
+            localContact[@"status"] = entity[@"status"];
+            localContact[@"currentIndex"] = entity[@"currentIndex"];
+            localContact[@"currentSequence"] = entity[@"currentSequence"];
+            localContact[@"timestamp"] = entity[@"timestamp"];
+            [synched addObject:localContact];
+        }
+        else {
+            [synched addObject:[entity mutableCopy]];
+        }
+    }
+    [_contactManager setContacts:synched];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
+
+}
+
+- (IBAction)syncContacts:(id)sender {
+
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Caution!"
+                                                                   message:@"Synchronizing contacts with the server may result in deletion of some local contacts"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction *action) {
+                                                         [_contactManager setViewController:self];
+                                                         [_contactManager setResponseConsumer:self];
+                                                         [_contactManager syncContacts];
+                                                     }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:nil];
+    [alert addAction:okAction];
+    [alert addAction:cancelAction];
+    [self presentViewController:alert animated:YES completion:nil];
+
+}
+
 - (IBAction)unwindAfterRequestAdded:(UIStoryboardSegue*)segue {
 
     AddContactViewController *view = (AddContactViewController*)segue.sourceViewController;
@@ -80,8 +127,8 @@
         NSString *nickname = entity[@"nickname"];
         NSString *publicId = entity[@"publicId"];
         if (nickname == nil) {
-            cell.textLabel.text = publicId;
-            cell.detailTextLabel.text = @"";
+            cell.textLabel.text = @"";
+            cell.detailTextLabel.text = publicId;
         }
         else {
             cell.textLabel.text = nickname;
@@ -131,14 +178,22 @@
 }
 */
 
-/*
 #pragma mark - Navigation
+
+- (IBAction) unwindToContactsViewController:(UIStoryboardSegue*)segue {
+}
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+
+    UIViewController *view = [segue destinationViewController];
+    if ([view isKindOfClass:[ContactDetailViewController class]]) {
+        ContactDetailViewController *detailView = (ContactDetailViewController*)view;
+        NSIndexPath *selectedIndexPath = [self.tableView indexPathForSelectedRow];
+        detailView.contact = [_contactManager contactAtIndex:selectedIndexPath.item];
+    }
 }
-*/
 
 @end

@@ -27,4 +27,6 @@
 
 - (void)storeContacts;
 
+- (void)syncContacts:(NSMutableArray*)synched;
+
 @end

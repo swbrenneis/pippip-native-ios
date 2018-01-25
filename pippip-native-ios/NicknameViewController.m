@@ -59,7 +59,7 @@
     method = @"SetNickname";
     pendingNickname = nil;
     [_contactManager setResponseConsumer:self];
-    [_contactManager setNickname:nil];
+    [_contactManager createNickname:nil];
     
 }
 
@@ -112,7 +112,7 @@
         method = @"SetNickname";
         pendingNickname = _nicknameTextField.text;
         [_contactManager setResponseConsumer:self];
-        [_contactManager setNickname:_nicknameTextField.text];
+        [_contactManager createNickname:_nicknameTextField.text];
     }
     else {
         [self noNicknameAlert];

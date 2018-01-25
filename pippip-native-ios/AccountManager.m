@@ -14,8 +14,9 @@
 
 @interface AccountManager ()
 {
-    NSMutableDictionary *vaultMap;
+    // NSMutableDictionary *vaultMap;
     NSMutableDictionary *config;
+    NSMutableArray *accountNames;
 }
 
 @end
@@ -25,24 +26,22 @@
 + (AccountManager*)loadManager {
 
     AccountManager *manager = [[AccountManager alloc] init];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docPath = [paths objectAtIndex:0];
-    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
-    [manager loadAccounts:vaultsPath];
+    [manager loadAccounts:YES];
     return manager;
     
 }
 
+/*
 -(void)addAccount:(NSString *)name {
 
     CKSHA1 *sha1 = [[CKSHA1 alloc] init];
     NSData *hash = [sha1 digest:[name dataUsingEncoding:NSUTF8StringEncoding]];
     [vaultMap setObject:[hash encodeHexString] forKey:name];
     [self storeAccounts];
-    _accountNames = [vaultMap allKeys];
+    accountNames = [vaultMap allKeys];
 
 }
-
+*/
 - (void)addWhitelistEntry:(NSDictionary *)entity {
 
     NSMutableArray *whitelist = config[@"whitelist"];
@@ -88,13 +87,19 @@
 
 }
 
-- (void) loadAccounts:(NSString*)vaultsPath {
+- (NSArray*) loadAccounts:(BOOL)setCurrentAccount {
 
-    _accountNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:vaultsPath
-                                                                       error:nil];
-    if (_accountNames.count > 0) {
-        _currentAccount = _accountNames[0];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docPath = [paths objectAtIndex:0];
+    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
+    NSArray *vaultNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:vaultsPath
+                                                                              error:nil];
+    accountNames = [vaultNames mutableCopy];
+    if (accountNames.count > 0) {
+        [accountNames removeObject:@".DS_Store"];
+        _currentAccount = accountNames[0];
     }
+    return accountNames;
 
 }
 
@@ -153,7 +158,7 @@
                     [NSArray arrayWithObjects:@"contactPolicy", @"loadContacts", nil]];
 
 }
-
+/*
 - (void)storeAccounts {
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -162,7 +167,7 @@
     [vaultMap writeToFile:accountsPath atomically:YES];
 
 }
-
+*/
 - (void) storeConfig {
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -209,13 +214,13 @@
     [vaultData writeToFile:vaultPath atomically:YES];
     
 }
-
+/*
 - (NSString*)getVaultName:(NSString *)accountName {
 
     return [vaultMap objectForKey:accountName];
 
 }
-
+*/
 - (NSInteger)whitelistCount {
 
     NSArray *whitelist = config[@"whitelist"];
