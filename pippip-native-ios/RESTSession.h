@@ -9,14 +9,10 @@
 #import <Foundation/Foundation.h>
 #import "RequestProcess.h"
 
-@protocol RequestStep;
-
 @interface RESTSession : NSObject <NSURLConnectionDelegate>
 
-- (void)doPost;
+- (void)queuePost:(id<RequestProcess>)process;
 
-- (void)startSession;
-
-@property (nonatomic) id<RequestProcess> requestProcess;
+- (void)startSession:(id<RequestProcess>)process;
 
 @end

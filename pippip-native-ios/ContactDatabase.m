@@ -8,8 +8,6 @@
 
 #import "ContactDatabase.h"
 #import "CKGCMCodec.h"
-#import "AppDelegate.h"
-#import "AccountManager.h"
 
 @interface ContactDatabase ()
 {
@@ -17,16 +15,15 @@
     NSMutableArray *indexed;
 }
 
-@property (weak, nonatomic) AccountManager *accountManager;
+@property (weak, nonatomic) SessionState *sessionState;
 
 @end
 
 @implementation ContactDatabase
 
-- (instancetype)initWithAccountManager:(AccountManager *)manager {
+- (instancetype)init {
     self = [super init];
 
-    _accountManager = manager;
     database = [NSMutableDictionary dictionary];
     indexed = [NSMutableArray array];
 
@@ -79,9 +76,8 @@
 - (void)decodeDatabase:(NSData*)encoded withError:(NSError**) error {
 
     *error = nil;
-    SessionState *state = _accountManager.sessionState;
     CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:encoded];
-    [codec decrypt:state.contactsKey withAuthData:state.authData withError:error];
+    [codec decrypt:_sessionState.contactsKey withAuthData:_sessionState.authData withError:error];
     // TODO Handle errors
     if (*error == nil) {
         NSInteger count = [codec getInt];
@@ -143,7 +139,6 @@
 
 - (NSData*)encodeDatabase {
 
-    SessionState *state = _accountManager.sessionState;
     CKGCMCodec *codec = [[CKGCMCodec alloc] init];
     [codec putInt:database.count];
     NSString *key;
@@ -161,7 +156,7 @@
             [codec putBlock:json];
         }
     }
-    return [codec encrypt:state.contactsKey withAuthData:state.authData];
+    return [codec encrypt:_sessionState.contactsKey withAuthData:_sessionState.authData];
 
 }
 
@@ -177,15 +172,30 @@
 
 }
 
-- (void)loadContacts {
+- (NSArray*)getContacts:(NSString *)status {
 
+    NSMutableArray *filtered = [NSMutableArray array];
+    for (NSDictionary *contact in indexed) {
+        NSString *currentStatus = contact[@"status"];
+        if ([status isEqualToString:currentStatus]) {
+            [filtered addObject:contact];
+        }
+    }
+    return filtered;
+
+}
+
+- (void)loadContacts:(SessionState*)state {
+
+    _sessionState = state;
+    
     [database removeAllObjects];
     [indexed removeAllObjects];
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docPath = [paths objectAtIndex:0];
     NSString *configsPath = [docPath stringByAppendingPathComponent:@"PippipConfig"];
-    NSString *dbFileName = [_accountManager.currentAccount stringByAppendingString:@".contacts"];
+    NSString *dbFileName = [_sessionState.currentAccount stringByAppendingString:@".contacts"];
     NSString *contactsPath = [configsPath stringByAppendingPathComponent:dbFileName];
 
     if ([[NSFileManager defaultManager] fileExistsAtPath:contactsPath]) {
@@ -199,14 +209,14 @@
 
 }
 
-- (void)storeContacts {
+- (void)storeContacts:(NSString*)accountName {
 
     NSData *encoded = [self encodeDatabase];
     if (encoded != nil) {
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *docPath = [paths objectAtIndex:0];
         NSString *configsPath = [docPath stringByAppendingPathComponent:@"PippipConfig"];
-        NSString *dbFileName = [_accountManager.currentAccount stringByAppendingString:@".contacts"];
+        NSString *dbFileName = [accountName stringByAppendingString:@".contacts"];
         NSString *contactsPath = [configsPath stringByAppendingPathComponent:dbFileName];
         [encoded writeToFile:contactsPath atomically:YES];
     }

@@ -8,22 +8,27 @@
 
 #import <UIKit/UIKit.h>
 #import "RequestProcess.h"
-#import "AccountManager.h"
+#import "RESTSession.h"
 #import "ResponseConsumer.h"
+#import "SessionState.h"
 
 @interface ContactManager : NSObject <RequestProcess>
 
-- (instancetype)initWithAccountManager:(AccountManager*)manager;
+- (instancetype)initWithRESTSession:(RESTSession*)restSession;
 
 - (void)acknowledgeRequest:(NSString*)response withId:(NSString*)publicId;
 
-- (void)addContact:(NSMutableDictionary*)entity;
+- (void)addLocalContact:(NSMutableDictionary*)entity;
 
 - (void)addFriend:(NSString*)publicId;
 
+- (void)addNewMessages:(NSArray*)messages;
+
 - (NSInteger)contactCount;
 
-- (void)createNickname:(NSString*)nickname;
+- (void)contactsUpdated;
+
+- (void)createNickname:(NSString*)nickname withOldNickname:(NSString*)oldNickname;
 
 - (void)deleteContact:(NSString*)publicId;
 
@@ -35,7 +40,11 @@
 
 - (NSMutableDictionary*)getContact:(NSString*)publicId;
 
+- (NSArray*)getContactIds;
+
 - (void)getNickname:(NSString*)publicId;
+
+- (NSArray*)getPendingContacts;
 
 - (void)getRequests;
 
@@ -51,9 +60,11 @@
 
 - (void)setResponseConsumer:(id<ResponseConsumer>)consumer;
 
+- (void)setSessionState:(SessionState*)state;
+
 - (void)setViewController:(UIViewController*)controller;
 
-- (void)storeContacts;
+//- (void)storeContacts;
 
 - (void)syncContacts;
 

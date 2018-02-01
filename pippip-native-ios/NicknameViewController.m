@@ -14,7 +14,9 @@
 @interface NicknameViewController ()
 {
     NSString *method;
+    NSString *currentNickname;
     NSString *pendingNickname;
+    NSString *accountName;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *nicknameTextField;
@@ -27,17 +29,6 @@
 
 @implementation NicknameViewController
 
--(void)viewDidAppear:(BOOL)animated {
-
-    [_availableLabel setHidden:YES];
-    NSString *nickname = [_accountManager getConfigItem:@"nickname"];
-    if (nickname != nil) {
-        _nicknameTextField.text = nickname;
-    }
-    [_contactManager setViewController:self];
-
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -45,8 +36,23 @@
     // Get the contact manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _accountManager = delegate.accountManager;
-    _contactManager = delegate.contactManager;
 
+}
+
+-(void)viewWillAppear:(BOOL)animated {
+
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    accountName = delegate.accountSession.sessionState.currentAccount;
+    _contactManager = delegate.accountSession.contactManager;
+    [_availableLabel setHidden:YES];
+    currentNickname = [_accountManager getConfigItem:@"nickname"];
+    if (currentNickname != nil) {
+        _nicknameTextField.text = currentNickname;
+    }
+    else {
+        _nicknameTextField.text = @"";
+    }
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -58,8 +64,9 @@
 
     method = @"SetNickname";
     pendingNickname = nil;
+    [_contactManager setViewController:self];
     [_contactManager setResponseConsumer:self];
-    [_contactManager createNickname:nil];
+    [_contactManager createNickname:nil withOldNickname:currentNickname];
     
 }
 
@@ -69,7 +76,12 @@
 
 - (void)noNicknameAlert {
 
-    _nicknameTextField.text = [_accountManager getConfigItem:@"nickname"];
+    if (currentNickname != nil) {
+        _nicknameTextField.text = currentNickname;
+    }
+    else {
+        _nicknameTextField.text = @"";
+    }
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Nickname Error"
                                                                    message:@"Please enter a nickname"
                                                             preferredStyle:UIAlertControllerStyleAlert];
@@ -98,7 +110,9 @@
     }
     else {
         [_accountManager setConfigItem:pendingNickname withKey:@"nickname"];
-        [_accountManager storeConfig];
+        [_accountManager storeConfig:accountName];
+        currentNickname = pendingNickname;
+        pendingNickname = nil;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self performSegueWithIdentifier:@"unwindAfterSave" sender:self];
         });
@@ -111,8 +125,9 @@
     if (_nicknameTextField.text != nil && _nicknameTextField.text.length > 0) {
         method = @"SetNickname";
         pendingNickname = _nicknameTextField.text;
+        [_contactManager setViewController:self];
         [_contactManager setResponseConsumer:self];
-        [_contactManager createNickname:_nicknameTextField.text];
+        [_contactManager createNickname:pendingNickname withOldNickname:currentNickname];
     }
     else {
         [self noNicknameAlert];

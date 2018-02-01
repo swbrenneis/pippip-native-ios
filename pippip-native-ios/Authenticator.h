@@ -9,13 +9,14 @@
 #import <Foundation/Foundation.h>
 #import "RequestProcess.h"
 #import "HomeViewController.h"
+#import "RESTSession.h"
 
 @interface Authenticator : NSObject <RequestProcess>
 
-- (instancetype) initWithViewController:(HomeViewController*)controller;
+- (instancetype) initWithViewController:(HomeViewController*)controller withRESTSession:(RESTSession*)restSession;
 
-- (void) authenticate;
+- (void)authenticate:(NSString*)accountName withPassphrase:(NSString*)passphrase;
 
-- (void) logout;
+- (void)logout;
 
 @end

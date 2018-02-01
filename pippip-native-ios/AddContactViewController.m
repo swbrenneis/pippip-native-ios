@@ -10,12 +10,15 @@
 #import "ContactsTableViewController.h"
 #import "AppDelegate.h"
 #import "ContactManager.h"
+#import "AccountManager.h"
 
 @interface AddContactViewController ()
 {
     NSString *action;
     NSString *nickname;
     NSString *publicId;
+    NSString *myPublicId;
+    NSString *myNickname;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *nicknameText;
@@ -30,13 +33,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    // Get the contact manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.contactManager;
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+
+    // Get the contact manager
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _contactManager = delegate.accountSession.contactManager;
+    myPublicId = delegate.accountSession.sessionState.publicId;
+    AccountManager *accountManager = delegate.accountManager;
+    myNickname = [accountManager getConfigItem:@"nickname"];
 
     _nicknameText.text = @"";
     _publicIdText.text = @"";
@@ -94,10 +100,17 @@
     if ([result isEqualToString:@"matched"]) {
         action = @"RequestContact";
         publicId = response[@"publicId"];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            _publicIdText.text = publicId;
-        });
-        [_contactManager requestContact:publicId];
+        if (![publicId isEqualToString:myPublicId]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                _publicIdText.text = publicId;
+            });
+            [_contactManager requestContact:publicId];
+        }
+        else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self selfContactAlert];
+            });
+        }
     }
     else {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid Contact ID"
@@ -126,12 +139,17 @@
         [_contactManager matchNickname:nickname];
     }
     else if (publicId.length != 0) {
-        action = @"RequestContact";
-        [_contactManager requestContact:publicId];
+        if (![publicId isEqualToString:myPublicId]) {
+            action = @"RequestContact";
+            [_contactManager requestContact:publicId];
+        }
+        else {
+            [self selfContactAlert];
+        }
     }
     else {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid Contact ID"
-                                                                       message:@"Please provide nickname or public ID"
+                                                                       message:@"Please provide a valid nickname or public ID"
                                                                 preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
                                                            style:UIAlertActionStyleDefault
@@ -151,6 +169,19 @@
         [self addContactComplete:info];
     }
     
+}
+
+- (void)selfContactAlert {
+
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid Contact ID"
+                                                                   message:@"You may not request contact with yourself"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:nil];
+    [alert addAction:okAction];
+    [self presentViewController:alert animated:YES completion:nil];
+
 }
 
 #pragma mark - Navigation

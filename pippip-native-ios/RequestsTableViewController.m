@@ -33,14 +33,14 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 
-    // Get the contact manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.contactManager;
-
 }
 
 -(void)viewWillAppear:(BOOL)animated {
 
+    // Get the contact manager
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _contactManager = delegate.accountSession.contactManager;
+    
     [_contactManager setViewController:self];
     [_contactManager setResponseConsumer:self];
     [_contactManager getRequests];

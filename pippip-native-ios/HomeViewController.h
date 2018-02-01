@@ -14,7 +14,7 @@
 
 - (void)authenticated:(NSString*)message;
 
-- (void) createAccount;
+- (void)createAccount:(NSString*)accountName withPassphrase:(NSString*)passphrase;
 
 - (void)updateStatus:(NSString*)status;
 

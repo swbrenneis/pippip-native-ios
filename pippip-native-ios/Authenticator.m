@@ -8,10 +8,8 @@
 
 #import "Authenticator.h"
 #import "AppDelegate.h"
-#import "AccountManager.h"
-#import "ContactManager.h"
+#import "AccountSession.h"
 #import "SessionState.h"
-#import "RESTSession.h"
 #import "AlertErrorDelegate.h"
 #import "UserVault.h"
 #import "AuthenticationRequest.h"
@@ -27,15 +25,12 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 @interface Authenticator ()
 {
-
     ProcessStep step;
-    RESTSession *session;
-    
+    SessionState *sessionState;
 }
 
-@property (weak, nonatomic) AccountManager *accountManager;
-@property (weak, nonatomic) ContactManager *contactManager;
 @property (weak, nonatomic) HomeViewController *viewController;
+@property (weak, nonatomic) RESTSession *session;
 
 @end
 
@@ -44,32 +39,27 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 @synthesize errorDelegate;
 @synthesize postPacket;
 
-- (instancetype)initWithViewController:(HomeViewController *)controller {
+- (instancetype)initWithViewController:(HomeViewController *)controller withRESTSession:(RESTSession *)restSession {
     self = [super init];
     
     _viewController = controller;
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
                                                              withTitle:@"Authentication Error"];
-    session = [[RESTSession alloc] init];
-    session.requestProcess = self;
-
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _accountManager = delegate.accountManager;
-    _contactManager = delegate.contactManager;
+    _session = restSession;
 
     return self;
     
 }
 
-- (void) authenticate {
+- (void)authenticate:(NSString*)accountName withPassphrase:(NSString *)passphrase {
 
     NSError *error = nil;
-    [_accountManager loadSessionState:&error];
+    [self loadSessionState:accountName withPassphrase:passphrase withError:&error];
     if (error == nil) {
         step = REQUEST;
         // Start the session.
         [_viewController updateStatus:@"Contacting the message server"];
-        [session startSession];
+        [_session startSession:self];
     }
     else {
         [errorDelegate sessionError:@"Invalid passphrase"];
@@ -77,31 +67,66 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 }
 
-- (void) doAuthorized {
+- (void)authenticated {
+
+    sessionState.authenticated = YES;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+        [delegate.accountManager loadConfig:sessionState.currentAccount];
+        [delegate.accountSession startSession:sessionState];
+        [delegate.accountSession.contactManager loadContacts];
+        [delegate.accountSession.messageManager loadMessages];
+    });
+
+}
+
+- (void)doAuthorized {
 
     step = AUTHORIZED;
-    postPacket = [[ServerAuthorized alloc] initWithState:_accountManager.sessionState];
+    postPacket = [[ServerAuthorized alloc] initWithState:sessionState];
     [_viewController updateStatus:@"Authorizing server"];
-    [session doPost];
+    [_session queuePost:self];
     
 }
 
 - (void)doChallenge {
 
     step = CHALLENGE;
-    postPacket = [[ClientAuthChallenge alloc] initWithState:_accountManager.sessionState];
+    postPacket = [[ClientAuthChallenge alloc] initWithState:sessionState];
     [_viewController updateStatus:@"Performing challenge"];
-    [session doPost];
+    [_session queuePost:self];
+
+}
+
+- (void)loadSessionState:(NSString*)accountName withPassphrase:(NSString*)passphrase withError:(NSError**)error {
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docPath = [paths objectAtIndex:0];
+    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
+    NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:accountName];
+    NSData *vaultData = [NSData dataWithContentsOfFile:vaultPath];
+    
+    sessionState = [[SessionState alloc] init];
+    UserVault *vault = [[UserVault alloc] initWithState:sessionState];
+    [vault decode:vaultData withPassword:passphrase withError:error];
+    sessionState.currentAccount = accountName;
     
 }
 
+/*
+ * This is invoked from the main thread.
+ */
 - (void) logout {
 
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    sessionState = delegate.accountSession.sessionState;
+    [delegate.accountSession endSession];
     step = LOGOUT;
-    postPacket = [[Logout alloc] initWithState:_accountManager.sessionState];
+    postPacket = [[Logout alloc] initWithState:sessionState];
     [_viewController updateStatus:@"Logging out"];
-    [session doPost];
-    
+    [_session queuePost:self];
+
 }
 
 - (void)postComplete:(NSDictionary*)response {
@@ -120,14 +145,11 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
                 break;
             case AUTHORIZED:
                 if ([self validateAuth:response]) {
-                    _accountManager.sessionState.authenticated = YES;
-                    [_accountManager loadConfig];
-                    [_contactManager loadContacts];
+                    [self authenticated];
                     [_viewController authenticated:@"Account authenticated. Online"];
                 }
                 break;
             case LOGOUT:
-                // Nothing to do.
                 break;
         }
         
@@ -147,13 +169,13 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
             [errorDelegate sessionError:@"Invalid server response, missing public key"];
         }
         else {
-            _accountManager.sessionState.sessionId = [sessionId intValue];
+            sessionState.sessionId = [sessionId intValue];
             CKPEMCodec *pem = [[CKPEMCodec alloc] init];
-            _accountManager.sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
+            sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
             step = REQUEST;
-            postPacket = [[AuthenticationRequest alloc] initWithState:_accountManager.sessionState];
+            postPacket = [[AuthenticationRequest alloc] initWithState:sessionState];
             [_viewController updateStatus:@"Requesting authentication"];
-            [session doPost];
+            [_session queuePost:self];
         }
     }
     
@@ -161,7 +183,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 - (BOOL) validateAuth:(NSDictionary*)response {
     
-    ClientAuthorized *authorized = [[ClientAuthorized alloc] initWithState:_accountManager.sessionState];
+    ClientAuthorized *authorized = [[ClientAuthorized alloc] initWithState:sessionState];
     return [authorized processResponse:response
                             errorDelegate:errorDelegate];
     
@@ -169,7 +191,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 - (BOOL) validateChallenge:(NSDictionary*)response {
     
-    ServerAuthChallenge *authChallenge = [[ServerAuthChallenge alloc] initWithState:_accountManager.sessionState];
+    ServerAuthChallenge *authChallenge = [[ServerAuthChallenge alloc] initWithState:sessionState];
     return [authChallenge processResponse:response
                             errorDelegate:errorDelegate];
     
@@ -177,7 +199,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 - (BOOL) validateResponse:(NSDictionary*)response {
     
-    AuthenticationResponse *authResponse = [[AuthenticationResponse alloc] initWithState:_accountManager.sessionState];
+    AuthenticationResponse *authResponse = [[AuthenticationResponse alloc] initWithState:sessionState];
     return [authResponse processResponse:response
                            errorDelegate:errorDelegate];
     

@@ -7,14 +7,13 @@
 //
 
 #import "AccountManager.h"
-#import "UserVault.h"
+//#import "UserVault.h"
 #import "ParameterGenerator.h"
 #import "NSData+HexEncode.h"
 #import "CKSHA1.h"
 
 @interface AccountManager ()
 {
-    // NSMutableDictionary *vaultMap;
     NSMutableDictionary *config;
     NSMutableArray *accountNames;
 }
@@ -23,25 +22,15 @@
 
 @implementation AccountManager
 
-+ (AccountManager*)loadManager {
+- (instancetype)initManager {
+    self = [super init];
 
-    AccountManager *manager = [[AccountManager alloc] init];
-    [manager loadAccounts:YES];
-    return manager;
+    [self loadAccounts:YES];
+
+    return self;
     
 }
 
-/*
--(void)addAccount:(NSString *)name {
-
-    CKSHA1 *sha1 = [[CKSHA1 alloc] init];
-    NSData *hash = [sha1 digest:[name dataUsingEncoding:NSUTF8StringEncoding]];
-    [vaultMap setObject:[hash encodeHexString] forKey:name];
-    [self storeAccounts];
-    accountNames = [vaultMap allKeys];
-
-}
-*/
 - (void)addWhitelistEntry:(NSDictionary *)entity {
 
     NSMutableArray *whitelist = config[@"whitelist"];
@@ -73,21 +62,13 @@
 
 }
 
-- (void) generateParameters {
-    
-    ParameterGenerator *generator = [[ParameterGenerator alloc] init];
-    [generator generateParameters:_currentAccount];
-    _sessionState = generator;
-    
-}
-
 - (id)getConfigItem:(NSString *)key {
 
     return config[key];
 
 }
 
-- (NSArray*) loadAccounts:(BOOL)setCurrentAccount {
+- (NSArray*)loadAccounts:(BOOL)setCurrentAccount {
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docPath = [paths objectAtIndex:0];
@@ -97,18 +78,17 @@
     accountNames = [vaultNames mutableCopy];
     if (accountNames.count > 0) {
         [accountNames removeObject:@".DS_Store"];
-        _currentAccount = accountNames[0];
     }
     return accountNames;
 
 }
 
-- (void) loadConfig {
+- (void)loadConfig:(NSString*)accountName {
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docPath = [paths objectAtIndex:0];
     NSString *configsPath = [docPath stringByAppendingPathComponent:@"PippipConfig"];
-    NSString *plistName = [_currentAccount stringByAppendingString:@".plist"];
+    NSString *plistName = [accountName stringByAppendingString:@".plist"];
     NSString *configPath = [configsPath stringByAppendingPathComponent:plistName];
 
     if (![[NSFileManager defaultManager] fileExistsAtPath:configPath]) {
@@ -129,20 +109,6 @@
 
 }
 
-- (void) loadSessionState:(NSError**)error {
-    
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docPath = [paths objectAtIndex:0];
-    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
-    NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:_currentAccount];
-    NSData *vaultData = [NSData dataWithContentsOfFile:vaultPath];
-    
-    _sessionState = [[SessionState alloc] init];
-    UserVault *vault = [[UserVault alloc] initWithState:_sessionState];
-    [vault decode:vaultData withPassword:_currentPassphrase withError:error];
-    
-}
-
 - (void)setConfigItem:(id)item withKey:(NSString *)key {
 
     config[key] = item;
@@ -158,22 +124,13 @@
                     [NSArray arrayWithObjects:@"contactPolicy", @"loadContacts", nil]];
 
 }
-/*
-- (void)storeAccounts {
 
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docsDir = paths[0];
-    NSString *accountsPath = [NSString stringWithFormat:@"%@/accounts", docsDir];
-    [vaultMap writeToFile:accountsPath atomically:YES];
-
-}
-*/
-- (void) storeConfig {
+- (void)storeConfig:(NSString*)accountName {
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docPath = [paths objectAtIndex:0];
     NSString *configsPath = [docPath stringByAppendingPathComponent:@"PippipConfig"];
-    NSString *plistName = [_currentAccount stringByAppendingString:@".plist"];
+    NSString *plistName = [accountName stringByAppendingString:@".plist"];
     NSString *configPath = [configsPath stringByAppendingPathComponent:plistName];
 
     NSError *error = nil;
@@ -196,31 +153,6 @@
 
 }
 
-- (void) storeVault {
-
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docPath = [paths objectAtIndex:0];
-    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
-    NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:_currentAccount];
-    
-    UserVault *vault = [[UserVault alloc] initWithState:_sessionState];
-    NSData *vaultData = [vault encode:_currentPassphrase];
-    
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager createDirectoryAtPath:vaultsPath
-           withIntermediateDirectories:NO
-                            attributes:nil
-                                 error:nil];
-    [vaultData writeToFile:vaultPath atomically:YES];
-    
-}
-/*
-- (NSString*)getVaultName:(NSString *)accountName {
-
-    return [vaultMap objectForKey:accountName];
-
-}
-*/
 - (NSInteger)whitelistCount {
 
     NSArray *whitelist = config[@"whitelist"];

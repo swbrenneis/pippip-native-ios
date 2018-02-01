@@ -19,6 +19,8 @@
 
 - (void)generateParameters:(NSString *)accountName {
 
+    self.currentAccount = accountName;
+
     CKSecureRandom *rnd = [[CKSecureRandom alloc] init];
 
     // Create generated password.

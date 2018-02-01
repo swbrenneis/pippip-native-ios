@@ -32,14 +32,13 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 
-    // Get the contact manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.contactManager;
-    [_contactManager setViewController:self];
-
 }
 
-- (void)viewDidAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated {
+
+    // Get the contact manager
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _contactManager = delegate.accountSession.contactManager;
     
     [self.tableView reloadData];
     
@@ -99,8 +98,7 @@
 - (IBAction)unwindAfterRequestAdded:(UIStoryboardSegue*)segue {
 
     AddContactViewController *view = (AddContactViewController*)segue.sourceViewController;
-    [_contactManager addContact:view.addedContact];
-    [_contactManager storeContacts];
+    [_contactManager addLocalContact:view.addedContact];
     [self.view setNeedsDisplay];
     
 }

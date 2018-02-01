@@ -225,7 +225,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kDo-kc-Eq2" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="09H-YN-fh0" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2442" y="163"/>
+            <point key="canvasLocation" x="2780" y="162.3688155922039"/>
         </scene>
         <!--Contact Detail View Controller-->
         <scene sceneID="4tU-Iz-qSg">
@@ -332,7 +332,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="B4O-rO-rPe" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="mBM-pB-tOz" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2440.8000000000002" y="859.52023988005999"/>
+            <point key="canvasLocation" x="2780" y="859.52023988005999"/>
         </scene>
         <!--Accounts Table View Controller-->
         <scene sceneID="36H-wK-Kvu">
@@ -937,14 +937,14 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Public ID" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3bM-sg-CPS">
-                                <rect key="frame" x="15" y="115" width="60.5" height="18"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1234567890123456789012345678901234567890" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3bM-sg-CPS">
+                                <rect key="frame" x="15" y="115" width="333.5" height="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eGE-4T-5GL">
-                                <rect key="frame" x="127" y="159" width="121" height="30"/>
+                                <rect key="frame" x="127" y="157" width="121" height="30"/>
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                                 <state key="normal" title="Approve Request">
                                     <color key="titleColor" red="0.0" green="0.56031829119999998" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -954,7 +954,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cST-9V-hJB">
-                                <rect key="frame" x="134" y="209" width="106" height="30"/>
+                                <rect key="frame" x="134" y="207" width="106" height="30"/>
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                                 <state key="normal" title="Reject Request">
                                     <color key="titleColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -964,7 +964,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Se9-Fu-xxN">
-                                <rect key="frame" x="139.5" y="259" width="95" height="30"/>
+                                <rect key="frame" x="139.5" y="257" width="95" height="30"/>
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                                 <state key="normal" title="Hide Request"/>
                                 <connections>
@@ -974,16 +974,16 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="3bM-sg-CPS" firstAttribute="top" secondItem="9ZL-79-fwl" secondAttribute="bottom" constant="5" id="5KO-XS-aG0"/>
+                            <constraint firstItem="3bM-sg-CPS" firstAttribute="leading" secondItem="9ZL-79-fwl" secondAttribute="leading" id="73s-L0-TX0"/>
                             <constraint firstItem="cST-9V-hJB" firstAttribute="centerX" secondItem="GZn-zr-adS" secondAttribute="centerX" id="9bY-DU-j7h"/>
                             <constraint firstItem="Se9-Fu-xxN" firstAttribute="top" secondItem="cST-9V-hJB" secondAttribute="bottom" constant="20" id="Ell-IE-1Jd"/>
-                            <constraint firstItem="3bM-sg-CPS" firstAttribute="leading" secondItem="9ZL-79-fwl" secondAttribute="leading" id="Ob4-Hu-hKx"/>
-                            <constraint firstItem="eGE-4T-5GL" firstAttribute="centerX" secondItem="GZn-zr-adS" secondAttribute="centerX" id="Xal-cH-tTE"/>
+                            <constraint firstItem="eGE-4T-5GL" firstAttribute="centerX" secondItem="GZn-zr-adS" secondAttribute="centerX" id="Zcy-H3-mfH"/>
+                            <constraint firstItem="9ZL-79-fwl" firstAttribute="top" secondItem="EV9-mw-3sl" secondAttribute="top" constant="25" id="a8Q-Xg-bIL"/>
                             <constraint firstItem="Se9-Fu-xxN" firstAttribute="centerX" secondItem="GZn-zr-adS" secondAttribute="centerX" id="bPY-Xr-jbf"/>
-                            <constraint firstItem="eGE-4T-5GL" firstAttribute="top" secondItem="EV9-mw-3sl" secondAttribute="top" constant="95" id="mab-YF-5ub"/>
-                            <constraint firstItem="9ZL-79-fwl" firstAttribute="top" secondItem="EV9-mw-3sl" secondAttribute="top" constant="25" id="o4h-uf-iCn"/>
-                            <constraint firstItem="9ZL-79-fwl" firstAttribute="leading" secondItem="EV9-mw-3sl" secondAttribute="leading" constant="15" id="spJ-xz-EQ6"/>
-                            <constraint firstItem="cST-9V-hJB" firstAttribute="top" secondItem="eGE-4T-5GL" secondAttribute="bottom" constant="20" id="uG7-sg-7gF"/>
+                            <constraint firstItem="3bM-sg-CPS" firstAttribute="top" secondItem="9ZL-79-fwl" secondAttribute="bottom" constant="5" id="bhw-oV-1mI"/>
+                            <constraint firstItem="eGE-4T-5GL" firstAttribute="top" secondItem="3bM-sg-CPS" secondAttribute="bottom" constant="25" id="jAB-CG-vRd"/>
+                            <constraint firstItem="9ZL-79-fwl" firstAttribute="leading" secondItem="EV9-mw-3sl" secondAttribute="leading" constant="15" id="vid-A0-0by"/>
+                            <constraint firstItem="cST-9V-hJB" firstAttribute="top" secondItem="eGE-4T-5GL" secondAttribute="bottom" constant="20" id="vsQ-bm-WiV"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="EV9-mw-3sl"/>
                     </view>
@@ -1010,7 +1010,7 @@
                     <connections>
                         <segue destination="9pv-A4-QxB" kind="relationship" relationship="viewControllers" id="u7Y-xg-7CH"/>
                         <segue destination="97m-2f-Rnt" kind="relationship" relationship="viewControllers" id="8jC-es-Qi7"/>
-                        <segue destination="DX8-6Y-FRo" kind="relationship" relationship="viewControllers" id="7ln-vg-jBg"/>
+                        <segue destination="FDw-Rg-cSV" kind="relationship" relationship="viewControllers" id="7ln-vg-jBg"/>
                         <segue destination="d5L-gm-f7z" kind="relationship" relationship="viewControllers" id="Zic-5b-hsV"/>
                     </connections>
                 </tabBarController>
@@ -1027,7 +1027,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="tfh-mb-1Ro">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MessageCell" id="tfh-mb-1Ro">
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tfh-mb-1Ro" id="7Kw-Dr-ynJ">
@@ -1041,14 +1041,16 @@
                             <outlet property="delegate" destination="DX8-6Y-FRo" id="CIS-4y-xhk"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Messages" image="icons8-Message Filled-50" selectedImage="icons8-Message Filled-50" id="Ftp-pL-deN"/>
+                    <navigationItem key="navigationItem" title="Messages" id="94v-RB-sPe">
+                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="l5m-Ia-Vl4"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="messagesTabBarItem" destination="Ftp-pL-deN" id="w3U-Te-is5"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gsW-xu-IBx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1041" y="358"/>
+            <point key="canvasLocation" x="1380" y="357.57121439280365"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Ca3-tb-Ebb">
@@ -1107,6 +1109,25 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VLA-R6-GGJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2231" y="4473"/>
+        </scene>
+        <!--Messages-->
+        <scene sceneID="gU1-L0-REI">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="FDw-Rg-cSV" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Messages" image="icons8-Message Filled-50" selectedImage="icons8-Message Filled-50" id="Ftp-pL-deN"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="5cy-f9-qES">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="DX8-6Y-FRo" kind="relationship" relationship="rootViewController" id="W0n-ON-N9c"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xob-Ql-0oM" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1040" y="357.12143928035982"/>
         </scene>
     </scenes>
     <resources>

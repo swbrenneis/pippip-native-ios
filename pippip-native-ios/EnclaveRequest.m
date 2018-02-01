@@ -8,7 +8,6 @@
 
 #import "EnclaveRequest.h"
 #import "CKGCMCodec.h"
-#import "NSData+HexEncode.h"
 
 @interface EnclaveRequest ()
 {
@@ -59,7 +58,7 @@
     CKGCMCodec *codec = [[CKGCMCodec alloc] init];
     [codec putString:json];
     NSData *encoded = [codec encrypt:sessionState.enclaveKey withAuthData:sessionState.authData];
-    packet[@"request"] = [encoded encodeHexString];
+    packet[@"request"] = [encoded base64EncodedStringWithOptions:0];
 
 }
 

@@ -7,15 +7,8 @@
 //
 
 #import "MoreTableViewController.h"
-#import "AccountManager.h"
-#import "ContactManager.h"
-#import "AppDelegate.h"
-#import "NicknameViewController.h"
 
 @interface MoreTableViewController ()
-
-@property (weak, nonatomic) AccountManager *accountManager;
-@property (weak, nonatomic) ContactManager *contactManager;
 
 @property (nonatomic) UIActivityIndicatorView *activityIndicator;
 
@@ -31,11 +24,6 @@
     [self.view addSubview:_activityIndicator];
     _activityIndicator.center = self.view.center;
 
-    // Get the account manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _accountManager = delegate.accountManager;
-    _contactManager = delegate.contactManager;
-    
 }
 
 - (void)didReceiveMemoryWarning {

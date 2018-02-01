@@ -20,16 +20,15 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 @interface ContactManager ()
 {
-
     ContactDatabase *contacts;
-    RESTSession *session;
     ContactRequest contactRequest;
-
 }
 
-@property (weak, nonatomic) AccountManager *accountManager;
+//@property (weak, nonatomic) AccountManager *accountManager;
 @property (weak, nonatomic) UIViewController *viewController;
 @property (weak, nonatomic) id<ResponseConsumer> responseConsumer;
+@property (weak, nonatomic) SessionState *sessionState;
+@property (weak, nonatomic) RESTSession *session;
 
 @end
 
@@ -38,13 +37,12 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 @synthesize errorDelegate;
 @synthesize postPacket;
 
-- (instancetype)initWithAccountManager:(AccountManager *)manager {
+- (instancetype)initWithRESTSession:(RESTSession *)restSession {
     self = [super init];
 
-    _accountManager = manager;
-    contacts = [[ContactDatabase alloc] initWithAccountManager:manager];
-    session = [[RESTSession alloc] init];
-    session.requestProcess = self;
+    _session = restSession;
+    contacts = [[ContactDatabase alloc] init];
+
     return self;
 
 }
@@ -59,21 +57,25 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     
 }
 
-- (void)addContact:(NSMutableDictionary *)entity {
-
-    NSString *publicId = entity[@"publicId"];
-    [contacts addContact:entity withId:publicId];
-    [contacts storeContacts];
-
-}
-
 - (void)addFriend:(NSString *)publicId {
-
+    
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
     request[@"method"] = @"UpdateWhitelist";
     request[@"action"] = @"add";
     request[@"id"] = publicId;
     [self sendRequest:request];
+    
+}
+
+- (void)addLocalContact:(NSMutableDictionary *)entity {
+
+    NSString *publicId = entity[@"publicId"];
+    [contacts addContact:entity withId:publicId];
+    [contacts storeContacts:_sessionState.currentAccount];
+
+}
+
+- (void)addNewMessages:(NSArray *)messages {
     
 }
 
@@ -89,14 +91,19 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 }
 
-- (void)createNickname:(NSString *)nickname {
+- (void)contactsUpdated {
+
+    [contacts storeContacts:_sessionState.currentAccount];
+
+}
+
+- (void)createNickname:(NSString *)nickname withOldNickname:(NSString *)oldNickname {
     
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
     request[@"method"] = @"SetNickname";
     if (nickname != nil) {
         request[@"newNickname"] = nickname;
     }
-    NSString *oldNickname = [_accountManager getConfigItem:@"nickname"];
     if (oldNickname != nil) {
         request[@"oldNickname"] = oldNickname;
     }
@@ -126,7 +133,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 - (void)deleteLocalContact:(NSString *)publicId {
 
     [contacts deleteContact:publicId];
-    [contacts storeContacts];
+    [contacts storeContacts:_sessionState.currentAccount];
 
 }
 
@@ -145,6 +152,17 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     
 }
 
+- (NSArray*)getPendingContacts {
+
+    NSMutableArray *pending = [NSMutableArray array];
+    NSArray *filtered = [contacts getContacts:@"pending"];
+    for (NSDictionary *entity in filtered) {
+        [pending addObject:entity[@"publicId"]];
+    }
+    return pending;
+
+}
+
 - (void)getRequests {
 
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
@@ -153,9 +171,20 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     
 }
 
+- (NSArray*)getContactIds {
+
+    NSArray *contactArray = [contacts getContacts:@"accepted"];
+    NSMutableArray *idArray = [NSMutableArray array];
+    for (NSDictionary *contact in contactArray) {
+        [idArray addObject:contact[@"publicId"]];
+    }
+    return idArray;
+
+}
+
 - (void)loadContacts {
 
-    [contacts loadContacts];
+    [contacts loadContacts:_sessionState];
 
 }
 
@@ -171,7 +200,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 - (void)postComplete:(NSDictionary*)response {
 
     if (response != nil) {
-        EnclaveResponse *enclaveResponse = [[EnclaveResponse alloc] initWithState:_accountManager.sessionState];
+        EnclaveResponse *enclaveResponse = [[EnclaveResponse alloc] initWithState:_sessionState];
         if ([enclaveResponse processResponse:response errorDelegate:errorDelegate]) {
             NSDictionary *contactResponse = [enclaveResponse getResponse];
             if (contactResponse != nil && _responseConsumer != nil) {
@@ -193,11 +222,11 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 - (void)sendRequest:(NSDictionary*)request {
     
-    EnclaveRequest *enclaveRequest = [[EnclaveRequest alloc] initWithState:_accountManager.sessionState];
+    EnclaveRequest *enclaveRequest = [[EnclaveRequest alloc] initWithState:_sessionState];
     [enclaveRequest setRequest:request];
 
     postPacket = enclaveRequest;
-    [session doPost];
+    [_session queuePost:self];
     
 }
 
@@ -217,7 +246,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 - (void)setContacts:(NSMutableArray *)newContacts {
 
     [contacts syncContacts:newContacts];
-    [contacts storeContacts];
+    [contacts storeContacts:_sessionState.currentAccount];
 
 }
 
@@ -225,7 +254,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
     NSMutableDictionary *entity = [contacts getContact:publicId];
     entity[@"nickname"] = nickname;
-    [contacts storeContacts];
+    [contacts storeContacts:_sessionState.currentAccount];
 
 }
 
@@ -233,17 +262,15 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     _responseConsumer = consumer;
 }
 
+- (void)setSessionState:(SessionState *)state {
+    _sessionState = state;
+}
+
 - (void)setViewController:(UIViewController *)controller {
 
     _viewController = controller;
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
                                                              withTitle:@"Contact Error"];
-
-}
-
-- (void)storeContacts {
-
-    [contacts storeContacts];
 
 }
 

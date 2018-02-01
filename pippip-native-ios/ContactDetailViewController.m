@@ -32,14 +32,14 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    // Get the contact manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.contactManager;
-
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
+    // Get the contact manager
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _contactManager = delegate.accountSession.contactManager;
+    
     [_nicknameSavedLabel setHidden:YES];
     [_nicknameNotAvailableLabel setHidden:YES];
 
@@ -54,15 +54,19 @@
     NSNumber *ts = _contact[@"timestamp"];
     NSInteger timestamp = [ts longValue];
 
-    // Some good old fashioned C
-    struct tm *tm_info;
-    char buffer[26];
-
-    tm_info = localtime(&timestamp);
-    strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_info);
-    
-    _timestampLabel.text = [NSString stringWithUTF8String:buffer];
-    
+    if (timestamp > 0) {
+        // Some good old fashioned C
+        struct tm *tm_info;
+        char buffer[26];
+        
+        tm_info = localtime(&timestamp);
+        strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_info);
+        
+        _timestampLabel.text = [NSString stringWithUTF8String:buffer];
+    }
+    else {
+        _timestampLabel.text = @"Never";
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -132,7 +136,9 @@
                                                             preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
                                                        style:UIAlertActionStyleDefault
-                                                     handler:nil];
+                                                     handler:^(UIAlertAction *action) {
+                                                         [self performSegueWithIdentifier:@"UnwindAfterDelete" sender:self];
+                                                     }];
     [alert addAction:okAction];
     
     [self presentViewController:alert animated:YES completion:nil];
@@ -158,7 +164,7 @@
         [_contactManager deleteLocalContact:_contact[@"publicId"]];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self deletedAlert];
-            [self performSegueWithIdentifier:@"UnwindAfterDelete" sender:self];
+
         });
     }
 

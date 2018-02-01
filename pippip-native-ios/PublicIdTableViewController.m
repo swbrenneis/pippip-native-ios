@@ -8,7 +8,7 @@
 
 #import "PublicIdTableViewController.h"
 #import "AppDelegate.h"
-#import "AccountManager.h"
+#import "AccountSession.h"
 
 @interface PublicIdTableViewController ()
 
@@ -19,10 +19,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    // Get the account manager
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    AccountManager *accountManager = delegate.accountManager;
-    _publicIdCellTitle.text = accountManager.sessionState.publicId;
+    _publicIdCellTitle.text = delegate.accountSession.sessionState.publicId;
 
 }
 

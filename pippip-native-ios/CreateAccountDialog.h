@@ -8,12 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "HomeViewController.h"
-#import "AccountManager.h"
 
 @interface CreateAccountDialog : NSObject
 
-- (instancetype) initWithViewController:(HomeViewController*)controller
-                     withAccountManager:(AccountManager*) manager;
+- (instancetype) initWithViewController:(HomeViewController*)controller;
 
 - (void) present;
 

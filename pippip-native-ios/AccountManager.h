@@ -7,41 +7,26 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SessionState.h"
 
 @interface AccountManager : NSObject
 
-@property (nonatomic) NSString *currentAccount;
-@property (nonatomic) NSString *currentPassphrase;
-@property (nonatomic) SessionState *sessionState;
-
-+(AccountManager*)loadManager;
-
-//- (void)addAccount:(NSString*)name;
+- (instancetype)initManager;
 
 - (void)addWhitelistEntry:(NSDictionary*)entity;
 
 - (void)deleteWhitelistEntry:(NSDictionary*)entity;
 
-- (void)generateParameters;
-
 - (id)getConfigItem:(NSString*)key;
 
-//- (NSString*)getVaultName:(NSString*)accountName;
+- (NSArray*)loadAccounts:(BOOL)setCurrentAccount;
 
-- (NSArray*) loadAccounts:(BOOL)setCurrentAccount;
-
-- (void)loadConfig;
-
-- (void)loadSessionState:(NSError**)error;
+- (void)loadConfig:(NSString*)accountName;
 
 - (void)setConfigItem:(id)item withKey:(NSString*)key;
 
 - (void)setDefaultConfig;
 
-- (void)storeConfig;
-
-- (void)storeVault;
+- (void)storeConfig:(NSString*)accountName;
 
 - (NSInteger)whitelistCount;
 

@@ -7,7 +7,6 @@
 //
 
 #import "EnclaveResponse.h"
-#import "NSData+HexEncode.h"
 #import "CKGCMCodec.h"
 
 @interface EnclaveResponse ()
@@ -42,13 +41,13 @@
         return NO;
     }
 
-    NSError *error = nil;
-    NSData *responseData = [NSData dataWithHexString:responseStr withError:&error];
-    if (error != nil) {
-        [errorDelegate responseError:[error localizedDescription]];
+    NSData *responseData = [[NSData alloc] initWithBase64EncodedString:responseStr options:0];
+    if (responseData == nil) {
+        [errorDelegate responseError:@"Server encoding error"];
         return NO;
     }
     
+    NSError *error = nil;
     CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:responseData];
     [codec decrypt:sessionState.enclaveKey withAuthData:sessionState.authData withError:&error];
     if (error != nil) {

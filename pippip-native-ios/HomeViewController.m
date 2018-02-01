@@ -13,13 +13,15 @@
 #import "AppDelegate.h"
 #import "SessionState.h"
 #import "AccountManager.h"
-
 #import "TabBarDelegate.h"
+#import "RESTSession.h"
 
 @interface HomeViewController ()
 {
     TabBarDelegate *tabBarDelegate;
     NSArray *accountNames;
+    NSString *selectedAccount;
+    NSString *passphrase;
 }
 
 @property (weak, nonatomic) IBOutlet UIPickerView *accountPickerView;
@@ -30,6 +32,7 @@
 
 @property (nonatomic) UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) AccountManager *accountManager;
+@property (weak, nonatomic) RESTSession *session;
 
 @end
 
@@ -43,27 +46,33 @@
     [self.view addSubview:_activityIndicator];
     _activityIndicator.center = self.view.center;
 
-    // Get the account manager
+    // Get the account manager and REST client
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _accountManager = delegate.accountManager;
+    _session = delegate.restSession;
 
     // Connect the picker.
     self.accountPickerView.delegate = self;
     self.accountPickerView.dataSource = self;
 
+    tabBarDelegate = [[TabBarDelegate alloc] init];
+    UITabBarController *tabBar = (UITabBarController*)delegate.window.rootViewController;
+    [tabBar setDelegate:tabBarDelegate];
 
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     accountNames = [_accountManager loadAccounts:NO];
-    if (!_accountManager.sessionState.authenticated) {
+    if (delegate.accountSession == nil || !delegate.accountSession.sessionState.authenticated) {
         // Enable sign in if there are accounts on this device. Set the status accordingly.
         if (accountNames.count == 0) {
             [self.authButton setHidden:YES];
             _defaultMessage = @"Please create a new account";
         }
         else {
+            selectedAccount = accountNames[0];
             [self.authButton setHidden:NO];
             _defaultMessage = @"Sign in or create a new account";
         }
@@ -110,24 +119,21 @@
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
 
     if (row < accountNames.count) {
-        _accountManager.currentAccount = accountNames[row];
+        selectedAccount = accountNames[row];
     }
 
 }
 
 - (IBAction)signoutClicked:(UIButton *)sender {
 
-    [_accountManager storeConfig];
+    Authenticator *auth = [[Authenticator alloc] initWithViewController:self withRESTSession:_session];
+    [auth logout];
     [_accountManager loadAccounts:NO];
     [_accountPickerView reloadAllComponents];
-    Authenticator *auth = [[Authenticator alloc] initWithViewController:self];
-    [auth logout];
-    _accountManager.sessionState.authenticated = NO;
     [self.createAccountButton setHidden:NO];
     [self.authButton setHidden:NO];
     [self.accountPickerView setHidden:NO];
     [self.signoutButton setHidden:YES];
-    [self.accountPickerView reloadAllComponents];
     [self updateStatus:@"Sign in or create a new account"];
 
 }
@@ -135,7 +141,7 @@
 - (IBAction)authClicked:(UIButton *)sender {
 
     UIAlertController *dialog = [UIAlertController alertControllerWithTitle:@"Authentication"
-                                                                    message:_accountManager.currentAccount
+                                                                    message:selectedAccount
                                                              preferredStyle:UIAlertControllerStyleAlert];
 
     [dialog addTextFieldWithConfigurationHandler:^(UITextField* textField) {
@@ -146,14 +152,14 @@
     UIAlertAction *createAction = [UIAlertAction actionWithTitle:@"Log In"
                                                            style:UIAlertActionStyleDefault
                                                          handler:^(UIAlertAction *action) {
-                                                             _accountManager.currentPassphrase = dialog.textFields[0].text;
+                                                             passphrase = dialog.textFields[0].text;
                                                              [self authenticate];
                                                          }];
     
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
                                                            style:UIAlertActionStyleCancel
                                                          handler:^(UIAlertAction* action) {
-                                                         _accountManager.currentPassphrase = nil;
+                                                             passphrase = nil;
                                                          }];
     
     [dialog addAction:createAction];
@@ -167,24 +173,23 @@
 
     [_activityIndicator startAnimating];
     [_createAccountButton setHidden:YES];
-    Authenticator *auth = [[Authenticator alloc] initWithViewController:self];
-    [auth authenticate];
+    Authenticator *auth = [[Authenticator alloc] initWithViewController:self withRESTSession:_session];
+    [auth authenticate:selectedAccount withPassphrase:passphrase];
     
 }
 
 - (IBAction)createAccountClicked:(UIButton *)sender {
 
-    CreateAccountDialog *dialog = [[CreateAccountDialog alloc] initWithViewController:self
-                                                                   withAccountManager:_accountManager];
+    CreateAccountDialog *dialog = [[CreateAccountDialog alloc] initWithViewController:self];
     [dialog present];
 
 }
 
-- (void)createAccount {
+- (void)createAccount:(NSString*)accountName withPassphrase:(NSString *)passphrase {
 
     [_activityIndicator startAnimating];
-    NewAccountCreator *creator = [[NewAccountCreator alloc] initWithViewController:self];
-    [creator createAccount:_accountManager];
+    NewAccountCreator *creator = [[NewAccountCreator alloc] initWithViewController:self withRESTSession:_session];
+    [creator createAccount:accountName withPassphrase:passphrase];
 
 }
 
@@ -193,6 +198,8 @@
     [self updateActivityIndicator:NO];
     [self updateStatus:message];
     dispatch_async(dispatch_get_main_queue(), ^{
+        [_accountManager loadAccounts:NO];
+        [_accountPickerView reloadAllComponents];
         [self.createAccountButton setHidden:YES];
         [self.authButton setHidden:YES];
         [self.accountPickerView setHidden:YES];

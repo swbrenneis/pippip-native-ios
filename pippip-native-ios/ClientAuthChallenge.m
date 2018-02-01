@@ -11,7 +11,6 @@
 #import "CKHMAC.h"
 #import "CKRSAPrivateKey.h"
 #import "CKSignature.h"
-#import "NSData+HexEncode.h"
 
 @interface ClientAuthChallenge ()
 {
@@ -47,11 +46,11 @@
     [message appendData:[tag dataUsingEncoding:NSUTF8StringEncoding]];
     [mac setMessage:message];
     NSData *hmac = [mac getHMAC];
-    [packet setObject:[hmac encodeHexString] forKey:@"hmac"];
+    packet[@"hmac"] = [hmac base64EncodedStringWithOptions:0];
 
     CKSignature *sig = [[CKSignature alloc] initWithSHA256];
     NSData *signature = [sig sign:sessionState.userPrivateKey withMessage:hmac];
-    [packet setObject:[signature encodeHexString] forKey:@"signature"];
+    packet[@"signature"] = [signature base64EncodedStringWithOptions:0];
 
     return packet;
 

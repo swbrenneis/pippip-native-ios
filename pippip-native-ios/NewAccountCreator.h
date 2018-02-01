@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "RequestProcess.h"
 #import "HomeViewController.h"
-#import "AccountManager.h"
+#import "RESTSession.h"
 
 @interface NewAccountCreator : NSObject <RequestProcess>
 
-- (instancetype) initWithViewController:(HomeViewController*)controller;
+- (instancetype) initWithViewController:(HomeViewController*)controller withRESTSession:(RESTSession*) restSession;
 
-- (void) createAccount:(AccountManager*)manager;
+- (void) createAccount:(NSString*)accountName withPassphrase:(NSString*)passphrase;
 
 @end

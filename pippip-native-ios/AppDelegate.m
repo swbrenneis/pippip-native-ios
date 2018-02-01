@@ -18,8 +18,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-    _accountManager = [AccountManager loadManager];
-    _contactManager = [[ContactManager alloc] initWithAccountManager:_accountManager];
+    _accountManager = [[AccountManager alloc] initManager];
+    _restSession = [[RESTSession alloc] init];
+    _accountSession = [[AccountSession alloc] initWithRESTSession:_restSession];
 
     return YES;
 

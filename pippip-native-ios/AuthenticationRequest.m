@@ -9,7 +9,6 @@
 #import "AuthenticationRequest.h"
 #import "CKRSACodec.h"
 #import "CKSecureRandom.h"
-#import "NSData+HexEncode.h"
 
 @interface AuthenticationRequest ()
 {
@@ -40,7 +39,7 @@
     [codec putBlock:sessionState.svpswSalt];
     [codec putBlock:sessionState.clientAuthRandom];
     NSData *data = [codec encrypt:sessionState.serverPublicKey];
-    [packet setObject:[data encodeHexString] forKey:@"data"];
+    packet[@"data"] = [data base64EncodedStringWithOptions:0];
 
     return packet;
     

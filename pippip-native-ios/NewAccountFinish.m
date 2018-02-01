@@ -39,7 +39,7 @@
     [codec putBlock:_sessionState.enclaveKey];
     [codec putBlock:_sessionState.svpswSalt];
     NSData *data = [codec encrypt:_sessionState.serverPublicKey];
-    [packet setObject:[data encodeHexString] forKey:@"data"];
+    packet[@"data"] = [data base64EncodedStringWithOptions:0];
 
     return packet;
 

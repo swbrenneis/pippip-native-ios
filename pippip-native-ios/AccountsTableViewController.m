@@ -14,6 +14,8 @@
     NSArray *accountNames;
 }
 
+@property (weak, nonatomic) SessionState *sessionState;
+
 @end
 
 @implementation AccountsTableViewController
@@ -34,6 +36,8 @@
 
 - (void)viewWillAppear:(BOOL)animated {
 
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _sessionState = delegate.accountSession.sessionState;
     accountNames = [_accountManager loadAccounts:NO];
 
 }
@@ -67,7 +71,7 @@
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the specified item to be editable.
     NSString *toEdit = accountNames[indexPath.item];
-    return ![toEdit isEqualToString:_accountManager.currentAccount];
+    return ![toEdit isEqualToString:_sessionState.currentAccount];
 
 }
 

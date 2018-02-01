@@ -13,9 +13,8 @@
 
 @interface ContactPolicyViewController ()
 {
-
     NSString *selectedPolicy;
-
+    NSString *accountName;
 }
 
 @property (weak, nonatomic) AccountManager *accountManager;
@@ -34,12 +33,14 @@
     // Get the account manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _accountManager = delegate.accountManager;
-    _contactManager = delegate.contactManager;
 
 }
 
 -(void)viewWillAppear:(BOOL)animated {
 
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _contactManager = delegate.accountSession.contactManager;
+    accountName = delegate.accountSession.sessionState.currentAccount;
     selectedPolicy = [_accountManager getConfigItem:@"contactPolicy"];
     if ([selectedPolicy isEqualToString:@"public"]) {
         [_contactPolicySwitch setOn:YES animated:YES];
@@ -60,7 +61,7 @@
     NSString *result = info[@"result"];
     if ([result isEqualToString:@"policySet"]) {
         [_accountManager setConfigItem:selectedPolicy withKey:@"contactPolicy"];
-        [_accountManager storeConfig];
+        [_accountManager storeConfig:accountName];
         [self performSegueWithIdentifier:@"unwindAfterSave" sender:self];
     }
 

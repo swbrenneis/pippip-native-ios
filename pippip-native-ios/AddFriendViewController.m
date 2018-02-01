@@ -24,14 +24,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    // Get the contact manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.contactManager;
-
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
+    // Get the contact manager
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _contactManager = delegate.accountSession.contactManager;
+    
     _nicknameTextField.text = @"";
     _publicIdTextField.text = @"";
 

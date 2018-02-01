@@ -7,7 +7,6 @@
 //
 
 #import "NewAccountResponse.h"
-#import "NSData+HexEncode.h"
 #import "CKRSACodec.h"
 
 @interface NewAccountResponse ()
@@ -39,13 +38,13 @@
         return NO;
     }
     else {
-        NSError *error = nil;
-        NSData *data = [NSData dataWithHexString:dataStr withError:&error];
-        if (error != nil) {
-            [errorDelegate responseError:[error localizedDescription]];
+        NSData *data = [[NSData alloc] initWithBase64EncodedString:dataStr options:0];
+        if (data == nil) {
+            [errorDelegate responseError:@"Response encoding error"];
             return NO;
         }
         else {
+            NSError *error;
             CKRSACodec *codec = [[CKRSACodec alloc] initWithData:data];
             [codec decrypt:sessionState.userPrivateKey withError:&error];
             if (error != nil) {

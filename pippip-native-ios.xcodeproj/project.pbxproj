@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		551050FF201F8840000A313E /* MessagesDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 551050FE201F8840000A313E /* MessagesDatabase.m */; };
+		55105102201F8880000A313E /* MessageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 55105101201F8880000A313E /* MessageManager.m */; };
+		551051042020B648000A313E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 551051032020B648000A313E /* Realm.framework */; };
+		551051052020B648000A313E /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 551051032020B648000A313E /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		551051082020BC36000A313E /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 551051072020BC36000A313E /* Message.m */; };
 		551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183E1FA0FA030050C93C /* NewAccountFinish.m */; };
 		551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A18411FA0FA740050C93C /* NewAccountFinal.m */; };
 		5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */; };
@@ -28,6 +33,8 @@
 		554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17361FDD5990009434F5 /* MoreTableViewController.m */; };
 		555E22FD2006C8CD0098A099 /* RequestsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 555E22FC2006C8CD0098A099 /* RequestsTableViewController.m */; };
 		5566664320169ADA00051ED2 /* ContactDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5566664220169ADA00051ED2 /* ContactDetailViewController.m */; };
+		55666646201A68AF00051ED2 /* AccountSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 55666645201A68AF00051ED2 /* AccountSession.m */; };
+		55666649201B7C9000051ED2 /* LoggingErrorDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 55666648201B7C9000051ED2 /* LoggingErrorDelegate.m */; };
 		5570AD191FDF039B00724B34 /* ContactPolicyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5570AD181FDF039B00724B34 /* ContactPolicyViewController.m */; };
 		557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238A91F8C43F600A13A14 /* AccountManager.m */; };
 		557238B31F8C6B0C00A13A14 /* NSData+HexEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238B21F8C6B0C00A13A14 /* NSData+HexEncode.m */; };
@@ -127,6 +134,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				551051052020B648000A313E /* Realm.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -134,6 +142,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		551050FD201F8840000A313E /* MessagesDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessagesDatabase.h; sourceTree = "<group>"; };
+		551050FE201F8840000A313E /* MessagesDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessagesDatabase.m; sourceTree = "<group>"; };
+		55105100201F8880000A313E /* MessageManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageManager.h; sourceTree = "<group>"; };
+		55105101201F8880000A313E /* MessageManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessageManager.m; sourceTree = "<group>"; };
+		551051032020B648000A313E /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
+		551051062020BC36000A313E /* Message.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		551051072020BC36000A313E /* Message.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 		551A183D1FA0FA030050C93C /* NewAccountFinish.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinish.h; sourceTree = "<group>"; };
 		551A183E1FA0FA030050C93C /* NewAccountFinish.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountFinish.m; sourceTree = "<group>"; };
 		551A18401FA0FA740050C93C /* NewAccountFinal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinal.h; sourceTree = "<group>"; };
@@ -179,6 +194,10 @@
 		555E22FC2006C8CD0098A099 /* RequestsTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RequestsTableViewController.m; sourceTree = "<group>"; };
 		5566664120169ADA00051ED2 /* ContactDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactDetailViewController.h; sourceTree = "<group>"; };
 		5566664220169ADA00051ED2 /* ContactDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactDetailViewController.m; sourceTree = "<group>"; };
+		55666644201A68AF00051ED2 /* AccountSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountSession.h; sourceTree = "<group>"; };
+		55666645201A68AF00051ED2 /* AccountSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountSession.m; sourceTree = "<group>"; };
+		55666647201B7C9000051ED2 /* LoggingErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoggingErrorDelegate.h; sourceTree = "<group>"; };
+		55666648201B7C9000051ED2 /* LoggingErrorDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoggingErrorDelegate.m; sourceTree = "<group>"; };
 		5570AD171FDF039B00724B34 /* ContactPolicyViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactPolicyViewController.h; sourceTree = "<group>"; };
 		5570AD181FDF039B00724B34 /* ContactPolicyViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactPolicyViewController.m; sourceTree = "<group>"; };
 		557238A81F8C43F600A13A14 /* AccountManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountManager.h; sourceTree = "<group>"; };
@@ -369,6 +388,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				551051042020B648000A313E /* Realm.framework in Frameworks */,
 				553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -393,6 +413,7 @@
 		5592A57B1F8BBB4400F08BF5 = {
 			isa = PBXGroup;
 			children = (
+				551051032020B648000A313E /* Realm.framework */,
 				55AA556D1FA1527C00A7026B /* libgmp.a */,
 				5592A5861F8BBB4400F08BF5 /* pippip-native-ios */,
 				5592A5A21F8BBB4500F08BF5 /* pippip-native-iosTests */,
@@ -418,6 +439,8 @@
 				5592A5991F8BBB4500F08BF5 /* main.mm */,
 				557238A81F8C43F600A13A14 /* AccountManager.h */,
 				557238A91F8C43F600A13A14 /* AccountManager.m */,
+				55666644201A68AF00051ED2 /* AccountSession.h */,
+				55666645201A68AF00051ED2 /* AccountSession.m */,
 				55B781A51FDDA63900330B80 /* AccountsTableViewController.h */,
 				55B781A61FDDA63900330B80 /* AccountsTableViewController.m */,
 				55B781B11FE0A4F600330B80 /* AddContactViewController.h */,
@@ -458,8 +481,16 @@
 				55DB42141F9ABF8C001D8CB1 /* ErrorDelegate.h */,
 				5592A58A1F8BBB4400F08BF5 /* HomeViewController.h */,
 				5592A58B1F8BBB4400F08BF5 /* HomeViewController.m */,
+				55666647201B7C9000051ED2 /* LoggingErrorDelegate.h */,
+				55666648201B7C9000051ED2 /* LoggingErrorDelegate.m */,
 				55B781A81FDE161E00330B80 /* Logout.h */,
 				55B781A91FDE161E00330B80 /* Logout.m */,
+				551051062020BC36000A313E /* Message.h */,
+				551051072020BC36000A313E /* Message.m */,
+				551050FD201F8840000A313E /* MessagesDatabase.h */,
+				551050FE201F8840000A313E /* MessagesDatabase.m */,
+				55105100201F8880000A313E /* MessageManager.h */,
+				55105101201F8880000A313E /* MessageManager.m */,
 				5592A5B11F8BC92E00F08BF5 /* MessagesTableViewController.h */,
 				5592A5B21F8BC92E00F08BF5 /* MessagesTableViewController.m */,
 				554C17351FDD5990009434F5 /* MoreTableViewController.h */,
@@ -802,15 +833,18 @@
 				55AA55011FA14C1300A7026B /* CKSHA256.mm in Sources */,
 				55AA54FC1FA14C1300A7026B /* CKRSAKeyPair.m in Sources */,
 				55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */,
+				551051082020BC36000A313E /* Message.m in Sources */,
 				55B3911F1FE17383004DAFF7 /* EnclaveResponse.m in Sources */,
 				55FA87481FD5E58E00FB96C0 /* ClientAuthChallenge.m in Sources */,
 				554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */,
 				553789951FF58B0F0043BCF4 /* WhitelistManager.m in Sources */,
 				5570AD191FDF039B00724B34 /* ContactPolicyViewController.m in Sources */,
+				551050FF201F8840000A313E /* MessagesDatabase.m in Sources */,
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
 				55B781B31FE0A4F600330B80 /* AddContactViewController.m in Sources */,
 				553789921FF583490043BCF4 /* AddFriendViewController.m in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
+				55666649201B7C9000051ED2 /* LoggingErrorDelegate.m in Sources */,
 				55AA55581FA14D7100A7026B /* HMAC.cc in Sources */,
 				554C17341FDC7F49009434F5 /* TabBarDelegate.m in Sources */,
 				55AA54DE1FA14B1E00A7026B /* ByteStreamCodec.cc in Sources */,
@@ -873,6 +907,8 @@
 				55B781A71FDDA63900330B80 /* AccountsTableViewController.m in Sources */,
 				55FA87391FD059AF00FB96C0 /* UserVault.m in Sources */,
 				55AA55021FA14C1300A7026B /* CKRSAKeyPairGenerator.mm in Sources */,
+				55105102201F8880000A313E /* MessageManager.m in Sources */,
+				55666646201A68AF00051ED2 /* AccountSession.m in Sources */,
 				555E22FD2006C8CD0098A099 /* RequestsTableViewController.m in Sources */,
 				55AA55501FA14D7100A7026B /* PSSmgf1.cc in Sources */,
 				55AA55531FA14D7100A7026B /* CCSecureRandom.cc in Sources */,
@@ -1048,6 +1084,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/pippip-native-ios",
 					"$(USER_LIBRARY_DIR)/Frameworks",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "pippip-native-ios/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1074,6 +1111,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/pippip-native-ios",
 					"$(USER_LIBRARY_DIR)/Frameworks",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "pippip-native-ios/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

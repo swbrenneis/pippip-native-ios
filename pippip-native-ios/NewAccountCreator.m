@@ -7,27 +7,28 @@
 //
 
 #import "NewAccountCreator.h"
-#import "RESTSession.h"
 #import "NewAccountRequest.h"
 #import "NewAccountResponse.h"
 #import "NewAccountFinish.h"
 #import "NewAccountFinal.h"
 #import "AlertErrorDelegate.h"
-#import "AccountManager.h"
+#import "ParameterGenerator.h"
+#import "AppDelegate.h"
+#import "AccountSession.h"
+#import "UserVault.h"
 #import "CKPEMCodec.h"
 
 typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
 @interface NewAccountCreator ()
 {
-
     ProcessStep step;
-    RESTSession *session;
-
+    SessionState *sessionState;
+    NSString *passphrase;
 }
 
-@property (weak, nonatomic) AccountManager *accountManager;
 @property (weak, nonatomic) HomeViewController *viewController;
+@property (weak, nonatomic) RESTSession *session;
 
 @end
 
@@ -36,36 +37,50 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 @synthesize errorDelegate;
 @synthesize postPacket;
 
-- (instancetype)initWithViewController:(HomeViewController *)controller {
+- (instancetype)initWithViewController:(HomeViewController *)controller withRESTSession: (RESTSession*)restSession {
     self = [super init];
 
     _viewController = controller;
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
-                                                              withTitle:@"New Account Creation Error"];
-    session = [[RESTSession alloc] init];
-    session.requestProcess = self;
+                                                             withTitle:@"New Account Creation Error"];
+    _session = restSession;
 
     return self;
 
 }
 
-- (void)createAccount:(AccountManager*)manager {
+- (void)accountCreated {
 
-    _accountManager = manager;
+    [self storeVault];
+    sessionState.authenticated = YES;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+        [delegate.accountManager setDefaultConfig];
+        [delegate.accountManager storeConfig:sessionState.currentAccount];
+        [delegate.accountSession startSession:sessionState];
+    });
+
+}
+
+- (void)createAccount:(NSString*)accountName withPassphrase:(NSString *)pass {
+
+    passphrase = pass;
     [_viewController updateStatus:@"Generating user data"];
-    [_accountManager generateParameters];
+    ParameterGenerator *generator = [[ParameterGenerator alloc] init];
+    [generator generateParameters:accountName];
+    sessionState = generator;
     // Start the session.
     [_viewController updateStatus:@"Contacting the message server"];
-    [session startSession];
+    [_session startSession:self];
 
 }
 
 - (void) doFinish {
 
     step = FINISH;
-    postPacket = [[NewAccountFinish alloc] initWithState:_accountManager.sessionState];
+    postPacket = [[NewAccountFinish alloc] initWithState:sessionState];
     [_viewController updateStatus:@"Finishing account creation"];
-    [session doPost];
+    [_session queuePost:self];
 
 }
 
@@ -81,10 +96,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
                 break;
             case FINISH:
                 if ([self validateFinish:response]) {
-                    [_accountManager storeVault];
-                    [_accountManager setDefaultConfig];
-                    [_accountManager storeConfig];
-                    _accountManager.sessionState.authenticated = YES;
+                    [self accountCreated];
                     [_viewController authenticated:@"Account created. Online"];
                 }
                 break;
@@ -106,21 +118,40 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
             [errorDelegate sessionError:@"Invalid server response, missing public key"];
         }
         else {
-            _accountManager.sessionState.sessionId = [sessionId intValue];
+            sessionState.sessionId = [sessionId intValue];
             CKPEMCodec *pem = [[CKPEMCodec alloc] init];
-            _accountManager.sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
+            sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
             step = REQUEST;
-            postPacket = [[NewAccountRequest alloc] initWithState:_accountManager.sessionState];
+            postPacket = [[NewAccountRequest alloc] initWithState:sessionState];
             [_viewController updateStatus:@"Requesting account"];
-            [session doPost];
+            [_session queuePost:self];
         }
     }
 
 }
 
+- (void)storeVault {
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docPath = [paths objectAtIndex:0];
+    NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
+    NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:sessionState.currentAccount];
+    
+    UserVault *vault = [[UserVault alloc] initWithState:sessionState];
+    NSData *vaultData = [vault encode:passphrase];
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager createDirectoryAtPath:vaultsPath
+           withIntermediateDirectories:NO
+                            attributes:nil
+                                 error:nil];
+    [vaultData writeToFile:vaultPath atomically:YES];
+    
+}
+
 - (BOOL) validateFinish:(NSDictionary*)response {
 
-    NewAccountFinal *accountFinal = [[NewAccountFinal alloc] initWithState:_accountManager.sessionState];
+    NewAccountFinal *accountFinal = [[NewAccountFinal alloc] initWithState:sessionState];
     return [accountFinal processResponse:response
                            errorDelegate:errorDelegate];
 
@@ -128,7 +159,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
 - (BOOL) validateResponse:(NSDictionary*)response {
 
-    NewAccountResponse *accountResponse = [[NewAccountResponse alloc] initWithState:_accountManager.sessionState];
+    NewAccountResponse *accountResponse = [[NewAccountResponse alloc] initWithState:sessionState];
     return [accountResponse processResponse:response
                               errorDelegate:errorDelegate];
 

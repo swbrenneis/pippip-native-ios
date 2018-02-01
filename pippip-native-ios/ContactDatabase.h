@@ -7,15 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AccountManager.h"
+#import "SessionState.h"
 
 @interface ContactDatabase : NSObject
 
-- (instancetype)initWithAccountManager:(AccountManager*)manager;
-
 - (NSInteger)contactCount;
 
-- (void)loadContacts;
+- (void)loadContacts:(SessionState*)state;
 
 - (void)addContact:(NSMutableDictionary*)contact withId:(NSString*)publicId;
 
@@ -25,7 +23,9 @@
 
 - (NSMutableDictionary*)getContactByIndex:(NSInteger)index;
 
-- (void)storeContacts;
+- (NSArray*)getContacts:(NSString*)status;
+
+- (void)storeContacts:(NSString*)accountName;
 
 - (void)syncContacts:(NSMutableArray*)synched;
 

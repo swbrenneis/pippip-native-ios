@@ -11,6 +11,4 @@
 
 @interface TabBarDelegate : NSObject<UITabBarControllerDelegate>
 
-- (instancetype) initWithAccountManager:(AccountManager*)manager;
-
 @end

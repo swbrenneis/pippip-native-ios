@@ -7,7 +7,6 @@
 //
 
 #import "NewAccountFinal.h"
-#import "NSData+HexEncode.h"
 
 @interface NewAccountFinal ()
 {

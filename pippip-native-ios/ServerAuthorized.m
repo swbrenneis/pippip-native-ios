@@ -8,7 +8,6 @@
 
 #import "ServerAuthorized.h"
 #import "CKRSACodec.h"
-#import "NSData+HexEncode.h"
 
 @interface ServerAuthorized ()
 {
@@ -38,7 +37,7 @@
     CKRSACodec *codec = [[CKRSACodec alloc] init];
     [codec putBlock:sessionState.enclaveKey];
     NSData *data = [codec encrypt:sessionState.serverPublicKey];
-    [packet setObject:[data encodeHexString] forKey:@"data"];
+    packet[@"data"] = [data base64EncodedStringWithOptions:0];
 
     return packet;
     

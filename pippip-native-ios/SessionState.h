@@ -13,6 +13,7 @@
 @interface SessionState : NSObject
 
 // Authentication state parameters
+@property (nonatomic) NSString *currentAccount;
 @property (nonatomic) BOOL authenticated;
 
 // Server parameters

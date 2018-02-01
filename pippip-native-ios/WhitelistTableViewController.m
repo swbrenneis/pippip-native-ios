@@ -18,6 +18,7 @@
 {
     NSDictionary *deletedEntity;
     NSIndexPath *deletedIndex;
+    NSString *accountName;
 }
 
 @property (weak, nonatomic) AccountManager *accountManager;
@@ -39,12 +40,14 @@
     // Get the account manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _accountManager = delegate.accountManager;
-    _contactManager = delegate.contactManager;
 
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    accountName = delegate.accountSession.sessionState.currentAccount;
+    _contactManager = delegate.accountSession.contactManager;
     [self.tableView reloadData];
 
 }
@@ -63,7 +66,7 @@
     }
 
     [_accountManager deleteWhitelistEntry:deletedEntity];
-    [_accountManager storeConfig];
+    [_accountManager storeConfig:accountName];
     UITableView *tableView = self.tableView;
     dispatch_async(dispatch_get_main_queue(), ^{
         [tableView deleteRowsAtIndexPaths:@[deletedIndex] withRowAnimation:UITableViewRowAnimationFade];
@@ -144,7 +147,7 @@
     NSString *publicId = view.publicIdTextField.text;
     NSMutableDictionary *entity = [NSMutableDictionary dictionaryWithObjectsAndKeys:nickname, @"nickname", publicId, @"publicId", nil];
     [_accountManager addWhitelistEntry:entity];
-    [_accountManager storeConfig];
+    [_accountManager storeConfig:accountName];
     [self.view setNeedsDisplay];
 
 }

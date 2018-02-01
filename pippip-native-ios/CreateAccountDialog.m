@@ -10,21 +10,21 @@
 
 @interface CreateAccountDialog ()
 {
-    AccountManager *accountManager;
-    HomeViewController *viewController;
     UIAlertController *dialog;
-
+    NSString *accountName;
+    NSString *passphrase;
 }
+
+@property (weak, nonatomic) HomeViewController *viewController;
+
 @end
 
 @implementation CreateAccountDialog
 
--(instancetype) initWithViewController:(HomeViewController*)controller
-                      withAccountManager:(AccountManager*)manager {
+-(instancetype) initWithViewController:(HomeViewController*)controller {
     self = [super init];
-    accountManager = manager;
-    viewController = controller;
 
+    _viewController = controller;
     dialog = [UIAlertController alertControllerWithTitle:@"Create A New Account"
                                                  message:@"Enter an account name and passphrase"
                                           preferredStyle:UIAlertControllerStyleAlert];
@@ -50,22 +50,22 @@
                                                        style:UIAlertActionStyleDefault
                                                      handler:^(UIAlertAction *action){}];
     [alert addAction:okAction];
-    [viewController presentViewController:alert animated:YES completion:nil];
+    [_viewController presentViewController:alert animated:YES completion:nil];
 
 }
 
 - (void) createSelected {
 
-    accountManager.currentAccount = dialog.textFields[0].text;
-    accountManager.currentPassphrase = dialog.textFields[1].text;
-    if (accountManager.currentAccount == nil || accountManager.currentAccount.length == 0) {
+    accountName = dialog.textFields[0].text;
+    passphrase = dialog.textFields[1].text;
+    if (accountName == nil || accountName.length == 0) {
         [self accountNameAlert];
     }
-    else if (accountManager.currentPassphrase == nil || accountManager.currentPassphrase.length == 0){
+    else if (passphrase == nil || passphrase.length == 0){
         [self passphraseAlert];
     }
     else {
-        [viewController createAccount];
+        [_viewController createAccount:accountName withPassphrase:passphrase];
     }
 
 }
@@ -79,14 +79,15 @@
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Ok"
                                                        style:UIAlertActionStyleDefault
                                                      handler:^(UIAlertAction *action){
-                                                         [viewController createAccount];
+                                                         [_viewController createAccount:accountName
+                                                                         withPassphrase:passphrase];
                                                      }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
                                                            style:UIAlertActionStyleCancel
                                                          handler:^(UIAlertAction *action){}];
     [alert addAction:okAction];
     [alert addAction:cancelAction];
-    [viewController presentViewController:alert animated:YES completion:nil];
+    [_viewController presentViewController:alert animated:YES completion:nil];
 
 }
 
@@ -100,15 +101,12 @@
 
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
                                                            style:UIAlertActionStyleCancel
-                                                         handler:^(UIAlertAction* action) {
-                                                             accountManager.currentAccount = nil;
-                                                             accountManager.currentPassphrase = nil;
-                                                         }];
+                                                         handler:nil];
 
     [dialog addAction:createAction];
     [dialog addAction:cancelAction];
     
-    [viewController presentViewController:dialog animated:YES completion:nil];
+    [_viewController presentViewController:dialog animated:YES completion:nil];
     
 }
 

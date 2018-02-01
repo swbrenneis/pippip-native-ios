@@ -10,7 +10,6 @@
 #import "CKHMAC.h"
 #import "CKSignature.h"
 #import "CKSHA256.h"
-#import "NSData+HexEncode.h"
 
 @interface ServerAuthChallenge ()
 {
@@ -46,14 +45,13 @@
         return NO;
     }
     else {
-        NSError *error = nil;
-        NSData *hmac = [NSData dataWithHexString:hmacStr withError:&error];
-        if (error != nil) {
+        NSData *hmac = [[NSData alloc] initWithBase64EncodedString:hmacStr options:0];
+        if (hmac == nil) {
             [errorDelegate responseError:@"Invalid HMAC hex encoding"];
             return NO;
         }
-        NSData *signature = [NSData dataWithHexString:sigStr withError:&error];
-        if (error != nil) {
+        NSData *signature = [[NSData alloc] initWithBase64EncodedString:sigStr options:0];
+        if (signature == nil) {
             [errorDelegate responseError:@"Invalid signature hex encoding"];
             return NO;
         }

@@ -26,14 +26,14 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    // Get the contact manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.contactManager;
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
+    // Get the contact manager
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _contactManager = delegate.accountSession.contactManager;
+    
     if (_requestNickname != nil) {
         _nicknameLabel.text = _requestNickname;
     }
@@ -51,15 +51,17 @@
 
 -(void)response:(NSDictionary *)info {
 
-    NSString *publicId = info[@"id"];
-    NSString *response = info[@"response"];
-    NSString *authData = info[@"authData"];
-    NSArray *keyStrings = info[@"keys"];
-    if (publicId == nil || response == nil || authData == nil || keyStrings == nil) {
+    NSDictionary *contact = info[@"acknowledged"];
+    NSString *publicId = contact[@"publicId"];
+    NSString *status = contact[@"status"];
+    NSString *authData = contact[@"authData"];
+    NSString *nonce = contact[@"nonce"];
+    NSArray *keyStrings = contact[@"messageKeys"];
+    if (publicId == nil || status == nil || authData == nil || keyStrings == nil || nonce == nil) {
         [self errorAlert:@"Invalid server response"];
     }
     else {
-        if ([response isEqualToString:@"accepted"]) {
+        if ([status isEqualToString:@"accepted"]) {
             NSMutableDictionary *entity = [NSMutableDictionary dictionary];
             entity[@"publicId"] = publicId;
             if (_requestNickname != nil) {
@@ -67,16 +69,17 @@
             }
             entity[@"currentIndex"] = [NSNumber numberWithLongLong:0];
             entity[@"currentSequence"] = [NSNumber numberWithLongLong:0];
-            entity[@"timestamp"] = info[@"timestamp"];
-            entity[@"status"] = response;
-            NSError *error = nil;
-            NSData *adBytes = [NSData dataWithHexString:authData withError:&error];
-            if (error == nil) {
+            entity[@"timestamp"] = contact[@"timestamp"];
+            entity[@"status"] = status;
+            NSData *adBytes = [[NSData alloc] initWithBase64EncodedString:authData options:0];
+            NSData *nonceBytes = [[NSData alloc] initWithBase64EncodedString:nonce options:0];
+            if (adBytes != nil && nonceBytes != nil) {
                 entity[@"authData"] = adBytes;
+                entity[@"nonce"] = nonceBytes;
                 NSArray *keys = [self decodeKeys:keyStrings];
                 if (keys != nil) {
                     entity[@"messageKeys"] = keys;
-                    [_contactManager addContact:entity];
+                    [_contactManager addLocalContact:entity];
                     [self contactAddedAlert];
                 }
             }
@@ -133,12 +136,8 @@
 - (NSArray*)decodeKeys:(NSArray*)keyStrings {
 
     NSMutableArray *keys = [NSMutableArray array];
-    NSError *error = nil;
     for (NSString *key in keyStrings) {
-        [keys addObject:[NSData dataWithHexString:key withError:&error]];
-        if (error != nil) {
-            return nil;
-        }
+        [keys addObject:[[NSData alloc] initWithBase64EncodedString:key options:0]];
     }
     return keys;
 

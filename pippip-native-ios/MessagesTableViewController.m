@@ -7,10 +7,12 @@
 //
 
 #import "MessagesTableViewController.h"
+#import "AppDelegate.h"
+#import "MessageManager.h"
 
 @interface MessagesTableViewController ()
 
-@property (weak, nonatomic) IBOutlet UITabBarItem *messagesTabBarItem;
+@property (weak, nonatomic) MessageManager *messageManager;
 
 @end
 
@@ -31,16 +33,27 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(void)viewWillAppear:(BOOL)animated {
+
+    // Get the message manager
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    _messageManager = delegate.accountSession.messageManager;
+    
+    [self.tableView reloadData];
+    
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Incomplete implementation, return the number of sections
-    return 0;
+
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete implementation, return the number of rows
-    return 0;
+
+    return [_messageManager senderCount];
+
 }
 
 /*

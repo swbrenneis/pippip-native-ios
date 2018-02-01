@@ -7,35 +7,28 @@
 //
 
 #import "TabBarDelegate.h"
+#import "AppDelegate.h"
+#import "AccountSession.h"
 
 @interface TabBarDelegate ()
 {
-
-    AccountManager *accountManager;
-
 }
+
 @end
 
 #import "TabBarDelegate.h"
 
 @implementation TabBarDelegate
 
-- (instancetype) initWithAccountManager:(AccountManager *)manager {
-    self = [super init];
-
-    accountManager = manager;
-    return self;
-
-}
-
 - (BOOL) tabBarController:(UITabBarController *)tabBarController
             shouldSelectViewController:(UIViewController*)viewController {
 
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     if ([viewController.title isEqualToString:@"Home"]) {
         return YES;
     }
     else {
-        return accountManager.sessionState.authenticated;
+        return delegate.accountSession.sessionState.authenticated;
     }
 
 }
