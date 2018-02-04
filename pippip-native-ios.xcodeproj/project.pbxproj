@@ -11,7 +11,7 @@
 		55105102201F8880000A313E /* MessageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 55105101201F8880000A313E /* MessageManager.m */; };
 		551051042020B648000A313E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 551051032020B648000A313E /* Realm.framework */; };
 		551051052020B648000A313E /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 551051032020B648000A313E /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		551051082020BC36000A313E /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 551051072020BC36000A313E /* Message.m */; };
+		551051082020BC36000A313E /* DatabaseMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 551051072020BC36000A313E /* DatabaseMessage.m */; };
 		551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183E1FA0FA030050C93C /* NewAccountFinish.m */; };
 		551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A18411FA0FA740050C93C /* NewAccountFinal.m */; };
 		5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */; };
@@ -24,13 +24,15 @@
 		5537898C1FF568B50043BCF4 /* WhitelistTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5537898B1FF568B50043BCF4 /* WhitelistTableViewController.m */; };
 		5537898F1FF579EC0043BCF4 /* WhitelistTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5537898E1FF579EC0043BCF4 /* WhitelistTableViewCell.m */; };
 		553789921FF583490043BCF4 /* AddFriendViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 553789911FF583490043BCF4 /* AddFriendViewController.m */; };
-		553789951FF58B0F0043BCF4 /* WhitelistManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 553789941FF58B0F0043BCF4 /* WhitelistManager.m */; };
 		553789982002C2B20043BCF4 /* ContactDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 553789972002C2B20043BCF4 /* ContactDatabase.m */; };
 		5537899B200CFABB0043BCF4 /* RequestsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5537899A200CFABB0043BCF4 /* RequestsTableViewCell.m */; };
 		5537899E200D2C7B0043BCF4 /* PendingContactViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5537899D200D2C7B0043BCF4 /* PendingContactViewController.m */; };
 		553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55AA556D1FA1527C00A7026B /* libgmp.a */; };
 		554C17341FDC7F49009434F5 /* TabBarDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17331FDC7F49009434F5 /* TabBarDelegate.m */; };
 		554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17361FDD5990009434F5 /* MoreTableViewController.m */; };
+		55579E512024C21F00131A54 /* DatabaseContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 55579E502024C21F00131A54 /* DatabaseContact.m */; };
+		55579E542026293300131A54 /* ContactTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 55579E532026293300131A54 /* ContactTableViewCell.m */; };
+		55579E57202647CF00131A54 /* PreviewTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 55579E56202647CF00131A54 /* PreviewTableViewCell.m */; };
 		555E22FD2006C8CD0098A099 /* RequestsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 555E22FC2006C8CD0098A099 /* RequestsTableViewController.m */; };
 		5566664320169ADA00051ED2 /* ContactDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5566664220169ADA00051ED2 /* ContactDetailViewController.m */; };
 		55666646201A68AF00051ED2 /* AccountSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 55666645201A68AF00051ED2 /* AccountSession.m */; };
@@ -147,8 +149,8 @@
 		55105100201F8880000A313E /* MessageManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageManager.h; sourceTree = "<group>"; };
 		55105101201F8880000A313E /* MessageManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessageManager.m; sourceTree = "<group>"; };
 		551051032020B648000A313E /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
-		551051062020BC36000A313E /* Message.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
-		551051072020BC36000A313E /* Message.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
+		551051062020BC36000A313E /* DatabaseMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseMessage.h; sourceTree = "<group>"; };
+		551051072020BC36000A313E /* DatabaseMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseMessage.m; sourceTree = "<group>"; };
 		551A183D1FA0FA030050C93C /* NewAccountFinish.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinish.h; sourceTree = "<group>"; };
 		551A183E1FA0FA030050C93C /* NewAccountFinish.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountFinish.m; sourceTree = "<group>"; };
 		551A18401FA0FA740050C93C /* NewAccountFinal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinal.h; sourceTree = "<group>"; };
@@ -171,15 +173,12 @@
 		553332581F9AD83A00F441E4 /* RequestProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestProcess.h; sourceTree = "<group>"; };
 		553332591F9AE2D700F441E4 /* AlertErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertErrorDelegate.h; sourceTree = "<group>"; };
 		5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertErrorDelegate.m; sourceTree = "<group>"; };
-		5533325C1F9B779300F441E4 /* ErrorCodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ErrorCodes.h; sourceTree = "<group>"; };
 		5537898A1FF568B50043BCF4 /* WhitelistTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhitelistTableViewController.h; sourceTree = "<group>"; };
 		5537898B1FF568B50043BCF4 /* WhitelistTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WhitelistTableViewController.m; sourceTree = "<group>"; };
 		5537898D1FF579EC0043BCF4 /* WhitelistTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhitelistTableViewCell.h; sourceTree = "<group>"; };
 		5537898E1FF579EC0043BCF4 /* WhitelistTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WhitelistTableViewCell.m; sourceTree = "<group>"; };
 		553789901FF583490043BCF4 /* AddFriendViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddFriendViewController.h; sourceTree = "<group>"; };
 		553789911FF583490043BCF4 /* AddFriendViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddFriendViewController.m; sourceTree = "<group>"; };
-		553789931FF58B0F0043BCF4 /* WhitelistManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhitelistManager.h; sourceTree = "<group>"; };
-		553789941FF58B0F0043BCF4 /* WhitelistManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WhitelistManager.m; sourceTree = "<group>"; };
 		553789962002C2B20043BCF4 /* ContactDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactDatabase.h; sourceTree = "<group>"; };
 		553789972002C2B20043BCF4 /* ContactDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactDatabase.m; sourceTree = "<group>"; };
 		55378999200CFABB0043BCF4 /* RequestsTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestsTableViewCell.h; sourceTree = "<group>"; };
@@ -190,6 +189,12 @@
 		554C17331FDC7F49009434F5 /* TabBarDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TabBarDelegate.m; sourceTree = "<group>"; };
 		554C17351FDD5990009434F5 /* MoreTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoreTableViewController.h; sourceTree = "<group>"; };
 		554C17361FDD5990009434F5 /* MoreTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MoreTableViewController.m; sourceTree = "<group>"; };
+		55579E4F2024C21F00131A54 /* DatabaseContact.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseContact.h; sourceTree = "<group>"; };
+		55579E502024C21F00131A54 /* DatabaseContact.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseContact.m; sourceTree = "<group>"; };
+		55579E522026293300131A54 /* ContactTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactTableViewCell.h; sourceTree = "<group>"; };
+		55579E532026293300131A54 /* ContactTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactTableViewCell.m; sourceTree = "<group>"; };
+		55579E55202647CF00131A54 /* PreviewTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreviewTableViewCell.h; sourceTree = "<group>"; };
+		55579E56202647CF00131A54 /* PreviewTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreviewTableViewCell.m; sourceTree = "<group>"; };
 		555E22FB2006C8CD0098A099 /* RequestsTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestsTableViewController.h; sourceTree = "<group>"; };
 		555E22FC2006C8CD0098A099 /* RequestsTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RequestsTableViewController.m; sourceTree = "<group>"; };
 		5566664120169ADA00051ED2 /* ContactDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactDetailViewController.h; sourceTree = "<group>"; };
@@ -410,6 +415,154 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		55579E582027638800131A54 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				55DB7F491FDB350800B4D262 /* CreateAccountDialog.h */,
+				55DB7F4A1FDB350800B4D262 /* CreateAccountDialog.m */,
+				5592A58A1F8BBB4400F08BF5 /* HomeViewController.h */,
+				5592A58B1F8BBB4400F08BF5 /* HomeViewController.m */,
+				554C17321FDC7F49009434F5 /* TabBarDelegate.h */,
+				554C17331FDC7F49009434F5 /* TabBarDelegate.m */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		55579E59202763DE00131A54 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				557238A81F8C43F600A13A14 /* AccountManager.h */,
+				557238A91F8C43F600A13A14 /* AccountManager.m */,
+				55666644201A68AF00051ED2 /* AccountSession.h */,
+				55666645201A68AF00051ED2 /* AccountSession.m */,
+				553332591F9AE2D700F441E4 /* AlertErrorDelegate.h */,
+				5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */,
+				55FA873D1FD187CD00FB96C0 /* Authenticator.h */,
+				55FA873E1FD187CD00FB96C0 /* Authenticator.m */,
+				553789962002C2B20043BCF4 /* ContactDatabase.h */,
+				553789972002C2B20043BCF4 /* ContactDatabase.m */,
+				55B781AB1FE018FC00330B80 /* ContactManager.h */,
+				55B781AC1FE018FC00330B80 /* ContactManager.m */,
+				55579E4F2024C21F00131A54 /* DatabaseContact.h */,
+				55579E502024C21F00131A54 /* DatabaseContact.m */,
+				551051062020BC36000A313E /* DatabaseMessage.h */,
+				551051072020BC36000A313E /* DatabaseMessage.m */,
+				55DB42141F9ABF8C001D8CB1 /* ErrorDelegate.h */,
+				55666647201B7C9000051ED2 /* LoggingErrorDelegate.h */,
+				55666648201B7C9000051ED2 /* LoggingErrorDelegate.m */,
+				551050FD201F8840000A313E /* MessagesDatabase.h */,
+				551050FE201F8840000A313E /* MessagesDatabase.m */,
+				55105100201F8880000A313E /* MessageManager.h */,
+				55105101201F8880000A313E /* MessageManager.m */,
+				5527BAA31F8D0D1200C40D05 /* NewAccountCreator.h */,
+				5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */,
+				557238B11F8C6B0C00A13A14 /* NSData+HexEncode.h */,
+				557238B21F8C6B0C00A13A14 /* NSData+HexEncode.m */,
+				5527BAAA1F8D398A00C40D05 /* ParameterGenerator.h */,
+				5527BAAB1F8D398A00C40D05 /* ParameterGenerator.m */,
+				5527BAA71F8D37D600C40D05 /* SessionState.h */,
+				5527BAA81F8D37D600C40D05 /* SessionState.m */,
+				55FA87371FD059AF00FB96C0 /* UserVault.h */,
+				55FA87381FD059AF00FB96C0 /* UserVault.m */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		55579E5A202763F700131A54 /* Contacts */ = {
+			isa = PBXGroup;
+			children = (
+				55B781B11FE0A4F600330B80 /* AddContactViewController.h */,
+				55B781B21FE0A4F600330B80 /* AddContactViewController.m */,
+				5566664120169ADA00051ED2 /* ContactDetailViewController.h */,
+				5566664220169ADA00051ED2 /* ContactDetailViewController.m */,
+				55579E522026293300131A54 /* ContactTableViewCell.h */,
+				55579E532026293300131A54 /* ContactTableViewCell.m */,
+				5592A5AE1F8BC43C00F08BF5 /* ContactsTableViewController.h */,
+				5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */,
+			);
+			path = Contacts;
+			sourceTree = "<group>";
+		};
+		55579E5B2027643A00131A54 /* Messages */ = {
+			isa = PBXGroup;
+			children = (
+				5592A5B11F8BC92E00F08BF5 /* MessagesTableViewController.h */,
+				5592A5B21F8BC92E00F08BF5 /* MessagesTableViewController.m */,
+				55579E55202647CF00131A54 /* PreviewTableViewCell.h */,
+				55579E56202647CF00131A54 /* PreviewTableViewCell.m */,
+			);
+			path = Messages;
+			sourceTree = "<group>";
+		};
+		55579E5C2027646200131A54 /* More */ = {
+			isa = PBXGroup;
+			children = (
+				55B781A51FDDA63900330B80 /* AccountsTableViewController.h */,
+				55B781A61FDDA63900330B80 /* AccountsTableViewController.m */,
+				553789901FF583490043BCF4 /* AddFriendViewController.h */,
+				553789911FF583490043BCF4 /* AddFriendViewController.m */,
+				5570AD171FDF039B00724B34 /* ContactPolicyViewController.h */,
+				5570AD181FDF039B00724B34 /* ContactPolicyViewController.m */,
+				554C17351FDD5990009434F5 /* MoreTableViewController.h */,
+				554C17361FDD5990009434F5 /* MoreTableViewController.m */,
+				558720451FE466BE0078679E /* NicknameViewController.h */,
+				558720461FE466BE0078679E /* NicknameViewController.m */,
+				5537899C200D2C7B0043BCF4 /* PendingContactViewController.h */,
+				5537899D200D2C7B0043BCF4 /* PendingContactViewController.m */,
+				55B781A21FDD77F800330B80 /* PublicIdTableViewController.h */,
+				55B781A31FDD77F800330B80 /* PublicIdTableViewController.m */,
+				55378999200CFABB0043BCF4 /* RequestsTableViewCell.h */,
+				5537899A200CFABB0043BCF4 /* RequestsTableViewCell.m */,
+				555E22FB2006C8CD0098A099 /* RequestsTableViewController.h */,
+				555E22FC2006C8CD0098A099 /* RequestsTableViewController.m */,
+				5537898D1FF579EC0043BCF4 /* WhitelistTableViewCell.h */,
+				5537898E1FF579EC0043BCF4 /* WhitelistTableViewCell.m */,
+				5537898A1FF568B50043BCF4 /* WhitelistTableViewController.h */,
+				5537898B1FF568B50043BCF4 /* WhitelistTableViewController.m */,
+			);
+			path = More;
+			sourceTree = "<group>";
+		};
+		55579E5D202764EF00131A54 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				55FA87401FD1AE5800FB96C0 /* AuthenticationRequest.h */,
+				55FA87411FD1AE5800FB96C0 /* AuthenticationRequest.m */,
+				55FA87431FD5CA4F00FB96C0 /* AuthenticationResponse.h */,
+				55FA87441FD5CA4F00FB96C0 /* AuthenticationResponse.m */,
+				55FA87461FD5E58E00FB96C0 /* ClientAuthChallenge.h */,
+				55FA87471FD5E58E00FB96C0 /* ClientAuthChallenge.m */,
+				55DB7F461FD86AF800B4D262 /* ClientAuthorized.h */,
+				55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */,
+				55B3911A1FE17339004DAFF7 /* EnclaveRequest.h */,
+				55B3911B1FE17339004DAFF7 /* EnclaveRequest.m */,
+				55B3911D1FE17383004DAFF7 /* EnclaveResponse.h */,
+				55B3911E1FE17383004DAFF7 /* EnclaveResponse.m */,
+				55B781A81FDE161E00330B80 /* Logout.h */,
+				55B781A91FDE161E00330B80 /* Logout.m */,
+				551A18401FA0FA740050C93C /* NewAccountFinal.h */,
+				551A18411FA0FA740050C93C /* NewAccountFinal.m */,
+				551A183D1FA0FA030050C93C /* NewAccountFinish.h */,
+				551A183E1FA0FA030050C93C /* NewAccountFinish.m */,
+				5527BAAF1F8D4B1D00C40D05 /* NewAccountRequest.h */,
+				5527BAB01F8D4B1D00C40D05 /* NewAccountRequest.m */,
+				5527BAB61F8DB81A00C40D05 /* NewAccountResponse.h */,
+				5527BAB71F8DB81A00C40D05 /* NewAccountResponse.m */,
+				5527BAA11F8D0AE200C40D05 /* PostPacket.h */,
+				553332581F9AD83A00F441E4 /* RequestProcess.h */,
+				5579D45B1FE8491C007BCFE4 /* ResponseConsumer.h */,
+				5527BAB51F8D5B9500C40D05 /* SessionDelegate.h */,
+				5527BAA61F8D36BA00C40D05 /* RESTResponse.h */,
+				5527BAB21F8D58D300C40D05 /* RESTSession.h */,
+				5527BAB31F8D58D300C40D05 /* RESTSession.m */,
+				55FA87491FD5E5AC00FB96C0 /* ServerAuthChallenge.h */,
+				55FA874A1FD5E5AC00FB96C0 /* ServerAuthChallenge.m */,
+				55DB7F431FD8692C00B4D262 /* ServerAuthorized.h */,
+				55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
 		5592A57B1F8BBB4400F08BF5 = {
 			isa = PBXGroup;
 			children = (
@@ -437,111 +590,14 @@
 				55AA54E41FA14B8900A7026B /* cryptokitty */,
 				55AA54C01FA14ACE00A7026B /* coder */,
 				5592A5991F8BBB4500F08BF5 /* main.mm */,
-				557238A81F8C43F600A13A14 /* AccountManager.h */,
-				557238A91F8C43F600A13A14 /* AccountManager.m */,
-				55666644201A68AF00051ED2 /* AccountSession.h */,
-				55666645201A68AF00051ED2 /* AccountSession.m */,
-				55B781A51FDDA63900330B80 /* AccountsTableViewController.h */,
-				55B781A61FDDA63900330B80 /* AccountsTableViewController.m */,
-				55B781B11FE0A4F600330B80 /* AddContactViewController.h */,
-				55B781B21FE0A4F600330B80 /* AddContactViewController.m */,
-				553789901FF583490043BCF4 /* AddFriendViewController.h */,
-				553789911FF583490043BCF4 /* AddFriendViewController.m */,
-				553332591F9AE2D700F441E4 /* AlertErrorDelegate.h */,
-				5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */,
 				5592A5871F8BBB4400F08BF5 /* AppDelegate.h */,
 				5592A5881F8BBB4400F08BF5 /* AppDelegate.m */,
-				55FA87401FD1AE5800FB96C0 /* AuthenticationRequest.h */,
-				55FA87411FD1AE5800FB96C0 /* AuthenticationRequest.m */,
-				55FA87431FD5CA4F00FB96C0 /* AuthenticationResponse.h */,
-				55FA87441FD5CA4F00FB96C0 /* AuthenticationResponse.m */,
-				55FA873D1FD187CD00FB96C0 /* Authenticator.h */,
-				55FA873E1FD187CD00FB96C0 /* Authenticator.m */,
-				55FA87461FD5E58E00FB96C0 /* ClientAuthChallenge.h */,
-				55FA87471FD5E58E00FB96C0 /* ClientAuthChallenge.m */,
-				55DB7F461FD86AF800B4D262 /* ClientAuthorized.h */,
-				55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */,
-				553789962002C2B20043BCF4 /* ContactDatabase.h */,
-				553789972002C2B20043BCF4 /* ContactDatabase.m */,
-				5566664120169ADA00051ED2 /* ContactDetailViewController.h */,
-				5566664220169ADA00051ED2 /* ContactDetailViewController.m */,
-				55B781AB1FE018FC00330B80 /* ContactManager.h */,
-				55B781AC1FE018FC00330B80 /* ContactManager.m */,
-				5570AD171FDF039B00724B34 /* ContactPolicyViewController.h */,
-				5570AD181FDF039B00724B34 /* ContactPolicyViewController.m */,
-				5592A5AE1F8BC43C00F08BF5 /* ContactsTableViewController.h */,
-				5592A5AF1F8BC43C00F08BF5 /* ContactsTableViewController.m */,
-				55DB7F491FDB350800B4D262 /* CreateAccountDialog.h */,
-				55DB7F4A1FDB350800B4D262 /* CreateAccountDialog.m */,
-				55B3911A1FE17339004DAFF7 /* EnclaveRequest.h */,
-				55B3911B1FE17339004DAFF7 /* EnclaveRequest.m */,
-				55B3911D1FE17383004DAFF7 /* EnclaveResponse.h */,
-				55B3911E1FE17383004DAFF7 /* EnclaveResponse.m */,
-				5533325C1F9B779300F441E4 /* ErrorCodes.h */,
-				55DB42141F9ABF8C001D8CB1 /* ErrorDelegate.h */,
-				5592A58A1F8BBB4400F08BF5 /* HomeViewController.h */,
-				5592A58B1F8BBB4400F08BF5 /* HomeViewController.m */,
-				55666647201B7C9000051ED2 /* LoggingErrorDelegate.h */,
-				55666648201B7C9000051ED2 /* LoggingErrorDelegate.m */,
-				55B781A81FDE161E00330B80 /* Logout.h */,
-				55B781A91FDE161E00330B80 /* Logout.m */,
-				551051062020BC36000A313E /* Message.h */,
-				551051072020BC36000A313E /* Message.m */,
-				551050FD201F8840000A313E /* MessagesDatabase.h */,
-				551050FE201F8840000A313E /* MessagesDatabase.m */,
-				55105100201F8880000A313E /* MessageManager.h */,
-				55105101201F8880000A313E /* MessageManager.m */,
-				5592A5B11F8BC92E00F08BF5 /* MessagesTableViewController.h */,
-				5592A5B21F8BC92E00F08BF5 /* MessagesTableViewController.m */,
-				554C17351FDD5990009434F5 /* MoreTableViewController.h */,
-				554C17361FDD5990009434F5 /* MoreTableViewController.m */,
-				5527BAA31F8D0D1200C40D05 /* NewAccountCreator.h */,
-				5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */,
-				551A18401FA0FA740050C93C /* NewAccountFinal.h */,
-				551A18411FA0FA740050C93C /* NewAccountFinal.m */,
-				551A183D1FA0FA030050C93C /* NewAccountFinish.h */,
-				551A183E1FA0FA030050C93C /* NewAccountFinish.m */,
-				5527BAAF1F8D4B1D00C40D05 /* NewAccountRequest.h */,
-				5527BAB01F8D4B1D00C40D05 /* NewAccountRequest.m */,
-				5527BAB61F8DB81A00C40D05 /* NewAccountResponse.h */,
-				5527BAB71F8DB81A00C40D05 /* NewAccountResponse.m */,
-				558720451FE466BE0078679E /* NicknameViewController.h */,
-				558720461FE466BE0078679E /* NicknameViewController.m */,
-				557238B11F8C6B0C00A13A14 /* NSData+HexEncode.h */,
-				557238B21F8C6B0C00A13A14 /* NSData+HexEncode.m */,
-				5527BAAA1F8D398A00C40D05 /* ParameterGenerator.h */,
-				5527BAAB1F8D398A00C40D05 /* ParameterGenerator.m */,
-				5537899C200D2C7B0043BCF4 /* PendingContactViewController.h */,
-				5537899D200D2C7B0043BCF4 /* PendingContactViewController.m */,
-				5527BAA11F8D0AE200C40D05 /* PostPacket.h */,
-				55B781A21FDD77F800330B80 /* PublicIdTableViewController.h */,
-				55B781A31FDD77F800330B80 /* PublicIdTableViewController.m */,
-				553332581F9AD83A00F441E4 /* RequestProcess.h */,
-				55378999200CFABB0043BCF4 /* RequestsTableViewCell.h */,
-				5537899A200CFABB0043BCF4 /* RequestsTableViewCell.m */,
-				555E22FB2006C8CD0098A099 /* RequestsTableViewController.h */,
-				555E22FC2006C8CD0098A099 /* RequestsTableViewController.m */,
-				5579D45B1FE8491C007BCFE4 /* ResponseConsumer.h */,
-				5527BAA61F8D36BA00C40D05 /* RESTResponse.h */,
-				5527BAB21F8D58D300C40D05 /* RESTSession.h */,
-				5527BAB31F8D58D300C40D05 /* RESTSession.m */,
-				55FA87491FD5E5AC00FB96C0 /* ServerAuthChallenge.h */,
-				55FA874A1FD5E5AC00FB96C0 /* ServerAuthChallenge.m */,
-				55DB7F431FD8692C00B4D262 /* ServerAuthorized.h */,
-				55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */,
-				5527BAB51F8D5B9500C40D05 /* SessionDelegate.h */,
-				5527BAA71F8D37D600C40D05 /* SessionState.h */,
-				5527BAA81F8D37D600C40D05 /* SessionState.m */,
-				554C17321FDC7F49009434F5 /* TabBarDelegate.h */,
-				554C17331FDC7F49009434F5 /* TabBarDelegate.m */,
-				55FA87371FD059AF00FB96C0 /* UserVault.h */,
-				55FA87381FD059AF00FB96C0 /* UserVault.m */,
-				553789931FF58B0F0043BCF4 /* WhitelistManager.h */,
-				553789941FF58B0F0043BCF4 /* WhitelistManager.m */,
-				5537898D1FF579EC0043BCF4 /* WhitelistTableViewCell.h */,
-				5537898E1FF579EC0043BCF4 /* WhitelistTableViewCell.m */,
-				5537898A1FF568B50043BCF4 /* WhitelistTableViewController.h */,
-				5537898B1FF568B50043BCF4 /* WhitelistTableViewController.m */,
+				55579E5D202764EF00131A54 /* API */,
+				55579E59202763DE00131A54 /* Support */,
+				55579E582027638800131A54 /* Home */,
+				55579E5A202763F700131A54 /* Contacts */,
+				55579E5B2027643A00131A54 /* Messages */,
+				55579E5C2027646200131A54 /* More */,
 				5592A5901F8BBB4400F08BF5 /* Main.storyboard */,
 				5592A5931F8BBB4400F08BF5 /* Assets.xcassets */,
 				5592A5951F8BBB4400F08BF5 /* LaunchScreen.storyboard */,
@@ -826,6 +882,7 @@
 				558720471FE466BE0078679E /* NicknameViewController.m in Sources */,
 				55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */,
 				55AA554C1FA14D7100A7026B /* DigestBase.cc in Sources */,
+				55579E512024C21F00131A54 /* DatabaseContact.m in Sources */,
 				55FA874B1FD5E5AC00FB96C0 /* ServerAuthChallenge.m in Sources */,
 				5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */,
 				5527BAA91F8D37D600C40D05 /* SessionState.m in Sources */,
@@ -833,17 +890,17 @@
 				55AA55011FA14C1300A7026B /* CKSHA256.mm in Sources */,
 				55AA54FC1FA14C1300A7026B /* CKRSAKeyPair.m in Sources */,
 				55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */,
-				551051082020BC36000A313E /* Message.m in Sources */,
+				551051082020BC36000A313E /* DatabaseMessage.m in Sources */,
 				55B3911F1FE17383004DAFF7 /* EnclaveResponse.m in Sources */,
 				55FA87481FD5E58E00FB96C0 /* ClientAuthChallenge.m in Sources */,
 				554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */,
-				553789951FF58B0F0043BCF4 /* WhitelistManager.m in Sources */,
 				5570AD191FDF039B00724B34 /* ContactPolicyViewController.m in Sources */,
 				551050FF201F8840000A313E /* MessagesDatabase.m in Sources */,
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
 				55B781B31FE0A4F600330B80 /* AddContactViewController.m in Sources */,
 				553789921FF583490043BCF4 /* AddFriendViewController.m in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
+				55579E57202647CF00131A54 /* PreviewTableViewCell.m in Sources */,
 				55666649201B7C9000051ED2 /* LoggingErrorDelegate.m in Sources */,
 				55AA55581FA14D7100A7026B /* HMAC.cc in Sources */,
 				554C17341FDC7F49009434F5 /* TabBarDelegate.m in Sources */,
@@ -859,6 +916,7 @@
 				5537898F1FF579EC0043BCF4 /* WhitelistTableViewCell.m in Sources */,
 				55AA555E1FA14D7100A7026B /* SHA384.cc in Sources */,
 				55B781AA1FDE161E00330B80 /* Logout.m in Sources */,
+				55579E542026293300131A54 /* ContactTableViewCell.m in Sources */,
 				55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */,
 				5537899E200D2C7B0043BCF4 /* PendingContactViewController.m in Sources */,
 				55AA55541FA14D7100A7026B /* SHA256.cc in Sources */,

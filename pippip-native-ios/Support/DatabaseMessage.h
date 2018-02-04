@@ -1,5 +1,5 @@
 //
-//  Message.h
+//  DatabaseMessage.h
 //  pippip-native-ios
 //
 //  Created by Steve Brenneis on 1/30/18.
@@ -8,14 +8,15 @@
 
 #import <Realm/Realm.h>
 
-@interface Message : RLMObject
+@interface DatabaseMessage : RLMObject
 
-@property NSString *fromId;
+@property NSInteger contactId;
 @property NSString *messageType;
 @property NSData *message;
 @property NSInteger keyIndex;
 @property NSInteger sequence;
 @property NSInteger timestamp;
+@property BOOL read;
 @property BOOL acknowledged;
 
 @end

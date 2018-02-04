@@ -16,11 +16,11 @@
 
 - (instancetype)initWithRESTSession:(RESTSession *)restSession;
 
+- (void)endSession;
+
+- (NSArray*)getMostRecentMessages;
+
 - (void)loadMessages;
-
-- (NSInteger)senderCount;
-
-- (void)setContactIds:(NSArray*)ids;
 
 - (void)setResponseConsumer:(id<ResponseConsumer>)responseConsumer;
 

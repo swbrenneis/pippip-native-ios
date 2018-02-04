@@ -11,6 +11,7 @@
 #import "ContactManager.h"
 #import "AddContactViewController.h"
 #import "ContactDetailViewController.h"
+#import "ContactTableViewCell.h"
 
 @interface ContactsTableViewController ()
 {
@@ -124,15 +125,17 @@
     if (entity != nil) {
         NSString *nickname = entity[@"nickname"];
         NSString *publicId = entity[@"publicId"];
-        if (nickname == nil) {
-            cell.textLabel.text = @"";
-            cell.detailTextLabel.text = publicId;
+        NSString *status = entity[@"status"];
+
+        ContactTableViewCell *contactCell = (ContactTableViewCell*)cell;
+        if (nickname != nil) {
+            contactCell.nicknameLabel.text = nickname;
         }
         else {
-            cell.textLabel.text = nickname;
-            cell.detailTextLabel.text = publicId;
+            contactCell.nicknameLabel.text = @"";
         }
-        cell.imageView.image = [UIImage imageNamed:entity[@"status"]];
+        contactCell.publicIdLabel.text = publicId;
+        contactCell.statusImageView.image = [UIImage imageNamed:status];
     }
     else {
         NSLog(@"Contact index %ld out of range", (long)indexPath.item);

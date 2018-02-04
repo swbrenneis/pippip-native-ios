@@ -11,6 +11,7 @@
 #import "EnclaveResponse.h"
 #import "LoggingErrorDelegate.h"
 #import "NSData+HexEncode.h"
+#import <Realm/Realm.h>
 
 typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
 
@@ -52,14 +53,19 @@ typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
             for (NSDictionary *contact in contacts) {
                 [self processContact:contact];
             }
-            if (contacts.count > 0) {
-                [_contactManager contactsUpdated];
-            }
         }
         else {
             NSLog(@"Error response: %@", error);
         }
     }
+
+}
+
+- (void)endSession {
+    
+    sessionActive = NO;
+    [_contactManager endSession];
+    [_messageManager endSession];
 
 }
 
@@ -77,12 +83,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
         }
     }
     return nil;
-
-}
-
-- (void)endSession {
-
-    sessionActive = NO;
 
 }
 
@@ -128,32 +128,32 @@ typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
 - (void)processContact:(NSDictionary*)contact {
 
     NSString *publicId = contact[@"publicId"];
-    NSMutableDictionary *entity = [_contactManager getContact:publicId];
+    NSDictionary *entity = [_contactManager getContact:publicId];
     if (entity == nil) {
         // Something really wrong here
-        NSLog(@"Contact %@ does not exist", publicId);
+        NSLog(@"Process contact, contact %@ does not exist", publicId);
     }
     else {
-        // This updates the actual contact in the database
-        // We just need to store the contacts after doing this.
+        NSMutableDictionary *update = [entity mutableCopy];
         NSString *status = contact[@"status"];
-        entity[@"status"] = status;
-        entity[@"timestamp"] = contact[@"timestamp"];
+        update[@"status"] = status;
+        update[@"timestamp"] = contact[@"timestamp"];
         if ([status isEqualToString:@"accepted"]) {
-            entity[@"currentSequence"] = [NSNumber numberWithLong:0L];
-            entity[@"currentIndex"] = [NSNumber numberWithLong:0L];
+            update[@"currentSequence"] = [NSNumber numberWithLong:0L];
+            update[@"currentIndex"] = [NSNumber numberWithLong:0L];
             NSData *authData = [[NSData alloc] initWithBase64EncodedString:contact[@"authData"] options:0];
-            entity[@"authData"] = authData;
+            update[@"authData"] = authData;
             NSData *nonce = [[NSData alloc] initWithBase64EncodedString:contact[@"nonce"] options:0];
-            entity[@"nonce"] = nonce;
+            update[@"nonce"] = nonce;
             NSArray *messageKeys = contact[@"messageKeys"];
             NSMutableArray *keys = [NSMutableArray array];
             for (NSString *keyString in messageKeys) {
                 NSData *key = [[NSData alloc] initWithBase64EncodedString:keyString options:0];
                 [keys addObject:key];
             }
-            entity[@"messageKeys"] = keys;
+            update[@"messageKeys"] = keys;
         }
+        [_contactManager updateContact:update];
     }
 
 }
@@ -172,12 +172,30 @@ typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
     // Nothing to do here.
 }
 
+- (void)setRealmConfiguration:(NSString*)name {
+    
+    RLMRealmConfiguration *config = [RLMRealmConfiguration defaultConfiguration];
+    // Use the default directory, but replace the filename with the username
+    config.fileURL = [[[config.fileURL URLByDeletingLastPathComponent]
+                       URLByAppendingPathComponent:name]
+                      URLByAppendingPathExtension:@"realm"];
+    config.schemaVersion = 1;
+    config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
+        if (oldSchemaVersion < 1) {
+            // No migration necessary
+        }
+    };
+    [RLMRealmConfiguration setDefaultConfiguration:config];
+    
+}
+
 /*
  * This is invoked from the main thread.
  */
 - (void)startSession:(SessionState *)state {
 
     _sessionState = state;
+    [self setRealmConfiguration:_sessionState.currentAccount];
     [_contactManager setSessionState:state];
     [_messageManager setSessionState:state];
     sessionActive = YES;
@@ -190,7 +208,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
 - (void)updateContacts {
 
     if (sessionActive) {
-        NSArray *pending = [_contactManager getPendingContacts];
+        NSArray *pending = [_contactManager getPendingContactIds];
         if (pending.count > 0) {
             NSLog(@"%@", @"Updating pending contacts");
             NSMutableDictionary *request = [NSMutableDictionary dictionary];

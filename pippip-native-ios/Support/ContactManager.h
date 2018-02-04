@@ -26,8 +26,6 @@
 
 - (NSInteger)contactCount;
 
-- (void)contactsUpdated;
-
 - (void)createNickname:(NSString*)nickname withOldNickname:(NSString*)oldNickname;
 
 - (void)deleteContact:(NSString*)publicId;
@@ -36,19 +34,19 @@
 
 - (void)deleteLocalContact:(NSString*)publicId;
 
+- (void)endSession;
+
 - (NSDictionary*)contactAtIndex:(NSInteger)index;
 
 - (NSMutableDictionary*)getContact:(NSString*)publicId;
 
-- (NSArray*)getContactIds;
-
 - (void)getNickname:(NSString*)publicId;
 
-- (NSArray*)getPendingContacts;
+- (NSArray*)getPendingContactIds;
 
 - (void)getRequests;
 
-- (void)loadContacts;
+- (BOOL)loadContacts;
 
 - (void)matchNickname:(NSString*)nickname;
 
@@ -64,10 +62,10 @@
 
 - (void)setViewController:(UIViewController*)controller;
 
-//- (void)storeContacts;
-
 - (void)syncContacts;
 
 - (void)requestContact:(NSString*)publicId;
+
+- (void)updateContact:(NSMutableDictionary*)contact;
 
 @end

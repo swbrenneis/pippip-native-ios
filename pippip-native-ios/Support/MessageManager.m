@@ -14,7 +14,6 @@
 @interface MessageManager ()
 {
     MessagesDatabase *messages;
-    NSArray *senderIds;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -40,20 +39,14 @@
     
 }
 
-- (NSInteger)senderCount {
-
-    NSInteger count = 0;
-    for (NSString *id in senderIds) {
-        if ([messages messageCountById:id] > 0) {
-            count++;
-        }
-    }
-    return count;
+- (void)endSession {
 
 }
 
-- (void)setContactIds:(NSArray *)ids {
-    senderIds = ids;
+- (NSArray*)getMostRecentMessages {
+
+    return [messages mostRecent];
+
 }
 
 - (void)loadMessages {

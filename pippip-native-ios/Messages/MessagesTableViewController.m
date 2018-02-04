@@ -9,8 +9,12 @@
 #import "MessagesTableViewController.h"
 #import "AppDelegate.h"
 #import "MessageManager.h"
+#import "PreviewTableViewCell.h"
 
 @interface MessagesTableViewController ()
+{
+    NSArray *mostRecent;
+}
 
 @property (weak, nonatomic) MessageManager *messageManager;
 
@@ -38,6 +42,7 @@
     // Get the message manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _messageManager = delegate.accountSession.messageManager;
+    mostRecent = [_messageManager getMostRecentMessages];
     
     [self.tableView reloadData];
     
@@ -52,19 +57,47 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return [_messageManager senderCount];
+    NSInteger count = mostRecent.count;
+    if (count > 0) {
+        return count;
+    }
+    else {
+        return 1;
+    }
 
 }
 
-/*
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PreviewCell" forIndexPath:indexPath];
     
     // Configure the cell...
-    
+    PreviewTableViewCell *previewCell = (PreviewTableViewCell*)cell;
+    NSDictionary *message = mostRecent[indexPath.item];
+    NSNumber *read = message[@"read"];
+    [previewCell.messageReadImage setHidden:[read boolValue]];
+    NSString *sender = message[@"sender"];
+    if (sender.length > 14) {
+        NSString *shortened = [sender substringWithRange:NSMakeRange(0, 14)];
+        previewCell.senderLabel.text = [shortened stringByAppendingString:@"..."];
+    }
+    else {
+        previewCell.senderLabel.text = sender;
+    }
+    NSString *dt = message[@"dateTime"];
+    previewCell.dateTimeLabel.text = [dt stringByAppendingString:@" >"];
+    NSString *msgText = message[@"message"];
+    if (msgText.length > 33) {
+        NSString *preview = [msgText substringWithRange:NSMakeRange(0, 33)];
+        previewCell.previewLabel.text = [preview stringByAppendingString:@"..."];
+    }
+    else {
+        previewCell.previewLabel.text = msgText;
+    }
+
     return cell;
+    
 }
-*/
+
 
 /*
 // Override to support conditional editing of the table view.
