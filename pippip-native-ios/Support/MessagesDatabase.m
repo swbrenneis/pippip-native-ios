@@ -24,6 +24,12 @@
 
 }
 
+- (NSArray*)buildConversation:(NSString *)publicId {
+
+    return nil;
+    
+}
+
 - (NSArray*)mostRecent {
 
     NSMutableArray *recent = [NSMutableArray array];

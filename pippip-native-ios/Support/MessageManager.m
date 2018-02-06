@@ -14,6 +14,7 @@
 @interface MessageManager ()
 {
     MessagesDatabase *messages;
+    NSMutableDictionary *conversations;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -34,12 +35,30 @@
     
     _session = restSession;
     messages = [[MessagesDatabase alloc] init];
+    conversations = [NSMutableDictionary dictionary];
     
     return self;
     
 }
 
+- (void)addNewMessages:(NSArray *)messages {
+    
+}
+
 - (void)endSession {
+
+}
+
+- (NSArray*)getConversation:(NSString *)publicId {
+
+    NSArray *conversation = conversations[publicId];
+    if (conversation == nil) {
+        conversation = [messages buildConversation:publicId];
+        if (conversation != nil) {
+            conversations[@"publicId"] = conversation;
+        }
+    }
+    return conversation;
 
 }
 

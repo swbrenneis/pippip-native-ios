@@ -14,6 +14,8 @@
 
 - (void)addMessage:(DatabaseMessage*)message;
 
+- (NSArray*)buildConversation:(NSString*)publicId;
+
 - (NSArray*)mostRecent;
 
 - (BOOL)loadMessages:(SessionState*)state;

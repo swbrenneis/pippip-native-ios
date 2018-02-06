@@ -14,8 +14,6 @@
 
 @interface ContactDatabase ()
 {
-    NSMutableDictionary *database;
-    NSMutableArray *indexed;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -27,8 +25,8 @@
 - (instancetype)init {
     self = [super init];
 
-    database = [NSMutableDictionary dictionary];
-    indexed = [NSMutableArray array];
+    _keyed = [NSMutableDictionary dictionary];
+    _indexed = [NSMutableArray array];
 
     return self;
 
@@ -36,10 +34,10 @@
 
 - (void)addContact:(NSMutableDictionary *)contact {
 
-    contact[@"index"] = [NSNumber numberWithInteger:[indexed count]];
-    [indexed addObject:contact];
+    contact[@"index"] = [NSNumber numberWithInteger:[_indexed count]];
+    [_indexed addObject:contact];
     NSString *publicId = contact[@"publicId"];
-    database[publicId] = contact;
+    _keyed[publicId] = contact;
 
     // Assign a contact ID
     CKSecureRandom *rnd = [[CKSecureRandom alloc] init];
@@ -57,12 +55,6 @@
         [realm addObject:dbContact];
         [realm commitWriteTransaction];
     }
-
-}
-
-- (NSInteger)contactCount {
-
-    return database.count;
 
 }
 
@@ -103,12 +95,12 @@
 
 - (void)deleteContact:(NSString *)publicId {
 
-    NSDictionary *contact = database[publicId];
+    NSDictionary *contact = _keyed[publicId];
     NSNumber *cid = contact[@"contactId"];
     NSInteger contactId = [cid integerValue];
     NSNumber *index = contact[@"index"];
-    [indexed removeObjectAtIndex:[index integerValue]];
-    [database removeObjectForKey:publicId];
+    [_indexed removeObjectAtIndex:[index integerValue]];
+    [_keyed removeObjectForKey:publicId];
     // Delete from the realm
     RLMRealm *realm = [RLMRealm defaultRealm];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
@@ -158,36 +150,10 @@
 
 }
 
-- (NSDictionary*)getContactById:(NSString *)publicId {
-
-    return database[publicId];
-
-}
-
-- (NSDictionary*)getContactByIndex:(NSInteger)index {
-
-    return indexed[index];
-
-}
-
-- (NSArray*)getContacts:(NSString *)status {
-
-    NSMutableArray *filtered = [NSMutableArray array];
-    for (NSDictionary *contact in indexed) {
-        NSString *currentStatus = contact[@"status"];
-        if ([status isEqualToString:currentStatus]) {
-            // Make the contact immutable
-            [filtered addObject:[NSDictionary dictionaryWithDictionary:contact]];
-        }
-    }
-    return filtered;
-
-}
-
 - (BOOL)loadContacts:(SessionState*)state {
 
-    [database removeAllObjects];
-    [indexed removeAllObjects];
+    [_keyed removeAllObjects];
+    [_indexed removeAllObjects];
 
     _sessionState = state;
     RLMRealm *realm = [RLMRealm defaultRealm];
@@ -201,9 +167,9 @@
             NSMutableDictionary *contact = [self decodeContact:dbContact.encoded];
             if (contact != nil) {
                 contact[@"contactId"] = [NSNumber numberWithInteger:dbContact.contactId];
-                database[contact[@"publicId"]] = contact;
+                _keyed[contact[@"publicId"]] = contact;
                 contact[@"index"] = [NSNumber numberWithInteger:index];
-                [indexed addObject:contact];
+                [_indexed addObject:contact];
                 index++;
             }
             else {
@@ -217,8 +183,8 @@
 
 - (void)syncContacts:(NSArray*)synched {
 
-    while (indexed.count > 0) {
-        NSDictionary *entity = indexed[0];
+    while (_indexed.count > 0) {
+        NSDictionary *entity = _indexed[0];
         [self deleteContact:entity[@"publicId"]];
     }
 
@@ -249,7 +215,7 @@
 - (void)updateContact:(NSMutableDictionary*)contact {
 
     NSString *publicId = contact[@"publicId"];
-    NSDictionary *entity = database[publicId];
+    NSDictionary *entity = _keyed[publicId];
     if (entity == nil) {
         // Not in the database.
         NSLog(@"Update contact, contact %@ not found", publicId);
@@ -263,8 +229,8 @@
         NSNumber *idx = entity[@"index"];
         contact[@"index"] = idx;
         NSInteger index = [idx integerValue];
-        indexed[index] = contact;
-        database[publicId] = contact;
+        _indexed[index] = contact;
+        _keyed[publicId] = contact;
     }
 
 }

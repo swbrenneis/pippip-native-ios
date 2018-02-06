@@ -10,7 +10,6 @@
 #import "AppDelegate.h"
 #import "AccountManager.h"
 #import "WhitelistTableViewCell.h"
-#import "WhitelistManager.h"
 #import "AddFriendViewController.h"
 #import "ContactManager.h"
 

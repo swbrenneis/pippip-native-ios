@@ -93,7 +93,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
         if (error == nil) {
             NSDictionary *updateResponse = [self getEnclaveResponse:response];
             NSArray *messages = updateResponse[@"messages"];
-            [_contactManager addNewMessages:messages];
+            [_messageManager addNewMessages:messages];
         }
         else {
             NSLog(@"Error response: %@", error);

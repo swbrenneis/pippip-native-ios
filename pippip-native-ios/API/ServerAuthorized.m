@@ -44,7 +44,7 @@
 }
 
 - (double)restTimeout {
-    return 10.0;
+    return 15.0;
 }
 
 - (NSString*)restURL {

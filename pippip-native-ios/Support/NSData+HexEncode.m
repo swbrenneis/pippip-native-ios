@@ -49,7 +49,7 @@
             if (error != nil) {
                 NSDictionary *errorDictionary = @{ NSLocalizedDescriptionKey : @"Invalid hex string" };
                 *error = [NSError errorWithDomain:[[NSBundle mainBundle] bundleIdentifier]
-                                             code:INVALID_HEX_STRING
+                                             code:43
                                          userInfo:errorDictionary];
             }
         }

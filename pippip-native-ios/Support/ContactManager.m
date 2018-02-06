@@ -73,19 +73,15 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 }
 
-- (void)addNewMessages:(NSArray *)messages {
-    
-}
-
 - (NSInteger) contactCount {
 
-    return [contacts contactCount];
+    return contacts.indexed.count;
 
 }
 
 - (NSDictionary*)contactAtIndex:(NSInteger)index {
 
-    return [contacts getContactByIndex:index];
+    return contacts.indexed[index];
 
 }
 
@@ -134,8 +130,22 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 - (NSDictionary*)getContact:(NSString *)publicId {
 
-    return [contacts getContactById:publicId];
+    return contacts.keyed[publicId];
 
+}
+
+- (NSArray*)getContacts:(NSString *)status {
+    
+    NSMutableArray *filtered = [NSMutableArray array];
+    for (NSDictionary *contact in contacts.indexed) {
+        NSString *currentStatus = contact[@"status"];
+        if ([status isEqualToString:currentStatus]) {
+            // Make the contact immutable
+            [filtered addObject:[NSDictionary dictionaryWithDictionary:contact]];
+        }
+    }
+    return filtered;
+    
 }
 
 - (void)getNickname:(NSString *)publicId {
@@ -150,7 +160,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 - (NSArray*)getPendingContactIds {
 
     NSMutableArray *pending = [NSMutableArray array];
-    NSArray *filtered = [contacts getContacts:@"pending"];
+    NSArray *filtered = [self getContacts:@"pending"];
     for (NSDictionary *entity in filtered) {
         [pending addObject:entity[@"publicId"]];
     }
@@ -204,6 +214,27 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     
 }
 
+- (NSArray*)searchContacts:(NSString *)fragment {
+
+    NSString *search = [fragment uppercaseString];
+    NSMutableArray *results = [NSMutableArray array];
+    for (NSDictionary *contact in contacts.indexed) {
+        NSString *nickname = contact[@"nickname"];
+        NSString *publicId = contact[@"publicId"];
+        if ([[publicId uppercaseString] containsString:search]) {
+            [results addObject:contact];
+        }
+        else if (nickname != nil) {
+            if ([[nickname uppercaseString] containsString:search]) {
+                [results addObject:contact];
+            }
+        }
+    }
+    
+    return results;
+
+}
+
 - (void)sendRequest:(NSDictionary*)request {
     
     EnclaveRequest *enclaveRequest = [[EnclaveRequest alloc] initWithState:_sessionState];
@@ -235,7 +266,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 - (void)setNickname:(NSString *)nickname withPublicId:(NSString *)publicId {
 
-    NSDictionary *contact = [contacts getContactById:publicId];
+    NSDictionary *contact = contacts.keyed[publicId];
     if (contact == nil) {
         NSLog(@"Set nickname, contact %@ not found", publicId);
     }

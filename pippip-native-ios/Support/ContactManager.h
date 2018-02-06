@@ -22,8 +22,6 @@
 
 - (void)addFriend:(NSString*)publicId;
 
-- (void)addNewMessages:(NSArray*)messages;
-
 - (NSInteger)contactCount;
 
 - (void)createNickname:(NSString*)nickname withOldNickname:(NSString*)oldNickname;
@@ -49,6 +47,8 @@
 - (BOOL)loadContacts;
 
 - (void)matchNickname:(NSString*)nickname;
+
+- (NSArray*)searchContacts:(NSString*)fragment;
 
 - (void)setContactPolicy:(NSString*)policy;
 

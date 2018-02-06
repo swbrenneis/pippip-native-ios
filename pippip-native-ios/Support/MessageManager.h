@@ -16,7 +16,11 @@
 
 - (instancetype)initWithRESTSession:(RESTSession *)restSession;
 
+- (void)addNewMessages:(NSArray*)messages;
+
 - (void)endSession;
+
+- (NSArray*)getConversation:(NSString*)publicId;
 
 - (NSArray*)getMostRecentMessages;
 
