@@ -8,15 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import "SessionState.h"
-#import "DatabaseMessage.h"
 
 @interface MessagesDatabase : NSObject
 
-- (void)addMessage:(DatabaseMessage*)message;
+@property (nonatomic) NSMutableDictionary *conversations;
 
-- (NSArray*)buildConversation:(NSString*)publicId;
+- (void)addMessage:(NSMutableDictionary*)message;
 
 - (NSArray*)mostRecent;
+
+- (NSMutableArray*)loadConversation:(NSInteger)contactId;
 
 - (BOOL)loadMessages:(SessionState*)state;
 

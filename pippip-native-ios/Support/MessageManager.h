@@ -11,10 +11,11 @@
 #import "RESTSession.h"
 #import "SessionState.h"
 #import "ResponseConsumer.h"
+#import "ContactManager.h"
 
 @interface MessageManager : NSObject <RequestProcess>
 
-- (instancetype)initWithRESTSession:(RESTSession *)restSession;
+- (instancetype)initWithRESTSession:(RESTSession *)restSession withContactManager:(ContactManager*)manager;
 
 - (void)addNewMessages:(NSArray*)messages;
 
@@ -25,6 +26,10 @@
 - (NSArray*)getMostRecentMessages;
 
 - (void)loadMessages;
+
+- (void)messageAcknowledged:(NSString*)publicId withSequence:(NSInteger)sequence withTimestamp:(NSInteger)timestamp;
+
+- (void)sendMessage:(NSString*)message withPublicId:(NSString*)publicId;
 
 - (void)setResponseConsumer:(id<ResponseConsumer>)responseConsumer;
 

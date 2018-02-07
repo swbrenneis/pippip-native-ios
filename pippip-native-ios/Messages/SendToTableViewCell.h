@@ -12,4 +12,6 @@
 
 @property (weak, nonatomic) IBOutlet UITextView *sendToTextView;
 
+@property (nonatomic) NSString *publicId;
+
 @end

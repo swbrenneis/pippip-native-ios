@@ -23,9 +23,11 @@ public:
     void decrypt(const coder::ByteArray& key, const coder::ByteArray& ad);
     void encrypt(const coder::ByteArray& key, const coder::ByteArray& ad);
     const coder::ByteArray& toArray() const { return text; }
+    void setIV(const coder::ByteArray& iv);
 
 private:
     coder::ByteArray text;
+    coder::ByteArray iv;
 
 };
 

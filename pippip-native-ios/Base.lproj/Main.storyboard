@@ -1097,11 +1097,10 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="avatarImage" destination="4Va-ZW-h7y" id="JKg-f4-AD2"/>
-                                    <outlet property="dateTimeLabel" destination="mC3-cZ-QO0" id="E7T-50-MDb"/>
-                                    <outlet property="messageReadImage" destination="Lyv-gp-4RE" id="mpQ-Rg-YH3"/>
-                                    <outlet property="previewLabel" destination="H6U-3i-0rc" id="1hb-RG-uew"/>
-                                    <outlet property="senderLabel" destination="5yp-jw-CkL" id="555-Bj-dp9"/>
+                                    <outlet property="dateTimeLabel" destination="mC3-cZ-QO0" id="7W6-Ec-MUE"/>
+                                    <outlet property="messageReadImage" destination="Lyv-gp-4RE" id="ffm-Ar-GBV"/>
+                                    <outlet property="previewLabel" destination="H6U-3i-0rc" id="bXb-4E-bMK"/>
+                                    <outlet property="senderLabel" destination="5yp-jw-CkL" id="riM-xH-sDF"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1154,7 +1153,7 @@
                                                 </label>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="pd3-fn-RxH">
                                                     <rect key="frame" x="57" y="11" width="288" height="23"/>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 </textView>
@@ -1168,6 +1167,7 @@
                                                 <constraint firstItem="pd3-fn-RxH" firstAttribute="centerY" secondItem="4Cf-4I-0jb" secondAttribute="centerY" id="li6-lf-VhJ"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                         <connections>
                                             <outlet property="sendToTextView" destination="pd3-fn-RxH" id="5M3-r2-bcG"/>
                                         </connections>
@@ -1221,35 +1221,52 @@
                                             <outlet property="contactTableView" destination="LQt-bx-d0v" id="7QH-P0-pSn"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="NewMessageCell" rowHeight="60" id="UhK-2k-2iI">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="NewMessageCell" rowHeight="60" id="UhK-2k-2iI" customClass="NewMessageTableViewCell">
                                         <rect key="frame" x="0.0" y="323" width="375" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="UhK-2k-2iI" id="tHp-wh-Afg">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LiF-yh-fuV">
-                                                    <rect key="frame" x="325" y="12" width="35" height="35"/>
-                                                    <state key="normal" image="sendmessage"/>
-                                                </button>
-                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Message" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yyb-ve-rRy">
-                                                    <rect key="frame" x="30" y="11" width="285" height="38"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="285" id="4fx-IG-7Uo"/>
-                                                    </constraints>
-                                                    <nil key="textColor"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits"/>
-                                                </textField>
+                                                <stackView opaque="NO" contentMode="scaleToFill" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="sP0-ki-pGD">
+                                                    <rect key="frame" x="10" y="10" width="355" height="40"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" ! " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bRd-ic-X6b">
+                                                            <rect key="frame" x="0.0" y="0.0" width="16" height="40"/>
+                                                            <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="20"/>
+                                                            <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Message" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yyb-ve-rRy">
+                                                            <rect key="frame" x="21" y="0.0" width="294" height="40"/>
+                                                            <nil key="textColor"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                            <textInputTraits key="textInputTraits"/>
+                                                        </textField>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LiF-yh-fuV">
+                                                            <rect key="frame" x="320" y="0.0" width="35" height="40"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="35" id="HzR-cE-mBe"/>
+                                                            </constraints>
+                                                            <state key="normal" image="sendmessage"/>
+                                                            <connections>
+                                                                <action selector="sendMessage:" destination="zue-dS-e4v" eventType="touchUpInside" id="Wsw-hr-iDF"/>
+                                                            </connections>
+                                                        </button>
+                                                    </subviews>
+                                                </stackView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="yyb-ve-rRy" firstAttribute="bottom" secondItem="tHp-wh-Afg" secondAttribute="bottomMargin" id="LLh-tq-X3e"/>
-                                                <constraint firstItem="LiF-yh-fuV" firstAttribute="centerY" secondItem="tHp-wh-Afg" secondAttribute="centerY" id="bxH-YB-BXw"/>
-                                                <constraint firstItem="yyb-ve-rRy" firstAttribute="top" secondItem="tHp-wh-Afg" secondAttribute="topMargin" id="de6-fJ-t3F"/>
-                                                <constraint firstItem="yyb-ve-rRy" firstAttribute="leading" secondItem="tHp-wh-Afg" secondAttribute="leadingMargin" constant="15" id="tQm-59-sV9"/>
-                                                <constraint firstItem="LiF-yh-fuV" firstAttribute="trailing" secondItem="tHp-wh-Afg" secondAttribute="trailingMargin" id="urU-4r-In1"/>
+                                                <constraint firstItem="sP0-ki-pGD" firstAttribute="leading" secondItem="tHp-wh-Afg" secondAttribute="leading" constant="10" id="be7-oK-d3J"/>
+                                                <constraint firstAttribute="bottom" secondItem="sP0-ki-pGD" secondAttribute="bottom" constant="10" id="eeJ-La-wpY"/>
+                                                <constraint firstAttribute="trailing" secondItem="sP0-ki-pGD" secondAttribute="trailing" constant="10" id="gqv-eW-Lre"/>
+                                                <constraint firstItem="sP0-ki-pGD" firstAttribute="top" secondItem="tHp-wh-Afg" secondAttribute="top" constant="10" id="jd9-O5-WNT"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="messageTextField" destination="yyb-ve-rRy" id="uLX-IQ-mC0"/>
+                                            <outlet property="sendFailedLabel" destination="bRd-ic-X6b" id="8ds-NV-4QK"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
@@ -1259,7 +1276,7 @@
                                     <navigationItem title="New Message" id="YCe-Ac-jPj">
                                         <barButtonItem key="rightBarButtonItem" systemItem="cancel" id="KsB-c8-Xk5">
                                             <connections>
-                                                <segue destination="I6u-W7-oSh" kind="unwind" unwindAction="unwindToMessagesTableView:" id="rPF-7q-xJz"/>
+                                                <segue destination="I6u-W7-oSh" kind="unwind" identifier="UnwindToMessages" unwindAction="unwindToMessagesTableView:" id="rPF-7q-xJz"/>
                                             </connections>
                                         </barButtonItem>
                                     </navigationItem>

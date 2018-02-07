@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ResponseConsumer.h"
 
-@interface NewMessageViewController : UIViewController <UITableViewDelegate>
+@interface NewMessageViewController : UIViewController <UITableViewDelegate, ResponseConsumer>
 
 @end

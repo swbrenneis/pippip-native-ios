@@ -28,4 +28,6 @@
 
 - (void)putString:(NSString*)str;
 
+- (void)setIV:(NSData*)iv;
+
 @end

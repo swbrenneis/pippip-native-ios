@@ -126,6 +126,8 @@
 		55FA87481FD5E58E00FB96C0 /* ClientAuthChallenge.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87471FD5E58E00FB96C0 /* ClientAuthChallenge.m */; };
 		55FA874B1FD5E5AC00FB96C0 /* ServerAuthChallenge.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA874A1FD5E5AC00FB96C0 /* ServerAuthChallenge.m */; };
 		55FA874E1FD5F10500FB96C0 /* CKHMAC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA874D1FD5F10500FB96C0 /* CKHMAC.mm */; };
+		55FB2F60202A4FE9005E3730 /* NewMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FB2F5F202A4FE9005E3730 /* NewMessageTableViewCell.m */; };
+		55FB2F62202A6D7B005E3730 /* CKIVGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FB2F61202A6D7B005E3730 /* CKIVGenerator.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -415,6 +417,10 @@
 		55FA874A1FD5E5AC00FB96C0 /* ServerAuthChallenge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ServerAuthChallenge.m; sourceTree = "<group>"; };
 		55FA874C1FD5F10500FB96C0 /* CKHMAC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKHMAC.h; sourceTree = "<group>"; };
 		55FA874D1FD5F10500FB96C0 /* CKHMAC.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKHMAC.mm; sourceTree = "<group>"; };
+		55FB2F5E202A4FE9005E3730 /* NewMessageTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewMessageTableViewCell.h; sourceTree = "<group>"; };
+		55FB2F5F202A4FE9005E3730 /* NewMessageTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewMessageTableViewCell.m; sourceTree = "<group>"; };
+		55FB2F61202A6D7B005E3730 /* CKIVGenerator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKIVGenerator.mm; sourceTree = "<group>"; };
+		55FB2F63202A6DA7005E3730 /* CKIVGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKIVGenerator.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -529,6 +535,8 @@
 				55D809842027A94F008940CB /* NewMessageCellItem.m */,
 				55D8097620277F39008940CB /* NewMessageCellSource.h */,
 				55D8097720277F39008940CB /* NewMessageCellSource.m */,
+				55FB2F5E202A4FE9005E3730 /* NewMessageTableViewCell.h */,
+				55FB2F5F202A4FE9005E3730 /* NewMessageTableViewCell.m */,
 				55D8096F20277AE4008940CB /* NewMessageTableViewDataSource.h */,
 				55D8097020277AE4008940CB /* NewMessageTableViewDataSource.m */,
 				55D8097920278270008940CB /* NewMessageViewController.h */,
@@ -713,6 +721,8 @@
 				55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */,
 				55FA874C1FD5F10500FB96C0 /* CKHMAC.h */,
 				55FA874D1FD5F10500FB96C0 /* CKHMAC.mm */,
+				55FB2F63202A6DA7005E3730 /* CKIVGenerator.h */,
+				55FB2F61202A6D7B005E3730 /* CKIVGenerator.mm */,
 				55AA54F91FA14C1300A7026B /* CKPEMCodec.h */,
 				55AA54EA1FA14C1200A7026B /* CKPEMCodec.mm */,
 				55AA54E81FA14C1200A7026B /* CKRSACodec.h */,
@@ -936,6 +946,7 @@
 				5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */,
 				5527BAA91F8D37D600C40D05 /* SessionState.m in Sources */,
 				55AA555B1FA14D7100A7026B /* GCMCodec.cc in Sources */,
+				55FB2F62202A6D7B005E3730 /* CKIVGenerator.mm in Sources */,
 				55AA55011FA14C1300A7026B /* CKSHA256.mm in Sources */,
 				55AA54FC1FA14C1300A7026B /* CKRSAKeyPair.m in Sources */,
 				55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */,
@@ -1023,6 +1034,7 @@
 				55105102201F8880000A313E /* MessageManager.m in Sources */,
 				55666646201A68AF00051ED2 /* AccountSession.m in Sources */,
 				55D8096E202776F7008940CB /* SendToTableViewCell.m in Sources */,
+				55FB2F60202A4FE9005E3730 /* NewMessageTableViewCell.m in Sources */,
 				555E22FD2006C8CD0098A099 /* RequestsTableViewController.m in Sources */,
 				55AA55501FA14D7100A7026B /* PSSmgf1.cc in Sources */,
 				55D8097820277F39008940CB /* NewMessageCellSource.m in Sources */,

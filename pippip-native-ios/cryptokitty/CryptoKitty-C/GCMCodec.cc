@@ -30,9 +30,11 @@ GCMCodec::~GCMCodec() {
 
 void GCMCodec::decrypt(const coder::ByteArray& key, const coder::ByteArray& ad) {
 
-    // The IV is the last 12 bytes of the provided text.
     coder::ByteArray ciphertext(text.range(0, text.length() - 12));
-    coder::ByteArray iv(text.range(text.length() - 12));
+    if (iv.length() == 0) {
+        // The IV is the last 12 bytes of the provided text.
+        iv = text.range(text.length() - 12);
+    }
 
     try {
         GCM gcm(new AES(AES::AES256), true);    // Auth tag is appended
@@ -54,9 +56,10 @@ void GCMCodec::decrypt(const coder::ByteArray& key, const coder::ByteArray& ad) 
 
 void GCMCodec::encrypt(const coder::ByteArray& key, const coder::ByteArray& ad) {
 
-    coder::ByteArray iv(12, 0);
-    CCSecureRandom rnd;
-    rnd.nextBytes(iv);
+    if (iv.length() == 0) {
+        CCSecureRandom rnd;
+        rnd.nextBytes(iv);
+    }
 
     try {
         GCM gcm(new AES(AES::AES256), true);    // Append the auth tag.
@@ -74,3 +77,8 @@ void GCMCodec::encrypt(const coder::ByteArray& key, const coder::ByteArray& ad) 
 
 }
 
+void GCMCodec::setIV(const coder::ByteArray &ivSet) {
+
+    iv = ivSet;
+
+}

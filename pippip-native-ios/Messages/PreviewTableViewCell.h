@@ -10,9 +10,6 @@
 
 @interface PreviewTableViewCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UIImageView *messageReadImage;
-@property (weak, nonatomic) IBOutlet UIImageView *avatarImage;
-@property (weak, nonatomic) IBOutlet UILabel *senderLabel;
-@property (weak, nonatomic) IBOutlet UILabel *dateTimeLabel;
-@property (weak, nonatomic) IBOutlet UILabel *previewLabel;
+- (void)configure:(NSDictionary*)message;
+
 @end

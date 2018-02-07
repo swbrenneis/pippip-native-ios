@@ -35,7 +35,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
 
     _session = restSession;
     _contactManager = [[ContactManager alloc] initWithRESTSession:restSession];
-    _messageManager = [[MessageManager alloc] initWithRESTSession:restSession];
+    _messageManager = [[MessageManager alloc] initWithRESTSession:restSession withContactManager:_contactManager];
     errorDelegate = [[LoggingErrorDelegate alloc] init];
     sessionActive = NO;
 

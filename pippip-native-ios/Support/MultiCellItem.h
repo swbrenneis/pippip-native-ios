@@ -14,6 +14,7 @@
 @property (nonatomic) NSInteger rowsInItem;
 @property (readonly, nonatomic) NSString *cellReuseId;
 @property (nonatomic) CGFloat cellHeight;
+@property (weak, nonatomic) UITableViewCell *currentCell;
 
 @end
 

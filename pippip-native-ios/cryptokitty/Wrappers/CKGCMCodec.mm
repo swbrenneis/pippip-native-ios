@@ -115,4 +115,11 @@
     
 }
 
+- (void)setIV:(NSData *)iv {
+
+    coder::ByteArray bytes(reinterpret_cast<const uint8_t*>(iv.bytes), iv.length);
+    gcmCodec->setIV(bytes);
+
+}
+
 @end

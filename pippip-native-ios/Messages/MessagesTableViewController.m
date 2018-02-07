@@ -61,13 +61,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    NSInteger count = mostRecent.count;
-    if (count > 0) {
-        return count;
-    }
-    else {
-        return 1;
-    }
+    return mostRecent.count;
 
 }
 
@@ -77,26 +71,7 @@
     // Configure the cell...
     PreviewTableViewCell *previewCell = (PreviewTableViewCell*)cell;
     NSDictionary *message = mostRecent[indexPath.item];
-    NSNumber *read = message[@"read"];
-    [previewCell.messageReadImage setHidden:[read boolValue]];
-    NSString *sender = message[@"sender"];
-    if (sender.length > 14) {
-        NSString *shortened = [sender substringWithRange:NSMakeRange(0, 14)];
-        previewCell.senderLabel.text = [shortened stringByAppendingString:@"..."];
-    }
-    else {
-        previewCell.senderLabel.text = sender;
-    }
-    NSString *dt = message[@"dateTime"];
-    previewCell.dateTimeLabel.text = [dt stringByAppendingString:@" >"];
-    NSString *msgText = message[@"message"];
-    if (msgText.length > 33) {
-        NSString *preview = [msgText substringWithRange:NSMakeRange(0, 33)];
-        previewCell.previewLabel.text = [preview stringByAppendingString:@"..."];
-    }
-    else {
-        previewCell.previewLabel.text = msgText;
-    }
+    [previewCell configure:message];
 
     return cell;
     

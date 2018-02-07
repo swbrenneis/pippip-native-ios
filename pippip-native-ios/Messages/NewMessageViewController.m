@@ -9,6 +9,10 @@
 #import "NewMessageViewController.h"
 #import "NewMessageTableViewDataSource.h"
 #import "AppDelegate.h"
+#import "NewMessageCellSource.h"
+#import "NewMessageTableViewCell.h"
+#import "SendToTableViewCell.h"
+#import "MultiCellItem.h"
 
 @interface NewMessageViewController ()
 {
@@ -16,6 +20,9 @@
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+
+@property (weak, nonatomic) MessageManager *messageManager;
+
 @end
 
 @implementation NewMessageViewController
@@ -25,9 +32,9 @@
     // Do any additional setup after loading the view.
 
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-
+    _messageManager = delegate.accountSession.messageManager;
     source = [[NewMessageTableViewDataSource alloc] initWithManagers:delegate.accountSession.contactManager
-                                                  withMessageManager:delegate.accountSession.messageManager];
+                                                  withMessageManager:_messageManager];
     source.tableView = _tableView;
     [_tableView setDelegate:source];
     _tableView.dataSource = source;
@@ -43,6 +50,45 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)sendMessage:(UIButton *)sender {
+
+    id<MultiCellItem> item = source.cellSource.items[2];
+    NewMessageTableViewCell *messageCell = (NewMessageTableViewCell*)item.currentCell;
+    [messageCell.sendFailedLabel setHidden:YES];
+    NSString *messageText = messageCell.messageTextField.text;
+    [_messageManager setViewController:self];
+    [_messageManager setResponseConsumer:self];
+    [_messageManager sendMessage:messageText withPublicId:source.selectedId];
+
+}
+
+- (void)response:(NSDictionary *)info {
+
+    BOOL success = NO;
+    if (info != nil) {
+        NSString *result = info[@"result"];
+        if ([result isEqualToString:@"sent"]) {
+            success = YES;
+            NSString *publicId = info[@"publicId"];
+            NSNumber *sq = info[@"sequence"];
+            NSNumber *ts = info[@"timestamp"];
+            [_messageManager messageAcknowledged:publicId
+                                    withSequence:[sq integerValue]
+                                   withTimestamp:[ts integerValue]];
+        }
+    }
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        id<MultiCellItem> item = source.cellSource.items[2];
+        NewMessageTableViewCell *messageCell = (NewMessageTableViewCell*)item.currentCell;
+        [messageCell.sendFailedLabel setHidden:success];
+        if (success) {
+            [self performSegueWithIdentifier:@"UnwindToMessages" sender:self];
+        }
+    });
+
 }
 
 /*

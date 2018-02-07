@@ -38,6 +38,8 @@
 
 - (NSMutableDictionary*)getContact:(NSString*)publicId;
 
+- (NSMutableDictionary*)getContactById:(NSInteger)contactId;
+
 - (void)getNickname:(NSString*)publicId;
 
 - (NSArray*)getPendingContactIds;

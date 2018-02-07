@@ -9,8 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "ContactManager.h"
 #import "MessageManager.h"
+#import "NewMessageCellSource.h"
 
 @interface NewMessageTableViewDataSource : NSObject <UITableViewDataSource, UITableViewDelegate, UITextViewDelegate>
+
+@property (readonly, nonatomic) NewMessageCellSource *cellSource;
+@property (nonatomic) NSString *selectedId;
+@property (nonatomic) NSString *selectedNickname;
 
 @property (weak, nonatomic) UITableView *tableView;
 

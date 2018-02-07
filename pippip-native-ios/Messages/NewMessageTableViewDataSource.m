@@ -7,19 +7,16 @@
 //
 
 #import "NewMessageTableViewDataSource.h"
-#import "NewMessageCellSource.h"
 #import "SendToTableViewCell.h"
 #import "ContactSearchTableViewCell.h"
 #import "ContactSearchDataSource.h"
+#import "NewMessageTableViewCell.h"
 
 static const NSInteger CONTACT_SEARCH_SECTION = 1;
 
 @interface NewMessageTableViewDataSource ()
 {
-    NewMessageCellSource *source;
     ContactSearchDataSource *contactSource;
-    NSString *selectedId;
-    NSString *selectedNickname;
     NSInteger hideSectionCount;
 }
 
@@ -35,12 +32,12 @@ static const NSInteger CONTACT_SEARCH_SECTION = 1;
 
     _contactManager = contact;
     _messageManager = message;
-    source = [[NewMessageCellSource alloc] init];
+    _cellSource = [[NewMessageCellSource alloc] init];
     contactSource = [[ContactSearchDataSource alloc] init];
     contactSource.rowsInTable = 0;
     contactSource.messageSource = self;
-    selectedNickname = @"";
-    selectedId = @"";
+    _selectedNickname = @"";
+    _selectedId = @"";
 
     return self;
 
@@ -48,8 +45,8 @@ static const NSInteger CONTACT_SEARCH_SECTION = 1;
 
 - (void)contactSelected:(NSString *)publicId withNickname:(NSString *)nickname {
 
-    selectedId = publicId;
-    selectedNickname = nickname;
+    _selectedId = publicId;
+    _selectedNickname = nickname;
     contactSource.rowsInTable = 0;
     [_tableView reloadData];
 
@@ -58,26 +55,27 @@ static const NSInteger CONTACT_SEARCH_SECTION = 1;
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return source.items.count;
+    return _cellSource.items.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return source.items[section].rowsInItem;
+    return _cellSource.items[section].rowsInItem;
 }
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    id<MultiCellItem> item = source.items[indexPath.section];
+    id<MultiCellItem> item = _cellSource.items[indexPath.section];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:item.cellReuseId];
+    item.currentCell = cell;
     
     if ([item.type isEqualToString:@"SendTo"]) {
         SendToTableViewCell *sendTo = (SendToTableViewCell*)cell;
         sendTo.sendToTextView.delegate = self;
-        if (selectedNickname != nil && selectedNickname.length > 0) {
-            sendTo.sendToTextView.text = selectedNickname;
+        if (_selectedNickname != nil && _selectedNickname.length > 0) {
+            sendTo.sendToTextView.text = _selectedNickname;
         }
-        else if (selectedId.length > 0) {
-            sendTo.sendToTextView.text = selectedId;
+        else if (_selectedId.length > 0) {
+            sendTo.sendToTextView.text = _selectedId;
         }
         else {
             [sendTo.sendToTextView becomeFirstResponder];
@@ -90,6 +88,10 @@ static const NSInteger CONTACT_SEARCH_SECTION = 1;
         [search.contactTableView setHidden:contactSource.rowsInTable == 0];
         contactSource.tableView = search.contactTableView;
     }
+    else if ([item.type isEqualToString:@"NewMessage"]) {
+        NewMessageTableViewCell *message = (NewMessageTableViewCell*)cell;
+        [message.sendFailedLabel setHidden:YES];
+    }
 
     return cell;
 
@@ -97,7 +99,7 @@ static const NSInteger CONTACT_SEARCH_SECTION = 1;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    id<MultiCellItem> item = source.items[indexPath.section];
+    id<MultiCellItem> item = _cellSource.items[indexPath.section];
     return item.cellHeight;
 
 }

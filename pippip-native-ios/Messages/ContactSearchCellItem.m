@@ -14,6 +14,7 @@
 @synthesize rowsInItem;
 @synthesize cellReuseId;
 @synthesize cellHeight;
+@synthesize currentCell;
 
 - (instancetype)init {
     self = [super init];
