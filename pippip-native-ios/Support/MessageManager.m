@@ -157,7 +157,11 @@
     CKGCMCodec *codec = [[CKGCMCodec alloc] init];
     [codec setIV:iv];
     [codec putString:message];
-    NSData *encoded = [codec encrypt:key withAuthData:authData];
+    NSError *error = nil;
+    NSData *encoded = [codec encrypt:key withAuthData:authData withError:&error];
+    if (error != nil) {
+        NSLog(@"Error while encrypting message: %@", error.localizedDescription);
+    }
 
     // Build the request
     NSMutableDictionary *msg = [NSMutableDictionary dictionary];

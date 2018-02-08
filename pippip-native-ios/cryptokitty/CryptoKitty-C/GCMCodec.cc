@@ -57,6 +57,7 @@ void GCMCodec::decrypt(const coder::ByteArray& key, const coder::ByteArray& ad) 
 void GCMCodec::encrypt(const coder::ByteArray& key, const coder::ByteArray& ad) {
 
     if (iv.length() == 0) {
+        iv.setLength(12);
         CCSecureRandom rnd;
         rnd.nextBytes(iv);
     }
@@ -73,6 +74,9 @@ void GCMCodec::encrypt(const coder::ByteArray& key, const coder::ByteArray& ad) 
     }
     catch (AuthenticationException& e) {
         throw EncodingException("Authentication failer");
+    }
+    catch (coder::OutOfRangeException& e) {
+        throw EncodingException("Array parameters out of range");
     }
 
 }

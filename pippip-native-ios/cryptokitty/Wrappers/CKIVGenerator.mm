@@ -17,7 +17,9 @@
     coder::ByteArray nonceBytes(reinterpret_cast<const uint8_t*>(nonce.bytes), nonce.length);
     nonceBytes.append(i64.getEncoded().range(4));   // Low order bytes
 
-    return [NSData dataWithBytesNoCopy:nonceBytes.asArray() length:nonceBytes.length()];
+    return [[NSMutableData alloc] initWithBytesNoCopy:nonceBytes.asArray()
+                                               length:nonceBytes.length()
+                                         freeWhenDone:YES];
 
 }
 

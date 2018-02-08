@@ -71,7 +71,12 @@
     [codec putBlock:sessionState.contactsKey];
     [codec putString:sessionState.userPrivateKeyPEM];
     [codec putString:sessionState.userPublicKeyPEM];
-    return [codec encrypt:vaultKey withAuthData:authData];
+    NSError *error = nil;
+    NSData *encoded = [codec encrypt:vaultKey withAuthData:authData withError:&error];
+    if (error != nil) {
+        NSLog(@"Error while encrypting vault: %@", error.localizedDescription);
+    }
+    return encoded;
 
 }
 

@@ -57,8 +57,14 @@
     NSString *json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     CKGCMCodec *codec = [[CKGCMCodec alloc] init];
     [codec putString:json];
-    NSData *encoded = [codec encrypt:sessionState.enclaveKey withAuthData:sessionState.authData];
-    packet[@"request"] = [encoded base64EncodedStringWithOptions:0];
+    NSError *error = nil;
+    NSData *encoded = [codec encrypt:sessionState.enclaveKey withAuthData:sessionState.authData withError:&error];
+    if (error != nil) {
+        NSLog(@"Error while encrypting enclave request: %@", error.localizedDescription);
+    }
+    else {
+        packet[@"request"] = [encoded base64EncodedStringWithOptions:0];
+    }
 
 }
 

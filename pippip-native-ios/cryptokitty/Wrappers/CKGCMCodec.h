@@ -14,7 +14,7 @@
 
 - (void)decrypt:(NSData*)key withAuthData:(NSData*)authData withError:(NSError**)error;
 
-- (NSData*)encrypt:(NSData*)key withAuthData:(NSData*)authData;
+- (NSData*)encrypt:(NSData*)key withAuthData:(NSData*)authData withError:(NSError**)error;
 
 - (NSData*)getBlock;
 

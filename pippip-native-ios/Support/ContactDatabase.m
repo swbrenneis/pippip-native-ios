@@ -146,7 +146,12 @@
         [codec putInt:0];
     }
 
-    return [codec encrypt:_sessionState.contactsKey withAuthData:_sessionState.authData];
+    NSError *error = nil;
+    NSData *encoded = [codec encrypt:_sessionState.contactsKey withAuthData:_sessionState.authData withError:&error];
+    if (error != nil) {
+        NSLog(@"Error while encrypting contact: %@", error.localizedDescription);
+    }
+    return encoded;
 
 }
 

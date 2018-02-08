@@ -56,15 +56,24 @@
     
 }
 
-- (NSData*) encrypt:(NSData *)key withAuthData:(NSData *)authData {
-    
-    coder::ByteArray ckKey(reinterpret_cast<const uint8_t*>(key.bytes), key.length);
-    coder::ByteArray ckAd(reinterpret_cast<const uint8_t*>(authData.bytes), authData.length);
-    gcmCodec->encrypt(ckKey, ckAd);
-    coder::ByteArray encrypted(gcmCodec->toArray());
-    return [[NSMutableData alloc] initWithBytesNoCopy:encrypted.asArray()
-                                               length:encrypted.length()
-                                         freeWhenDone:YES];
+- (NSData*) encrypt:(NSData *)key withAuthData:(NSData *)authData withError:(NSError**)error {
+
+    try {
+        coder::ByteArray ckKey(reinterpret_cast<const uint8_t*>(key.bytes), key.length);
+        coder::ByteArray ckAd(reinterpret_cast<const uint8_t*>(authData.bytes), authData.length);
+        gcmCodec->encrypt(ckKey, ckAd);
+        coder::ByteArray encrypted(gcmCodec->toArray());
+        return [[NSMutableData alloc] initWithBytesNoCopy:encrypted.asArray()
+                                                   length:encrypted.length()
+                                             freeWhenDone:YES];
+    }
+    catch (EncodingException& e) {
+        NSDictionary *errorDictionary = @{ NSLocalizedDescriptionKey : [NSString stringWithUTF8String:e.what()] };
+        *error = [NSError errorWithDomain:[[NSBundle mainBundle] bundleIdentifier]
+                                     code:GCM_ENCRYPTION_ERROR
+                                 userInfo:errorDictionary];
+        return nil;
+    }
 
 }
 
