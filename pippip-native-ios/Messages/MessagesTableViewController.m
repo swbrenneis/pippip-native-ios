@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 #import "MessageManager.h"
 #import "PreviewTableViewCell.h"
+#import "ConversationViewController.h"
 
 @interface MessagesTableViewController ()
 {
@@ -77,14 +78,11 @@
     
 }
 
-
-/*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the specified item to be editable.
     return YES;
 }
-*/
 
 /*
 // Override to support editing the table view.
@@ -112,14 +110,19 @@
 }
 */
 
-/*
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    UIViewController * view = [segue destinationViewController];
+    if ([view isKindOfClass:[ConversationViewController class]]) {
+        ConversationViewController *conversationView = (ConversationViewController*)view;
+        NSDictionary *message = mostRecent[self.tableView.indexPathForSelectedRow.item];
+        conversationView.publicId = message[@"publicId"];
+        conversationView.messageManager = _messageManager;
+    }
+
 }
-*/
 
 @end

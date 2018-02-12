@@ -13,12 +13,14 @@
 #import "NSData+HexEncode.h"
 #import <Realm/Realm.h>
 
-typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
+typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 
 @interface AccountSession ()
 {
     UpdateType updateType;
     BOOL sessionActive;
+    NSMutableArray *pendingMessages;
+    NSArray *exceptions;
 }
 
 @property (weak, nonatomic) RESTSession *session;
@@ -37,9 +39,41 @@ typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
     _contactManager = [[ContactManager alloc] initWithRESTSession:restSession];
     _messageManager = [[MessageManager alloc] initWithRESTSession:restSession withContactManager:_contactManager];
     errorDelegate = [[LoggingErrorDelegate alloc] init];
+    pendingMessages = [NSMutableArray array];
     sessionActive = NO;
 
     return self;
+
+}
+
+- (void)acknowledgeMessages {
+
+    updateType = ACK_MESSAGES;
+
+    // Get pending messages from the message manager
+    if (_messageManager.pendingMessages.count > 0) {
+        NSMutableArray *pending = [NSMutableArray arrayWithArray:_messageManager.pendingMessages];
+        [_messageManager.pendingMessages removeAllObjects];
+        // Add them to the pending queue
+        for (NSDictionary *message in pending) {
+            [pendingMessages addObject:message];
+        }
+    }
+    if (pendingMessages.count > 0) {
+        NSLog(@"%@", @"Acknowledging messages");
+        NSMutableDictionary *request = [NSMutableDictionary dictionary];
+        request[@"method"] = @"AcknowledgeMessages";
+        NSMutableArray *messages = [NSMutableArray array];
+        for (NSDictionary *msg in pendingMessages) {
+            NSMutableDictionary *message = [NSMutableDictionary dictionary];
+            message[@"toId"] = msg[@"publicId"];
+            message[@"sequence"] = msg[@"sequence"];
+            message[@"timestamp"] = msg[@"timestamp"];
+            [messages addObject:message];
+        }
+        request[@"messages"] = messages;
+        [self sendRequest:request];
+    }
 
 }
 
@@ -93,7 +127,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
         if (error == nil) {
             NSDictionary *updateResponse = [self getEnclaveResponse:response];
             NSArray *messages = updateResponse[@"messages"];
-            [_messageManager addNewMessages:messages];
+            [_messageManager addReceivedMessages:messages];
         }
         else {
             NSLog(@"Error response: %@", error);
@@ -102,9 +136,29 @@ typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
 
 }
 
+-(void)messagesAcknowledged:(NSDictionary*)response {
+
+    if (response != nil) {
+        exceptions = response[@"exceptions"];
+        NSLog(@"Messages acknowledged, %ld exceptions", exceptions.count);
+        [pendingMessages removeAllObjects];
+    }
+
+}
+
 - (void)postComplete:(NSDictionary*)response {
 
     switch (updateType) {
+        case ACK_MESSAGES:
+            [self messagesAcknowledged:response];
+            if (sessionActive) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
+                        [self updateContacts];
+                    }];
+                });
+            }
+            break;
         case CONTACTS:
             [self contactsUpdated:response];
             if (sessionActive) {
@@ -114,6 +168,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
         case MESSAGES:
             [self messagesUpdated:response];
             if (sessionActive) {
+                [self acknowledgeMessages];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
                         [self updateContacts];
@@ -179,9 +234,9 @@ typedef enum UPDATE { MESSAGES, CONTACTS } UpdateType;
     config.fileURL = [[[config.fileURL URLByDeletingLastPathComponent]
                        URLByAppendingPathComponent:name]
                       URLByAppendingPathExtension:@"realm"];
-    config.schemaVersion = 1;
+    config.schemaVersion = 2;
     config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
-        if (oldSchemaVersion < 1) {
+        if (oldSchemaVersion < 2) {
             // No migration necessary
         }
     };

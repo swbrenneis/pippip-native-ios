@@ -15,9 +15,11 @@
 
 @interface MessageManager : NSObject <RequestProcess>
 
+@property (nonatomic) NSMutableArray *pendingMessages;
+
 - (instancetype)initWithRESTSession:(RESTSession *)restSession withContactManager:(ContactManager*)manager;
 
-- (void)addNewMessages:(NSArray*)messages;
+- (void)addReceivedMessages:(NSArray*)messages;
 
 - (void)endSession;
 

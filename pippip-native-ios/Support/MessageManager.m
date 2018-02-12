@@ -40,18 +40,33 @@
     _session = restSession;
     messageDatabase = [[MessagesDatabase alloc] init];
     _contactManager = manager;
+    _pendingMessages = [NSMutableArray array];
 
     return self;
     
 }
 
-- (void)addNewMessages:(NSArray *)messages {
+- (void)addPendingMessage:(NSDictionary*)message {
 
-    for (NSMutableDictionary *message in messages) {
-        NSString *publicId = message[@"fromId"];
+}
+
+- (void)addReceivedMessages:(NSArray*)messages {
+
+    for (NSDictionary *msg in messages) {
+        NSMutableDictionary *message = [NSMutableDictionary dictionary];
+        NSString *publicId = msg[@"fromId"];
+        message[@"publicId"] = publicId;
         NSDictionary *contact = [_contactManager getContact:publicId];
         message[@"contactId"] = contact[@"contactId"];
-        [messageDatabase addMessage:message];
+        message[@"sent"] = [NSNumber numberWithBool:NO];
+        message[@"messageType"] = msg[@"messageType"];
+        message[@"keyIndex"] = msg[@"keyIndex"];
+        message[@"sequence"] = msg[@"sequence"];
+        message[@"timestamp"] = msg[@"timestamp"];
+        message[@"acknowledged"] = [NSNumber numberWithBool:NO];
+        message[@"body"] = msg[@"body"];
+        [messageDatabase addNewMessage:message];
+        [self addPendingMessage:message];
     }
 
 }
@@ -62,13 +77,7 @@
 
 - (NSArray*)getConversation:(NSString *)publicId {
 
-    NSArray *conversation = messageDatabase.conversations[publicId];
-    if (conversation == nil) {
-        NSDictionary *contact = [_contactManager getContact:publicId];
-        NSNumber *cid = contact[@"contactId"];
-        conversation = [messageDatabase loadConversation:[cid integerValue]];
-    }
-    return conversation;
+    return messageDatabase.conversations[publicId];
 
 }
 
@@ -104,8 +113,11 @@
 
 - (void)loadMessages {
     
-    [messageDatabase loadMessages:_sessionState];
-    
+    NSArray *unack = [messageDatabase loadConversations:_contactManager];
+    for (NSDictionary *message in unack) {
+        [self addPendingMessage:message];
+    }
+
 }
 
 - (void)messageAcknowledged:(NSString *)publicId withSequence:(NSInteger)sequence withTimestamp:(NSInteger)timestamp {
@@ -113,7 +125,15 @@
     if (pending != nil) {
         pending[@"timestamp"] = [NSNumber numberWithInteger:timestamp];
         pending[@"acknowledged"] = @YES;
-        [messageDatabase addMessage:pending];
+        pending[@"publicId"] = pending[@"toId"];
+        NSDictionary *contact = [_contactManager getContact:pending[@"toId"]];
+        pending[@"contactId"] = contact[@"contactId"];
+        NSString *nickname = contact[@"nickname"];
+        if (nickname != nil) {
+            pending[@"nickname"] = nickname;
+        }
+        pending[@"sent"] = @YES;
+        [messageDatabase addNewMessage:pending];
         pending = nil;
     }
 
@@ -165,13 +185,14 @@
 
     // Build the request
     NSMutableDictionary *msg = [NSMutableDictionary dictionary];
-    msg[@"request"] = @"SendMessage";
+    msg[@"method"] = @"SendMessage";
     msg[@"toId"] = publicId;
     msg[@"sequence"] = [NSNumber numberWithInteger:sequence];
     msg[@"keyIndex"] = [NSNumber numberWithInteger:keyIndex];
     msg[@"messageType"] = @"user";
     msg[@"body"] = [encoded base64EncodedStringWithOptions:0];
     pending = msg;
+    pending[@"cleartext"] = message;
     [self sendRequest:msg];
 
 }

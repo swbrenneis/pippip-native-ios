@@ -18,5 +18,6 @@
 @property NSInteger timestamp;
 @property BOOL read;
 @property BOOL acknowledged;
+@property BOOL sent;
 
 @end

@@ -115,6 +115,10 @@
 		55D809852027A94F008940CB /* NewMessageCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 55D809842027A94F008940CB /* NewMessageCellItem.m */; };
 		55D809882027DE78008940CB /* ContactSearchTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 55D809872027DE78008940CB /* ContactSearchTableViewCell.m */; };
 		55D8098B2028BCBA008940CB /* ContactSearchDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 55D8098A2028BCBA008940CB /* ContactSearchDataSource.m */; };
+		55D80997202E3905008940CB /* ConversationLeftTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 55D80996202E3905008940CB /* ConversationLeftTableViewCell.m */; };
+		55D8099A202F787A008940CB /* ConversationRightTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 55D80999202F787A008940CB /* ConversationRightTableViewCell.m */; };
+		55D8099D20310A18008940CB /* ConversationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55D8099C20310A18008940CB /* ConversationViewController.m */; };
+		55D809A020310B0D008940CB /* ConversationDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 55D8099F20310B0D008940CB /* ConversationDataSource.m */; };
 		55DB7F451FD8692C00B4D262 /* ServerAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */; };
 		55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */; };
 		55DB7F4B1FDB350800B4D262 /* CreateAccountDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F4A1FDB350800B4D262 /* CreateAccountDialog.m */; };
@@ -394,6 +398,14 @@
 		55D809872027DE78008940CB /* ContactSearchTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactSearchTableViewCell.m; sourceTree = "<group>"; };
 		55D809892028BCBA008940CB /* ContactSearchDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactSearchDataSource.h; sourceTree = "<group>"; };
 		55D8098A2028BCBA008940CB /* ContactSearchDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactSearchDataSource.m; sourceTree = "<group>"; };
+		55D80995202E3905008940CB /* ConversationLeftTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConversationLeftTableViewCell.h; sourceTree = "<group>"; };
+		55D80996202E3905008940CB /* ConversationLeftTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConversationLeftTableViewCell.m; sourceTree = "<group>"; };
+		55D80998202F787A008940CB /* ConversationRightTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConversationRightTableViewCell.h; sourceTree = "<group>"; };
+		55D80999202F787A008940CB /* ConversationRightTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConversationRightTableViewCell.m; sourceTree = "<group>"; };
+		55D8099B20310A18008940CB /* ConversationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConversationViewController.h; sourceTree = "<group>"; };
+		55D8099C20310A18008940CB /* ConversationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConversationViewController.m; sourceTree = "<group>"; };
+		55D8099E20310B0D008940CB /* ConversationDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConversationDataSource.h; sourceTree = "<group>"; };
+		55D8099F20310B0D008940CB /* ConversationDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConversationDataSource.m; sourceTree = "<group>"; };
 		55DB42141F9ABF8C001D8CB1 /* ErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ErrorDelegate.h; sourceTree = "<group>"; };
 		55DB7F431FD8692C00B4D262 /* ServerAuthorized.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServerAuthorized.h; sourceTree = "<group>"; };
 		55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ServerAuthorized.m; sourceTree = "<group>"; };
@@ -529,6 +541,14 @@
 				55D8098A2028BCBA008940CB /* ContactSearchDataSource.m */,
 				55D809862027DE78008940CB /* ContactSearchTableViewCell.h */,
 				55D809872027DE78008940CB /* ContactSearchTableViewCell.m */,
+				55D8099E20310B0D008940CB /* ConversationDataSource.h */,
+				55D8099F20310B0D008940CB /* ConversationDataSource.m */,
+				55D80995202E3905008940CB /* ConversationLeftTableViewCell.h */,
+				55D80996202E3905008940CB /* ConversationLeftTableViewCell.m */,
+				55D80998202F787A008940CB /* ConversationRightTableViewCell.h */,
+				55D80999202F787A008940CB /* ConversationRightTableViewCell.m */,
+				55D8099B20310A18008940CB /* ConversationViewController.h */,
+				55D8099C20310A18008940CB /* ConversationViewController.m */,
 				5592A5B11F8BC92E00F08BF5 /* MessagesTableViewController.h */,
 				5592A5B21F8BC92E00F08BF5 /* MessagesTableViewController.m */,
 				55D809832027A94F008940CB /* NewMessageCellItem.h */,
@@ -939,6 +959,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				558720471FE466BE0078679E /* NicknameViewController.m in Sources */,
+				55D809A020310B0D008940CB /* ConversationDataSource.m in Sources */,
 				55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */,
 				55AA554C1FA14D7100A7026B /* DigestBase.cc in Sources */,
 				55579E512024C21F00131A54 /* DatabaseContact.m in Sources */,
@@ -1001,6 +1022,8 @@
 				55D809882027DE78008940CB /* ContactSearchTableViewCell.m in Sources */,
 				55AA55641FA14D7100A7026B /* RSACodec.cc in Sources */,
 				5527BAB81F8DB81B00C40D05 /* NewAccountResponse.m in Sources */,
+				55D8099A202F787A008940CB /* ConversationRightTableViewCell.m in Sources */,
+				55D8099D20310A18008940CB /* ConversationViewController.m in Sources */,
 				5566664320169ADA00051ED2 /* ContactDetailViewController.m in Sources */,
 				557238B31F8C6B0C00A13A14 /* NSData+HexEncode.m in Sources */,
 				55D8097B20278270008940CB /* NewMessageViewController.m in Sources */,
@@ -1014,6 +1037,7 @@
 				5527BAB41F8D58D300C40D05 /* RESTSession.m in Sources */,
 				55AA55611FA14D7100A7026B /* PKCS1rsassa.cc in Sources */,
 				5592A59A1F8BBB4500F08BF5 /* main.mm in Sources */,
+				55D80997202E3905008940CB /* ConversationLeftTableViewCell.m in Sources */,
 				5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */,
 				55B3911C1FE17339004DAFF7 /* EnclaveRequest.m in Sources */,
 				55AA55651FA14D7100A7026B /* Random.cc in Sources */,

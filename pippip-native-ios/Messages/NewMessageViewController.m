@@ -71,9 +71,9 @@
         NSString *result = info[@"result"];
         if ([result isEqualToString:@"sent"]) {
             success = YES;
-            NSString *publicId = info[@"publicId"];
             NSNumber *sq = info[@"sequence"];
             NSNumber *ts = info[@"timestamp"];
+            NSString *publicId = info[@"publicId"];
             [_messageManager messageAcknowledged:publicId
                                     withSequence:[sq integerValue]
                                    withTimestamp:[ts integerValue]];
