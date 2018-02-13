@@ -105,6 +105,7 @@ static NSLock *idLock = nil;
                     entity[@"nickname"] = nickname;
                 }
                 entity[@"publicId"] = [codec getString];
+                [privateWhitelist addObject:entity];
             }
         }
         else {
@@ -230,6 +231,15 @@ static NSLock *idLock = nil;
 - (NSString*)getNickname {
     AccountConfig *config = [self getConfig];
     return config.nickname;
+}
+
+- (void)loadWhitelist {
+
+    AccountConfig *config = [self getConfig];
+    if (privateWhitelist.count == 0) {
+        [self decodeWhitelist:config];
+    }
+
 }
 
 - (NSInteger)newContactId {

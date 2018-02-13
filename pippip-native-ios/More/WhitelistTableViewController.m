@@ -44,6 +44,7 @@
     accountName = delegate.accountSession.sessionState.currentAccount;
     _contactManager = delegate.accountSession.contactManager;
     config = [[Configurator alloc] initWithSessionState:delegate.accountSession.sessionState];
+    [config loadWhitelist];
     [self.tableView reloadData];
 
 }

@@ -27,6 +27,8 @@
 
 - (NSString*)getNickname;
 
+- (void)loadWhitelist;
+
 - (NSInteger)newContactId;
 
 - (NSInteger)newMessageId;
