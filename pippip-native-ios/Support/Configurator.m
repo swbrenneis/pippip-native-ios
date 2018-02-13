@@ -73,7 +73,7 @@ static NSLock *idLock = nil;
 - (void)decodeIdMap:(AccountConfig*)config {
 
     if (config.idMap != nil) {
-        CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:config.whitelist];
+        CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:config.idMap];
         NSError *error = nil;
         [codec decrypt:_sessionState.contactsKey withAuthData:_sessionState.authData withError:&error];
         if (error == nil) {

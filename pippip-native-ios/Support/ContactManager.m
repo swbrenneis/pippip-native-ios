@@ -258,6 +258,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 - (void)setSessionState:(SessionState *)state {
     _sessionState = state;
+    contactDatabase = [[ContactDatabase alloc] initWithSessionState:state];
 }
 
 - (void)setViewController:(UIViewController *)controller {
