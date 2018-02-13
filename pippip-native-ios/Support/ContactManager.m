@@ -268,15 +268,27 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
                                                              withTitle:@"Contact Error"];
 
 }
-/*
+
 - (void)syncContacts {
-    
+
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
-    request[@"method"] = @"GetAllContacts";
+    NSArray *contactList = [contactDatabase getContactList];
+    NSMutableArray *syncList = [NSMutableArray array];
+    for (NSDictionary *contact in contactList) {
+        NSMutableDictionary *sync = [NSMutableDictionary dictionary];
+        sync[@"publicId"] = contact[@"publicId"];
+        sync[@"status"] = contact[@"status"];
+        sync[@"currentSequence"] = contact[@"currentSequence"];
+        sync[@"currentIndex"] = contact[@"currentIndex"];
+        sync[@"timestamp"] = contact[@"timestamp"];
+        [syncList addObject:sync];
+    }
+    request[@"method"] = @"SyncContacts";
+    request[@"contacts"] = syncList;
     [self sendRequest:request];
 
 }
-
+/*
 - (void)updateContact:(NSMutableDictionary*)contact {
 
     [contactDatabase updateContact:contact];

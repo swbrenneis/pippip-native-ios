@@ -99,6 +99,7 @@
 - (void)deleteContact:(NSString *)publicId {
 
     NSInteger contactId = [config getContactId:publicId];
+    [config deleteContactId:publicId];
     [keyed removeObjectForKey:publicId];
     [keyed removeObjectForKey:[NSNumber numberWithInteger:contactId]];
     [indexed removeAllObjects];  // Invalidate the contact list so it is reloaded on the next request.
@@ -109,7 +110,7 @@
     if (contacts.count > 0) {
         if (realm != nil) {
             [realm beginWriteTransaction];
-            [realm deleteObject:contacts[0]];
+            [realm deleteObject:[contacts firstObject]];
             [realm commitWriteTransaction];
         }
     }
@@ -198,9 +199,13 @@
     if (indexed.count == 0) {
         RLMResults<DatabaseContact*> *contacts = [DatabaseContact allObjects];
         for (DatabaseContact *dbContact in contacts) {
-            NSMutableDictionary *contact = [self decodeContact:dbContact.encoded];
-            if (contact != nil) {
-                [indexed addObject:contact];
+            // There might be a contact with ID = 0. This is a bug and can be ignored.
+            NSInteger contactId = dbContact.contactId;
+            if (contactId > 0) {
+                NSMutableDictionary *contact = [self decodeContact:dbContact.encoded];
+                if (contact != nil) {
+                    [indexed addObject:contact];
+                }
             }
         }
     }

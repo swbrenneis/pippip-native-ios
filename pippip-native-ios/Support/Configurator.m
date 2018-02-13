@@ -115,6 +115,13 @@ static NSLock *idLock = nil;
 
 }
 
+- (void)deleteContactId:(NSString *)publicId {
+
+    [idMap removeObjectForKey:publicId];
+    [self encodeIdMap:[self getConfig]];
+
+}
+
 - (BOOL)deleteWhitelistEntry:(NSString *)publicId {
 
     AccountConfig *config = [self getConfig];

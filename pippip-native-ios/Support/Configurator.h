@@ -19,6 +19,8 @@
 
 - (BOOL)addWhitelistEntry:(NSDictionary*)entity;
 
+- (void)deleteContactId:(NSString*)publicId;
+
 - (BOOL)deleteWhitelistEntry:(NSString*)publicId;
 
 - (NSInteger)getContactId:(NSString*)publicId;

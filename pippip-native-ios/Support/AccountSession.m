@@ -246,7 +246,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 }
 
 - (void)updateContacts {
-
+/*
     if (sessionActive) {
         NSArray *pending = [_contactManager getPendingContactIds];
         if (pending.count > 0) {
@@ -261,7 +261,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
             [self updateMessages];
         }
     }
-
+*/
 }
 
 - (void)updateMessages {

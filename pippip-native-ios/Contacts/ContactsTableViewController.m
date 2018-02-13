@@ -55,49 +55,37 @@
 }
 
 - (void)response:(NSDictionary *)info {
-/*
-    NSArray *contacts = info[@"contacts"];
-    NSMutableArray *synched = [NSMutableArray array];
-    for (NSDictionary *entity in contacts) {
-        NSMutableDictionary *localContact = [contacts getContact:entity[@"publicId"]];
-        if (localContact != nil) {
-            localContact[@"status"] = entity[@"status"];
-            localContact[@"currentIndex"] = entity[@"currentIndex"];
-            localContact[@"currentSequence"] = entity[@"currentSequence"];
-            localContact[@"timestamp"] = entity[@"timestamp"];
-            [synched addObject:localContact];
-        }
-        else {
-            [synched addObject:[entity mutableCopy]];
-        }
+
+    NSString *result = info[@"result"];
+    NSString *prefix = @"Contact synchronization ";
+    NSString *message;
+    if ([result isEqualToString:@"contacts set"]) {
+        message = [prefix stringByAppendingString:@"successful"];
     }
-    [_contactManager setContacts:synched];
+    else {
+        NSLog(@"Contact sync server response: %@", result);
+        message = [prefix stringByAppendingString:@"failed"];
+    }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableView reloadData];
-    });
-*/
-}
-
-- (IBAction)syncContacts:(id)sender {
-/*
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Caution!"
-                                                                   message:@"Synchronizing contacts with the server may result in deletion of some local contacts"
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Synchronize Contacts"
+                                                                   message:message
                                                             preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
                                                        style:UIAlertActionStyleDefault
-                                                     handler:^(UIAlertAction *action) {
-                                                         [_contactManager setViewController:self];
-                                                         [_contactManager setResponseConsumer:self];
-                                                         [_contactManager syncContacts];
-                                                     }];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
-                                                           style:UIAlertActionStyleDefault
-                                                         handler:nil];
+                                                     handler:nil];
     [alert addAction:okAction];
-    [alert addAction:cancelAction];
-    [self presentViewController:alert animated:YES completion:nil];
-*/
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self presentViewController:alert animated:YES completion:nil];
+    });
+
+}
+
+- (IBAction)syncContacts:(id)sender {
+
+    [_contactManager setViewController:self];
+    [_contactManager setResponseConsumer:self];
+    [_contactManager syncContacts];
+
 }
 
 - (IBAction)unwindAfterRequestAdded:(UIStoryboardSegue*)segue {

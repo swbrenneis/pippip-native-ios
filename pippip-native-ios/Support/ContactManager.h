@@ -65,9 +65,9 @@
 - (void)setSessionState:(SessionState*)state;
 
 - (void)setViewController:(UIViewController*)controller;
-/*
-- (void)syncContacts;
 
+- (void)syncContacts;
+/*
 - (void)updateContact:(NSMutableDictionary*)contact;
 */
 @end
