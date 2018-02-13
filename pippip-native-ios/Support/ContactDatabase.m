@@ -213,13 +213,12 @@
 
 }
 
-- (void)updateDatabaseContact:(NSDictionary*)contact {
+- (void)updateDatabaseContact:(NSDictionary*)contact withContactId:(NSInteger)contactId{
 
-    NSNumber *cid = contact[@"contactId"];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", [cid integerValue]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
     RLMResults<DatabaseContact*> *contacts = [DatabaseContact objectsWithPredicate:predicate];
     if (contacts.count > 0) {
-        DatabaseContact *dbContact = contacts[0];
+        DatabaseContact *dbContact = [contacts firstObject];
         NSData *encoded = [self encodeContact:contact];
         RLMRealm *realm = [RLMRealm defaultRealm];
         if (realm != nil) {
@@ -240,11 +239,11 @@
         NSLog(@"Update contact, contact %@ not found", publicId);
     }
     else {
-        [self updateDatabaseContact:contact];
+        NSInteger contactId = [config getContactId:publicId];
+        [self updateDatabaseContact:contact withContactId:contactId];
         // Invalidate the cached contacts
         [indexed removeAllObjects];
         [keyed removeObjectForKey:publicId];
-        NSInteger contactId = [config getContactId:publicId];
         [keyed removeObjectForKey:[NSNumber numberWithInteger:contactId]];
     }
 
