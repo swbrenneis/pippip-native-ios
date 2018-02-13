@@ -21,7 +21,7 @@
 
 -(instancetype)initWithRESTSession:(RESTSession*)restSession;
 
-- (void)startSession:(SessionState*)state withConfig:(NSDictionary*)config;
+- (void)startSession:(SessionState*)state;
 
 - (void)endSession;
 

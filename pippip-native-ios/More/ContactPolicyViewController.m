@@ -7,9 +7,9 @@
 //
 
 #import "ContactPolicyViewController.h"
-#import "AppDelegate.h"
 #import "ContactManager.h"
 #import "Configurator.h"
+#import "AppDelegate.h"
 
 @interface ContactPolicyViewController ()
 {
@@ -17,7 +17,6 @@
     Configurator *config;
 }
 
-@property (weak, nonatomic) AccountManager *accountManager;
 @property (weak, nonatomic) ContactManager *contactManager;
 
 @property (weak, nonatomic) IBOutlet UISwitch *contactPolicySwitch;
@@ -29,10 +28,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-
-    // Get the account manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _accountManager = delegate.accountManager;
 
 }
 
@@ -60,8 +55,7 @@
 
     NSString *result = info[@"result"];
     if ([result isEqualToString:@"policySet"]) {
-        [_accountManager setConfigItem:selectedPolicy withKey:@"contactPolicy"];
-        [_accountManager storeConfig:accountName];
+        [config setContactPolicy:selectedPolicy];
         [self performSegueWithIdentifier:@"unwindAfterSave" sender:self];
     }
 

@@ -17,7 +17,7 @@
 
 @property (nonatomic) NSMutableArray *pendingMessages;
 
-- (instancetype)initWithRESTSession:(RESTSession *)restSession withContactManager:(ContactManager*)manager;
+- (instancetype)initWithRESTSession:(RESTSession *)restSession;
 
 - (void)addReceivedMessages:(NSArray*)messages;
 
@@ -32,8 +32,6 @@
 - (void)messageAcknowledged:(NSString*)publicId withSequence:(NSInteger)sequence withTimestamp:(NSInteger)timestamp;
 
 - (void)sendMessage:(NSString*)message withPublicId:(NSString*)publicId;
-
-- (void)setConfig:(NSDictionary*)config;
 
 - (void)setResponseConsumer:(id<ResponseConsumer>)responseConsumer;
 

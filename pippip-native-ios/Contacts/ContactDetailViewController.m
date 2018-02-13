@@ -9,11 +9,13 @@
 #import "ContactDetailViewController.h"
 #import "AppDelegate.h"
 #import "ContactManager.h"
+#import "ContactDatabase.h"
 #import <time.h>
 
 @interface ContactDetailViewController ()
 {
     NSString *action;
+    ContactDatabase *contacts;
 }
 
 @property (weak, nonatomic) ContactManager *contactManager;
@@ -39,7 +41,8 @@
     // Get the contact manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _contactManager = delegate.accountSession.contactManager;
-    
+    contacts = [[ContactDatabase alloc] initWithSessionState:delegate.accountSession.sessionState];
+
     [_nicknameSavedLabel setHidden:YES];
     [_nicknameNotAvailableLabel setHidden:YES];
 
@@ -93,8 +96,9 @@
     
     NSString *nickname = _nicknameTextField.text;
     if (nickname.length > 0) {
-        [_contactManager setNickname:_nicknameTextField.text
-                        withPublicId:_contact[@"publicId"]];
+        NSMutableDictionary *cont = [contacts getContact:_contact[@"publicId"]];
+        cont[@"nickname"] = _nicknameTextField.text;
+        [contacts updateContact:cont];
         [_nicknameSavedLabel setHidden:NO];
     }
 
@@ -161,7 +165,7 @@
     else {
         NSString *result = info[@"result"];
         NSLog(@"Delete result: %@", result);
-        [_contactManager deleteLocalContact:_contact[@"publicId"]];
+        [contacts deleteContact:_contact[@"publicId"]];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self deletedAlert];
 

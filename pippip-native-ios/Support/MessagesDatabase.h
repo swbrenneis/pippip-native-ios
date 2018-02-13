@@ -8,14 +8,15 @@
 
 #import <Foundation/Foundation.h>
 #import "SessionState.h"
-#import "ContactManager.h"
 
 @interface MessagesDatabase : NSObject
 
 @property (nonatomic) NSMutableDictionary *conversations;
 
+- (instancetype)initWithSessionState:(SessionState*)state;
+
 - (void)addNewMessage:(NSMutableDictionary*)message;
 
-- (NSArray*)loadConversations:(ContactManager*)contactManager;
+- (NSArray*)loadConversations;
 
 @end

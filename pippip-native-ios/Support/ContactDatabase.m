@@ -8,12 +8,15 @@
 
 #import "ContactDatabase.h"
 #import "CKGCMCodec.h"
-#import "CKSecureRandom.h"
 #import "DatabaseContact.h"
+#import "Configurator.h"
 #import <Realm/Realm.h>
 
 @interface ContactDatabase ()
 {
+    Configurator *config;
+    NSMutableArray *indexed;
+    NSMutableDictionary *keyed;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -22,27 +25,26 @@
 
 @implementation ContactDatabase
 
-- (instancetype)init {
+- (instancetype)initWithSessionState:(SessionState *)state {
     self = [super init];
 
-    _keyed = [NSMutableDictionary dictionary];
-    _indexed = [NSMutableArray array];
+    _sessionState = state;
+    config = [[Configurator alloc] initWithSessionState:state];
+    indexed = [NSMutableArray array];
+    keyed = [NSMutableDictionary dictionary];
 
     return self;
 
 }
 
-- (void)addContact:(NSMutableDictionary *)contact {
+- (NSInteger)addContact:(NSMutableDictionary *)contact {
 
-    contact[@"index"] = [NSNumber numberWithInteger:[_indexed count]];
-    [_indexed addObject:contact];
+    NSInteger contactId = [config newContactId];
+    keyed[[NSNumber numberWithInteger:contactId]] = contact;
     NSString *publicId = contact[@"publicId"];
-    _keyed[publicId] = contact;
+    keyed[publicId] = contact;
+    [config addContactId:contactId withPublicId:publicId];
 
-    // Assign a contact ID
-    CKSecureRandom *rnd = [[CKSecureRandom alloc] init];
-    NSInteger contactId = [rnd nextLong];
-    contact[@"contactId"] = [NSNumber numberWithInteger:contactId];
     NSData *encoded = [self encodeContact:contact];
     
     // Add the contact to the database.
@@ -55,6 +57,7 @@
         [realm addObject:dbContact];
         [realm commitWriteTransaction];
     }
+    return contactId;
 
 }
 
@@ -95,12 +98,10 @@
 
 - (void)deleteContact:(NSString *)publicId {
 
-    NSDictionary *contact = _keyed[publicId];
-    NSNumber *cid = contact[@"contactId"];
-    NSInteger contactId = [cid integerValue];
-    NSNumber *index = contact[@"index"];
-    [_indexed removeObjectAtIndex:[index integerValue]];
-    [_keyed removeObjectForKey:publicId];
+    NSInteger contactId = [config getContactId:publicId];
+    [keyed removeObjectForKey:publicId];
+    [keyed removeObjectForKey:[NSNumber numberWithInteger:contactId]];
+    [indexed removeAllObjects];  // Invalidate the contact list so it is reloaded on the next request.
     // Delete from the realm
     RLMRealm *realm = [RLMRealm defaultRealm];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
@@ -155,47 +156,55 @@
 
 }
 
-- (BOOL)loadContacts:(SessionState*)state {
-
-    [_keyed removeAllObjects];
-    [_indexed removeAllObjects];
-
-    _sessionState = state;
-    RLMRealm *realm = [RLMRealm defaultRealm];
-    if (realm == nil) {
-        return NO;
+- (NSMutableDictionary*)getContact:(NSString *)publicId {
+    
+    NSMutableDictionary *contact = keyed[publicId];
+    if (contact == nil) {
+        NSInteger contactId = [config getContactId:publicId];
+        if (contactId != NSNotFound) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+            RLMResults<DatabaseContact*> *contacts = [DatabaseContact objectsWithPredicate:predicate];
+            if (contacts.count > 0) {
+                DatabaseContact *dbContact = [contacts firstObject];
+                contact = [self decodeContact:dbContact.encoded];
+                keyed[publicId] = contact;
+                keyed[[NSNumber numberWithInteger:contactId]] = contact;
+            }
+        }
     }
-    else {
+    return contact;
+    
+}
+
+- (NSMutableDictionary*)getContactById:(NSInteger)contactId {
+    
+    NSMutableDictionary *contact = keyed[[NSNumber numberWithInteger:contactId]];
+    if (contact == nil) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+        RLMResults<DatabaseContact*> *contacts = [DatabaseContact objectsWithPredicate:predicate];
+        if (contacts.count > 0) {
+            DatabaseContact *dbContact = [contacts firstObject];
+            contact = [self decodeContact:dbContact.encoded];
+            keyed[contact[@"publicId"]] = contact;
+            keyed[[NSNumber numberWithInteger:contactId]] = contact;
+        }
+    }
+    return contact;
+    
+}
+
+- (NSArray*)getContactList {
+
+    if (indexed.count == 0) {
         RLMResults<DatabaseContact*> *contacts = [DatabaseContact allObjects];
-        NSInteger index = 0;
         for (DatabaseContact *dbContact in contacts) {
             NSMutableDictionary *contact = [self decodeContact:dbContact.encoded];
             if (contact != nil) {
-                contact[@"contactId"] = [NSNumber numberWithInteger:dbContact.contactId];
-                _keyed[contact[@"publicId"]] = contact;
-                contact[@"index"] = [NSNumber numberWithInteger:index];
-                [_indexed addObject:contact];
-                index++;
-            }
-            else {
-                return NO;
+                [indexed addObject:contact];
             }
         }
-        return YES;
     }
-
-}
-
-- (void)syncContacts:(NSArray*)synched {
-
-    while (_indexed.count > 0) {
-        NSDictionary *entity = _indexed[0];
-        [self deleteContact:entity[@"publicId"]];
-    }
-
-    for (NSMutableDictionary *entity in synched) {
-        [self addContact:entity];
-    }
+    return indexed;
 
 }
 
@@ -220,22 +229,18 @@
 - (void)updateContact:(NSMutableDictionary*)contact {
 
     NSString *publicId = contact[@"publicId"];
-    NSDictionary *entity = _keyed[publicId];
+    NSMutableDictionary *entity = [self getContact:publicId];
     if (entity == nil) {
         // Not in the database.
         NSLog(@"Update contact, contact %@ not found", publicId);
     }
     else {
-        // Transfer the contact ID and update the database
-        NSNumber *cid = entity[@"contactId"];
-        contact[@"contactId"] = cid;
         [self updateDatabaseContact:contact];
-        // Update the cached contacts
-        NSNumber *idx = entity[@"index"];
-        contact[@"index"] = idx;
-        NSInteger index = [idx integerValue];
-        _indexed[index] = contact;
-        _keyed[publicId] = contact;
+        // Invalidate the cached contacts
+        [indexed removeAllObjects];
+        [keyed removeObjectForKey:publicId];
+        NSInteger contactId = [config getContactId:publicId];
+        [keyed removeObjectForKey:[NSNumber numberWithInteger:contactId]];
     }
 
 }

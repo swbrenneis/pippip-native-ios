@@ -9,6 +9,7 @@
 #import "ContactsTableViewController.h"
 #import "AppDelegate.h"
 #import "ContactManager.h"
+#import "ContactDatabase.h"
 #import "AddContactViewController.h"
 #import "ContactDetailViewController.h"
 #import "ContactTableViewCell.h"
@@ -16,6 +17,8 @@
 @interface ContactsTableViewController ()
 {
     NSDictionary *addedContact;
+    ContactDatabase *contacts;
+    NSArray *contactList;
 }
 
 @property (weak, nonatomic) ContactManager *contactManager;
@@ -37,10 +40,11 @@
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    // Get the contact manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _contactManager = delegate.accountSession.contactManager;
-    
+    contacts = [[ContactDatabase alloc] initWithSessionState:delegate.accountSession.sessionState];
+    contactList = [contacts getContactList];
+
     [self.tableView reloadData];
     
 }
@@ -51,11 +55,11 @@
 }
 
 - (void)response:(NSDictionary *)info {
-
+/*
     NSArray *contacts = info[@"contacts"];
     NSMutableArray *synched = [NSMutableArray array];
     for (NSDictionary *entity in contacts) {
-        NSMutableDictionary *localContact = [_contactManager getContact:entity[@"publicId"]];
+        NSMutableDictionary *localContact = [contacts getContact:entity[@"publicId"]];
         if (localContact != nil) {
             localContact[@"status"] = entity[@"status"];
             localContact[@"currentIndex"] = entity[@"currentIndex"];
@@ -72,11 +76,11 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.tableView reloadData];
     });
-
+*/
 }
 
 - (IBAction)syncContacts:(id)sender {
-
+/*
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Caution!"
                                                                    message:@"Synchronizing contacts with the server may result in deletion of some local contacts"
                                                             preferredStyle:UIAlertControllerStyleAlert];
@@ -93,15 +97,16 @@
     [alert addAction:okAction];
     [alert addAction:cancelAction];
     [self presentViewController:alert animated:YES completion:nil];
-
+*/
 }
 
 - (IBAction)unwindAfterRequestAdded:(UIStoryboardSegue*)segue {
 
     AddContactViewController *view = (AddContactViewController*)segue.sourceViewController;
-    [_contactManager addLocalContact:view.addedContact];
-    [self.view setNeedsDisplay];
-    
+    [contacts addContact:view.addedContact];
+    contactList = [contacts getContactList];
+    [self.tableView reloadData];
+
 }
 
 #pragma mark - Table view data source
@@ -114,14 +119,14 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return [_contactManager contactCount];
+    return contactList.count;
 
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell" forIndexPath:indexPath];
     
-    NSDictionary *entity = [_contactManager contactAtIndex:indexPath.item];
+    NSDictionary *entity = contactList[indexPath.item];
     if (entity != nil) {
         NSString *nickname = entity[@"nickname"];
         NSString *publicId = entity[@"publicId"];
@@ -193,7 +198,7 @@
     if ([view isKindOfClass:[ContactDetailViewController class]]) {
         ContactDetailViewController *detailView = (ContactDetailViewController*)view;
         NSIndexPath *selectedIndexPath = [self.tableView indexPathForSelectedRow];
-        detailView.contact = [_contactManager contactAtIndex:selectedIndexPath.item];
+        detailView.contact = contactList[selectedIndexPath.item];
     }
 }
 

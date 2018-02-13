@@ -8,6 +8,7 @@
 
 #import "MessageManager.h"
 #import "MessagesDatabase.h"
+#import "ContactDatabase.h"
 #import "EnclaveRequest.h"
 #import "EnclaveResponse.h"
 #import "AlertErrorDelegate.h"
@@ -17,6 +18,7 @@
 @interface MessageManager ()
 {
     MessagesDatabase *messageDatabase;
+    ContactDatabase *contacts;
     NSMutableDictionary *pending;
 }
 
@@ -25,7 +27,6 @@
 @property (weak, nonatomic) id<ResponseConsumer> responseConsumer;
 @property (weak, nonatomic) UIViewController *viewController;
 @property (weak, nonatomic) RESTSession *session;
-@property (weak, nonatomic) ContactManager *contactManager;
 
 @end;
 
@@ -34,12 +35,11 @@
 @synthesize errorDelegate;
 @synthesize postPacket;
 
-- (instancetype)initWithRESTSession:(RESTSession *)restSession withContactManager:(ContactManager *)manager {
+- (instancetype)initWithRESTSession:(RESTSession *)restSession {
     self = [super init];
     
     _session = restSession;
     messageDatabase = [[MessagesDatabase alloc] init];
-    _contactManager = manager;
     _pendingMessages = [NSMutableArray array];
 
     return self;
@@ -126,7 +126,7 @@
         pending[@"timestamp"] = [NSNumber numberWithInteger:timestamp];
         pending[@"acknowledged"] = @YES;
         pending[@"publicId"] = pending[@"toId"];
-        NSDictionary *contact = [_contactManager getContact:pending[@"toId"]];
+        NSDictionary *contact = [contacts getContact:pending[@"toId"]];
         pending[@"contactId"] = contact[@"contactId"];
         NSString *nickname = contact[@"nickname"];
         if (nickname != nil) {
@@ -155,7 +155,7 @@
 
 - (void)sendMessage:(NSString *)message withPublicId:(NSString *)publicId {
 
-    NSMutableDictionary *contact = [_contactManager getContact:publicId];
+    NSMutableDictionary *contact = [contacts getContact:publicId];
     NSNumber *sq = contact[@"currentSequence"];
     NSInteger sequence = [sq integerValue] + 1;
     contact[@"currentSequence"] = [NSNumber numberWithInteger:sequence];
@@ -169,7 +169,7 @@
     NSData *key = keys[keyIndex];
     NSData *authData = contact[@"authData"];
     NSData *nonce = contact[@"nonce"];
-    [_contactManager updateContact:contact];
+    [contacts updateContact:contact];
 
     // Encrypt the message.
     CKIVGenerator *ivGen = [[CKIVGenerator alloc] init];
@@ -211,16 +211,15 @@
     // Nothing to do here. Session is already established.
 }
 
-- (void)setConfig:(NSDictionary *)config {
-
-}
-
 - (void)setResponseConsumer:(id<ResponseConsumer>)consumer {
     _responseConsumer = consumer;
 }
 
 - (void)setSessionState:(SessionState *)state {
+
     _sessionState = state;
+    contacts = [[ContactDatabase alloc] initWithSessionState:state];
+
 }
 
 - (void)setViewController:(UIViewController *)controller {

@@ -8,7 +8,7 @@
 
 #import "WhitelistTableViewController.h"
 #import "AppDelegate.h"
-#import "AccountManager.h"
+#import "Configurator.h"
 #import "WhitelistTableViewCell.h"
 #import "AddFriendViewController.h"
 #import "ContactManager.h"
@@ -18,9 +18,9 @@
     NSDictionary *deletedEntity;
     NSIndexPath *deletedIndex;
     NSString *accountName;
+    Configurator *config;
 }
 
-@property (weak, nonatomic) AccountManager *accountManager;
 @property (weak, nonatomic) ContactManager *contactManager;
 
 @end
@@ -36,10 +36,6 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 
-    // Get the account manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _accountManager = delegate.accountManager;
-
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -47,6 +43,7 @@
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     accountName = delegate.accountSession.sessionState.currentAccount;
     _contactManager = delegate.accountSession.contactManager;
+    config = [[Configurator alloc] initWithSessionState:delegate.accountSession.sessionState];
     [self.tableView reloadData];
 
 }
@@ -64,8 +61,7 @@
         NSLog(@"%@ %@ %@", @"Friend", publicId, @"not found on server");
     }
 
-    [_accountManager deleteWhitelistEntry:deletedEntity];
-    [_accountManager storeConfig:accountName];
+    [config deleteWhitelistEntry:deletedEntity[@"publicId"]];
     UITableView *tableView = self.tableView;
     dispatch_async(dispatch_get_main_queue(), ^{
         [tableView deleteRowsAtIndexPaths:@[deletedIndex] withRowAnimation:UITableViewRowAnimationFade];
@@ -83,7 +79,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return [_accountManager whitelistCount];
+    return config.whitelist.count;
 
 }
 
@@ -92,7 +88,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"WhitelistCell" forIndexPath:indexPath];
     WhitelistTableViewCell *whitelistCell = (WhitelistTableViewCell*)cell;
 
-    NSDictionary *entity = [_accountManager whitelistEntryAtIndex:indexPath.item];
+    NSDictionary *entity = config.whitelist[indexPath.item];
     whitelistCell.nicknameLabel.text = entity[@"nickname"];
     whitelistCell.publicIdLabel.text = entity[@"publicId"];
 
@@ -108,7 +104,7 @@
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        deletedEntity = [_accountManager whitelistEntryAtIndex:indexPath.item];
+        deletedEntity = config.whitelist[indexPath.item];
         deletedIndex = indexPath;
         NSString *publicId = deletedEntity[@"publicId"];
         [_contactManager setResponseConsumer:self];
@@ -145,8 +141,7 @@
     NSString *nickname = view.nicknameTextField.text;
     NSString *publicId = view.publicIdTextField.text;
     NSMutableDictionary *entity = [NSMutableDictionary dictionaryWithObjectsAndKeys:nickname, @"nickname", publicId, @"publicId", nil];
-    [_accountManager addWhitelistEntry:entity];
-    [_accountManager storeConfig:accountName];
+    [config addWhitelistEntry:entity];
     [self.view setNeedsDisplay];
 
 }

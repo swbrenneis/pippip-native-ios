@@ -15,15 +15,21 @@
 
 - (instancetype)initWithSessionState:(SessionState*)state;
 
+- (void)addContactId:(NSInteger)contactId withPublicId:(NSString*)publicId;
+
 - (BOOL)addWhitelistEntry:(NSDictionary*)entity;
 
 - (BOOL)deleteWhitelistEntry:(NSString*)publicId;
 
+- (NSInteger)getContactId:(NSString*)publicId;
+
 - (NSString*)getContactPolicy;
 
-- (NSInteger)getMessageId;
-
 - (NSString*)getNickname;
+
+- (NSInteger)newContactId;
+
+- (NSInteger)newMessageId;
 
 - (void)setContactPolicy:(NSString*)policy;
 

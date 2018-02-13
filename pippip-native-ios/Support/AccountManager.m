@@ -63,8 +63,10 @@
     AccountConfig *config = [[AccountConfig alloc] init];
     config.accountName = accountName;
     config.contactPolicy = @"whitelist";
-    config.messageId = 0;
+    config.messageId = 1;
+    config.contactId = 1;
     config.whitelist = nil;
+    config.idMap = nil;
 
     RLMRealm *realm = [RLMRealm defaultRealm];
     [realm beginWriteTransaction];

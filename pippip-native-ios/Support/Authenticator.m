@@ -75,8 +75,6 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
         AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
         [delegate.accountManager loadConfig:sessionState.currentAccount];
         [delegate.accountSession startSession:sessionState];
-        [delegate.accountSession.contactManager loadContacts];
-        [delegate.accountSession.messageManager loadMessages];
     });
 
 }

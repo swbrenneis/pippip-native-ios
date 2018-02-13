@@ -10,7 +10,7 @@
 #import "ContactsTableViewController.h"
 #import "AppDelegate.h"
 #import "ContactManager.h"
-#import "AccountManager.h"
+#import "Configurator.h"
 
 @interface AddContactViewController ()
 {
@@ -41,8 +41,8 @@
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _contactManager = delegate.accountSession.contactManager;
     myPublicId = delegate.accountSession.sessionState.publicId;
-    AccountManager *accountManager = delegate.accountManager;
-    myNickname = [accountManager getConfigItem:@"nickname"];
+    Configurator *config = [[Configurator alloc] initWithSessionState:delegate.accountSession.sessionState];
+    myNickname = [config getNickname];
 
     _nicknameText.text = @"";
     _publicIdText.text = @"";

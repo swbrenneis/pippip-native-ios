@@ -230,13 +230,11 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 /*
  * This is invoked from the main thread.
  */
-- (void)startSession:(SessionState *)state withConfig:(NSDictionary *)config {
+- (void)startSession:(SessionState *)state {
 
     _sessionState = state;
-    [self setRealmConfiguration:_sessionState.currentAccount];
     [_contactManager setSessionState:state];
     [_messageManager setSessionState:state];
-    [_messageManager setConfig:config];
     sessionActive = YES;
     [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
         [self updateContacts];

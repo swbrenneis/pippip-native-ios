@@ -11,16 +11,17 @@
 
 @interface ContactDatabase : NSObject
 
-@property (nonatomic) NSMutableArray *indexed;
-@property (nonatomic) NSMutableDictionary *keyed;
+- (instancetype)initWithSessionState:(SessionState*)state;
 
-- (void)addContact:(NSMutableDictionary*)contact;
+- (NSInteger)addContact:(NSMutableDictionary*)contact;
 
 - (void)deleteContact:(NSString*)publicId;
 
-- (BOOL)loadContacts:(SessionState*)state;
+- (NSMutableDictionary*)getContact:(NSString*)publicId;
 
-- (void)syncContacts:(NSArray*)synched;
+- (NSMutableDictionary*)getContactById:(NSInteger)contactId;
+
+- (NSArray*)getContactList;
 
 - (void)updateContact:(NSMutableDictionary*)contact;
 

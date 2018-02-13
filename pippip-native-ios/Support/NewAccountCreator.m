@@ -55,8 +55,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
     sessionState.authenticated = YES;
     dispatch_async(dispatch_get_main_queue(), ^{
         AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-        [delegate.accountManager setDefaultConfig];
-        [delegate.accountManager storeConfig:sessionState.currentAccount];
+        [delegate.accountManager loadConfig:sessionState.currentAccount];
         [delegate.accountSession startSession:sessionState];
     });
 

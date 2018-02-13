@@ -9,12 +9,14 @@
 #import <Realm/Realm.h>
 #import "MessagesDatabase.h"
 #import "DatabaseMessage.h"
+#import "ContactDatabase.h"
 #import "CKIVGenerator.h"
 #import "CKGCMCodec.h"
 
 @interface MessagesDatabase ()
 {
     NSInteger messageId;
+    ContactDatabase *contacts;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -23,10 +25,12 @@
 
 @implementation MessagesDatabase
 
-- (instancetype)init {
+- (instancetype)initWithSessionState:(SessionState *)state {
     self = [super init];
 
+    _sessionState = state;
     _conversations = [NSMutableDictionary dictionary];
+    contacts = [[ContactDatabase alloc] initWithSessionState:state];
 
     return self;
 
@@ -133,7 +137,7 @@
 
 }
 
-- (NSArray*)loadConversations:(ContactManager*)contactManager {
+- (NSArray*)loadConversations {
 
     [_conversations removeAllObjects];
     NSMutableArray *pendingMessages = [NSMutableArray array];
@@ -149,7 +153,7 @@
         message[@"sequence"] = [NSNumber numberWithInteger:dbMessage.sequence];
         message[@"sent"] = [NSNumber numberWithBool:dbMessage.sent];
 
-        NSDictionary *contact = [contactManager getContactById:dbMessage.contactId];
+        NSDictionary *contact = [contacts getContactById:dbMessage.contactId];
         message[@"publicId"] = contact[@"publicId"];
         NSString *nickname = contact[@"nickname"];
         if (nickname != nil) {

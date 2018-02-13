@@ -41,7 +41,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     self = [super init];
 
     _session = restSession;
-    contactDatabase = [[ContactDatabase alloc] init];
+    contactDatabase = nil;
 
     return self;
 
@@ -66,25 +66,13 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
     
 }
-
+/*
 - (void)addLocalContact:(NSMutableDictionary *)entity {
 
     [contactDatabase addContact:entity];
 
 }
-
-- (NSInteger) contactCount {
-
-    return contactDatabase.indexed.count;
-
-}
-
-- (NSDictionary*)contactAtIndex:(NSInteger)index {
-
-    return contactDatabase.indexed[index];
-
-}
-
+*/
 - (void)createNickname:(NSString *)nickname withOldNickname:(NSString *)oldNickname {
     
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
@@ -117,32 +105,10 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
     
 }
-
+/*
 - (void)deleteLocalContact:(NSString *)publicId {
 
     [contactDatabase deleteContact:publicId];
-
-}
-
-- (void)endSession {
-
-}
-
-- (NSDictionary*)getContact:(NSString *)publicId {
-
-    return contactDatabase.keyed[publicId];
-
-}
-
-- (NSMutableDictionary*)getContactById:(NSInteger)contactId {
-
-    for (NSMutableDictionary *contact in contactDatabase.indexed) {
-        NSNumber *cid = contact[@"contactId"];
-        if ([cid integerValue] == contactId) {
-            return contact;
-        }
-    }
-    return nil;
 
 }
 
@@ -159,7 +125,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     return filtered;
     
 }
-
+*/
 - (void)getNickname:(NSString *)publicId {
 
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
@@ -168,7 +134,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
     
 }
-
+/*
 - (NSArray*)getPendingContactIds {
 
     NSMutableArray *pending = [NSMutableArray array];
@@ -187,13 +153,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
     
 }
-
-- (BOOL)loadContacts {
-
-    return [contactDatabase loadContacts:_sessionState];
-
-}
-
+*/
 - (void)matchNickname:(NSString *)nickname {
     
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
@@ -230,7 +190,8 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
     NSString *search = [fragment uppercaseString];
     NSMutableArray *results = [NSMutableArray array];
-    for (NSDictionary *contact in contactDatabase.indexed) {
+    NSArray *indexed = [contactDatabase getContactList];
+    for (NSDictionary *contact in indexed) {
         NSString *nickname = contact[@"nickname"];
         NSString *publicId = contact[@"publicId"];
         if ([[publicId uppercaseString] containsString:search]) {
@@ -269,7 +230,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
 
 }
-
+/*
 - (void)setContacts:(NSArray*)newContacts {
 
     [contactDatabase syncContacts:newContacts];
@@ -289,7 +250,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     }
 
 }
-
+*/
 - (void)setResponseConsumer:(id<ResponseConsumer>)consumer {
     _responseConsumer = consumer;
 }
@@ -305,7 +266,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
                                                              withTitle:@"Contact Error"];
 
 }
-
+/*
 - (void)syncContacts {
     
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
@@ -319,5 +280,5 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [contactDatabase updateContact:contact];
 
 }
-
+*/
 @end

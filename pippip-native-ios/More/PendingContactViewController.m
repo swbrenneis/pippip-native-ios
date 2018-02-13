@@ -9,9 +9,13 @@
 #import "PendingContactViewController.h"
 #import "AppDelegate.h"
 #import "ContactManager.h"
+#import "ContactDatabase.h"
 #import "NSData+HexEncode.h"
 
 @interface PendingContactViewController ()
+{
+    ContactDatabase *contacts;
+}
 
 @property (weak, nonatomic) IBOutlet UILabel *nicknameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *publicIdLabel;
@@ -33,6 +37,7 @@
     // Get the contact manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _contactManager = delegate.accountSession.contactManager;
+    contacts = [[ContactDatabase alloc] initWithSessionState:delegate.accountSession.sessionState];
     
     if (_requestNickname != nil) {
         _nicknameLabel.text = _requestNickname;
@@ -79,7 +84,7 @@
                 NSArray *keys = [self decodeKeys:keyStrings];
                 if (keys != nil) {
                     entity[@"messageKeys"] = keys;
-                    [_contactManager addLocalContact:entity];
+                    [contacts addContact:entity];
                     [self contactAddedAlert];
                 }
             }
