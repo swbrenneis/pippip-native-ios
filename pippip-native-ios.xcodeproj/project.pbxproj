@@ -132,6 +132,8 @@
 		55FA874E1FD5F10500FB96C0 /* CKHMAC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA874D1FD5F10500FB96C0 /* CKHMAC.mm */; };
 		55FB2F60202A4FE9005E3730 /* NewMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FB2F5F202A4FE9005E3730 /* NewMessageTableViewCell.m */; };
 		55FB2F62202A6D7B005E3730 /* CKIVGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FB2F61202A6D7B005E3730 /* CKIVGenerator.mm */; };
+		55FB2F662032375A005E3730 /* AccountConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FB2F652032375A005E3730 /* AccountConfig.m */; };
+		55FB2F69203245E1005E3730 /* Configurator.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FB2F68203245E1005E3730 /* Configurator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -433,6 +435,10 @@
 		55FB2F5F202A4FE9005E3730 /* NewMessageTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewMessageTableViewCell.m; sourceTree = "<group>"; };
 		55FB2F61202A6D7B005E3730 /* CKIVGenerator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKIVGenerator.mm; sourceTree = "<group>"; };
 		55FB2F63202A6DA7005E3730 /* CKIVGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKIVGenerator.h; sourceTree = "<group>"; };
+		55FB2F642032375A005E3730 /* AccountConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountConfig.h; sourceTree = "<group>"; };
+		55FB2F652032375A005E3730 /* AccountConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountConfig.m; sourceTree = "<group>"; };
+		55FB2F67203245E1005E3730 /* Configurator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Configurator.h; sourceTree = "<group>"; };
+		55FB2F68203245E1005E3730 /* Configurator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Configurator.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -478,6 +484,8 @@
 		55579E59202763DE00131A54 /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				55FB2F642032375A005E3730 /* AccountConfig.h */,
+				55FB2F652032375A005E3730 /* AccountConfig.m */,
 				557238A81F8C43F600A13A14 /* AccountManager.h */,
 				557238A91F8C43F600A13A14 /* AccountManager.m */,
 				55666644201A68AF00051ED2 /* AccountSession.h */,
@@ -486,6 +494,8 @@
 				5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */,
 				55FA873D1FD187CD00FB96C0 /* Authenticator.h */,
 				55FA873E1FD187CD00FB96C0 /* Authenticator.m */,
+				55FB2F67203245E1005E3730 /* Configurator.h */,
+				55FB2F68203245E1005E3730 /* Configurator.m */,
 				553789962002C2B20043BCF4 /* ContactDatabase.h */,
 				553789972002C2B20043BCF4 /* ContactDatabase.m */,
 				55B781AB1FE018FC00330B80 /* ContactManager.h */,
@@ -1041,6 +1051,7 @@
 				5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */,
 				55B3911C1FE17339004DAFF7 /* EnclaveRequest.m in Sources */,
 				55AA55651FA14D7100A7026B /* Random.cc in Sources */,
+				55FB2F662032375A005E3730 /* AccountConfig.m in Sources */,
 				55FA873F1FD187CD00FB96C0 /* Authenticator.m in Sources */,
 				55DB7F451FD8692C00B4D262 /* ServerAuthorized.m in Sources */,
 				55AA55511FA14D7100A7026B /* RSAPrivateModKey.cc in Sources */,
@@ -1065,6 +1076,7 @@
 				55AA55531FA14D7100A7026B /* CCSecureRandom.cc in Sources */,
 				55FA87451FD5CA4F00FB96C0 /* AuthenticationResponse.m in Sources */,
 				55AA55601FA14D7100A7026B /* IosSecureRandom.cc in Sources */,
+				55FB2F69203245E1005E3730 /* Configurator.m in Sources */,
 				55AA554D1FA14D7100A7026B /* RSAPublicKey.cc in Sources */,
 				551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */,
 				55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */,

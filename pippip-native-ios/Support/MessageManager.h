@@ -33,6 +33,8 @@
 
 - (void)sendMessage:(NSString*)message withPublicId:(NSString*)publicId;
 
+- (void)setConfig:(NSDictionary*)config;
+
 - (void)setResponseConsumer:(id<ResponseConsumer>)responseConsumer;
 
 - (void)setSessionState:(SessionState*)state;

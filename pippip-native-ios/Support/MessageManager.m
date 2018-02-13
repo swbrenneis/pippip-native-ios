@@ -211,6 +211,10 @@
     // Nothing to do here. Session is already established.
 }
 
+- (void)setConfig:(NSDictionary *)config {
+
+}
+
 - (void)setResponseConsumer:(id<ResponseConsumer>)consumer {
     _responseConsumer = consumer;
 }

@@ -10,26 +10,8 @@
 
 @interface AccountManager : NSObject
 
-- (instancetype)initManager;
-
-- (void)addWhitelistEntry:(NSDictionary*)entity;
-
-- (void)deleteWhitelistEntry:(NSDictionary*)entity;
-
-- (id)getConfigItem:(NSString*)key;
-
 - (NSArray*)loadAccounts:(BOOL)setCurrentAccount;
 
 - (void)loadConfig:(NSString*)accountName;
-
-- (void)setConfigItem:(id)item withKey:(NSString*)key;
-
-- (void)setDefaultConfig;
-
-- (void)storeConfig:(NSString*)accountName;
-
-- (NSInteger)whitelistCount;
-
-- (NSDictionary*)whitelistEntryAtIndex:(NSInteger)index;
 
 @end

@@ -8,13 +8,13 @@
 
 #import "ContactPolicyViewController.h"
 #import "AppDelegate.h"
-#import "AccountManager.h"
 #import "ContactManager.h"
+#import "Configurator.h"
 
 @interface ContactPolicyViewController ()
 {
     NSString *selectedPolicy;
-    NSString *accountName;
+    Configurator *config;
 }
 
 @property (weak, nonatomic) AccountManager *accountManager;
@@ -40,8 +40,8 @@
 
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     _contactManager = delegate.accountSession.contactManager;
-    accountName = delegate.accountSession.sessionState.currentAccount;
-    selectedPolicy = [_accountManager getConfigItem:@"contactPolicy"];
+    config = [[Configurator alloc] initWithSessionState:delegate.accountSession.sessionState];
+    selectedPolicy = [config getContactPolicy];
     if ([selectedPolicy isEqualToString:@"public"]) {
         [_contactPolicySwitch setOn:YES animated:YES];
     }

@@ -11,6 +11,7 @@
 @interface DatabaseMessage : RLMObject
 
 @property NSInteger contactId;
+@property NSInteger messageId;
 @property NSString *messageType;
 @property NSData *message;
 @property NSInteger keyIndex;

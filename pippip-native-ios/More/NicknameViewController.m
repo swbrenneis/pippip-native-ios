@@ -9,21 +9,20 @@
 #import "NicknameViewController.h"
 #import "AppDelegate.h"
 #import "ContactManager.h"
-#import "AccountManager.h"
+#import "Configurator.h"
 
 @interface NicknameViewController ()
 {
     NSString *method;
     NSString *currentNickname;
     NSString *pendingNickname;
-    NSString *accountName;
+    Configurator *config;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *nicknameTextField;
 @property (weak, nonatomic) IBOutlet UILabel *availableLabel;
 
 @property (weak, nonatomic) ContactManager *contactManager;
-@property (weak, nonatomic) AccountManager *accountManager;
 
 @end
 
@@ -33,19 +32,18 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    // Get the contact manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _accountManager = delegate.accountManager;
+    config = [[Configurator alloc] initWithSessionState:delegate.accountSession.sessionState];
 
 }
 
 -(void)viewWillAppear:(BOOL)animated {
 
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    accountName = delegate.accountSession.sessionState.currentAccount;
+    config = [[Configurator alloc] initWithSessionState:delegate.accountSession.sessionState];
     _contactManager = delegate.accountSession.contactManager;
     [_availableLabel setHidden:YES];
-    currentNickname = [_accountManager getConfigItem:@"nickname"];
+    currentNickname = [config getNickname];
     if (currentNickname != nil) {
         _nicknameTextField.text = currentNickname;
     }
@@ -109,8 +107,7 @@
         });
     }
     else {
-        [_accountManager setConfigItem:pendingNickname withKey:@"nickname"];
-        [_accountManager storeConfig:accountName];
+        [config setNickname:pendingNickname];
         currentNickname = pendingNickname;
         pendingNickname = nil;
         dispatch_async(dispatch_get_main_queue(), ^{

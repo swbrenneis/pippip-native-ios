@@ -227,32 +227,16 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
     // Nothing to do here.
 }
 
-- (void)setRealmConfiguration:(NSString*)name {
-    
-    RLMRealmConfiguration *config = [RLMRealmConfiguration defaultConfiguration];
-    // Use the default directory, but replace the filename with the username
-    config.fileURL = [[[config.fileURL URLByDeletingLastPathComponent]
-                       URLByAppendingPathComponent:name]
-                      URLByAppendingPathExtension:@"realm"];
-    config.schemaVersion = 2;
-    config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
-        if (oldSchemaVersion < 2) {
-            // No migration necessary
-        }
-    };
-    [RLMRealmConfiguration setDefaultConfiguration:config];
-    
-}
-
 /*
  * This is invoked from the main thread.
  */
-- (void)startSession:(SessionState *)state {
+- (void)startSession:(SessionState *)state withConfig:(NSDictionary *)config {
 
     _sessionState = state;
     [self setRealmConfiguration:_sessionState.currentAccount];
     [_contactManager setSessionState:state];
     [_messageManager setSessionState:state];
+    [_messageManager setConfig:config];
     sessionActive = YES;
     [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
         [self updateContacts];

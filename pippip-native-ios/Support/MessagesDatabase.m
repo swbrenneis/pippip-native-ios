@@ -14,7 +14,7 @@
 
 @interface MessagesDatabase ()
 {
-
+    NSInteger messageId;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
