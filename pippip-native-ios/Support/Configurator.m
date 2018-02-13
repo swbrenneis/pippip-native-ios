@@ -15,7 +15,6 @@ static NSLock *idLock = nil;
 
 @interface Configurator ()
 {
-    AccountConfig *config;
     NSMutableArray *privateWhitelist;
     NSMutableDictionary *idMap;
 }
@@ -34,9 +33,6 @@ static NSLock *idLock = nil;
     }
 
     _sessionState = state;
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"accountName = %@", state.currentAccount];
-    RLMResults<AccountConfig*> *configResults = [AccountConfig objectsWithPredicate:predicate];
-    config = [configResults firstObject];
     privateWhitelist = [NSMutableArray array];
     _whitelist = privateWhitelist;
     idMap = [NSMutableDictionary dictionary];
@@ -50,15 +46,16 @@ static NSLock *idLock = nil;
     NSInteger cid = [self getContactId:publicId];
     if (cid == NSNotFound) {
         idMap[publicId] = [NSNumber numberWithInteger:contactId];
-        [self encodeIdMap];
+        [self encodeIdMap:[self getConfig]];
     }
 
 }
 
 - (BOOL)addWhitelistEntry:(NSDictionary *)entity {
 
+    AccountConfig *config = [self getConfig];
     if (privateWhitelist.count == 0) {
-        [self decodeWhitelist];
+        [self decodeWhitelist:config];
     }
     NSString *publicId = entity[@"publicId"];
     NSUInteger idx = [privateWhitelist indexOfObjectPassingTest:^BOOL(id obj, NSUInteger index, BOOL *stop) {
@@ -67,13 +64,13 @@ static NSLock *idLock = nil;
     }];
     if (idx == NSNotFound) {
         [privateWhitelist addObject:entity];
-        [self encodeWhitelist];
+        [self encodeWhitelist:config];
     }
     return idx == NSNotFound;
 
 }
 
-- (void)decodeIdMap {
+- (void)decodeIdMap:(AccountConfig*)config {
 
     if (config.idMap != nil) {
         CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:config.whitelist];
@@ -93,7 +90,7 @@ static NSLock *idLock = nil;
 
 }
 
-- (void)decodeWhitelist {
+- (void)decodeWhitelist:(AccountConfig*)config {
 
     if (config.whitelist != nil) {
         CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:config.whitelist];
@@ -119,8 +116,9 @@ static NSLock *idLock = nil;
 
 - (BOOL)deleteWhitelistEntry:(NSString *)publicId {
 
+    AccountConfig *config = [self getConfig];
     if (privateWhitelist.count == 0) {
-        [self decodeWhitelist];
+        [self decodeWhitelist:config];
     }
     NSUInteger deleteIndex = [privateWhitelist indexOfObjectPassingTest:^BOOL(id obj, NSUInteger index, BOOL *stop) {
         NSDictionary *entity = obj;
@@ -128,13 +126,13 @@ static NSLock *idLock = nil;
     }];
     if (deleteIndex != NSNotFound) {
         [privateWhitelist removeObjectAtIndex:deleteIndex];
-        [self encodeWhitelist];
+        [self encodeWhitelist:config];
     }
     return deleteIndex != NSNotFound;
 
 }
 
-- (void)encodeIdMap {
+- (void)encodeIdMap:(AccountConfig*)config {
 
     RLMRealm *realm = [RLMRealm defaultRealm];
     if (idMap.count > 0) {
@@ -166,7 +164,7 @@ static NSLock *idLock = nil;
     
 }
 
-- (void)encodeWhitelist {
+- (void)encodeWhitelist:(AccountConfig*)config {
 
     RLMRealm *realm = [RLMRealm defaultRealm];
     if (privateWhitelist.count > 0) {
@@ -201,10 +199,18 @@ static NSLock *idLock = nil;
 
 }
 
+- (AccountConfig*)getConfig {
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"accountName = %@", _sessionState.currentAccount];
+    RLMResults<AccountConfig*> *configResults = [AccountConfig objectsWithPredicate:predicate];
+    return [configResults firstObject];
+
+}
+
 - (NSInteger)getContactId:(NSString *)publicId {
 
     if (idMap.count == 0) {
-        [self decodeIdMap];
+        [self decodeIdMap:[self getConfig]];
     }
     NSNumber *cid = idMap[publicId];
     if (cid != nil) {
@@ -217,15 +223,18 @@ static NSLock *idLock = nil;
 }
 
 - (NSString*)getContactPolicy {
+    AccountConfig *config = [self getConfig];
     return config.contactPolicy;
 }
 
 - (NSString*)getNickname {
+    AccountConfig *config = [self getConfig];
     return config.nickname;
 }
 
-- (NSInteger)newContacId {
+- (NSInteger)newContactId {
 
+    AccountConfig *config = [self getConfig];
     [idLock lock];
     NSInteger contactId = config.contactId;
     
@@ -241,6 +250,7 @@ static NSLock *idLock = nil;
 
 - (NSInteger)newMessageId {
     
+    AccountConfig *config = [self getConfig];
     [idLock lock];
     NSInteger messageId = config.messageId;
     
@@ -256,6 +266,7 @@ static NSLock *idLock = nil;
 
 - (void)setContactPolicy:(NSString *)policy {
     
+    AccountConfig *config = [self getConfig];
     RLMRealm *realm = [RLMRealm defaultRealm];
     [realm beginWriteTransaction];
     config.contactPolicy = policy;
@@ -264,12 +275,13 @@ static NSLock *idLock = nil;
 }
 
 - (void)setNickname:(NSString *)nickname {
-    
+
+    AccountConfig *config = [self getConfig];
     RLMRealm *realm = [RLMRealm defaultRealm];
     [realm beginWriteTransaction];
     config.nickname = nickname;
     [realm commitWriteTransaction];
-    
+
 }
 
 @end

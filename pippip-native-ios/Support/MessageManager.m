@@ -56,7 +56,7 @@
         NSMutableDictionary *message = [NSMutableDictionary dictionary];
         NSString *publicId = msg[@"fromId"];
         message[@"publicId"] = publicId;
-        NSDictionary *contact = [_contactManager getContact:publicId];
+        NSDictionary *contact = [contacts getContact:publicId];
         message[@"contactId"] = contact[@"contactId"];
         message[@"sent"] = [NSNumber numberWithBool:NO];
         message[@"messageType"] = msg[@"messageType"];
@@ -113,7 +113,7 @@
 
 - (void)loadMessages {
     
-    NSArray *unack = [messageDatabase loadConversations:_contactManager];
+    NSArray *unack = [messageDatabase loadConversations];
     for (NSDictionary *message in unack) {
         [self addPendingMessage:message];
     }

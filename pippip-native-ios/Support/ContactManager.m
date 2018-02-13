@@ -111,11 +111,12 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [contactDatabase deleteContact:publicId];
 
 }
-
+*/
 - (NSArray*)getContacts:(NSString *)status {
     
     NSMutableArray *filtered = [NSMutableArray array];
-    for (NSDictionary *contact in contactDatabase.indexed) {
+    NSArray *indexed = [contactDatabase getContactList];
+    for (NSDictionary *contact in indexed) {
         NSString *currentStatus = contact[@"status"];
         if ([status isEqualToString:currentStatus]) {
             // Make the contact immutable
@@ -125,7 +126,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     return filtered;
     
 }
-*/
+
 - (void)getNickname:(NSString *)publicId {
 
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
@@ -134,7 +135,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
     
 }
-/*
+
 - (NSArray*)getPendingContactIds {
 
     NSMutableArray *pending = [NSMutableArray array];
@@ -153,7 +154,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
     
 }
-*/
+
 - (void)matchNickname:(NSString *)nickname {
     
     NSMutableDictionary *request = [NSMutableDictionary dictionary];

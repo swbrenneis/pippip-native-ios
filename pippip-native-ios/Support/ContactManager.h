@@ -41,11 +41,11 @@
 - (NSMutableDictionary*)getContactById:(NSInteger)contactId;
 */
 - (void)getNickname:(NSString*)publicId;
-/*
+
 - (NSArray*)getPendingContactIds;
 
 - (void)getRequests;
-
+/*
 - (BOOL)loadContacts;
 */
 - (void)matchNickname:(NSString*)nickname;

@@ -9,6 +9,7 @@
 #import "AccountSession.h"
 #import "EnclaveRequest.h"
 #import "EnclaveResponse.h"
+#import "ContactDatabase.h"
 #import "LoggingErrorDelegate.h"
 #import "NSData+HexEncode.h"
 #import <Realm/Realm.h>
@@ -21,6 +22,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
     BOOL sessionActive;
     NSMutableArray *pendingMessages;
     NSArray *exceptions;
+    ContactDatabase *contactDatabase;
 }
 
 @property (weak, nonatomic) RESTSession *session;
@@ -37,7 +39,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 
     _session = restSession;
     _contactManager = [[ContactManager alloc] initWithRESTSession:restSession];
-    _messageManager = [[MessageManager alloc] initWithRESTSession:restSession withContactManager:_contactManager];
+    _messageManager = [[MessageManager alloc] initWithRESTSession:restSession];
     errorDelegate = [[LoggingErrorDelegate alloc] init];
     pendingMessages = [NSMutableArray array];
     sessionActive = NO;
@@ -98,7 +100,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 - (void)endSession {
     
     sessionActive = NO;
-    [_contactManager endSession];
+    //[_contactManager endSession];
     [_messageManager endSession];
 
 }
@@ -183,7 +185,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 - (void)processContact:(NSDictionary*)contact {
 
     NSString *publicId = contact[@"publicId"];
-    NSDictionary *entity = [_contactManager getContact:publicId];
+    NSDictionary *entity = [contactDatabase getContact:publicId];
     if (entity == nil) {
         // Something really wrong here
         NSLog(@"Process contact, contact %@ does not exist", publicId);
@@ -208,7 +210,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
             }
             update[@"messageKeys"] = keys;
         }
-        [_contactManager updateContact:update];
+        [contactDatabase updateContact:update];
     }
 
 }
@@ -235,6 +237,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
     _sessionState = state;
     [_contactManager setSessionState:state];
     [_messageManager setSessionState:state];
+    contactDatabase = [[ContactDatabase alloc] initWithSessionState:state];
     sessionActive = YES;
     [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
         [self updateContacts];

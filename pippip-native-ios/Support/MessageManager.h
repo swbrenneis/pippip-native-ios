@@ -11,7 +11,6 @@
 #import "RESTSession.h"
 #import "SessionState.h"
 #import "ResponseConsumer.h"
-#import "ContactManager.h"
 
 @interface MessageManager : NSObject <RequestProcess>
 
