@@ -70,6 +70,15 @@ static NSLock *idLock = nil;
 
 }
 
+- (NSArray*)allContactIds {
+
+    if (idMap.count == 0) {
+        [self decodeIdMap:[self getConfig]];
+    }
+    return [idMap allValues];
+
+}
+
 - (void)decodeIdMap:(AccountConfig*)config {
 
     if (config.idMap != nil) {

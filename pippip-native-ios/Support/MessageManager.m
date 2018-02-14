@@ -39,7 +39,6 @@
     self = [super init];
     
     _session = restSession;
-    messageDatabase = [[MessagesDatabase alloc] init];
     _pendingMessages = [NSMutableArray array];
 
     return self;
@@ -74,7 +73,7 @@
 - (void)endSession {
 
 }
-
+/*
 - (NSArray*)getConversation:(NSString *)publicId {
 
     return messageDatabase.conversations[publicId];
@@ -119,7 +118,7 @@
     }
 
 }
-
+*/
 - (void)messageAcknowledged:(NSString *)publicId withSequence:(NSInteger)sequence withTimestamp:(NSInteger)timestamp {
 
     if (pending != nil) {
@@ -218,6 +217,7 @@
 - (void)setSessionState:(SessionState *)state {
 
     _sessionState = state;
+    messageDatabase = [[MessagesDatabase alloc] initWithSessionState:state];
     contacts = [[ContactDatabase alloc] initWithSessionState:state];
 
 }

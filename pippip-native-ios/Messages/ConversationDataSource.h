@@ -7,9 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SessionState.h"
 
 @interface ConversationDataSource : NSObject <UITableViewDataSource, UITableViewDelegate>
 
-- (void)setConversation:(NSArray *)conversation;
+@property (nonatomic) NSString *publicId;
+
+- (void)setSession:(SessionState*)state;
 
 @end

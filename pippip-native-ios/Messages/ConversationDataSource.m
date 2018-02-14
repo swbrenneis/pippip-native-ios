@@ -9,11 +9,13 @@
 #import "ConversationDataSource.h"
 #import "ConversationLeftTableViewCell.h"
 #import "ConversationRightTableViewCell.h"
+#import "MessagesDatabase.h"
 
 @interface ConversationDataSource ()
 {
     NSArray *conversation;
     NSMutableArray *cellSizes;
+    MessagesDatabase *messagesDatabase;
 }
 
 @end
@@ -29,9 +31,10 @@
 
 }
 
-- (void)setConversation:(NSArray *)conv {
+- (void)setSession:(SessionState*)state {
 
-    conversation = conv;
+    messagesDatabase = [[MessagesDatabase alloc] initWithSessionState:state];
+    conversation = [messagesDatabase getConversation:_publicId];
     [cellSizes removeAllObjects];
     while (cellSizes.count < conversation.count) {
         [cellSizes addObject:[NSValue valueWithCGSize:CGSizeMake(0, 0)]];

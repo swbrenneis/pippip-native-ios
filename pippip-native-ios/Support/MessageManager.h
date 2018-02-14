@@ -21,13 +21,13 @@
 - (void)addReceivedMessages:(NSArray*)messages;
 
 - (void)endSession;
-
+/*
 - (NSArray*)getConversation:(NSString*)publicId;
 
 - (NSArray*)getMostRecentMessages;
 
 - (void)loadMessages;
-
+*/
 - (void)messageAcknowledged:(NSString*)publicId withSequence:(NSInteger)sequence withTimestamp:(NSInteger)timestamp;
 
 - (void)sendMessage:(NSString*)message withPublicId:(NSString*)publicId;

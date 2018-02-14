@@ -1216,6 +1216,31 @@
                                     </tableView>
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9S1-cZ-M5T">
                                         <rect key="frame" x="0.0" y="514" width="375" height="40"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" ! " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mMb-2K-QGT">
+                                                <rect key="frame" x="0.0" y="0.0" width="16" height="40"/>
+                                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="20"/>
+                                                <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Message" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="o2Y-Mi-8Ou">
+                                                <rect key="frame" x="16" y="0.0" width="324" height="40"/>
+                                                <nil key="textColor"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                            </textField>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iDi-f3-aWm">
+                                                <rect key="frame" x="340" y="0.0" width="35" height="40"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="35" id="RJz-ln-tcx"/>
+                                                </constraints>
+                                                <state key="normal" image="sendmessage"/>
+                                                <connections>
+                                                    <action selector="sendMessage:" destination="zue-dS-e4v" eventType="touchUpInside" id="fzU-VR-hXf"/>
+                                                    <action selector="sendMessage:" destination="W8U-Wg-QYH" eventType="touchUpInside" id="ycG-se-hgc"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="9bB-dE-sKh"/>
                                         </constraints>
@@ -1234,6 +1259,8 @@
                     </view>
                     <connections>
                         <outlet property="conversationTableView" destination="gh2-Ob-sW3" id="PVe-qd-B3W"/>
+                        <outlet property="messageTextField" destination="o2Y-Mi-8Ou" id="6b7-QX-M8X"/>
+                        <outlet property="sendFailedLabel" destination="mMb-2K-QGT" id="heN-Ap-5Ll"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eSB-fG-XJh" userLabel="First Responder" sceneMemberID="firstResponder"/>

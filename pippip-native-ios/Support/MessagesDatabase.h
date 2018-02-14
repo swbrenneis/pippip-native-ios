@@ -11,12 +11,12 @@
 
 @interface MessagesDatabase : NSObject
 
-@property (nonatomic) NSMutableDictionary *conversations;
-
 - (instancetype)initWithSessionState:(SessionState*)state;
 
 - (void)addNewMessage:(NSMutableDictionary*)message;
 
-- (NSArray*)loadConversations;
+- (NSArray*)getConversation:(NSString*)publicId;
+
+- (NSArray*)mostRecentMessages;
 
 @end

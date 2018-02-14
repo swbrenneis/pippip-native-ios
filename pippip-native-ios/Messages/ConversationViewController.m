@@ -8,6 +8,7 @@
 
 #import "ConversationViewController.h"
 #import "ConversationDataSource.h"
+#import "AppDelegate.h"
 
 @interface ConversationViewController ()
 {
@@ -15,6 +16,8 @@
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *conversationTableView;
+@property (weak, nonatomic) IBOutlet UILabel *sendFailedLabel;
+@property (weak, nonatomic) IBOutlet UITextField *messageTextField;
 
 @end
 
@@ -26,12 +29,16 @@
     dataSource = [[ConversationDataSource alloc] init];
     _conversationTableView.dataSource = dataSource;
     [_conversationTableView setDelegate:dataSource];
+    [_sendFailedLabel setHidden:YES];
 
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    [dataSource setConversation:[_messageManager getConversation:_publicId]];
+    // Message manager set in parent view prepare for segue.
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    dataSource.publicId = _publicId;
+    [dataSource setSession:delegate.accountSession.sessionState];
     [_conversationTableView reloadData];
 
 }
@@ -39,6 +46,9 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)sendMessage:(id)sender {
 }
 
 /*

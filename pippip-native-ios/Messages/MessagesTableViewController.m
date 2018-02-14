@@ -8,7 +8,7 @@
 
 #import "MessagesTableViewController.h"
 #import "AppDelegate.h"
-#import "MessageManager.h"
+#import "MessagesDatabase.h"
 #import "PreviewTableViewCell.h"
 #import "ConversationViewController.h"
 
@@ -40,10 +40,9 @@
 
 -(void)viewWillAppear:(BOOL)animated {
 
-    // Get the message manager
     AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _messageManager = delegate.accountSession.messageManager;
-    mostRecent = [_messageManager getMostRecentMessages];
+    MessagesDatabase *messages = [[MessagesDatabase alloc] initWithSessionState:delegate.accountSession.sessionState];
+    mostRecent = [messages mostRecentMessages];
     
     [self.tableView reloadData];
     
