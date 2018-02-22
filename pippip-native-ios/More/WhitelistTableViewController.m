@@ -7,11 +7,11 @@
 //
 
 #import "WhitelistTableViewController.h"
-#import "AppDelegate.h"
-#import "Configurator.h"
+#import "ApplicationSingleton.h"
 #import "WhitelistTableViewCell.h"
 #import "AddFriendViewController.h"
 #import "ContactManager.h"
+#import "AlertErrorDelegate.h"
 
 @interface WhitelistTableViewController ()
 {
@@ -19,13 +19,14 @@
     NSIndexPath *deletedIndex;
     NSString *accountName;
     Configurator *config;
+    ContactManager *contactManager;
 }
-
-@property (weak, nonatomic) ContactManager *contactManager;
 
 @end
 
 @implementation WhitelistTableViewController
+
+@synthesize errorDelegate;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -36,14 +37,17 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 
+    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Friends List Error"];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    accountName = delegate.accountSession.sessionState.currentAccount;
-    _contactManager = delegate.accountSession.contactManager;
-    config = [[Configurator alloc] initWithSessionState:delegate.accountSession.sessionState];
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    accountName = app.accountSession.sessionState.currentAccount;
+    contactManager = [[ContactManager alloc] init];
+    [contactManager setResponseConsumer:self];
+    config = [ApplicationSingleton instance].config;
     [config loadWhitelist];
     [self.tableView reloadData];
 
@@ -108,9 +112,7 @@
         deletedEntity = config.whitelist[indexPath.item];
         deletedIndex = indexPath;
         NSString *publicId = deletedEntity[@"publicId"];
-        [_contactManager setResponseConsumer:self];
-        [_contactManager setViewController:self];
-        [_contactManager deleteFriend:publicId];
+        [contactManager deleteFriend:publicId];
         //[tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view

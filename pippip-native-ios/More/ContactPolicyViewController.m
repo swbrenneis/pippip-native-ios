@@ -8,16 +8,15 @@
 
 #import "ContactPolicyViewController.h"
 #import "ContactManager.h"
-#import "Configurator.h"
-#import "AppDelegate.h"
+#import "ApplicationSingleton.h"
+#import "AlertErrorDelegate.h"
 
 @interface ContactPolicyViewController ()
 {
     NSString *selectedPolicy;
     Configurator *config;
+    ContactManager *contactManager;
 }
-
-@property (weak, nonatomic) ContactManager *contactManager;
 
 @property (weak, nonatomic) IBOutlet UISwitch *contactPolicySwitch;
 
@@ -25,17 +24,19 @@
 
 @implementation ContactPolicyViewController
 
+@synthesize errorDelegate;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
+    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Policy Error"];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
 
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.accountSession.contactManager;
-    config = [[Configurator alloc] initWithSessionState:delegate.accountSession.sessionState];
+    contactManager = [[ContactManager alloc] init];
+    config = [ApplicationSingleton instance].config;
     selectedPolicy = [config getContactPolicy];
     if ([selectedPolicy isEqualToString:@"public"]) {
         [_contactPolicySwitch setOn:YES animated:YES];
@@ -73,9 +74,8 @@
 
 - (IBAction)saveContactPolicy:(UIBarButtonItem *)sender {
 
-    [_contactManager setViewController:self];
-    [_contactManager setResponseConsumer:self];
-    [_contactManager setContactPolicy:selectedPolicy];
+    [contactManager setResponseConsumer:self];
+    [contactManager setContactPolicy:selectedPolicy];
 
 }
 

@@ -11,18 +11,21 @@
 #import "ContactManager.h"
 #import "RequestsTableViewCell.h"
 #import "PendingContactViewController.h"
+#import "AlertErrorDelegate.h"
 
 @interface RequestsTableViewController ()
 {
     NSArray *requests;
     NSInteger selectedRow;
+    ContactManager *contactManager;
 }
 
-@property (weak, nonatomic) ContactManager *contactManager;
 
 @end
 
 @implementation RequestsTableViewController
+
+@synthesize errorDelegate;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -33,17 +36,15 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 
+    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact Request Error"];
+
 }
 
 -(void)viewWillAppear:(BOOL)animated {
 
-    // Get the contact manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.accountSession.contactManager;
-    
-    [_contactManager setViewController:self];
-    [_contactManager setResponseConsumer:self];
-    [_contactManager getRequests];
+    contactManager = [[ContactManager alloc] init];
+    [contactManager setResponseConsumer:self];
+    [contactManager getRequests];
     
 }
 

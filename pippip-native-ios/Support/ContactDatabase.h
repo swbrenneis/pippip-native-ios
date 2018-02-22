@@ -11,8 +11,6 @@
 
 @interface ContactDatabase : NSObject
 
-- (instancetype)initWithSessionState:(SessionState*)state;
-
 - (NSInteger)addContact:(NSMutableDictionary*)contact;
 
 - (void)deleteContact:(NSString*)publicId;

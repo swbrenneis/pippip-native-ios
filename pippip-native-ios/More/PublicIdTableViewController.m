@@ -7,7 +7,7 @@
 //
 
 #import "PublicIdTableViewController.h"
-#import "AppDelegate.h"
+#import "ApplicationSingleton.h"
 #import "AccountSession.h"
 
 @interface PublicIdTableViewController ()
@@ -23,8 +23,8 @@
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _publicIdCellTitle.text = delegate.accountSession.sessionState.publicId;
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    _publicIdCellTitle.text = app.accountSession.sessionState.publicId;
 
 }
 

@@ -13,7 +13,7 @@
 #import "NewAccountFinal.h"
 #import "AlertErrorDelegate.h"
 #import "ParameterGenerator.h"
-#import "AppDelegate.h"
+#import "ApplicationSingleton.h"
 #import "AccountSession.h"
 #import "UserVault.h"
 #import "CKPEMCodec.h"
@@ -53,11 +53,10 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
     [self storeVault];
     sessionState.authenticated = YES;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-        [delegate.accountManager loadConfig:sessionState.currentAccount];
-        [delegate.accountSession startSession:sessionState];
-    });
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    [app.accountManager loadConfig:sessionState.currentAccount];
+    [app.accountSession startSession:sessionState];
+    [app.config startNewSession:sessionState];
 
 }
 

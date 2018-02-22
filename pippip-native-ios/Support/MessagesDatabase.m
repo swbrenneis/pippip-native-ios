@@ -8,6 +8,7 @@
 
 #import <Realm/Realm.h>
 #import "MessagesDatabase.h"
+#import "ApplicationSingleton.h"
 #import "DatabaseMessage.h"
 #import "ContactDatabase.h"
 #import "Configurator.h"
@@ -17,9 +18,7 @@
 @interface MessagesDatabase ()
 {
     NSInteger messageId;
-    ContactDatabase *contacts;
-    Configurator *config;
-    NSMutableDictionary *conversations;
+    ContactDatabase *contactDatabase;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -28,20 +27,60 @@
 
 @implementation MessagesDatabase
 
-- (instancetype)initWithSessionState:(SessionState *)state {
+- (instancetype)init {
     self = [super init];
 
-    _sessionState = state;
-    conversations = [NSMutableDictionary dictionary];
-    contacts = [[ContactDatabase alloc] initWithSessionState:state];
-    config = [[Configurator alloc] initWithSessionState:state];
+    contactDatabase = [[ContactDatabase alloc] init];
 
     return self;
 
 }
 
-- (void)addMessageSorted:(NSDictionary*)message withMessageList:(NSMutableArray*)messageList {
+- (void)acknowledgeMessage:(NSInteger)messageId {
 
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageId = %ld", messageId];
+    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+    if (messages.count > 0) {
+        DatabaseMessage *dbMessage = [messages firstObject];
+        [realm beginWriteTransaction];
+        dbMessage.acknowledged = YES;
+        [realm commitWriteTransaction];
+    }
+    else {
+        NSLog(@"MessagesDatabase.acknowledgeMessage - Message not found in database");
+    }
+
+}
+
+- (NSInteger)addMessage:(NSDictionary*)message {
+    
+    // Add the message to the database
+    DatabaseMessage *dbMessage = [[DatabaseMessage alloc] init];
+    Configurator *config = [ApplicationSingleton instance].config;
+    NSInteger messageId = [config newMessageId];
+    dbMessage.messageId = messageId;
+    dbMessage.contactId = [config getContactId:message[@"publicId"]];
+    dbMessage.messageType = message[@"messageType"];
+    dbMessage.keyIndex = [message[@"keyIndex"] integerValue];
+    dbMessage.sequence = [message[@"sequence"] integerValue];
+    dbMessage.timestamp = [message[@"timestamp"] integerValue];
+    dbMessage.read = [message[@"read"] boolValue];
+    dbMessage.acknowledged = [message[@"acknowledged"] boolValue];
+    dbMessage.sent = [message[@"sent"] boolValue];
+    dbMessage.message = [[NSData alloc] initWithBase64EncodedString:message[@"body"] options:0];
+    
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    [realm beginWriteTransaction];
+    [realm addObject:dbMessage];
+    [realm commitWriteTransaction];
+
+    return messageId;
+
+}
+
+- (void)addMessageSorted:(NSDictionary*)message withMessageList:(NSMutableArray*)messageList {
+    
     if (messageList.count == 0) {
         [messageList addObject:message];
     }
@@ -71,48 +110,7 @@
                                       }];
         [messageList insertObject:message atIndex:index];
     }
-
-}
-
-- (void)addMessageToConversation:(NSMutableDictionary*)message {
-
-    NSString *publicId = message[@"publicId"];
-    NSMutableArray *conversation = [self loadConversation:publicId];
-    [self addMessageSorted:message withMessageList:conversation];
-
-}
-
-- (void)addNewMessage:(NSMutableDictionary*)message {
     
-    NSString *publicId = message[@"publicId"];
-    NSNumber *sq = message[@"sequence"];
-    NSNumber *ts = message[@"timestamp"];
-
-    if (![self messageExists:publicId withSequence:[sq integerValue] withTimestamp:[ts integerValue]]) {
-        [self addMessageToConversation:message];
-        
-        // Add the message to the database
-        DatabaseMessage *dbMessage = [[DatabaseMessage alloc] init];
-        dbMessage.messageId = [config newMessageId];
-        dbMessage.contactId = [config getContactId:message[@"publicId"]];
-        dbMessage.messageType = message[@"messageType"];
-        NSNumber *ki = message[@"keyIndex"];
-        dbMessage.keyIndex = [ki integerValue];
-        dbMessage.sequence = [sq integerValue];
-        dbMessage.timestamp = [ts integerValue];
-        dbMessage.read = NO;
-        NSNumber *ack = message[@"acknowledged"];
-        dbMessage.acknowledged = [ack boolValue];
-        NSNumber *sent = message[@"sent"];
-        dbMessage.sent = [sent boolValue];
-        dbMessage.message = [[NSData alloc] initWithBase64EncodedString:message[@"body"] options:0];
-        
-        RLMRealm *realm = [RLMRealm defaultRealm];
-        [realm beginWriteTransaction];
-        [realm addObject:dbMessage];
-        [realm commitWriteTransaction];
-    }
-
 }
 
 - (NSMutableDictionary*)decodeMessage:(DatabaseMessage*)dbMessage withContact:(NSDictionary*)contact {
@@ -124,6 +122,7 @@
         message[@"nickname"] = nickname;
     }
     message[@"contactId"] = [NSNumber numberWithInteger:dbMessage.contactId];
+    message[@"messageId"] = [NSNumber numberWithInteger:dbMessage.messageId];
     message[@"messageType"] = dbMessage.messageType;
     message[@"messageType"] = [NSNumber numberWithInteger:dbMessage.timestamp];
     message[@"read"] = [NSNumber numberWithBool:dbMessage.read];
@@ -149,11 +148,13 @@
 
 }
 
-// Debug only!!!
-- (void)deleteAllMessages {
+- (void)deleteAllMessages:(NSString*)publicId {
 
     RLMRealm *realm = [RLMRealm defaultRealm];
-    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage allObjects];
+    Configurator *config = [ApplicationSingleton instance].config;
+    NSInteger contactId = [config getContactId:publicId];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
     for (DatabaseMessage *message in messages) {
         [realm beginWriteTransaction];
         [realm deleteObject:message];
@@ -162,99 +163,112 @@
 
 }
 
-- (NSArray*)getConversation:(NSString *)publicId {
+- (NSArray*)loadConversation:(NSString*)publicId {
 
-    NSArray *conversation = conversations[publicId];
-    if (conversation == nil) {
-        conversation = [self loadConversation:publicId];
-    }
-    return conversation;
-
-}
-
-- (NSMutableArray*)loadConversation:(NSString*)publicId {
-
-    NSMutableArray* conversation = [NSMutableArray array];
+    NSMutableArray *conversation = [NSMutableArray array];
+    Configurator *config = [ApplicationSingleton instance].config;
     NSInteger contactId = [config getContactId:publicId];
-    NSDictionary *contact = [contacts getContact:publicId];
+    NSDictionary *contact = [contactDatabase getContact:publicId];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
     RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
                                               sortedResultsUsingKeyPath:@"timestamp" ascending:YES];
     for (DatabaseMessage *dbMessage in messages) {
         NSMutableDictionary *message = [self decodeMessage:dbMessage withContact:contact];
         [conversation addObject:message];
-        //[self addMessageSorted:message withConversation:conversation];
     }
     return conversation;
 
 }
 
-// Is this necessary?
-- (NSArray*)loadConversations {
+- (NSArray*)getPendingMessages:(NSString*)publicId {
 
-    [conversations removeAllObjects];
-    NSMutableArray *pendingMessages = [NSMutableArray array];
-    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage allObjects];
-    for (DatabaseMessage *dbMessage in messages) {
-        NSMutableDictionary *message = [NSMutableDictionary dictionary];
-        message[@"contactId"] = [NSNumber numberWithInteger:dbMessage.contactId];
-        message[@"messageType"] = dbMessage.messageType;
-        message[@"messageType"] = [NSNumber numberWithInteger:dbMessage.timestamp];
-        message[@"read"] = [NSNumber numberWithBool:dbMessage.read];
-        message[@"acknowledged"] = [NSNumber numberWithBool:dbMessage.acknowledged];
-        message[@"timestamp"] = [NSNumber numberWithInteger:dbMessage.timestamp];
-        message[@"sequence"] = [NSNumber numberWithInteger:dbMessage.sequence];
-        message[@"sent"] = [NSNumber numberWithBool:dbMessage.sent];
-
-        NSDictionary *contact = [contacts getContactById:dbMessage.contactId];
-        message[@"publicId"] = contact[@"publicId"];
-        NSString *nickname = contact[@"nickname"];
-        if (nickname != nil) {
-            message[@"nickname"] = nickname;
-        }
-        message[@"cleartext"] = [self decryptMessage:dbMessage withContact:contact];
-        [self addMessageToConversation:message];
-        if (!dbMessage.acknowledged) {
-            [pendingMessages addObject:message];
-        }
-    }
-    return pendingMessages;
-
+    return nil;
+    
 }
 
-- (BOOL)messageExists:(NSString*)publicId withSequence:(NSInteger)sequence withTimestamp:(NSInteger)timestamp {
-    
-    NSArray *conversation = [self loadConversation:publicId];
+/*
+- (Conversation*)loadConversation:(NSString*)publicId {
+
+    Conversation* conversation = conversations[publicId];
     if (conversation != nil) {
-        for (NSDictionary *message in conversation) {
-            NSNumber *sq = message[@"sequence"];
-            NSNumber *ts = message[@"timestamp"];
-            if ([sq integerValue] == sequence && [ts integerValue] == timestamp) {
-                return YES;
-            }
-        }
+        return conversation;
     }
-    return NO;
-    
+
+    conversation = [[Conversation alloc] init];
+    NSInteger contactId = [config getContactId:publicId];
+    NSDictionary *contact = [contactDatabase getContact:publicId];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+    RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
+                                              sortedResultsUsingKeyPath:@"timestamp" ascending:YES];
+    for (DatabaseMessage *dbMessage in messages) {
+        NSMutableDictionary *message = [self decodeMessage:dbMessage withContact:contact];
+        [conversation addMessage:message];
+    }
+    conversations[publicId] = conversation;
+    return conversation;
+
+}
+*/
+- (void)markMessageRead:(NSInteger)messageId {
+
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageId = %ld", messageId];
+    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+    if (messages.count > 0) {
+        DatabaseMessage *dbMessage = [messages firstObject];
+        [realm beginWriteTransaction];
+        dbMessage.read = YES;
+        [realm commitWriteTransaction];
+    }
+    else {
+        NSLog(@"Message not in database!");
+    }
+
 }
 
-- (NSArray*)mostRecentMessages {
+- (NSDictionary*)mostRecentMessage:(NSInteger)contactId {
 
-    NSMutableArray *recent = [NSMutableArray array];
-    NSArray *contactIds = [config allContactIds];
-    for (NSNumber *cid in contactIds) {
-        NSInteger contactId = [cid integerValue];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
         RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
                                                   sortedResultsUsingKeyPath:@"timestamp" ascending:NO];
         if (messages.count > 0) {
-            NSDictionary *contact = [contacts getContactById:contactId];
+            NSDictionary *contact = [contactDatabase getContactById:contactId];
             NSDictionary *message = [self decodeMessage:[messages firstObject] withContact:contact];
-            [self addMessageSorted:message withMessageList:recent];
+            return message;
         }
-    }
-    return recent;
+        else {
+            NSLog(@"No messages found for contact %ld", contactId);
+            return nil;
+        }
 
 }
+
+- (NSArray*)pendingMessages {
+
+    NSMutableArray *pending = [NSMutableArray array];
+    Configurator *config = [ApplicationSingleton instance].config;
+    NSArray *contactIds = [config allContactIds];
+    for (NSNumber *cid in contactIds) {
+        NSInteger contactId = [cid integerValue];
+        NSPredicate *predicate =
+            [NSPredicate predicateWithFormat:@"contactId = %ld && acknowledged == %@", contactId, @NO];
+        RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+        for (DatabaseMessage *dbMessage in messages) {
+            NSDictionary *contact = [contactDatabase getContactById:contactId];
+            NSDictionary *message = [self decodeMessage:dbMessage withContact:contact];
+            [pending addObject:message];
+        }
+    }
+    return pending;
+
+}
+/*
+- (NSArray*)reloadConversation:(NSString *)publicId {
+
+    [conversations removeObjectForKey:publicId];
+    return [self getConversation:publicId];
+
+}
+*/
 
 @end

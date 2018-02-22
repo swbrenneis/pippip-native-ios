@@ -7,17 +7,17 @@
 //
 
 #import "MessagesTableViewController.h"
-#import "AppDelegate.h"
-#import "MessagesDatabase.h"
-#import "PreviewTableViewCell.h"
+#import "ApplicationSingleton.h"
+#import "ConversationCache.h"
 #import "ConversationViewController.h"
+#import "PreviewTableViewCell.h"
 
 @interface MessagesTableViewController ()
 {
     NSArray *mostRecent;
 }
 
-@property (weak, nonatomic) MessageManager *messageManager;
+@property (weak, nonatomic) ConversationCache *conversationCache;
 
 @end
 
@@ -31,6 +31,10 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    _conversationCache = app.conversationCache;
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -40,12 +44,25 @@
 
 -(void)viewWillAppear:(BOOL)animated {
 
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    MessagesDatabase *messages = [[MessagesDatabase alloc] initWithSessionState:delegate.accountSession.sessionState];
-    mostRecent = [messages mostRecentMessages];
-    
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    [app.accountSession setMessageObserver:self];
+    mostRecent = [_conversationCache mostRecentMessages];
     [self.tableView reloadData];
     
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    [app.accountSession unsetMessageObserver:self];
+
+}
+
+- (void)newMessagesReceived {
+    
+    mostRecent = [_conversationCache mostRecentMessages];
+    [self.tableView reloadData];
+
 }
 
 - (IBAction)unwindToMessagesTableView:(UIStoryboardSegue*)segue {
@@ -119,7 +136,6 @@
         ConversationViewController *conversationView = (ConversationViewController*)view;
         NSDictionary *message = mostRecent[self.tableView.indexPathForSelectedRow.item];
         conversationView.publicId = message[@"publicId"];
-        conversationView.messageManager = _messageManager;
     }
 
 }

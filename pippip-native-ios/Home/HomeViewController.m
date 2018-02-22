@@ -10,6 +10,7 @@
 #import "NewAccountCreator.h"
 #import "Authenticator.h"
 #import "CreateAccountDialog.h"
+#import "ApplicationSingleton.h"
 #import "AppDelegate.h"
 #import "SessionState.h"
 #import "AccountManager.h"
@@ -47,15 +48,16 @@
     _activityIndicator.center = self.view.center;
 
     // Get the account manager and REST client
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _accountManager = delegate.accountManager;
-    _session = delegate.restSession;
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    _accountManager = app.accountManager;
+    _session = app.restSession;
 
     // Connect the picker.
     self.accountPickerView.delegate = self;
     self.accountPickerView.dataSource = self;
 
     tabBarDelegate = [[TabBarDelegate alloc] init];
+    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     UITabBarController *tabBar = (UITabBarController*)delegate.window.rootViewController;
     [tabBar setDelegate:tabBarDelegate];
 
@@ -63,9 +65,9 @@
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     accountNames = [_accountManager loadAccounts:NO];
-    if (delegate.accountSession == nil || !delegate.accountSession.sessionState.authenticated) {
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    if (app.accountSession == nil || !app.accountSession.sessionState.authenticated) {
         // Enable sign in if there are accounts on this device. Set the status accordingly.
         if (accountNames.count == 0) {
             [self.authButton setHidden:YES];

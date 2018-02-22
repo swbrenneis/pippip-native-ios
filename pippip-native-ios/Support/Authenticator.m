@@ -7,7 +7,7 @@
 //
 
 #import "Authenticator.h"
-#import "AppDelegate.h"
+#import "ApplicationSingleton.h"
 #import "AccountSession.h"
 #import "SessionState.h"
 #import "AlertErrorDelegate.h"
@@ -70,12 +70,11 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 - (void)authenticated {
 
     sessionState.authenticated = YES;
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-        [delegate.accountManager loadConfig:sessionState.currentAccount];
-        [delegate.accountSession startSession:sessionState];
-    });
+
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    [app.accountManager loadConfig:sessionState.currentAccount];
+    [app.accountSession startSession:sessionState];
+    [app.config startNewSession:sessionState];
 
 }
 
@@ -117,9 +116,9 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
  */
 - (void) logout {
 
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    sessionState = delegate.accountSession.sessionState;
-    [delegate.accountSession endSession];
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    sessionState = app.accountSession.sessionState;
+    [app.accountSession endSession];
     step = LOGOUT;
     postPacket = [[Logout alloc] initWithState:sessionState];
     [_viewController updateStatus:@"Logging out"];

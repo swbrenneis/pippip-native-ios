@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MessageManager.h"
+#import "MessageObserver.h"
+#import "ResponseConsumer.h"
 
-@interface ConversationViewController : UIViewController
+@interface ConversationViewController : UIViewController <MessageObserver, ResponseConsumer>
 
 @property (nonatomic) NSString *publicId;
-@property (weak, nonatomic) MessageManager *messageManager;
 
 @end

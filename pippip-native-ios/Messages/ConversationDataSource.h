@@ -11,8 +11,12 @@
 
 @interface ConversationDataSource : NSObject <UITableViewDataSource, UITableViewDelegate>
 
-@property (nonatomic) NSString *publicId;
+- (instancetype)initWithPublicId:(NSString*)pid;
 
-- (void)setSession:(SessionState*)state;
+- (void)newMessageAdded;
+
+//- (void)markMessagesRead;
+
+//- (void)reloadMessages:(NSString*)publicId;
 
 @end

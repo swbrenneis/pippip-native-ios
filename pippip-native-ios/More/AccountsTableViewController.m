@@ -7,7 +7,7 @@
 //
 
 #import "AccountsTableViewController.h"
-#import "AppDelegate.h"
+#import "ApplicationSingleton.h"
 
 @interface AccountsTableViewController ()
 {
@@ -24,8 +24,8 @@
     [super viewDidLoad];
     
     // Get the account manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _accountManager = delegate.accountManager;
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    _accountManager = app.accountManager;
 
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -36,8 +36,8 @@
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _sessionState = delegate.accountSession.sessionState;
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    _sessionState = app.accountSession.sessionState;
     accountNames = [_accountManager loadAccounts:NO];
 
 }

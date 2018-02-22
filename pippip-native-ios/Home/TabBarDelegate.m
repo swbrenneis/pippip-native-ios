@@ -7,7 +7,7 @@
 //
 
 #import "TabBarDelegate.h"
-#import "AppDelegate.h"
+#import "ApplicationSingleton.h"
 #import "AccountSession.h"
 
 @interface TabBarDelegate ()
@@ -23,12 +23,12 @@
 - (BOOL) tabBarController:(UITabBarController *)tabBarController
             shouldSelectViewController:(UIViewController*)viewController {
 
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     if ([viewController.title isEqualToString:@"Home"]) {
         return YES;
     }
     else {
-        return delegate.accountSession.sessionState.authenticated;
+        ApplicationSingleton *app = [ApplicationSingleton instance];
+        return app.accountSession.sessionState.authenticated;
     }
 
 }

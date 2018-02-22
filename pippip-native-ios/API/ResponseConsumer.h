@@ -7,8 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ErrorDelegate.h"
 
 @protocol ResponseConsumer <NSObject>
+
+@property (nonatomic) id<ErrorDelegate> errorDelegate;
 
 - (void)response:(NSDictionary*)info;
 

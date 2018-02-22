@@ -11,12 +11,18 @@
 
 @interface MessagesDatabase : NSObject
 
-- (instancetype)initWithSessionState:(SessionState*)state;
+- (void)acknowledgeMessage:(NSInteger)messageId;
 
-- (void)addNewMessage:(NSMutableDictionary*)message;
+- (NSInteger)addMessage:(NSDictionary*)message;
 
-- (NSArray*)getConversation:(NSString*)publicId;
+- (void)deleteAllMessages:(NSString*)publicId;
 
-- (NSArray*)mostRecentMessages;
+- (NSArray*)loadConversation:(NSString*)publicId;
+
+- (void)markMessageRead:(NSInteger)messageId;
+
+- (NSDictionary*)mostRecentMessage:(NSInteger)contactId;
+
+- (NSArray*)pendingMessages;
 
 @end

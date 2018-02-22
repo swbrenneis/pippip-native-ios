@@ -7,37 +7,39 @@
 //
 
 #import "PendingContactViewController.h"
-#import "AppDelegate.h"
 #import "ContactManager.h"
 #import "ContactDatabase.h"
-#import "NSData+HexEncode.h"
+//#import "NSData+HexEncode.h"
+#import "AlertErrorDelegate.h"
 
 @interface PendingContactViewController ()
 {
-    ContactDatabase *contacts;
+    ContactDatabase *contactDatabase;
+    ContactManager *contactManager;
 }
 
 @property (weak, nonatomic) IBOutlet UILabel *nicknameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *publicIdLabel;
 
-@property (weak, nonatomic) ContactManager *contactManager;
-
 @end
 
 @implementation PendingContactViewController
+
+@synthesize errorDelegate;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
+    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact Error"];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    // Get the contact manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.accountSession.contactManager;
-    contacts = [[ContactDatabase alloc] initWithSessionState:delegate.accountSession.sessionState];
+    contactManager = [[ContactManager alloc] init];
+    [contactManager setResponseConsumer:self];
+    contactDatabase = [[ContactDatabase alloc] init];
     
     if (_requestNickname != nil) {
         _nicknameLabel.text = _requestNickname;
@@ -84,7 +86,7 @@
                 NSArray *keys = [self decodeKeys:keyStrings];
                 if (keys != nil) {
                     entity[@"messageKeys"] = keys;
-                    [contacts addContact:entity];
+                    [contactDatabase addContact:entity];
                     [self contactAddedAlert];
                 }
             }
@@ -98,25 +100,19 @@
 
 - (IBAction)acceptRequest:(id)sender {
 
-    [_contactManager setViewController:self];
-    [_contactManager setResponseConsumer:self];
-    [_contactManager acknowledgeRequest:@"accept" withId:_publicIdLabel.text];
+    [contactManager acknowledgeRequest:@"accept" withId:_publicIdLabel.text];
     
 }
 
 - (IBAction)rejectRequest:(id)sender {
 
-    [_contactManager setViewController:self];
-    [_contactManager setResponseConsumer:self];
-    [_contactManager acknowledgeRequest:@"reject" withId:_publicIdLabel.text];
+    [contactManager acknowledgeRequest:@"reject" withId:_publicIdLabel.text];
     
 }
 
 - (IBAction)ignoreRequest:(id)sender {
 
-    [_contactManager setViewController:self];
-    [_contactManager setResponseConsumer:self];
-    [_contactManager acknowledgeRequest:@"ignore" withId:_publicIdLabel.text];
+    [contactManager acknowledgeRequest:@"ignore" withId:_publicIdLabel.text];
     
 }
 

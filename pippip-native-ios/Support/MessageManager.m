@@ -7,26 +7,27 @@
 //
 
 #import "MessageManager.h"
-#import "MessagesDatabase.h"
+#import "ApplicationSingleton.h"
+#import "ConversationCache.h"
 #import "ContactDatabase.h"
 #import "EnclaveRequest.h"
 #import "EnclaveResponse.h"
-#import "AlertErrorDelegate.h"
+#import "MessagesDatabase.h"
 #import "CKIVGenerator.h"
 #import "CKGCMCodec.h"
 
 @interface MessageManager ()
 {
+    ContactDatabase *contactDatabase;
     MessagesDatabase *messageDatabase;
-    ContactDatabase *contacts;
-    NSMutableDictionary *pending;
+    NSMutableDictionary *sentMessage;
+    NSArray *pendingMessages;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
-
 @property (weak, nonatomic) id<ResponseConsumer> responseConsumer;
-@property (weak, nonatomic) UIViewController *viewController;
 @property (weak, nonatomic) RESTSession *session;
+@property (weak, nonatomic) ConversationCache *conversationCache;
 
 @end;
 
@@ -35,27 +36,46 @@
 @synthesize errorDelegate;
 @synthesize postPacket;
 
-- (instancetype)initWithRESTSession:(RESTSession *)restSession {
+- (instancetype)init {
     self = [super init];
-    
-    _session = restSession;
-    _pendingMessages = [NSMutableArray array];
+
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    _session = app.restSession;
+    _sessionState = app.accountSession.sessionState;
+    _conversationCache = app.conversationCache;
+    contactDatabase = [[ContactDatabase alloc] init];
+    messageDatabase = [[MessagesDatabase alloc] init];
 
     return self;
     
 }
 
-- (void)addPendingMessage:(NSDictionary*)message {
+- (void)acknowledgePendingMessages {
+
+    pendingMessages = [messageDatabase pendingMessages];
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"GetMessages";
+    NSMutableArray *triplets = [NSMutableArray array];
+    for (NSDictionary *message in pendingMessages) {
+        NSMutableDictionary *triplet = [NSMutableDictionary dictionary];
+        triplet[@"publicId"] = message[@"publicId"];
+        triplet[@"sequence"] = message[@"sequence"];
+        triplet[@"timestamp"] = message[@"timestamp"];
+        [triplets addObject:triplet];
+    }
+    request[@"messages"] = triplets;
+    [self sendRequest:request];
 
 }
 
+/*
 - (void)addReceivedMessages:(NSArray*)messages {
 
     for (NSDictionary *msg in messages) {
         NSMutableDictionary *message = [NSMutableDictionary dictionary];
         NSString *publicId = msg[@"fromId"];
         message[@"publicId"] = publicId;
-        NSDictionary *contact = [contacts getContact:publicId];
+        NSDictionary *contact = [contactDatabase getContact:publicId];
         message[@"contactId"] = contact[@"contactId"];
         message[@"sent"] = [NSNumber numberWithBool:NO];
         message[@"messageType"] = msg[@"messageType"];
@@ -65,77 +85,44 @@
         message[@"acknowledged"] = [NSNumber numberWithBool:NO];
         message[@"body"] = msg[@"body"];
         [messageDatabase addNewMessage:message];
-        [self addPendingMessage:message];
-    }
-
-}
-
-- (void)endSession {
-
-}
-/*
-- (NSArray*)getConversation:(NSString *)publicId {
-
-    return messageDatabase.conversations[publicId];
-
-}
-
-- (NSArray*)getMostRecentMessages {
-
-    NSMutableArray *recent = [NSMutableArray array];
-    for (NSString *publicId in messageDatabase.conversations) {
-        NSArray *conversation = messageDatabase.conversations[publicId];
-        [recent addObject:[conversation lastObject]];
-    }
-    [recent sortUsingComparator:^(id obj1, id obj2) {
-        NSDictionary *msg1 = obj1;
-        NSNumber *ts1 = msg1[@"timestamp"];
-        NSInteger time1 = [ts1 integerValue];
-        NSDictionary *msg2 = obj2;
-        NSNumber *ts2 = msg2[@"timestamp"];
-        NSInteger time2 = [ts2 integerValue];
-        if (time1 == time2) {
-            NSLog(@"%@", @"Equal message timestamps!");
-            return NSOrderedSame;
-        }
-        else if (time1 > time2) {
-            return NSOrderedDescending;
-        }
-        else {
-            return NSOrderedAscending;
-        }
-    }];
-
-    return recent;
-
-}
-
-- (void)loadMessages {
-    
-    NSArray *unack = [messageDatabase loadConversations];
-    for (NSDictionary *message in unack) {
-        [self addPendingMessage:message];
     }
 
 }
 */
-- (void)messageAcknowledged:(NSString *)publicId withSequence:(NSInteger)sequence withTimestamp:(NSInteger)timestamp {
 
-    if (pending != nil) {
-        pending[@"timestamp"] = [NSNumber numberWithInteger:timestamp];
-        pending[@"acknowledged"] = @YES;
-        pending[@"publicId"] = pending[@"toId"];
-        NSDictionary *contact = [contacts getContact:pending[@"toId"]];
-        pending[@"contactId"] = contact[@"contactId"];
+- (void)getNewMessages {
+
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"GetMessages";
+    [self sendRequest:request];
+
+}
+
+- (void)messageSent:(NSString *)publicId withSequence:(NSInteger)sequence withTimestamp:(NSInteger)timestamp {
+
+    if (sentMessage != nil) {
+        sentMessage[@"timestamp"] = [NSNumber numberWithInteger:timestamp];
+        sentMessage[@"acknowledged"] = @YES;
+        sentMessage[@"publicId"] = sentMessage[@"toId"];
+        NSDictionary *contact = [contactDatabase getContact:sentMessage[@"toId"]];
+        sentMessage[@"contactId"] = contact[@"contactId"];
         NSString *nickname = contact[@"nickname"];
         if (nickname != nil) {
-            pending[@"nickname"] = nickname;
+            sentMessage[@"nickname"] = nickname;
         }
-        pending[@"sent"] = @YES;
-        [messageDatabase addNewMessage:pending];
-        pending = nil;
+        sentMessage[@"sent"] = @YES;
+        [_conversationCache addMessage:sentMessage];
+        sentMessage = nil;
     }
 
+}
+
+- (void)pendingMessagesAcknowledged {
+    
+    for (NSDictionary *message in pendingMessages) {
+        [_conversationCache acknowledgeMessage:message];
+    }
+    
 }
 
 - (void)postComplete:(NSDictionary*)response {
@@ -144,8 +131,11 @@
         EnclaveResponse *enclaveResponse = [[EnclaveResponse alloc] initWithState:_sessionState];
         if ([enclaveResponse processResponse:response errorDelegate:errorDelegate]) {
             NSDictionary *messageResponse = [enclaveResponse getResponse];
-            if (messageResponse != nil && _responseConsumer != nil) {
+            if (_responseConsumer != nil) {
                 [_responseConsumer response:messageResponse];
+            }
+            else {
+                NSLog(@"MessageManager.postComplete - responseConsumer is nil");
             }
         }
     }
@@ -154,7 +144,7 @@
 
 - (void)sendMessage:(NSString *)message withPublicId:(NSString *)publicId {
 
-    NSMutableDictionary *contact = [contacts getContact:publicId];
+    NSMutableDictionary *contact = [contactDatabase getContact:publicId];
     NSNumber *sq = contact[@"currentSequence"];
     NSInteger sequence = [sq integerValue] + 1;
     contact[@"currentSequence"] = [NSNumber numberWithInteger:sequence];
@@ -168,7 +158,7 @@
     NSData *key = keys[keyIndex];
     NSData *authData = contact[@"authData"];
     NSData *nonce = contact[@"nonce"];
-    [contacts updateContact:contact];
+    [contactDatabase updateContact:contact];
 
     // Encrypt the message.
     CKIVGenerator *ivGen = [[CKIVGenerator alloc] init];
@@ -190,8 +180,8 @@
     msg[@"keyIndex"] = [NSNumber numberWithInteger:keyIndex];
     msg[@"messageType"] = @"user";
     msg[@"body"] = [encoded base64EncodedStringWithOptions:0];
-    pending = msg;
-    pending[@"cleartext"] = message;
+    sentMessage = msg;
+    sentMessage[@"cleartext"] = message;
     [self sendRequest:msg];
 
 }
@@ -211,22 +201,15 @@
 }
 
 - (void)setResponseConsumer:(id<ResponseConsumer>)consumer {
+
     _responseConsumer = consumer;
+    errorDelegate = _responseConsumer.errorDelegate;
+
 }
 
-- (void)setSessionState:(SessionState *)state {
+- (void)startNewSession:(SessionState *)state {
 
     _sessionState = state;
-    messageDatabase = [[MessagesDatabase alloc] initWithSessionState:state];
-    contacts = [[ContactDatabase alloc] initWithSessionState:state];
-
-}
-
-- (void)setViewController:(UIViewController *)controller {
-    
-    _viewController = controller;
-    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
-                                                             withTitle:@"Contact Error"];
     
 }
 

@@ -10,6 +10,7 @@
 
 @interface ContactSearchDataSource ()
 {
+    NSInteger rowsInTable;
     NSArray *contactList;
 }
 @end
@@ -20,13 +21,16 @@
 
     contactList = contacts;
     if (contacts == nil) {
-        _rowsInTable = 0;
+        rowsInTable = 0;
     }
     else {
-        _rowsInTable = contacts.count;
+        rowsInTable = contacts.count;
     }
-    [_tableView reloadData];
 
+}
+
+- (NSDictionary*)contactAtRow:(NSInteger)row {
+    return contactList[row];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -37,7 +41,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return _rowsInTable;
+    return rowsInTable;
 
 }
 
@@ -58,13 +62,6 @@
 
     return cell;
     
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    NSDictionary *contact = contactList[indexPath.item];
-    [_messageSource contactSelected:contact[@"publicId"] withNickname:contact[@"nickname"]];
-
 }
 
 @end

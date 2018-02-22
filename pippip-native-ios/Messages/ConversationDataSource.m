@@ -7,16 +7,19 @@
 //
 
 #import "ConversationDataSource.h"
-#import "ConversationLeftTableViewCell.h"
-#import "ConversationRightTableViewCell.h"
-#import "MessagesDatabase.h"
+#import "ConversationTableViewCell.h"
+#import "ConversationCache.h"
+#import "Conversation.h"
+#import "ApplicationSingleton.h"
 
 @interface ConversationDataSource ()
 {
-    NSArray *conversation;
-    NSMutableArray *cellSizes;
-    MessagesDatabase *messagesDatabase;
+    NSString *publicId;
+    Conversation *conversation;
+    NSMutableArray *cells;
 }
+
+@property (weak, nonatomic) ConversationCache *conversationCache;
 
 @end
 
@@ -25,21 +28,30 @@
 - (instancetype)init {
     self = [super init];
 
-    cellSizes = [NSMutableArray array];
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    _conversationCache = app.conversationCache;
+    conversation = nil;
+    cells = [NSMutableArray array];
+    
+    return self;
+    
+}
+
+- (instancetype)initWithPublicId:(NSString *)pid {
+    self = [super init];
+
+    publicId = pid;
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    _conversationCache = app.conversationCache;
+    conversation = [_conversationCache getConversation:publicId];
+    cells = [NSMutableArray array];
 
     return self;
 
 }
 
-- (void)setSession:(SessionState*)state {
-
-    messagesDatabase = [[MessagesDatabase alloc] initWithSessionState:state];
-    conversation = [messagesDatabase getConversation:_publicId];
-    [cellSizes removeAllObjects];
-    while (cellSizes.count < conversation.count) {
-        [cellSizes addObject:[NSValue valueWithCGSize:CGSizeMake(0, 0)]];
-    }
-
+- (void)newMessageAdded {
+    [cells removeAllObjects];
 }
 
 #pragma mark - Table view data source
@@ -63,34 +75,40 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSDictionary *message = conversation[indexPath.item];
-    NSNumber *s = message[@"sent"];
-    BOOL sent = [s boolValue];
-    
-    // Configure the cell...
-    if (sent) {
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ConversationCellRight"
-                                                                forIndexPath:indexPath];
-        ConversationRightTableViewCell *conversationCell = (ConversationRightTableViewCell*)cell;
-        CGSize cellSize = [conversationCell configureCell:message];
-        cellSizes[indexPath.item] = [NSValue valueWithCGSize:cellSize];
-        return cell;
-    }
-    else {
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ConversationCellLeft"
-                                                                forIndexPath:indexPath];
-        ConversationLeftTableViewCell *conversationCell = (ConversationLeftTableViewCell*)cell;
-        CGSize cellSize = [conversationCell configureCell:message];
-        cellSizes[indexPath.item] = [NSValue valueWithCGSize:cellSize];
-        return cell;
+    if (cells.count <= indexPath.item) {
+        while (cells.count <= indexPath.item) {
+            ConversationTableViewCell *dummy = [[ConversationTableViewCell alloc] init];
+            dummy.configured = NO;
+            [cells addObject:dummy];
+        }
     }
     
+    ConversationTableViewCell *convCell = cells[indexPath.item];
+    if (!convCell.configured) {
+        NSDictionary *message = [conversation getIndexedMessage:indexPath.item];
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MessageCell"
+                                                                forIndexPath:indexPath];
+        // Configure the cell...
+        convCell = (ConversationTableViewCell*)cell;
+        [convCell configureCell:message];
+        convCell.configured = YES;
+        cells[indexPath.item] = cell;
+
+    }
+    return convCell;
+
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    NSValue *cellSize  = cellSizes[indexPath.item];
-    return cellSize.CGSizeValue.height;
+
+    if (cells.count > indexPath.item) {
+        ConversationTableViewCell *cell = cells[indexPath.item];
+        return cell.cellSize.height;
+    }
+    else {
+        NSLog(@"Cell size for row %ld not found!", indexPath.item);
+        return 20.0;
+    }
     
 }
 

@@ -14,28 +14,20 @@
 
 @interface MessageManager : NSObject <RequestProcess>
 
-@property (nonatomic) NSMutableArray *pendingMessages;
+- (void)acknowledgePendingMessages;
 
-- (instancetype)initWithRESTSession:(RESTSession *)restSession;
+- (void)getNewMessages;
 
-- (void)addReceivedMessages:(NSArray*)messages;
+- (void)messageSent:(NSString*)publicId withSequence:(NSInteger)sequence withTimestamp:(NSInteger)timestamp;
 
-- (void)endSession;
-/*
-- (NSArray*)getConversation:(NSString*)publicId;
-
-- (NSArray*)getMostRecentMessages;
-
-- (void)loadMessages;
-*/
-- (void)messageAcknowledged:(NSString*)publicId withSequence:(NSInteger)sequence withTimestamp:(NSInteger)timestamp;
+- (void)pendingMessagesAcknowledged;
 
 - (void)sendMessage:(NSString*)message withPublicId:(NSString*)publicId;
 
 - (void)setResponseConsumer:(id<ResponseConsumer>)responseConsumer;
 
-- (void)setSessionState:(SessionState*)state;
+//- (void)setViewController:(UIViewController*)controller;
 
-- (void)setViewController:(UIViewController*)controller;
+- (void)startNewSession:(SessionState*)state;
 
 @end

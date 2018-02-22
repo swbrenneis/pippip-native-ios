@@ -13,8 +13,6 @@
 
 @property (nonatomic) NSArray *whitelist;
 
-- (instancetype)initWithSessionState:(SessionState*)state;
-
 - (void)addContactId:(NSInteger)contactId withPublicId:(NSString*)publicId;
 
 - (BOOL)addWhitelistEntry:(NSDictionary*)entity;
@@ -40,5 +38,7 @@
 - (void)setContactPolicy:(NSString*)policy;
 
 - (void)setNickname:(NSString*)nickname;
+
+- (void)startNewSession:(SessionState*)state;
 
 @end

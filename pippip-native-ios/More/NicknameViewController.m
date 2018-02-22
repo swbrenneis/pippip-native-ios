@@ -7,9 +7,9 @@
 //
 
 #import "NicknameViewController.h"
-#import "AppDelegate.h"
 #import "ContactManager.h"
-#import "Configurator.h"
+#import "ApplicationSingleton.h"
+#import "AlertErrorDelegate.h"
 
 @interface NicknameViewController ()
 {
@@ -17,31 +17,31 @@
     NSString *currentNickname;
     NSString *pendingNickname;
     Configurator *config;
+    ContactManager *contactManager;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *nicknameTextField;
 @property (weak, nonatomic) IBOutlet UILabel *availableLabel;
 
-@property (weak, nonatomic) ContactManager *contactManager;
-
 @end
 
 @implementation NicknameViewController
+
+@synthesize errorDelegate;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    config = [[Configurator alloc] initWithSessionState:delegate.accountSession.sessionState];
+    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Nickname Error"];
 
 }
 
 -(void)viewWillAppear:(BOOL)animated {
 
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    config = [[Configurator alloc] initWithSessionState:delegate.accountSession.sessionState];
-    _contactManager = delegate.accountSession.contactManager;
+    config = [ApplicationSingleton instance].config;
+    contactManager = [[ContactManager alloc] init];
+
     [_availableLabel setHidden:YES];
     currentNickname = [config getNickname];
     if (currentNickname != nil) {
@@ -62,9 +62,8 @@
 
     method = @"SetNickname";
     pendingNickname = nil;
-    [_contactManager setViewController:self];
-    [_contactManager setResponseConsumer:self];
-    [_contactManager createNickname:nil withOldNickname:currentNickname];
+    [contactManager setResponseConsumer:self];
+    [contactManager createNickname:nil withOldNickname:currentNickname];
     
 }
 
@@ -122,9 +121,8 @@
     if (_nicknameTextField.text != nil && _nicknameTextField.text.length > 0) {
         method = @"SetNickname";
         pendingNickname = _nicknameTextField.text;
-        [_contactManager setViewController:self];
-        [_contactManager setResponseConsumer:self];
-        [_contactManager createNickname:pendingNickname withOldNickname:currentNickname];
+        [contactManager setResponseConsumer:self];
+        [contactManager createNickname:pendingNickname withOldNickname:currentNickname];
     }
     else {
         [self noNicknameAlert];
@@ -137,8 +135,8 @@
     if (_nicknameTextField.text != nil && _nicknameTextField.text.length > 0) {
         method = @"MatchNickname";
         [_availableLabel setHidden:YES];
-        [_contactManager setResponseConsumer:self];
-        [_contactManager matchNickname:_nicknameTextField.text];
+        [contactManager setResponseConsumer:self];
+        [contactManager matchNickname:_nicknameTextField.text];
     }
     else {
         [self noNicknameAlert];

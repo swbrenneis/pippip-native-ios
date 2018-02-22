@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MessageObserver.h"
 
-@interface MessagesTableViewController : UITableViewController
+@interface MessagesTableViewController : UITableViewController <MessageObserver>
 
 @end

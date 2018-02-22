@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+//#import "ApplicationSingleton.h"
 
 @interface AppDelegate ()
 
@@ -17,11 +18,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    
-    _accountManager = [[AccountManager alloc] init];
-    _restSession = [[RESTSession alloc] init];
-    _accountSession = [[AccountSession alloc] initWithRESTSession:_restSession];
 
+    //[ApplicationSingleton instance];
     return YES;
 
 }

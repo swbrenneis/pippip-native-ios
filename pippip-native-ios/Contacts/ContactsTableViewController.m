@@ -7,25 +7,28 @@
 //
 
 #import "ContactsTableViewController.h"
-#import "AppDelegate.h"
+#import "ApplicationSingleton.h"
 #import "ContactManager.h"
 #import "ContactDatabase.h"
 #import "AddContactViewController.h"
 #import "ContactDetailViewController.h"
 #import "ContactTableViewCell.h"
+#import "AlertErrorDelegate.h"
 
 @interface ContactsTableViewController ()
 {
     NSDictionary *addedContact;
-    ContactDatabase *contacts;
+    ContactDatabase *contactDatabase;
     NSArray *contactList;
+    ContactManager *contactManager;
 }
 
-@property (weak, nonatomic) ContactManager *contactManager;
 
 @end
 
 @implementation ContactsTableViewController
+
+@synthesize errorDelegate;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -36,17 +39,28 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 
+    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact List Error"];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.accountSession.contactManager;
-    contacts = [[ContactDatabase alloc] initWithSessionState:delegate.accountSession.sessionState];
-    contactList = [contacts getContactList];
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    [app.accountSession setContactObserver:self];
+    contactManager = [[ContactManager alloc] init];
+    [contactManager setResponseConsumer:self];
+    contactDatabase = [[ContactDatabase alloc] init];
+    contactList = [contactDatabase getContactList];
 
     [self.tableView reloadData];
     
+}
+
+-(void)viewWillDisappear:(BOOL)animated {
+
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    [app.accountSession unsetContactObserver:self];
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -80,19 +94,24 @@
 
 }
 
+- (void)contactsUpdated {
+
+    contactList = [contactDatabase getContactList];
+    [self.tableView reloadData];
+
+}
+
 - (IBAction)syncContacts:(id)sender {
 
-    [_contactManager setViewController:self];
-    [_contactManager setResponseConsumer:self];
-    [_contactManager syncContacts];
+    [contactManager syncContacts];
 
 }
 
 - (IBAction)unwindAfterRequestAdded:(UIStoryboardSegue*)segue {
 
     AddContactViewController *view = (AddContactViewController*)segue.sourceViewController;
-    [contacts addContact:view.addedContact];
-    contactList = [contacts getContactList];
+    [contactDatabase addContact:view.addedContact];
+    contactList = [contactDatabase getContactList];
     [self.tableView reloadData];
 
 }

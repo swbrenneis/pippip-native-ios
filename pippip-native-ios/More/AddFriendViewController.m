@@ -9,31 +9,35 @@
 #import "AddFriendViewController.h"
 #import "AppDelegate.h"
 #import "ContactManager.h"
+#import "AlertErrorDelegate.h"
 
 @interface AddFriendViewController ()
 {
     NSString *action;
+    ContactManager *contactManager;
 }
 
-@property (weak, nonatomic) ContactManager *contactManager;
 
 @end
 
 @implementation AddFriendViewController
 
+@synthesize errorDelegate;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Add Friend Error"];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    // Get the contact manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.accountSession.contactManager;
-    
+    contactManager = [[ContactManager alloc] init];
+    [contactManager setResponseConsumer:self];
+
     _nicknameTextField.text = @"";
     _publicIdTextField.text = @"";
+    [_nicknameTextField becomeFirstResponder];
 
 }
 
@@ -92,15 +96,13 @@
 
     NSString *nickname = _nicknameTextField.text;
     NSString *publicId = _publicIdTextField.text;
-    [_contactManager setViewController:self];
-    [_contactManager setResponseConsumer:self];
     if (nickname.length != 0) {
         action = @"MatchNickname";
-        [_contactManager matchNickname:nickname];
+        [contactManager matchNickname:nickname];
     }
     else if (publicId.length != 0) {
         action = @"UpdateWhitelist";
-        [_contactManager addFriend:publicId];
+        [contactManager addFriend:publicId];
     }
     else {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid Friend ID"
@@ -124,7 +126,7 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             _publicIdTextField.text = matchedId;
         });
-        [_contactManager addFriend:matchedId];
+        [contactManager addFriend:matchedId];
     }
     else {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Invalid Friend ID"

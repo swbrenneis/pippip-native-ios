@@ -11,9 +11,9 @@
 @interface ConversationRightTableViewCell ()
 
 @property (weak, nonatomic) IBOutlet UIImageView *messageBubbleImage;
-@property (weak, nonatomic) IBOutlet UILabel *messageText;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *messageTextLeading;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *messageBubbleLeading;
+@property (weak, nonatomic) IBOutlet UILabel *messageText;
 
 @end
 

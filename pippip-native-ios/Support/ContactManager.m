@@ -7,13 +7,12 @@
 //
 
 #import "ContactManager.h"
+#import "ApplicationSingleton.h"
 #import "RESTSession.h"
 #import "EnclaveRequest.h"
 #import "EnclaveResponse.h"
-#import "SessionState.h"
-#import "AlertErrorDelegate.h"
 #import "ContactDatabase.h"
-#import "NSData+HexEncode.h"
+//#import "NSData+HexEncode.h"
 #import "CKGCMCodec.h"
 
 typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
@@ -24,8 +23,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     ContactRequest contactRequest;
 }
 
-//@property (weak, nonatomic) AccountManager *accountManager;
-@property (weak, nonatomic) UIViewController *viewController;
+//@property (weak, nonatomic) UIViewController *viewController;
 @property (weak, nonatomic) id<ResponseConsumer> responseConsumer;
 @property (weak, nonatomic) SessionState *sessionState;
 @property (weak, nonatomic) RESTSession *session;
@@ -37,11 +35,13 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 @synthesize errorDelegate;
 @synthesize postPacket;
 
-- (instancetype)initWithRESTSession:(RESTSession *)restSession {
+- (instancetype)init {
     self = [super init];
 
-    _session = restSession;
-    contactDatabase = nil;
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    _session = app.restSession;
+    _sessionState = app.accountSession.sessionState;
+    contactDatabase = [[ContactDatabase alloc] init];
 
     return self;
 
@@ -66,13 +66,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
     
 }
-/*
-- (void)addLocalContact:(NSMutableDictionary *)entity {
 
-    [contactDatabase addContact:entity];
-
-}
-*/
 - (void)createNickname:(NSString *)nickname withOldNickname:(NSString *)oldNickname {
     
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
@@ -105,13 +99,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
     
 }
-/*
-- (void)deleteLocalContact:(NSString *)publicId {
 
-    [contactDatabase deleteContact:publicId];
-
-}
-*/
 - (NSArray*)getContacts:(NSString *)status {
     
     NSMutableArray *filtered = [NSMutableArray array];
@@ -170,8 +158,11 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
         EnclaveResponse *enclaveResponse = [[EnclaveResponse alloc] initWithState:_sessionState];
         if ([enclaveResponse processResponse:response errorDelegate:errorDelegate]) {
             NSDictionary *contactResponse = [enclaveResponse getResponse];
-            if (contactResponse != nil && _responseConsumer != nil) {
+            if (_responseConsumer != nil) {
                 [_responseConsumer response:contactResponse];
+            }
+            else {
+                NSLog(@"ContactManager.postComplete - response consumer is nil");
             }
         }
     }
@@ -231,41 +222,17 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
 
 }
-/*
-- (void)setContacts:(NSArray*)newContacts {
 
-    [contactDatabase syncContacts:newContacts];
-
-}
-
-- (void)setNickname:(NSString *)nickname withPublicId:(NSString *)publicId {
-
-    NSDictionary *contact = contactDatabase.keyed[publicId];
-    if (contact == nil) {
-        NSLog(@"Set nickname, contact %@ not found", publicId);
-    }
-    else {
-        NSMutableDictionary *update = [contact mutableCopy];
-        update[@"nickname"] = nickname;
-        [contactDatabase updateContact:update];
-    }
-
-}
-*/
 - (void)setResponseConsumer:(id<ResponseConsumer>)consumer {
+
     _responseConsumer = consumer;
+    errorDelegate = _responseConsumer.errorDelegate;
+
 }
 
-- (void)setSessionState:(SessionState *)state {
+- (void)startNewSession:(SessionState *)state {
+
     _sessionState = state;
-    contactDatabase = [[ContactDatabase alloc] initWithSessionState:state];
-}
-
-- (void)setViewController:(UIViewController *)controller {
-
-    _viewController = controller;
-    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
-                                                             withTitle:@"Contact Error"];
 
 }
 
@@ -288,11 +255,52 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
 
 }
-/*
-- (void)updateContact:(NSMutableDictionary*)contact {
 
-    [contactDatabase updateContact:contact];
+- (void)updateContact:(NSDictionary*)contact {
+    
+    NSString *publicId = contact[@"publicId"];
+    NSDictionary *entity = [contactDatabase getContact:publicId];
+    if (entity == nil) {
+        // Something really wrong here
+        NSLog(@"Process contact, contact %@ does not exist", publicId);
+    }
+    else {
+        NSMutableDictionary *update = [entity mutableCopy];
+        NSString *status = contact[@"status"];
+        update[@"status"] = status;
+        update[@"timestamp"] = contact[@"timestamp"];
+        if ([status isEqualToString:@"accepted"]) {
+            update[@"currentSequence"] = [NSNumber numberWithLong:0L];
+            update[@"currentIndex"] = [NSNumber numberWithLong:0L];
+            NSData *authData = [[NSData alloc] initWithBase64EncodedString:contact[@"authData"] options:0];
+            update[@"authData"] = authData;
+            NSData *nonce = [[NSData alloc] initWithBase64EncodedString:contact[@"nonce"] options:0];
+            update[@"nonce"] = nonce;
+            NSArray *messageKeys = contact[@"messageKeys"];
+            NSMutableArray *keys = [NSMutableArray array];
+            for (NSString *keyString in messageKeys) {
+                NSData *key = [[NSData alloc] initWithBase64EncodedString:keyString options:0];
+                [keys addObject:key];
+            }
+            update[@"messageKeys"] = keys;
+        }
+        [contactDatabase updateContact:update];
+    }
+    
+}
+
+- (NSUInteger)updatePendingContacts {
+
+     NSArray *pending = [self getPendingContactIds];
+     if (pending.count > 0) {
+         NSLog(@"%@", @"Updating pending contacts");
+         NSMutableDictionary *request = [NSMutableDictionary dictionary];
+         request[@"method"] = @"UpdatePendingContacts";
+         request[@"pending"] = pending;
+         [self sendRequest:request];
+     }
+    return pending.count;
 
 }
-*/
+
 @end

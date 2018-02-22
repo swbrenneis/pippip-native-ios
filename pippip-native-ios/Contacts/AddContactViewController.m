@@ -8,9 +8,10 @@
 
 #import "AddContactViewController.h"
 #import "ContactsTableViewController.h"
-#import "AppDelegate.h"
 #import "ContactManager.h"
 #import "Configurator.h"
+#import "ApplicationSingleton.h"
+#import "AlertErrorDelegate.h"
 
 @interface AddContactViewController ()
 {
@@ -19,33 +20,35 @@
     NSString *publicId;
     NSString *myPublicId;
     NSString *myNickname;
+    ContactManager *contactManager;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *nicknameText;
 @property (weak, nonatomic) IBOutlet UITextField *publicIdText;
 
-@property (weak, nonatomic) ContactManager *contactManager;
-
 @end
 
 @implementation AddContactViewController
 
+@synthesize errorDelegate;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact Error"];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    // Get the contact manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.accountSession.contactManager;
-    myPublicId = delegate.accountSession.sessionState.publicId;
-    Configurator *config = [[Configurator alloc] initWithSessionState:delegate.accountSession.sessionState];
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    myPublicId = app.accountSession.sessionState.publicId;
+    contactManager = [[ContactManager alloc] init];
+    Configurator *config = [ApplicationSingleton instance].config;
     myNickname = [config getNickname];
 
     _nicknameText.text = @"";
     _publicIdText.text = @"";
+    [_nicknameText becomeFirstResponder];
 
 }
 
@@ -104,7 +107,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 _publicIdText.text = publicId;
             });
-            [_contactManager requestContact:publicId];
+            [contactManager requestContact:publicId];
         }
         else {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -132,16 +135,15 @@
 
     nickname = _nicknameText.text;
     publicId = _publicIdText.text;
-    [_contactManager setViewController:self];
-    [_contactManager setResponseConsumer:self];
+    [contactManager setResponseConsumer:self];
     if (nickname.length != 0) {
         action = @"MatchNickname";
-        [_contactManager matchNickname:nickname];
+        [contactManager matchNickname:nickname];
     }
     else if (publicId.length != 0) {
         if (![publicId isEqualToString:myPublicId]) {
             action = @"RequestContact";
-            [_contactManager requestContact:publicId];
+            [contactManager requestContact:publicId];
         }
         else {
             [self selfContactAlert];

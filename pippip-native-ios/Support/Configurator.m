@@ -7,6 +7,7 @@
 //
 
 #import "Configurator.h"
+#import "ApplicationSingleton.h"
 #import "AccountConfig.h"
 #import "CKGCMCodec.h"
 #import <Realm/Realm.h>
@@ -16,7 +17,7 @@ static NSLock *idLock = nil;
 @interface Configurator ()
 {
     NSMutableArray *privateWhitelist;
-    NSMutableDictionary *idMap;
+    NSMutableDictionary<NSString*, NSNumber*> *idMap;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -25,14 +26,9 @@ static NSLock *idLock = nil;
 
 @implementation Configurator
 
-- (instancetype)initWithSessionState:(SessionState *)state {
+- (instancetype)init {
     self = [super init];
 
-    if (idLock == nil) {
-        idLock = [[NSLock alloc] init];
-    }
-
-    _sessionState = state;
     privateWhitelist = [NSMutableArray array];
     _whitelist = privateWhitelist;
     idMap = [NSMutableDictionary dictionary];
@@ -307,6 +303,14 @@ static NSLock *idLock = nil;
     [realm beginWriteTransaction];
     config.nickname = nickname;
     [realm commitWriteTransaction];
+
+}
+
+- (void)startNewSession:(SessionState *)state {
+
+    _sessionState = state;
+    [idMap removeAllObjects];
+    [privateWhitelist removeAllObjects];
 
 }
 

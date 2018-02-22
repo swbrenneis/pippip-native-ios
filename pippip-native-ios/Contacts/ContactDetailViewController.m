@@ -7,18 +7,18 @@
 //
 
 #import "ContactDetailViewController.h"
-#import "AppDelegate.h"
 #import "ContactManager.h"
 #import "ContactDatabase.h"
+#import "AlertErrorDelegate.h"
+#import "ApplicationSingleton.h"
 #import <time.h>
 
 @interface ContactDetailViewController ()
 {
     NSString *action;
-    ContactDatabase *contacts;
+    ContactDatabase *contactDatabase;
+    ContactManager *contactManager;
 }
-
-@property (weak, nonatomic) ContactManager *contactManager;
 
 @property (weak, nonatomic) IBOutlet UITextField *nicknameTextField;
 @property (weak, nonatomic) IBOutlet UILabel *publicIdLabel;
@@ -30,18 +30,20 @@
 
 @implementation ContactDetailViewController
 
+@synthesize errorDelegate;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
+    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact Error"];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    // Get the contact manager
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    _contactManager = delegate.accountSession.contactManager;
-    contacts = [[ContactDatabase alloc] initWithSessionState:delegate.accountSession.sessionState];
+    contactManager = [[ContactManager alloc] init];
+    [contactManager setResponseConsumer:self];
+    contactDatabase = [[ContactDatabase alloc] init];
 
     [_nicknameSavedLabel setHidden:YES];
     [_nicknameNotAvailableLabel setHidden:YES];
@@ -83,9 +85,7 @@
     [_nicknameSavedLabel setHidden:YES];
 
     action = @"GetNickname";
-    [_contactManager setViewController:self];
-    [_contactManager setResponseConsumer:self];
-    [_contactManager getNickname:_contact[@"publicId"]];
+    [contactManager getNickname:_contact[@"publicId"]];
 
 }
 
@@ -96,9 +96,9 @@
     
     NSString *nickname = _nicknameTextField.text;
     if (nickname.length > 0) {
-        NSMutableDictionary *cont = [contacts getContact:_contact[@"publicId"]];
+        NSMutableDictionary *cont = [contactDatabase getContact:_contact[@"publicId"]];
         cont[@"nickname"] = _nicknameTextField.text;
-        [contacts updateContact:cont];
+        [contactDatabase updateContact:cont];
         [_nicknameSavedLabel setHidden:NO];
     }
 
@@ -107,7 +107,7 @@
 - (IBAction)deleteContact:(id)sender {
 
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Caution!"
-                                                                   message:@"You are about to delete this contact. This action cannot be undone"
+                                                                   message:@"You are about to delete this contact and all associated messages. This action cannot be undone"
                                                             preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
                                                        style:UIAlertActionStyleDefault
@@ -127,9 +127,7 @@
 - (void)doDeleteContact {
 
     action = @"DeleteContact";
-    [_contactManager setViewController:self];
-    [_contactManager setResponseConsumer:self];
-    [_contactManager deleteContact:_contact[@"publicId"]];
+    [contactManager deleteContact:_contact[@"publicId"]];
 
 }
 
@@ -165,7 +163,9 @@
     else {
         NSString *result = info[@"result"];
         NSLog(@"Delete result: %@", result);
-        [contacts deleteContact:_contact[@"publicId"]];
+        [contactDatabase deleteContact:_contact[@"publicId"]];
+        ApplicationSingleton *app = [ApplicationSingleton instance];
+        [app.conversationCache deleteAllMessages:_contact[@"publicId"]];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self deletedAlert];
 

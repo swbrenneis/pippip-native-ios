@@ -14,40 +14,22 @@
 
 @interface ContactManager : NSObject <RequestProcess>
 
-- (instancetype)initWithRESTSession:(RESTSession*)restSession;
-
 - (void)acknowledgeRequest:(NSString*)response withId:(NSString*)publicId;
-/*
-- (void)addLocalContact:(NSMutableDictionary*)entity;
-*/
+
 - (void)addFriend:(NSString*)publicId;
-/*
-- (NSInteger)contactCount;
-*/
+
 - (void)createNickname:(NSString*)nickname withOldNickname:(NSString*)oldNickname;
 
 - (void)deleteContact:(NSString*)publicId;
 
 - (void)deleteFriend:(NSString*)publicId;
-/*
-- (void)deleteLocalContact:(NSString*)publicId;
 
-- (void)endSession;
-
-- (NSDictionary*)contactAtIndex:(NSInteger)index;
-
-- (NSMutableDictionary*)getContact:(NSString*)publicId;
-
-- (NSMutableDictionary*)getContactById:(NSInteger)contactId;
-*/
 - (void)getNickname:(NSString*)publicId;
 
-- (NSArray*)getPendingContactIds;
+//- (NSArray*)getPendingContactIds;
 
 - (void)getRequests;
-/*
-- (BOOL)loadContacts;
-*/
+
 - (void)matchNickname:(NSString*)nickname;
 
 - (void)requestContact:(NSString*)publicId;
@@ -55,19 +37,17 @@
 - (NSArray*)searchContacts:(NSString*)fragment;
 
 - (void)setContactPolicy:(NSString*)policy;
-/*
-- (void)setContacts:(NSMutableArray*)contacts;
 
-- (void)setNickname:(NSString*)nickname withPublicId:(NSString*)publicId;
-*/
 - (void)setResponseConsumer:(id<ResponseConsumer>)consumer;
 
-- (void)setSessionState:(SessionState*)state;
+//- (void)setViewController:(UIViewController*)controller;
 
-- (void)setViewController:(UIViewController*)controller;
+- (void)startNewSession:(SessionState*)state;
 
 - (void)syncContacts;
-/*
-- (void)updateContact:(NSMutableDictionary*)contact;
-*/
+
+- (void)updateContact:(NSDictionary*)contact;
+
+- (NSUInteger)updatePendingContacts;
+
 @end

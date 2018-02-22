@@ -9,40 +9,23 @@
 #import "ContactDatabase.h"
 #import "CKGCMCodec.h"
 #import "DatabaseContact.h"
-#import "Configurator.h"
+#import "ApplicationSingleton.h"
+#import "ApplicationSingleton.h"
 #import <Realm/Realm.h>
 
 @interface ContactDatabase ()
 {
-    Configurator *config;
-    NSMutableArray *indexed;
-    NSMutableDictionary *keyed;
 }
-
-@property (weak, nonatomic) SessionState *sessionState;
 
 @end
 
 @implementation ContactDatabase
 
-- (instancetype)initWithSessionState:(SessionState *)state {
-    self = [super init];
-
-    _sessionState = state;
-    config = [[Configurator alloc] initWithSessionState:state];
-    indexed = [NSMutableArray array];
-    keyed = [NSMutableDictionary dictionary];
-
-    return self;
-
-}
-
 - (NSInteger)addContact:(NSMutableDictionary *)contact {
 
+    Configurator *config = [ApplicationSingleton instance].config;
     NSInteger contactId = [config newContactId];
-    keyed[[NSNumber numberWithInteger:contactId]] = contact;
     NSString *publicId = contact[@"publicId"];
-    keyed[publicId] = contact;
     [config addContactId:contactId withPublicId:publicId];
 
     NSData *encoded = [self encodeContact:contact];
@@ -65,7 +48,9 @@
 
     CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:encoded];
     NSError *error = nil;
-    [codec decrypt:_sessionState.contactsKey withAuthData:_sessionState.authData withError:&error];
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    SessionState *sessionState = app.accountSession.sessionState;
+    [codec decrypt:sessionState.contactsKey withAuthData:sessionState.authData withError:&error];
     if (error != nil) {
         NSLog(@"Contact encoding error: %@", [error localizedDescription]);
         return nil;
@@ -98,11 +83,9 @@
 
 - (void)deleteContact:(NSString *)publicId {
 
+    Configurator *config = [ApplicationSingleton instance].config;
     NSInteger contactId = [config getContactId:publicId];
     [config deleteContactId:publicId];
-    [keyed removeObjectForKey:publicId];
-    [keyed removeObjectForKey:[NSNumber numberWithInteger:contactId]];
-    [indexed removeAllObjects];  // Invalidate the contact list so it is reloaded on the next request.
     // Delete from the realm
     RLMRealm *realm = [RLMRealm defaultRealm];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
@@ -149,7 +132,9 @@
     }
 
     NSError *error = nil;
-    NSData *encoded = [codec encrypt:_sessionState.contactsKey withAuthData:_sessionState.authData withError:&error];
+    ApplicationSingleton *app = [ApplicationSingleton instance];
+    SessionState *sessionState = app.accountSession.sessionState;
+    NSData *encoded = [codec encrypt:sessionState.contactsKey withAuthData:sessionState.authData withError:&error];
     if (error != nil) {
         NSLog(@"Error while encrypting contact: %@", error.localizedDescription);
     }
@@ -159,18 +144,15 @@
 
 - (NSMutableDictionary*)getContact:(NSString *)publicId {
     
-    NSMutableDictionary *contact = keyed[publicId];
-    if (contact == nil) {
-        NSInteger contactId = [config getContactId:publicId];
-        if (contactId != NSNotFound) {
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
-            RLMResults<DatabaseContact*> *contacts = [DatabaseContact objectsWithPredicate:predicate];
-            if (contacts.count > 0) {
-                DatabaseContact *dbContact = [contacts firstObject];
-                contact = [self decodeContact:dbContact.encoded];
-                keyed[publicId] = contact;
-                keyed[[NSNumber numberWithInteger:contactId]] = contact;
-            }
+    NSMutableDictionary *contact = nil;
+    Configurator *config = [ApplicationSingleton instance].config;
+    NSInteger contactId = [config getContactId:publicId];
+    if (contactId != NSNotFound) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+        RLMResults<DatabaseContact*> *contacts = [DatabaseContact objectsWithPredicate:predicate];
+        if (contacts.count > 0) {
+            DatabaseContact *dbContact = [contacts firstObject];
+            contact = [self decodeContact:dbContact.encoded];
         }
     }
     return contact;
@@ -179,16 +161,12 @@
 
 - (NSMutableDictionary*)getContactById:(NSInteger)contactId {
     
-    NSMutableDictionary *contact = keyed[[NSNumber numberWithInteger:contactId]];
-    if (contact == nil) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
-        RLMResults<DatabaseContact*> *contacts = [DatabaseContact objectsWithPredicate:predicate];
-        if (contacts.count > 0) {
-            DatabaseContact *dbContact = [contacts firstObject];
-            contact = [self decodeContact:dbContact.encoded];
-            keyed[contact[@"publicId"]] = contact;
-            keyed[[NSNumber numberWithInteger:contactId]] = contact;
-        }
+    NSMutableDictionary *contact = nil;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+    RLMResults<DatabaseContact*> *contacts = [DatabaseContact objectsWithPredicate:predicate];
+    if (contacts.count > 0) {
+        DatabaseContact *dbContact = [contacts firstObject];
+        contact = [self decodeContact:dbContact.encoded];
     }
     return contact;
     
@@ -196,16 +174,15 @@
 
 - (NSArray*)getContactList {
 
-    if (indexed.count == 0) {
-        RLMResults<DatabaseContact*> *contacts = [DatabaseContact allObjects];
-        for (DatabaseContact *dbContact in contacts) {
-            // There might be a contact with ID = 0. This is a bug and can be ignored.
-            NSInteger contactId = dbContact.contactId;
-            if (contactId > 0) {
-                NSMutableDictionary *contact = [self decodeContact:dbContact.encoded];
-                if (contact != nil) {
-                    [indexed addObject:contact];
-                }
+    NSMutableArray *indexed = [NSMutableArray array];
+    RLMResults<DatabaseContact*> *contacts = [DatabaseContact allObjects];
+    for (DatabaseContact *dbContact in contacts) {
+        // There might be a contact with ID = 0. This is a bug and can be ignored.
+        NSInteger contactId = dbContact.contactId;
+        if (contactId > 0) {
+            NSMutableDictionary *contact = [self decodeContact:dbContact.encoded];
+            if (contact != nil) {
+                [indexed addObject:contact];
             }
         }
     }
@@ -239,12 +216,9 @@
         NSLog(@"Update contact, contact %@ not found", publicId);
     }
     else {
+        Configurator *config = [ApplicationSingleton instance].config;
         NSInteger contactId = [config getContactId:publicId];
         [self updateDatabaseContact:contact withContactId:contactId];
-        // Invalidate the cached contacts
-        [indexed removeAllObjects];
-        [keyed removeObjectForKey:publicId];
-        [keyed removeObjectForKey:[NSNumber numberWithInteger:contactId]];
     }
 
 }

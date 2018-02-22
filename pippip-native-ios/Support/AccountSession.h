@@ -8,21 +8,29 @@
 
 #import <Foundation/Foundation.h>
 #import "SessionState.h"
-#import "ContactManager.h"
-#import "MessageManager.h"
-#import "RequestProcess.h"
+#import "MessageObserver.h"
+#import "ContactObserver.h"
+#import "ConversationCache.h"
 #import "RESTSession.h"
+#import "ResponseConsumer.h"
+#import "ErrorDelegate.h"
 
-@interface AccountSession : NSObject <RequestProcess>
+@interface AccountSession : NSObject <ResponseConsumer>
 
 @property (nonatomic) SessionState *sessionState;
-@property (nonatomic) ContactManager *contactManager;
-@property (nonatomic) MessageManager *messageManager;
+@property (weak, nonatomic) RESTSession *restSession;
+@property (weak, nonatomic) ConversationCache *conversationCache;
 
--(instancetype)initWithRESTSession:(RESTSession*)restSession;
+- (void)endSession;
+
+- (void)setContactObserver:(id<ContactObserver>)observer;
+
+- (void)setMessageObserver:(id<MessageObserver>)observer;
 
 - (void)startSession:(SessionState*)state;
 
-- (void)endSession;
+- (void)unsetContactObserver:(id<ContactObserver>)observer;
+
+- (void)unsetMessageObserver:(id<MessageObserver>)observer;
 
 @end

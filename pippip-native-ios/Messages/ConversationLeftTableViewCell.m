@@ -11,9 +11,9 @@
 @interface ConversationLeftTableViewCell ()
 
 @property (weak, nonatomic) IBOutlet UIImageView *messageBubbleImage;
-@property (weak, nonatomic) IBOutlet UILabel *messageText;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *messageTextTrailing;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *messageBubbleTrailing;
+@property (weak, nonatomic) IBOutlet UILabel *messageText;
 
 @end
 
@@ -30,17 +30,17 @@
     // Configure the view for the selected state
 }
 
-- (CGSize)configureCell:(NSDictionary*)message {
+- (void)configureCell:(NSDictionary*)message {
 
-    CGSize cellSize = self.frame.size;
+    CGSize frameSize = self.frame.size;
     
     NSString *text = message[@"cleartext"];
     _messageText.text = text;
     _messageText.tintColor = [UIColor whiteColor];
     _messageText.numberOfLines = 0;
     _messageText.lineBreakMode = NSLineBreakByWordWrapping;
-    _messageTextTrailing.constant = (cellSize.width * .333) + 10;
-    CGSize maxSize = CGSizeMake((cellSize.width * .667) - 20, CGFLOAT_MAX);
+    _messageTextTrailing.constant = (frameSize.width * .333) + 10;
+    CGSize maxSize = CGSizeMake((frameSize.width * .667) - 20, CGFLOAT_MAX);
     CGSize labelSize = [_messageText sizeThatFits:maxSize];
     
     NSString *imageName = @"MessageBubbleLeft";
@@ -50,10 +50,10 @@
                        imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     _messageBubbleImage.image = bubble;
     _messageBubbleImage.tintColor = [UIColor lightGrayColor];
-    _messageBubbleTrailing.constant = cellSize.width - labelSize.width - 22;
+    _messageBubbleTrailing.constant = frameSize.width - labelSize.width - 22;
     
     CGFloat cellHeight = labelSize.height + 24;
-    return CGSizeMake(cellSize.width, cellHeight);
+    _cellSize = CGSizeMake(frameSize.width, cellHeight);
     
 }
 
