@@ -135,6 +135,23 @@
 
 }
 
+- (NSString*)decryptMessage:(NSDictionary *)message {
+
+    NSDictionary *contact = [contactDatabase getContact:message[@"publicId"]];
+    CKIVGenerator *ivGen = [[CKIVGenerator alloc] init];
+    NSInteger sequence = [message[@"sequence"] integerValue];
+    NSData *iv = [ivGen generate:sequence withNonce:contact[@"nonce"]];
+    NSData *ciphertext = [[NSData alloc] initWithBase64EncodedString:message[@"body"] options:0];
+    CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:ciphertext];
+    [codec setIV:iv];
+    NSArray *messageKeys = contact[@"messageKeys"];
+    NSError *error = nil;
+    NSInteger keyIndex = [message[@"keyIndex"] integerValue];
+    [codec decrypt:messageKeys[keyIndex] withAuthData:contact[@"authData"] withError:&error];
+    return [codec getString];
+
+}
+
 - (NSString*)decryptMessage:(DatabaseMessage*)message withContact:(NSDictionary*)contact {
 
     CKIVGenerator *ivGen = [[CKIVGenerator alloc] init];
@@ -221,9 +238,9 @@
     NSArray *contactIds = [config allContactIds];
     for (NSNumber *cid in contactIds) {
         NSInteger contactId = [cid integerValue];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
-//        NSPredicate *predicate =
-//            [NSPredicate predicateWithFormat:@"contactId = %ld && acknowledged == %@", contactId, @NO];
+//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+        NSPredicate *predicate =
+            [NSPredicate predicateWithFormat:@"contactId = %ld && acknowledged == %@", contactId, @NO];
         RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
         for (DatabaseMessage *dbMessage in messages) {
             NSDictionary *contact = [contactDatabase getContactById:contactId];

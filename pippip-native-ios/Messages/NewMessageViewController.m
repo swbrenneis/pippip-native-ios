@@ -114,29 +114,29 @@
     BOOL success = NO;
     if (info != nil) {
         NSString *result = info[@"result"];
-        NSString *publicId = info[@"publicId"];
         if ([result isEqualToString:@"sent"]) {
             success = YES;
             NSNumber *sq = info[@"sequence"];
             NSNumber *ts = info[@"timestamp"];
+            NSString *publicId = info[@"publicId"];
             [messageManager messageSent:publicId
                            withSequence:[sq integerValue]
                           withTimestamp:[ts integerValue]];
+            [convSource newMessageAdded];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_sendFailedLabel setHidden:success];
+                if (success) {
+                    _messageText.text = @"";
+                    [_tableView reloadData];
+                    CGSize contentSize = _tableView.contentSize;
+                    CGSize viewSize = _tableView.bounds.size;
+                    //CGSize stackSize = _stackView.frame.size;
+                    CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
+                    [_tableView setContentOffset:newOffset animated:YES];
+                }
+            });
         }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_sendFailedLabel setHidden:success];
-            if (success) {
-                [convSource newMessageAdded];
-                _messageText.text = @"";
-                [_tableView reloadData];
-                CGSize contentSize = _tableView.contentSize;
-                CGSize viewSize = _tableView.bounds.size;
-                //CGSize stackSize = _stackView.frame.size;
-                CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
-                [_tableView setContentOffset:newOffset animated:YES];
-            }
-        });
     }
     
 }

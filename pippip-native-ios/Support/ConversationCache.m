@@ -8,6 +8,7 @@
 
 #import "ConversationCache.h"
 #import "MessagesDatabase.h"
+#import "ContactDatabase.h"
 #import "MutableConversation.h"
 #import "DatabaseMessage.h"
 #import "ApplicationSingleton.h"
@@ -71,10 +72,11 @@
     for (NSDictionary *msg in messages) {
         NSMutableDictionary *message = [msg mutableCopy];
         message[@"publicId"] = publicId;
-        message[@"sent"] = @NO;
         NSInteger messageId = [conversation messageExists:message];
         if (messageId == NSNotFound) {
             messageId = [messageDatabase addMessage:message];
+            message[@"cleartext"] = [messageDatabase decryptMessage:message];
+            message[@"sent"] = @NO;
             message[@"messageId"] = [NSNumber numberWithInteger:messageId];
             [conversation addMessage:message];
         }
