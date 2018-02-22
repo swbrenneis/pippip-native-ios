@@ -7,7 +7,36 @@
 //
 
 #import "MutableConversation.h"
+#import "ConversationDelegate.h"
+
+@interface MutableConversation ()
+{
+    ConversationDelegate *theDelegate;
+}
+
+@end
 
 @implementation MutableConversation
+
+- (instancetype)init {
+    self = [super init];
+
+    theDelegate = super.delegate;
+
+    return self;
+
+}
+
+- (void)acknowledgeMessage:(NSDictionary *)triplet {
+    [theDelegate acknowledgeMessage:triplet];
+}
+
+- (void)addMessage:(NSMutableDictionary *)message {
+    [theDelegate addMessage:message];
+}
+
+- (NSInteger)markMessageRead:(NSDictionary *)triplet {
+    return [theDelegate markMessageRead:triplet];
+}
 
 @end

@@ -45,6 +45,7 @@
 		557CE57B203B8598008AF8CF /* PreviewTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE579203B8598008AF8CF /* PreviewTableViewCell.m */; };
 		557CE57E203CC7A1008AF8CF /* ConversationCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE57D203CC7A1008AF8CF /* ConversationCache.m */; };
 		557CE581203CD245008AF8CF /* MutableConversation.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE580203CD245008AF8CF /* MutableConversation.m */; };
+		557CE584203F746D008AF8CF /* ConversationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE583203F746D008AF8CF /* ConversationDelegate.m */; };
 		558720471FE466BE0078679E /* NicknameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 558720461FE466BE0078679E /* NicknameViewController.m */; };
 		5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5881F8BBB4400F08BF5 /* AppDelegate.m */; };
 		5592A58C1F8BBB4400F08BF5 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A58B1F8BBB4400F08BF5 /* HomeViewController.m */; };
@@ -236,6 +237,8 @@
 		557CE57D203CC7A1008AF8CF /* ConversationCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConversationCache.m; sourceTree = "<group>"; };
 		557CE57F203CD245008AF8CF /* MutableConversation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MutableConversation.h; sourceTree = "<group>"; };
 		557CE580203CD245008AF8CF /* MutableConversation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MutableConversation.m; sourceTree = "<group>"; };
+		557CE582203F746D008AF8CF /* ConversationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConversationDelegate.h; sourceTree = "<group>"; };
+		557CE583203F746D008AF8CF /* ConversationDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConversationDelegate.m; sourceTree = "<group>"; };
 		558720451FE466BE0078679E /* NicknameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NicknameViewController.h; sourceTree = "<group>"; };
 		558720461FE466BE0078679E /* NicknameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NicknameViewController.m; sourceTree = "<group>"; };
 		5592A5841F8BBB4400F08BF5 /* pippip-native-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pippip-native-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -500,6 +503,8 @@
 				557CE561203A1D76008AF8CF /* Conversation.m */,
 				557CE57C203CC7A1008AF8CF /* ConversationCache.h */,
 				557CE57D203CC7A1008AF8CF /* ConversationCache.m */,
+				557CE582203F746D008AF8CF /* ConversationDelegate.h */,
+				557CE583203F746D008AF8CF /* ConversationDelegate.m */,
 				55579E4F2024C21F00131A54 /* DatabaseContact.h */,
 				55579E502024C21F00131A54 /* DatabaseContact.m */,
 				551051062020BC36000A313E /* DatabaseMessage.h */,
@@ -1026,6 +1031,7 @@
 				5566664320169ADA00051ED2 /* ContactDetailViewController.m in Sources */,
 				557238B31F8C6B0C00A13A14 /* NSData+HexEncode.m in Sources */,
 				55D8097B20278270008940CB /* NewMessageViewController.m in Sources */,
+				557CE584203F746D008AF8CF /* ConversationDelegate.m in Sources */,
 				55D8098B2028BCBA008940CB /* ContactSearchDataSource.m in Sources */,
 				55AA55661FA14D7100A7026B /* Base64.cc in Sources */,
 				55AA54FF1FA14C1300A7026B /* CKRSAPrivateKey.m in Sources */,

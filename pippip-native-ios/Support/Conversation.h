@@ -10,17 +10,17 @@
 
 @interface Conversation : NSObject
 
-@property (nonatomic) NSUInteger count;
+@property (readonly, nonatomic) id delegate;
 
 - (instancetype)initWithMessages:(NSArray*)messages;
 
 - (NSArray*)allMessages;
 
+- (NSUInteger)count;
+
 - (NSDictionary*)getIndexedMessage:(NSUInteger)index;
 
 - (NSArray*)getPendingMessages;
-
-- (NSInteger)markMessageRead:(NSDictionary*)triplet;
 
 - (NSInteger)messageExists:(NSDictionary*)triplet;
 

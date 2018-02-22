@@ -14,6 +14,6 @@
 
 - (void)addMessage:(NSMutableDictionary*)message;
 
-- (void)markMessagesRead;
+- (NSInteger)markMessageRead:(NSDictionary*)triplet;
 
 @end

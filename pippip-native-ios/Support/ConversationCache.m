@@ -140,7 +140,7 @@
 
 - (void)markMessagesRead:(NSString *)publicId {
 
-    Conversation *conversation = [self getConversation:publicId];
+    MutableConversation *conversation = [self getMutableConversation:publicId];
     NSArray *messages = [conversation allMessages];
     for (NSMutableDictionary *message in messages) {
         if (![message[@"read"] boolValue]) {
