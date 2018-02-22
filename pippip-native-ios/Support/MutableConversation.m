@@ -27,6 +27,15 @@
 
 }
 
+- (instancetype)initWithMessages:(NSArray *)messages {
+    self = [super initWithMessages:messages];
+
+    theDelegate = super.delegate;
+
+    return self;
+
+}
+
 - (void)acknowledgeMessage:(NSDictionary *)triplet {
     [theDelegate acknowledgeMessage:triplet];
 }

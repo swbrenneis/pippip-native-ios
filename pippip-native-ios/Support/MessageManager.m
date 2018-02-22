@@ -54,7 +54,7 @@
 
     pendingMessages = [messageDatabase pendingMessages];
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
-    request[@"method"] = @"GetMessages";
+    request[@"method"] = @"AcknowledgeMessages";
     NSMutableArray *triplets = [NSMutableArray array];
     for (NSDictionary *message in pendingMessages) {
         NSMutableDictionary *triplet = [NSMutableDictionary dictionary];

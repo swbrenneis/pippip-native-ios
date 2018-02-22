@@ -65,9 +65,13 @@
 // Filters duplicates, marries the cached message to its ID.
 - (void)addMessages:(NSArray*)messages {
 
-    NSMutableDictionary *first = [messages firstObject];
-    MutableConversation *conversation = [self getMutableConversation:first[@"publicId"]];
-    for (NSMutableDictionary *message in messages) {
+    NSDictionary *first = [messages firstObject];
+    NSString *publicId = first[@"fromId"];
+    MutableConversation *conversation = [self getMutableConversation:publicId];
+    for (NSDictionary *msg in messages) {
+        NSMutableDictionary *message = [msg mutableCopy];
+        message[@"publicId"] = publicId;
+        message[@"sent"] = @NO;
         NSInteger messageId = [conversation messageExists:message];
         if (messageId == NSNotFound) {
             messageId = [messageDatabase addMessage:message];

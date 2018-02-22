@@ -180,35 +180,6 @@
 
 }
 
-- (NSArray*)getPendingMessages:(NSString*)publicId {
-
-    return nil;
-    
-}
-
-/*
-- (Conversation*)loadConversation:(NSString*)publicId {
-
-    Conversation* conversation = conversations[publicId];
-    if (conversation != nil) {
-        return conversation;
-    }
-
-    conversation = [[Conversation alloc] init];
-    NSInteger contactId = [config getContactId:publicId];
-    NSDictionary *contact = [contactDatabase getContact:publicId];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
-    RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
-                                              sortedResultsUsingKeyPath:@"timestamp" ascending:YES];
-    for (DatabaseMessage *dbMessage in messages) {
-        NSMutableDictionary *message = [self decodeMessage:dbMessage withContact:contact];
-        [conversation addMessage:message];
-    }
-    conversations[publicId] = conversation;
-    return conversation;
-
-}
-*/
 - (void)markMessageRead:(NSInteger)messageId {
 
     RLMRealm *realm = [RLMRealm defaultRealm];
@@ -250,8 +221,9 @@
     NSArray *contactIds = [config allContactIds];
     for (NSNumber *cid in contactIds) {
         NSInteger contactId = [cid integerValue];
-        NSPredicate *predicate =
-            [NSPredicate predicateWithFormat:@"contactId = %ld && acknowledged == %@", contactId, @NO];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+//        NSPredicate *predicate =
+//            [NSPredicate predicateWithFormat:@"contactId = %ld && acknowledged == %@", contactId, @NO];
         RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
         for (DatabaseMessage *dbMessage in messages) {
             NSDictionary *contact = [contactDatabase getContactById:contactId];

@@ -10,6 +10,8 @@
 
 @interface MutableConversation : Conversation
 
+- (instancetype)initWithMessages:(NSArray*)messages;
+
 - (void)acknowledgeMessage:(NSDictionary*)triplet;
 
 - (void)addMessage:(NSMutableDictionary*)message;
