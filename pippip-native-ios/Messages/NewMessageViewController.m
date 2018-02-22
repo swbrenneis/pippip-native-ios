@@ -131,9 +131,10 @@
                     [_tableView reloadData];
                     CGSize contentSize = _tableView.contentSize;
                     CGSize viewSize = _tableView.bounds.size;
-                    //CGSize stackSize = _stackView.frame.size;
-                    CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
-                    [_tableView setContentOffset:newOffset animated:YES];
+                    if (contentSize.height > viewSize.height) {
+                        CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
+                        [_tableView setContentOffset:newOffset animated:YES];
+                    }
                 }
             });
         }
@@ -154,11 +155,15 @@
         _searchText.text = contact[@"publicId"];
     }
     [searchSource setContactList:nil];
-    [convSource newMessageAdded];
+    convSource = [[ConversationDataSource alloc] initWithPublicId:contact[@"publicId"]];
     _tableView.dataSource = convSource;
     [_tableView reloadData];
-    CGRect scrollTo = CGRectMake(_tableView.contentSize.width - 1, _tableView.contentSize.height - 1, 1, 1);
-    [_tableView scrollRectToVisible:scrollTo animated:YES];
+    CGSize contentSize = _tableView.contentSize;
+    CGSize viewSize = _tableView.bounds.size;
+    if (contentSize.height > viewSize.height) {
+        CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
+        [_tableView setContentOffset:newOffset animated:YES];
+    }
 
     ApplicationSingleton *app = [ApplicationSingleton instance];
     [app.accountSession setMessageObserver:self];

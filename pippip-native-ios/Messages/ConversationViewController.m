@@ -127,7 +127,6 @@
     [_conversationTableView reloadData];
     CGSize contentSize = _conversationTableView.contentSize;
     CGSize viewSize = _conversationTableView.bounds.size;
-    //CGSize stackSize = _stackView.frame.size;
     if (contentSize.height > viewSize.height) {
         CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
         [_conversationTableView setContentOffset:newOffset animated:YES];
@@ -157,9 +156,10 @@
                     [_conversationTableView reloadData];
                     CGSize contentSize = _conversationTableView.contentSize;
                     CGSize viewSize = _conversationTableView.bounds.size;
-                    //CGSize stackSize = _stackView.frame.size;
-                    CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
-                    [_conversationTableView setContentOffset:newOffset animated:YES];
+                    if (contentSize.height > viewSize.height) {
+                        CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
+                        [_conversationTableView setContentOffset:newOffset animated:YES];
+                    }
                 }
             });
         }
