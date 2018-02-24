@@ -42,16 +42,17 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 @synthesize errorDelegate;
 //@synthesize postPacket;
 
-- (instancetype)initWithRESTSession:(RESTSession *)restSession {
+- (instancetype)init {
     self = [super init];
 
-    _session = restSession;
     errorDelegate = [[LoggingErrorDelegate alloc] init];
     sessionActive = NO;
     _messageObserver = nil;
     _contactObserver = nil;
-    contactManager = nil;
-    messageManager = nil;
+    contactManager = [[ContactManager alloc] init];
+    [contactManager setResponseConsumer:self];
+    messageManager = [[MessageManager alloc] init];
+    [messageManager setResponseConsumer:self];
     contactDatabase = [[ContactDatabase alloc] init];
 
     return self;
@@ -79,6 +80,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
         NSString *error = response[@"error"];
         if (error == nil) {
             NSArray *contacts = response[@"contacts"];
+            NSLog(@"%ld contacts updated", contacts.count);
             for (NSDictionary *contact in contacts) {
                 [contactManager updateContact:contact];
             }
@@ -126,6 +128,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
     if (error == nil) {
         NSArray *messages = response[@"messages"];
         newMessageCount = messages.count;
+        NSLog(@"Messages update, %ld messages", newMessageCount);
         if (messages.count > 0) {
             [_conversationCache addMessages:messages];
             if (_messageObserver != nil) {
@@ -198,17 +201,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 - (void)startSession:(SessionState *)state {
 
     _sessionState = state;
-    if (contactManager == nil) {
-        contactManager = [[ContactManager alloc] init];
-        [contactManager setResponseConsumer:self];
-        messageManager = [[MessageManager alloc] init];
-        [messageManager setResponseConsumer:self];
-    }
-    else {
-        [contactManager startNewSession:state];
-        [messageManager startNewSession:state];
-    }
-    [_conversationCache startNewSession:state];
     sessionActive = YES;
     dispatch_async(dispatch_get_main_queue(), ^{
         [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
@@ -249,7 +241,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 - (void)updateMessages {
 
     updateType = MESSAGES;
-    NSLog(@"%@", @"Retrieving new messages");
     newMessageCount = 0;
     [messageManager getNewMessages];
 

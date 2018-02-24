@@ -33,6 +33,8 @@ static NSLock *idLock = nil;
     _whitelist = privateWhitelist;
     idMap = [NSMutableDictionary dictionary];
 
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
+    
     return self;
 
 }
@@ -286,6 +288,14 @@ static NSLock *idLock = nil;
     
 }
 
+- (void)newSession:(NSNotification*)notification {
+    
+    _sessionState = (SessionState*)notification.object;
+    [idMap removeAllObjects];
+    [privateWhitelist removeAllObjects];
+    
+}
+
 - (void)setContactPolicy:(NSString *)policy {
     
     AccountConfig *config = [self getConfig];
@@ -303,14 +313,6 @@ static NSLock *idLock = nil;
     [realm beginWriteTransaction];
     config.nickname = nickname;
     [realm commitWriteTransaction];
-
-}
-
-- (void)startNewSession:(SessionState *)state {
-
-    _sessionState = state;
-    [idMap removeAllObjects];
-    [privateWhitelist removeAllObjects];
 
 }
 

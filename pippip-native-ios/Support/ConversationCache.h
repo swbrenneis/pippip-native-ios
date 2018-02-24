@@ -26,6 +26,4 @@
 
 - (NSArray*)mostRecentMessages;
 
-- (void)startNewSession:(SessionState*)state;
-
 @end

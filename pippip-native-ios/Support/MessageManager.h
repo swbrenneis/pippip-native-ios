@@ -26,8 +26,4 @@
 
 - (void)setResponseConsumer:(id<ResponseConsumer>)responseConsumer;
 
-//- (void)setViewController:(UIViewController*)controller;
-
-- (void)startNewSession:(SessionState*)state;
-
 @end

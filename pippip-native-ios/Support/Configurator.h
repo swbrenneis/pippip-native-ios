@@ -39,6 +39,4 @@
 
 - (void)setNickname:(NSString*)nickname;
 
-- (void)startNewSession:(SessionState*)state;
-
 @end

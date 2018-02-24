@@ -32,6 +32,8 @@
     conversations = [NSMutableDictionary dictionary];
     messageDatabase = [[MessagesDatabase alloc] init];
 
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
+    
     return self;
 
 }
@@ -174,9 +176,9 @@
 
 }
 
-- (void)startNewSession:(SessionState *)state {
+- (void)newSession:(NSNotification*)notification {
 
-    _sessionState = state;
+    _sessionState = (SessionState*)notification.object;
     [conversations removeAllObjects];
 
 }

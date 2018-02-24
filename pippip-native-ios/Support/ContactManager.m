@@ -38,10 +38,10 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 - (instancetype)init {
     self = [super init];
 
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    _session = app.restSession;
-    _sessionState = app.accountSession.sessionState;
+    _session = nil;
     contactDatabase = [[ContactDatabase alloc] init];
+
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
 
     return self;
 
@@ -152,6 +152,12 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     
 }
 
+- (void)newSession:(NSNotification*)notification {
+
+    _sessionState = (SessionState*)notification.object;
+
+}
+
 - (void)postComplete:(NSDictionary*)response {
 
     if (response != nil) {
@@ -201,7 +207,12 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 }
 
 - (void)sendRequest:(NSDictionary*)request {
-    
+
+    if (_session == nil) {
+        ApplicationSingleton *app = [ApplicationSingleton instance];
+        _session = app.restSession;
+    }
+
     EnclaveRequest *enclaveRequest = [[EnclaveRequest alloc] initWithState:_sessionState];
     [enclaveRequest setRequest:request];
 
@@ -227,12 +238,6 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
     _responseConsumer = consumer;
     errorDelegate = _responseConsumer.errorDelegate;
-
-}
-
-- (void)startNewSession:(SessionState *)state {
-
-    _sessionState = state;
 
 }
 

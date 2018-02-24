@@ -39,12 +39,11 @@
 - (instancetype)init {
     self = [super init];
 
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    _session = app.restSession;
-    _sessionState = app.accountSession.sessionState;
-    _conversationCache = app.conversationCache;
+    _session = nil;
     contactDatabase = [[ContactDatabase alloc] init];
     messageDatabase = [[MessagesDatabase alloc] init];
+
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
 
     return self;
     
@@ -118,6 +117,13 @@
 
 }
 
+- (void)newSession:(NSNotification*)notification {
+    
+    _sessionState = (SessionState*)notification.object;
+    _conversationCache = [ApplicationSingleton instance].conversationCache;
+
+}
+
 - (void)pendingMessagesAcknowledged {
     
     for (NSDictionary *message in pendingMessages) {
@@ -188,6 +194,11 @@
 }
 
 - (void)sendRequest:(NSDictionary*)request {
+
+    if (_session == nil) {
+        ApplicationSingleton *app = [ApplicationSingleton instance];
+        _session = app.restSession;
+    }
     
     EnclaveRequest *enclaveRequest = [[EnclaveRequest alloc] initWithState:_sessionState];
     [enclaveRequest setRequest:request];
@@ -206,12 +217,6 @@
     _responseConsumer = consumer;
     errorDelegate = _responseConsumer.errorDelegate;
 
-}
-
-- (void)startNewSession:(SessionState *)state {
-
-    _sessionState = state;
-    
 }
 
 @end

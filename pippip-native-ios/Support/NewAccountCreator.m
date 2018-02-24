@@ -56,8 +56,10 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
     ApplicationSingleton *app = [ApplicationSingleton instance];
     [app.accountManager loadConfig:sessionState.currentAccount];
     [app.accountSession startSession:sessionState];
-    [app.config startNewSession:sessionState];
 
+    [NSNotificationCenter.defaultCenter
+     postNotification:[NSNotification notificationWithName:@"NewSession" object:sessionState]];
+    
 }
 
 - (void)createAccount:(NSString*)accountName withPassphrase:(NSString *)pass {

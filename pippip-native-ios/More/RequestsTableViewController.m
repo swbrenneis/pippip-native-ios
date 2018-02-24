@@ -36,14 +36,14 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 
+    contactManager = [[ContactManager alloc] init];
+    [contactManager setResponseConsumer:self];
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact Request Error"];
 
 }
 
 -(void)viewWillAppear:(BOOL)animated {
 
-    contactManager = [[ContactManager alloc] init];
-    [contactManager setResponseConsumer:self];
     [contactManager getRequests];
     
 }
@@ -57,6 +57,12 @@
 
     requests = info[@"requests"];
     dispatch_async(dispatch_get_main_queue(), ^{
+        if (requests.count > 0) {
+            self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+        }
+        else {
+            self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        }
         [self.tableView reloadData];
     });
 
@@ -103,7 +109,10 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    if (indexPath.item != 0 || (requests != nil && requests.count > 0)) {
+    if (requests == nil || requests.count == 0) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+    else {
         selectedRow = indexPath.item;
         [self performSegueWithIdentifier:@"PendingContactSegue" sender:self];
     }

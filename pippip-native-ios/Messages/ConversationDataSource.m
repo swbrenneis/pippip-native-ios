@@ -74,7 +74,7 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
     if (cells.count <= indexPath.item) {
         while (cells.count <= indexPath.item) {
             ConversationTableViewCell *dummy = [[ConversationTableViewCell alloc] init];
@@ -97,6 +97,14 @@
     }
     return convCell;
 
+/*
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MessageCell" forIndexPath:indexPath];
+    ConversationTableViewCell *convCell = (ConversationTableViewCell*)cell;
+    NSDictionary *message = [conversation getIndexedMessage:indexPath.item];
+    [convCell configureCell:message];
+
+    return cell;
+*/
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -109,7 +117,12 @@
         NSLog(@"Cell size for row %ld not found!", indexPath.item);
         return 20.0;
     }
-    
+
+/*
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    ConversationTableViewCell *convCell = (ConversationTableViewCell*)cell;
+    return convCell.cellSize.height;
+*/
 }
 
 @end

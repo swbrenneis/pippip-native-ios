@@ -7,10 +7,21 @@
 //
 
 #import "MoreTableViewController.h"
+#import "ApplicationSingleton.h"
+#import "SessionState.h"
+#import "ContactPolicyCell.h"
+#import "NicknameCell.h"
+
+static const NSInteger ACCOUNTS = 0;
+static const NSInteger PUBLIC_ID = 1;
+static const NSInteger CONTACT_POLICY = 2;
+static const NSInteger SET_NICKNAME = 3;
+static const NSInteger CONTACT_REQUESTS = 4;
+static const NSInteger EDIT_FRIENDS = 5;
 
 @interface MoreTableViewController ()
 
-@property (nonatomic) UIActivityIndicatorView *activityIndicator;
+@property (weak, nonatomic) SessionState *sessionState;
 
 @end
 
@@ -18,17 +29,29 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
+    _sessionState = [ApplicationSingleton instance].accountSession.sessionState;
     _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _activityIndicator.hidesWhenStopped = YES;
     [self.view addSubview:_activityIndicator];
     _activityIndicator.center = self.view.center;
+
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
 
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)newSession:(NSNotification*)notification {
+
+    _sessionState = (SessionState*)notification.object;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
+
 }
 
 - (IBAction) unwindToMoreViewController:(UIStoryboardSegue*)segue {
@@ -41,18 +64,69 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 6;
+
+    NSString *contactPolicy = [[ApplicationSingleton instance].config getContactPolicy];
+    if ([contactPolicy isEqualToString:@"public"]) {
+        return 5;
+    }
+    else {
+        return 6;
+    }
+
 }
 
-/*
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+
+    UITableViewCell *cell = nil;
+    switch (indexPath.item) {
+        case ACCOUNTS:
+            cell = [tableView dequeueReusableCellWithIdentifier:@"BasicOptionsCell" forIndexPath:indexPath];
+            cell.textLabel.text = @"Account List";
+            break;
+        case PUBLIC_ID:
+            cell = [tableView dequeueReusableCellWithIdentifier:@"SubtitleOptionsCell" forIndexPath:indexPath];
+            cell.textLabel.text = @"My Public ID";
+            cell.detailTextLabel.text = _sessionState.publicId;
+            break;
+        case CONTACT_POLICY:
+            cell = [tableView dequeueReusableCellWithIdentifier:@"ContactPolicyCell" forIndexPath:indexPath];
+            [(ContactPolicyCell*)cell setViewController:self];
+            break;
+        case SET_NICKNAME:
+            cell = [tableView dequeueReusableCellWithIdentifier:@"NicknameCell" forIndexPath:indexPath];
+            [(NicknameCell*)cell setViewController:self];
+            break;
+        case CONTACT_REQUESTS:
+            cell = [tableView dequeueReusableCellWithIdentifier:@"BasicOptionsCell" forIndexPath:indexPath];
+            cell.textLabel.text = @"Check Contact Requests";
+            break;
+        case EDIT_FRIENDS:
+            cell = [tableView dequeueReusableCellWithIdentifier:@"BasicOptionsCell" forIndexPath:indexPath];
+            cell.textLabel.text = @"Edit Friends List";
+            break;
+    }
     
     // Configure the cell...
     
     return cell;
 }
-*/
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    switch (indexPath.item) {
+        case ACCOUNTS:
+            [self performSegueWithIdentifier:@"AccountListSegue" sender:self];
+            break;
+        case CONTACT_REQUESTS:
+            [self performSegueWithIdentifier:@"PendingRequestsSegue" sender:self];
+            break;
+        case EDIT_FRIENDS:
+            [self performSegueWithIdentifier:@"WhitelistSegue" sender:self];
+            break;
+    }
+
+}
+
 
 /*
 // Override to support conditional editing of the table view.

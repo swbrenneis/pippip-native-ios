@@ -26,8 +26,6 @@
 
 - (void)getNickname:(NSString*)publicId;
 
-//- (NSArray*)getPendingContactIds;
-
 - (void)getRequests;
 
 - (void)matchNickname:(NSString*)nickname;
@@ -39,10 +37,6 @@
 - (void)setContactPolicy:(NSString*)policy;
 
 - (void)setResponseConsumer:(id<ResponseConsumer>)consumer;
-
-//- (void)setViewController:(UIViewController*)controller;
-
-- (void)startNewSession:(SessionState*)state;
 
 - (void)syncContacts;
 

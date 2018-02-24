@@ -74,7 +74,9 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     ApplicationSingleton *app = [ApplicationSingleton instance];
     [app.accountManager loadConfig:sessionState.currentAccount];
     [app.accountSession startSession:sessionState];
-    [app.config startNewSession:sessionState];
+    
+    [NSNotificationCenter.defaultCenter
+            postNotification:[NSNotification notificationWithName:@"NewSession" object:sessionState]];
 
 }
 
