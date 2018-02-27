@@ -28,7 +28,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
     MessageManager *messageManager;
     ContactManager *contactManager;
     NSInteger newMessageCount;
-    //NSArray *pending;
+    NSDate *suspendTime;
 }
 
 @property (weak, nonatomic) id<MessageObserver> messageObserver;
@@ -175,21 +175,20 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 
 }
 
-/*
-- (void)sendRequest:(NSDictionary*)request {
-    
-    EnclaveRequest *enclaveRequest = [[EnclaveRequest alloc] initWithState:_sessionState];
-    [enclaveRequest setRequest:request];
-    
-    postPacket = enclaveRequest;
-    [_session queuePost:self];
-    
+- (void)resume {
+
+    NSDate *resumeTime = [NSDate date];
+    if ([resumeTime timeIntervalSinceDate:suspendTime] < 180) {     // 30 minutes
+        sessionActive = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
+                [self updateContacts];
+            }];
+        });
+    }
+
 }
 
-- (void)sessionComplete:(NSDictionary*)response {
-    // Nothing to do here.
-}
-*/
 - (void)setContactObserver:(id<ContactObserver>)observer {
     _contactObserver = observer;
 }
@@ -208,6 +207,13 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
         }];
     });
     
+}
+
+- (void)suspend {
+
+    sessionActive = NO;
+    suspendTime = [NSDate date];
+
 }
 
 - (void)unsetMessageObserver:(id<MessageObserver>)observer {

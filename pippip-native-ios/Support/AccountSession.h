@@ -23,9 +23,13 @@
 
 - (void)endSession;
 
+- (void)resume;
+
 - (void)setContactObserver:(id<ContactObserver>)observer;
 
 - (void)setMessageObserver:(id<MessageObserver>)observer;
+
+- (void)suspend;
 
 - (void)startSession:(SessionState*)state;
 
