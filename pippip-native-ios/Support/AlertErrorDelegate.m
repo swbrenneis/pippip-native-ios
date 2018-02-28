@@ -7,7 +7,7 @@
 //
 
 #import "AlertErrorDelegate.h"
-#import "HomeViewController.h"
+#import "AuthViewController.h"
 
 @interface AlertErrorDelegate ()
 {
@@ -75,10 +75,9 @@
 
 - (void)updateViewStatus {
 
-    if ([view isKindOfClass:[HomeViewController class]]) {
-        [(HomeViewController*)view updateActivityIndicator:NO];
-        NSString *status = [(HomeViewController*)view defaultMessage];
-        [(HomeViewController*)view updateStatus:status];
+    if ([view isKindOfClass:[AuthViewController class]]) {
+        [(AuthViewController*)view stopActivityIndicator];
+        [(AuthViewController*)view restoreDefaultStatus];
     }
 
 }

@@ -7,23 +7,24 @@
 //
 
 #import "EnclaveRequest.h"
+#import "ApplicationSingleton.h"
 #import "CKGCMCodec.h"
 
 @interface EnclaveRequest ()
 {
-    SessionState *sessionState;
     NSMutableDictionary *packet;
-
 }
+
+@property (weak, nonatomic) SessionState *sessionState;
 
 @end
 
 @implementation EnclaveRequest
 
-- (instancetype)initWithState:(SessionState*)state {
+- (instancetype)init {
     self = [super init];
     
-    sessionState = state;
+    _sessionState = [ApplicationSingleton instance].accountSession.sessionState;
     packet = [[NSMutableDictionary alloc] init];
     return self;
 
@@ -31,9 +32,9 @@
 
 - (NSDictionary*)restPacket {
     
-    [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
+    [packet setObject:[NSString stringWithFormat:@"%d", _sessionState.sessionId]
                forKey:@"sessionId"];
-    [packet setObject:[NSString stringWithFormat:@"%lld", sessionState.authToken]
+    [packet setObject:[NSString stringWithFormat:@"%lld", _sessionState.authToken]
                forKey:@"authToken"];
 
     return packet;
@@ -58,7 +59,7 @@
     CKGCMCodec *codec = [[CKGCMCodec alloc] init];
     [codec putString:json];
     NSError *error = nil;
-    NSData *encoded = [codec encrypt:sessionState.enclaveKey withAuthData:sessionState.authData withError:&error];
+    NSData *encoded = [codec encrypt:_sessionState.enclaveKey withAuthData:_sessionState.authData withError:&error];
     if (error != nil) {
         NSLog(@"Error while encrypting enclave request: %@", error.localizedDescription);
     }

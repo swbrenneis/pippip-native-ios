@@ -19,6 +19,8 @@
 
 - (void)deleteAllMessages:(NSString*)publicId;
 
+- (void)deleteMessage:(NSInteger)messageId;
+
 - (NSArray*)loadConversation:(NSString*)publicId;
 
 - (void)markMessageRead:(NSInteger)messageId;

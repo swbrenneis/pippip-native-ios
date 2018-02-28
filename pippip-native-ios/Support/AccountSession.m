@@ -31,8 +31,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
     NSDate *suspendTime;
 }
 
-@property (weak, nonatomic) id<MessageObserver> messageObserver;
-@property (weak, nonatomic) id<ContactObserver> contactObserver;
 @property (weak, nonatomic) RESTSession *session;
 
 @end
@@ -47,8 +45,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 
     errorDelegate = [[LoggingErrorDelegate alloc] init];
     sessionActive = NO;
-    _messageObserver = nil;
-    _contactObserver = nil;
     contactManager = [[ContactManager alloc] init];
     [contactManager setResponseConsumer:self];
     messageManager = [[MessageManager alloc] init];
@@ -84,10 +80,9 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
             for (NSDictionary *contact in contacts) {
                 [contactManager updateContact:contact];
             }
-            if (contacts.count > 0 && _contactObserver != nil) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [_contactObserver contactsUpdated];
-                });
+            if (contacts.count > 0) {
+                [[NSNotificationCenter defaultCenter]
+                        postNotification:[NSNotification notificationWithName:@"ContactsUpdated" object:nil]];
             }
         }
         else {
@@ -131,11 +126,10 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
         NSLog(@"Messages update, %ld messages", newMessageCount);
         if (messages.count > 0) {
             [_conversationCache addMessages:messages];
-            if (_messageObserver != nil) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [_messageObserver newMessagesReceived];
-                });
-            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[NSNotificationCenter defaultCenter]
+                    postNotification:[NSNotification notificationWithName:@"NewMessagesReceived" object:nil]];
+            });
         }
     }
     else {
@@ -189,14 +183,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 
 }
 
-- (void)setContactObserver:(id<ContactObserver>)observer {
-    _contactObserver = observer;
-}
-
-- (void)setMessageObserver:(id<MessageObserver>)observer {
-    _messageObserver = observer;
-}
-
 - (void)startSession:(SessionState *)state {
 
     _sessionState = state;
@@ -213,22 +199,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
 
     sessionActive = NO;
     suspendTime = [NSDate date];
-
-}
-
-- (void)unsetMessageObserver:(id<MessageObserver>)observer {
-    
-    if (_messageObserver == observer) {
-        _messageObserver = nil;
-    }
-
-}
-
-- (void)unsetContactObserver:(id<ContactObserver>)observer {
-
-    if (_contactObserver == observer) {
-        _contactObserver = nil;
-    }
 
 }
 

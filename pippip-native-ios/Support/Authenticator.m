@@ -11,6 +11,7 @@
 #import "AccountSession.h"
 #import "SessionState.h"
 #import "AlertErrorDelegate.h"
+#import "LoggingErrorDelegate.h"
 #import "UserVault.h"
 #import "AuthenticationRequest.h"
 #import "AuthenticationResponse.h"
@@ -29,7 +30,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     SessionState *sessionState;
 }
 
-@property (weak, nonatomic) HomeViewController *viewController;
+@property (weak, nonatomic) AuthViewController *viewController;
 @property (weak, nonatomic) RESTSession *session;
 
 @end
@@ -39,14 +40,24 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 @synthesize errorDelegate;
 @synthesize postPacket;
 
-- (instancetype)initWithViewController:(HomeViewController *)controller withRESTSession:(RESTSession *)restSession {
+- (instancetype)initWithViewController:(AuthViewController *)controller {
     self = [super init];
     
     _viewController = controller;
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
                                                              withTitle:@"Authentication Error"];
-    _session = restSession;
+    _session = [ApplicationSingleton instance].restSession;
 
+    return self;
+    
+}
+
+- (instancetype)init {
+    self = [super init];
+    
+    errorDelegate = [[LoggingErrorDelegate alloc] init];
+    _session = [ApplicationSingleton instance].restSession;
+    
     return self;
     
 }
@@ -145,7 +156,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
             case AUTHORIZED:
                 if ([self validateAuth:response]) {
                     [self authenticated];
-                    [_viewController authenticated:@"Account authenticated. Online"];
+                    [_viewController authenticated];
                 }
                 break;
             case LOGOUT:

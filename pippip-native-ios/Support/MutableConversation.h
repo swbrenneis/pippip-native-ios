@@ -16,6 +16,10 @@
 
 - (void)addMessage:(NSMutableDictionary*)message;
 
+- (void)deleteAllMessages;
+
+- (void)deleteMessage:(NSDictionary*)triplet;
+
 - (NSInteger)markMessageRead:(NSDictionary*)triplet;
 
 @end

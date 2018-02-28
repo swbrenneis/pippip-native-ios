@@ -7,22 +7,24 @@
 //
 
 #import "EnclaveResponse.h"
+#import "ApplicationSingleton.h"
 #import "CKGCMCodec.h"
 
 @interface EnclaveResponse ()
 {
-    SessionState *sessionState;
     NSDictionary *response;
 }
+
+@property (weak, nonatomic) SessionState *sessionState;
 
 @end
 
 @implementation EnclaveResponse
 
-- (instancetype)initWithState:(SessionState *)state {
+- (instancetype)init {
     self = [super init];
     
-    sessionState = state;
+    _sessionState = [ApplicationSingleton instance].accountSession.sessionState;
     return self;
     
 }
@@ -49,7 +51,7 @@
     
     NSError *error = nil;
     CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:responseData];
-    [codec decrypt:sessionState.enclaveKey withAuthData:sessionState.authData withError:&error];
+    [codec decrypt:_sessionState.enclaveKey withAuthData:_sessionState.authData withError:&error];
     if (error != nil) {
         [errorDelegate responseError:[error localizedDescription]];
         return NO;

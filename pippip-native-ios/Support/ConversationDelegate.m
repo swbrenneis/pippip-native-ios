@@ -111,6 +111,23 @@
     
 }
 
+- (void)deleteAllMessages {
+
+    [conversation removeAllObjects];
+    [messageList removeAllObjects];
+    _count = 0;
+
+}
+
+- (void)deleteMessage:(NSDictionary *)triplet {
+
+    NSString *hash = [self getMessageHash:triplet];
+    [conversation removeObjectForKey:hash];
+    [self sortMessages];
+    _count = conversation.count;
+
+}
+
 - (NSDictionary*)getIndexedMessage:(NSUInteger)index {
     
     if (messageList.count == 0) {
@@ -136,22 +153,6 @@
     
 }
 
-- (NSArray*)getPendingMessages {
-    
-    if (messageList.count == 0) {
-        [self sortMessages];
-    }
-    NSMutableArray *pending = [NSMutableArray array];
-    for (NSDictionary *message in messageList) {
-        NSNumber *ack = message[@"acknowledged"];
-        if (![ack boolValue]) {
-            [pending addObject:message];
-        }
-    }
-    return pending;
-    
-}
-
 - (NSInteger)markMessageRead:(NSDictionary*)triplet {
     
     NSString *hash = [self getMessageHash:triplet];
@@ -173,7 +174,23 @@
     }
     
 }
-
+/*
+- (NSArray*)pendingMessages {
+    
+    if (messageList.count == 0) {
+        [self sortMessages];
+    }
+    NSMutableArray *pending = [NSMutableArray array];
+    for (NSDictionary *message in messageList) {
+        NSNumber *ack = message[@"acknowledged"];
+        if (![ack boolValue]) {
+            [pending addObject:message];
+        }
+    }
+    return pending;
+    
+}
+*/
 - (void)sortMessages {
     
     [messageList removeAllObjects];

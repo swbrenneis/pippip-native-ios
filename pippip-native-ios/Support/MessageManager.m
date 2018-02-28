@@ -24,10 +24,10 @@
     NSArray *pendingMessages;
 }
 
-@property (weak, nonatomic) SessionState *sessionState;
+//@property (weak, nonatomic) SessionState *sessionState;
 @property (weak, nonatomic) id<ResponseConsumer> responseConsumer;
 @property (weak, nonatomic) RESTSession *session;
-@property (weak, nonatomic) ConversationCache *conversationCache;
+//@property (weak, nonatomic) ConversationCache *conversationCache;
 
 @end;
 
@@ -42,8 +42,9 @@
     _session = nil;
     contactDatabase = [[ContactDatabase alloc] init];
     messageDatabase = [[MessagesDatabase alloc] init];
+//    _conversationCache = nil;
 
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
+//    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
 
     return self;
     
@@ -111,23 +112,23 @@
             sentMessage[@"nickname"] = nickname;
         }
         sentMessage[@"sent"] = @YES;
-        [_conversationCache addMessage:sentMessage];
+        [[ApplicationSingleton instance].conversationCache addMessage:sentMessage];
         sentMessage = nil;
     }
 
 }
-
+/*
 - (void)newSession:(NSNotification*)notification {
     
     _sessionState = (SessionState*)notification.object;
     _conversationCache = [ApplicationSingleton instance].conversationCache;
 
 }
-
+*/
 - (void)pendingMessagesAcknowledged {
     
     for (NSDictionary *message in pendingMessages) {
-        [_conversationCache acknowledgeMessage:message];
+        [[ApplicationSingleton instance].conversationCache acknowledgeMessage:message];
     }
     
 }
@@ -135,7 +136,7 @@
 - (void)postComplete:(NSDictionary*)response {
     
     if (response != nil) {
-        EnclaveResponse *enclaveResponse = [[EnclaveResponse alloc] initWithState:_sessionState];
+        EnclaveResponse *enclaveResponse = [[EnclaveResponse alloc] init];
         if ([enclaveResponse processResponse:response errorDelegate:errorDelegate]) {
             NSDictionary *messageResponse = [enclaveResponse getResponse];
             if (_responseConsumer != nil) {
@@ -200,7 +201,7 @@
         _session = app.restSession;
     }
     
-    EnclaveRequest *enclaveRequest = [[EnclaveRequest alloc] initWithState:_sessionState];
+    EnclaveRequest *enclaveRequest = [[EnclaveRequest alloc] init];
     [enclaveRequest setRequest:request];
     
     postPacket = enclaveRequest;

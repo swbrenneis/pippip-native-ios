@@ -79,6 +79,12 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)doneClicked:(UIBarButtonItem *)sender {
+
+    [self dismissViewControllerAnimated:YES completion:nil];
+
+}
+
 - (IBAction)getNickname:(id)sender {
 
     [_nicknameNotAvailableLabel setHidden:YES];

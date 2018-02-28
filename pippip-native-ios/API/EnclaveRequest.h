@@ -12,8 +12,6 @@
 
 @interface EnclaveRequest : NSObject<PostPacket>
 
-- (instancetype)initWithState:(SessionState*)state;
-
 - (void)setRequest:(NSDictionary*)request;
 
 @end

@@ -75,7 +75,7 @@
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
                                                            style:UIAlertActionStyleDefault
                                                          handler:^(UIAlertAction *action) {
-                                                             [self performSegueWithIdentifier:@"requestContactDone" sender:self];
+                                                             [self dismissViewControllerAnimated:YES completion:nil];
                                                          }];
         [alert addAction:okAction];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -130,8 +130,13 @@
     }
     
 }
+- (IBAction)cancelClicked:(UIBarButtonItem *)sender {
 
-- (IBAction)requestContact:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+
+}
+
+- (IBAction)saveContact:(UIBarButtonItem *)sender {
 
     nickname = _nicknameText.text;
     publicId = _publicIdText.text;

@@ -19,12 +19,12 @@
     ConversationDataSource *dataSource;
 }
 
-@property (weak, nonatomic) IBOutlet UINavigationBar *navBar;
 @property (weak, nonatomic) IBOutlet UITextField *messageText;
 @property (weak, nonatomic) IBOutlet UITableView *conversationTableView;
 @property (weak, nonatomic) IBOutlet UIStackView *stackView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *stackViewBottom;
 @property (weak, nonatomic) IBOutlet UILabel *sendFailedLabel;
+@property (weak, nonatomic) IBOutlet UINavigationItem *navItem;
 
 @property (weak) ConversationCache *conversationCache;
 
@@ -42,33 +42,22 @@
     [_conversationTableView setDelegate:dataSource];
     [_sendFailedLabel setHidden:YES];
 
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    [app.accountSession setMessageObserver:self];
     messageManager = [[MessageManager alloc] init];
     [messageManager setResponseConsumer:self];
     // Public ID is set in the messages table prepare for segue.
-    _conversationCache = app.conversationCache;
+    _conversationCache = [ApplicationSingleton instance].conversationCache;
     [_conversationCache markMessagesRead:_publicId];
 
     ContactDatabase *contactDatabase = [[ContactDatabase alloc] init];
     NSDictionary *contact = [contactDatabase getContact:_publicId];
     NSString *nickname = contact[@"nickname"];
     if (nickname != nil) {
-        _navBar.topItem.title = nickname;
+        _navItem.title = nickname;
     }
     else {
         NSString *fragment = [_publicId substringWithRange:NSMakeRange(0, 6)];
-        _navBar.topItem.title = [fragment stringByAppendingString:@"..."];
+        _navItem.title = [fragment stringByAppendingString:@"..."];
     }
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:UIKeyboardWillShowNotification
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardDidHide:)
-                                                 name:UIKeyboardDidHideNotification
-                                               object:nil];
 
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Messages Error"];
 }
@@ -82,14 +71,25 @@
     CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
     [_conversationTableView setContentOffset:newOffset animated:YES];
 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardDidHide:)
+                                                 name:UIKeyboardDidHideNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(newMessagesReceived:)
+                                                 name:@"NewMessagesReceived" object:nil];
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
 
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    [app.accountSession unsetMessageObserver:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NewMessagesReceived" object:nil];
 
 }
 
@@ -121,9 +121,10 @@
 
 }
 
-- (void)newMessagesReceived {
+- (void)newMessagesReceived:(NSNotification*)notification {
 
-    [dataSource newMessageAdded];
+    [dataSource messagesUpdated];
+    [_conversationCache markMessagesRead:_publicId];
     [_conversationTableView reloadData];
     CGSize contentSize = _conversationTableView.contentSize;
     CGSize viewSize = _conversationTableView.bounds.size;
@@ -147,7 +148,7 @@
             [messageManager messageSent:publicId
                            withSequence:[sq integerValue]
                           withTimestamp:[ts integerValue]];
-            [dataSource newMessageAdded];
+            [dataSource messagesUpdated];
 
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_sendFailedLabel setHidden:success];
@@ -164,6 +165,14 @@
             });
         }
     }
+
+}
+
+- (IBAction)clearAllMessages:(UIBarButtonItem *)sender {
+
+    [_conversationCache deleteAllMessages:_publicId];
+    [dataSource messagesUpdated];
+    [_conversationTableView reloadData];
 
 }
 

@@ -45,8 +45,6 @@
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    [app.accountSession setContactObserver:self];
     contactManager = [[ContactManager alloc] init];
     [contactManager setResponseConsumer:self];
     contactDatabase = [[ContactDatabase alloc] init];
@@ -54,13 +52,6 @@
 
     [self.tableView reloadData];
     
-}
-
--(void)viewWillDisappear:(BOOL)animated {
-
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    [app.accountSession unsetContactObserver:self];
-
 }
 
 - (void)didReceiveMemoryWarning {

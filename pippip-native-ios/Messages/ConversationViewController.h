@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MessageObserver.h"
 #import "ResponseConsumer.h"
 
-@interface ConversationViewController : UIViewController <MessageObserver, ResponseConsumer>
+@interface ConversationViewController : UIViewController <ResponseConsumer>
 
 @property (nonatomic) NSString *publicId;
 

@@ -7,6 +7,7 @@
 //
 
 #import "NewMessageViewController.h"
+#import "ConversationViewController.h"
 #import "ContactSearchDataSource.h"
 #import "ConversationDataSource.h"
 #import "ApplicationSingleton.h"
@@ -24,12 +25,13 @@
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet UITextView *searchText;
+@property (weak, nonatomic) IBOutlet UITextField *searchText;
 @property (weak, nonatomic) IBOutlet UILabel *sendFailedLabel;
 @property (weak, nonatomic) IBOutlet UITextField *messageText;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *stackViewBottom;
 @property (weak, nonatomic) IBOutlet UIStackView *stackView;
-
+@property (weak, nonatomic) IBOutlet UIStackView *searchStackView;
+@property (weak, nonatomic) IBOutlet UINavigationItem *navItem;
 
 @end
 
@@ -52,6 +54,11 @@
     [_searchText becomeFirstResponder];
     [_sendFailedLabel setHidden:YES];
 
+    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Message Error"];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
                                                  name:UIKeyboardWillShowNotification
@@ -60,14 +67,16 @@
                                              selector:@selector(keyboardDidHide:)
                                                  name:UIKeyboardDidHideNotification
                                                object:nil];
-
-    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Message Error"];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(newMessagesReceived:)
+                                                 name:@"NewMessagesReceived" object:nil];
+    
 }
-
 - (void)viewWillDisappear:(BOOL)animated {
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NewMessagesReceived" object:nil];
 
 }
 
@@ -76,9 +85,9 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)newMessagesReceived {
+- (void)newMessagesReceived:(NSNotification*)notification {
 
-    [convSource newMessageAdded];
+    [convSource messagesUpdated];
     [self.tableView reloadData];
 
 }
@@ -122,8 +131,8 @@
             [messageManager messageSent:publicId
                            withSequence:[sq integerValue]
                           withTimestamp:[ts integerValue]];
-            [convSource newMessageAdded];
-            
+            [convSource messagesUpdated];
+
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_sendFailedLabel setHidden:success];
                 if (success) {
@@ -150,14 +159,15 @@
     NSString *nickname = contact[@"nickname"];
     if (nickname != nil) {
         _searchText.text = nickname;
+        _navItem.title = nickname;
     }
     else {
-        _searchText.text = contact[@"publicId"];
+        NSString *publicId = contact[@"publicId"];
+        _searchText.text = publicId;
+        NSString *fragment = [publicId substringWithRange:NSMakeRange(0, 6)];
+        _navItem.title = [fragment stringByAppendingString:@"..."];
     }
     [searchSource setContactList:nil];
-    convSource = [[ConversationDataSource alloc] initWithPublicId:contact[@"publicId"]];
-    _tableView.dataSource = convSource;
-    [_tableView reloadData];
     CGSize contentSize = _tableView.contentSize;
     CGSize viewSize = _tableView.bounds.size;
     if (contentSize.height > viewSize.height) {
@@ -165,16 +175,20 @@
         [_tableView setContentOffset:newOffset animated:YES];
     }
 
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    [app.accountSession setMessageObserver:self];
+}
+
+- (IBAction)messageStarted:(UITextField *)sender {
+
+    [_searchStackView setHidden:YES];
+    convSource = [[ConversationDataSource alloc] initWithPublicId:contact[@"publicId"]];
+    _tableView.dataSource = convSource;
+    [_tableView reloadData];
 
 }
 
-#pragma mark - Text view delegate
+- (IBAction)searchDidChange:(UITextField *)sender {
 
-- (void)textViewDidChange:(UITextView *)textView {
-    
-    NSString *soFar = textView.text;
+    NSString *soFar = sender.text;
     if (soFar.length > 0) {
         [searchSource setContactList:[contactManager searchContacts:soFar]];
     }
@@ -183,20 +197,21 @@
     }
     _tableView.dataSource = searchSource;
     [_tableView reloadData];
-    
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    [app.accountSession unsetMessageObserver:self];
-    
+
 }
 
-/*
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    UIViewController *controller = [segue destinationViewController];
+    if ([controller isKindOfClass:[ConversationViewController class]]) {
+        ConversationViewController *convController = (ConversationViewController*)controller;
+        convController.publicId = contact[@"publicId"];
+    }
+
 }
-*/
 
 @end

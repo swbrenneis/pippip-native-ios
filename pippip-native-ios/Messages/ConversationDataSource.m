@@ -28,8 +28,7 @@
 - (instancetype)init {
     self = [super init];
 
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    _conversationCache = app.conversationCache;
+    _conversationCache = [ApplicationSingleton instance].conversationCache;
     conversation = nil;
     cells = [NSMutableArray array];
     
@@ -41,8 +40,7 @@
     self = [super init];
 
     publicId = pid;
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    _conversationCache = app.conversationCache;
+    _conversationCache = [ApplicationSingleton instance].conversationCache;
     conversation = [_conversationCache getConversation:publicId];
     cells = [NSMutableArray array];
 
@@ -50,7 +48,7 @@
 
 }
 
-- (void)newMessageAdded {
+- (void)messagesUpdated {
     [cells removeAllObjects];
 }
 
@@ -123,6 +121,27 @@
     ConversationTableViewCell *convCell = (ConversationTableViewCell*)cell;
     return convCell.cellSize.height;
 */
+
+}
+
+// Override to support conditional editing of the table view.
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Return NO if you do not want the specified item to be editable.
+    return YES;
+}
+
+// Override to support editing the table view.
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        // Delete the row from the data source
+        [cells removeAllObjects];
+        NSDictionary *message = [conversation getIndexedMessage:indexPath.item];
+        [_conversationCache deleteMessage:message];
+        [tableView reloadData];
+//        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
+        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }
 }
 
 @end

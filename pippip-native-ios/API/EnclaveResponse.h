@@ -12,8 +12,6 @@
 
 @interface EnclaveResponse : NSObject<RESTResponse>
 
-- (instancetype) initWithState:(SessionState*)state;
-
 - (NSDictionary*) getResponse;
 
 @end

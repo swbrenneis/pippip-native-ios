@@ -14,6 +14,7 @@
 
 // Authentication state parameters
 @property (nonatomic) NSString *currentAccount;
+@property (nonatomic) NSString *passphrase;
 @property (nonatomic) BOOL authenticated;
 
 // Server parameters

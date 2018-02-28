@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ResponseConsumer.h"
-#import "ContactObserver.h"
 
-@interface ContactsTableViewController : UITableViewController <ResponseConsumer, ContactObserver>
+@interface ContactsTableViewController : UITableViewController <ResponseConsumer>
 
 @end

@@ -13,10 +13,6 @@
 
 - (instancetype)initWithPublicId:(NSString*)pid;
 
-- (void)newMessageAdded;
-
-//- (void)markMessagesRead;
-
-//- (void)reloadMessages:(NSString*)publicId;
+- (void)messagesUpdated;
 
 @end

@@ -122,8 +122,17 @@
 
 - (void)deleteAllMessages:(NSString *)publicId {
 
-    [conversations removeObjectForKey:publicId];
+    MutableConversation *conversation = [self getMutableConversation:publicId];
+    [conversation deleteAllMessages];
     [messageDatabase deleteAllMessages:publicId];
+
+}
+
+- (void)deleteMessage:(NSDictionary*)message {
+
+    [messageDatabase deleteMessage:[message[@"messageId"] integerValue]];
+    MutableConversation *conversation = [self getMutableConversation:message[@"publicId"]];
+    [conversation deleteMessage:message];
 
 }
 

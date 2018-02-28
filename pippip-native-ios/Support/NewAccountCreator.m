@@ -27,7 +27,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
     NSString *passphrase;
 }
 
-@property (weak, nonatomic) HomeViewController *viewController;
+@property (weak, nonatomic) AuthViewController *viewController;
 @property (weak, nonatomic) RESTSession *session;
 
 @end
@@ -37,13 +37,13 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 @synthesize errorDelegate;
 @synthesize postPacket;
 
-- (instancetype)initWithViewController:(HomeViewController *)controller withRESTSession: (RESTSession*)restSession {
+- (instancetype)initWithViewController:(AuthViewController *)controller {
     self = [super init];
 
     _viewController = controller;
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
                                                              withTitle:@"New Account Creation Error"];
-    _session = restSession;
+    _session = [ApplicationSingleton instance].restSession;
 
     return self;
 
@@ -97,7 +97,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
             case FINISH:
                 if ([self validateFinish:response]) {
                     [self accountCreated];
-                    [_viewController authenticated:@"Account created. Online"];
+                    [_viewController authenticated];
                 }
                 break;
         }

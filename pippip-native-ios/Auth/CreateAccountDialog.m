@@ -7,21 +7,23 @@
 //
 
 #import "CreateAccountDialog.h"
+#import "NewAccountCreator.h"
 
 @interface CreateAccountDialog ()
 {
     UIAlertController *dialog;
     NSString *accountName;
     NSString *passphrase;
+    
 }
 
-@property (weak, nonatomic) HomeViewController *viewController;
+@property (weak, nonatomic) AuthViewController *viewController;
 
 @end
 
 @implementation CreateAccountDialog
 
--(instancetype) initWithViewController:(HomeViewController*)controller {
+-(instancetype) initWithViewController:(AuthViewController*)controller {
     self = [super init];
 
     _viewController = controller;
@@ -54,6 +56,14 @@
 
 }
 
+- (void)createAccount {
+
+    [_viewController startActivityIndicator];
+    NewAccountCreator *creator = [[NewAccountCreator alloc] initWithViewController:_viewController];
+    [creator createAccount:accountName withPassphrase:passphrase];
+
+}
+
 - (void) createSelected {
 
     accountName = dialog.textFields[0].text;
@@ -65,7 +75,7 @@
         [self passphraseAlert];
     }
     else {
-        [_viewController createAccount:accountName withPassphrase:passphrase];
+        [self createAccount];
     }
 
 }
@@ -79,12 +89,11 @@
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Ok"
                                                        style:UIAlertActionStyleDefault
                                                      handler:^(UIAlertAction *action){
-                                                         [_viewController createAccount:accountName
-                                                                         withPassphrase:passphrase];
+                                                         [self createAccount];
                                                      }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
                                                            style:UIAlertActionStyleCancel
-                                                         handler:^(UIAlertAction *action){}];
+                                                         handler:nil];
     [alert addAction:okAction];
     [alert addAction:cancelAction];
     [_viewController presentViewController:alert animated:YES completion:nil];

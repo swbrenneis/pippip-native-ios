@@ -1,5 +1,5 @@
 //
-//  PreviewTableViewCell.h
+//  PreviewCell.h
 //  pippip-native-ios
 //
 //  Created by Steve Brenneis on 2/3/18.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PreviewTableViewCell : UITableViewCell
+@interface PreviewCell : UITableViewCell
 
 - (void)configure:(NSDictionary*)message;
 

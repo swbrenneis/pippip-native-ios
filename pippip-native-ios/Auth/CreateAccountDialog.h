@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "HomeViewController.h"
+#import "AuthViewController.h"
 
 @interface CreateAccountDialog : NSObject
 
-- (instancetype) initWithViewController:(HomeViewController*)controller;
+- (instancetype) initWithViewController:(AuthViewController*)controller;
 
 - (void) present;
 

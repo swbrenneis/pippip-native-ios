@@ -20,12 +20,16 @@
 
 - (NSArray*)allMessages;
 
-- (NSDictionary*)getIndexedMessage:(NSUInteger)index;
+- (void)deleteAllMessages;
 
-- (NSArray*)getPendingMessages;
+- (void)deleteMessage:(NSDictionary*)triplet;
+
+- (NSDictionary*)getIndexedMessage:(NSUInteger)index;
 
 - (NSInteger)markMessageRead:(NSDictionary*)triplet;
 
 - (NSInteger)messageExists:(NSDictionary*)triplet;
+
+//- (NSArray*)pendingMessages;
 
 @end

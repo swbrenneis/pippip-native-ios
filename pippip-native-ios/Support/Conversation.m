@@ -50,12 +50,12 @@
     return [theDelegate getIndexedMessage:index];
 }
 
-- (NSArray*)getPendingMessages {
-    return [theDelegate getPendingMessages];
-}
-
 - (NSInteger)messageExists:(NSDictionary *)triplet {
     return [theDelegate messageExists:triplet];
 }
-
+/*
+- (NSArray*)pendingMessages {
+    return [theDelegate pendingMessages];
+}
+*/
 @end

@@ -30,10 +30,11 @@ GCMCodec::~GCMCodec() {
 
 void GCMCodec::decrypt(const coder::ByteArray& key, const coder::ByteArray& ad) {
 
-    coder::ByteArray ciphertext(text.range(0, text.length() - 12));
+    coder::ByteArray ciphertext = text;
     if (iv.length() == 0) {
         // The IV is the last 12 bytes of the provided text.
         iv = text.range(text.length() - 12);
+        ciphertext.setLength(text.length() - 12);
     }
 
     try {
@@ -56,7 +57,9 @@ void GCMCodec::decrypt(const coder::ByteArray& key, const coder::ByteArray& ad) 
 
 void GCMCodec::encrypt(const coder::ByteArray& key, const coder::ByteArray& ad) {
 
+    bool ivPreset = true;
     if (iv.length() == 0) {
+        ivPreset = false;
         iv.setLength(12);
         CCSecureRandom rnd;
         rnd.nextBytes(iv);
@@ -67,7 +70,9 @@ void GCMCodec::encrypt(const coder::ByteArray& key, const coder::ByteArray& ad) 
         gcm.setIV(iv);
         gcm.setAuthenticationData(ad);
         text = gcm.encrypt(stream, key);
-        text.append(iv);                        // Append the IV
+        if (!ivPreset) {
+            text.append(iv);                        // Append the IV
+        }
     }
     catch (BadParameterException& e) {
         throw EncodingException(e);

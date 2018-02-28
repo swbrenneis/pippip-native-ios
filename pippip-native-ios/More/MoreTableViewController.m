@@ -54,9 +54,6 @@ static const NSInteger EDIT_FRIENDS = 5;
 
 }
 
-- (IBAction) unwindToMoreViewController:(UIStoryboardSegue*)segue {
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {

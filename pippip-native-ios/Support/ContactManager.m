@@ -25,7 +25,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 //@property (weak, nonatomic) UIViewController *viewController;
 @property (weak, nonatomic) id<ResponseConsumer> responseConsumer;
-@property (weak, nonatomic) SessionState *sessionState;
+//@property (weak, nonatomic) SessionState *sessionState;
 @property (weak, nonatomic) RESTSession *session;
 
 @end
@@ -41,7 +41,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     _session = nil;
     contactDatabase = [[ContactDatabase alloc] init];
 
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
+//    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
 
     return self;
 
@@ -151,17 +151,17 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
     
 }
-
+/*
 - (void)newSession:(NSNotification*)notification {
 
     _sessionState = (SessionState*)notification.object;
 
 }
-
+*/
 - (void)postComplete:(NSDictionary*)response {
 
     if (response != nil) {
-        EnclaveResponse *enclaveResponse = [[EnclaveResponse alloc] initWithState:_sessionState];
+        EnclaveResponse *enclaveResponse = [[EnclaveResponse alloc] init];
         if ([enclaveResponse processResponse:response errorDelegate:errorDelegate]) {
             NSDictionary *contactResponse = [enclaveResponse getResponse];
             if (_responseConsumer != nil) {
@@ -213,7 +213,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
         _session = app.restSession;
     }
 
-    EnclaveRequest *enclaveRequest = [[EnclaveRequest alloc] initWithState:_sessionState];
+    EnclaveRequest *enclaveRequest = [[EnclaveRequest alloc] init];
     [enclaveRequest setRequest:request];
 
     postPacket = enclaveRequest;

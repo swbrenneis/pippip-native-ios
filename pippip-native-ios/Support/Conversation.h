@@ -20,8 +20,8 @@
 
 - (NSDictionary*)getIndexedMessage:(NSUInteger)index;
 
-- (NSArray*)getPendingMessages;
-
 - (NSInteger)messageExists:(NSDictionary*)triplet;
+
+//- (NSArray*)pendingMessages;
 
 @end

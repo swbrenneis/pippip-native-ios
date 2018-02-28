@@ -6,38 +6,35 @@
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
-#import "HomeViewController.h"
-#import "NewAccountCreator.h"
+#import "AuthViewController.h"
 #import "Authenticator.h"
 #import "CreateAccountDialog.h"
 #import "ApplicationSingleton.h"
 #import "AppDelegate.h"
 #import "SessionState.h"
 #import "AccountManager.h"
-#import "TabBarDelegate.h"
 #import "RESTSession.h"
 
-@interface HomeViewController ()
+@interface AuthViewController ()
 {
-    TabBarDelegate *tabBarDelegate;
     NSArray *accountNames;
     NSString *selectedAccount;
     NSString *passphrase;
+    NSString *defaultStatus;
 }
 
 @property (weak, nonatomic) IBOutlet UIPickerView *accountPickerView;
 @property (weak, nonatomic) IBOutlet UIButton *authButton;
 @property (weak, nonatomic) IBOutlet UIButton *createAccountButton;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
-@property (weak, nonatomic) IBOutlet UIButton *signoutButton;
 
-@property (nonatomic) UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) AccountManager *accountManager;
 @property (weak, nonatomic) RESTSession *session;
+@property (nonatomic) UIActivityIndicatorView *activityIndicator;
 
 @end
 
-@implementation HomeViewController
+@implementation AuthViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -48,45 +45,28 @@
     _activityIndicator.center = self.view.center;
 
     // Get the account manager and REST client
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    _accountManager = app.accountManager;
-    _session = app.restSession;
+    _accountManager = [ApplicationSingleton instance].accountManager;
 
     // Connect the picker.
     self.accountPickerView.delegate = self;
     self.accountPickerView.dataSource = self;
-
-    tabBarDelegate = [[TabBarDelegate alloc] init];
-    AppDelegate *delegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    UITabBarController *tabBar = (UITabBarController*)delegate.window.rootViewController;
-    [tabBar setDelegate:tabBarDelegate];
 
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
     accountNames = [_accountManager loadAccounts:NO];
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    if (app.accountSession == nil || !app.accountSession.sessionState.authenticated) {
-        // Enable sign in if there are accounts on this device. Set the status accordingly.
-        if (accountNames.count == 0) {
-            [self.authButton setHidden:YES];
-            _defaultMessage = @"Please create a new account";
-        }
-        else {
-            selectedAccount = accountNames[0];
-            [self.authButton setHidden:NO];
-            _defaultMessage = @"Sign in or create a new account";
-        }
-        [self.signoutButton setHidden:YES];
-        [self updateStatus:_defaultMessage];
+    // Enable sign in if there are accounts on this device. Set the status accordingly.
+    if (accountNames.count == 0) {
+        [self.authButton setHidden:YES];
+        defaultStatus = @"Please create a new account";
     }
     else {
-        [self.createAccountButton setHidden:YES];
-        [self.authButton setHidden:YES];
-        [self.accountPickerView setHidden:YES];
-        [self.signoutButton setHidden:NO];
+        selectedAccount = accountNames[0];
+        [self.authButton setHidden:NO];
+        defaultStatus = @"Sign in or create a new account";
     }
+    _statusLabel.text = defaultStatus;
 
 }
 
@@ -126,20 +106,6 @@
 
 }
 
-- (IBAction)signoutClicked:(UIButton *)sender {
-
-    Authenticator *auth = [[Authenticator alloc] initWithViewController:self withRESTSession:_session];
-    [auth logout];
-    [_accountManager loadAccounts:NO];
-    [_accountPickerView reloadAllComponents];
-    [self.createAccountButton setHidden:NO];
-    [self.authButton setHidden:NO];
-    [self.accountPickerView setHidden:NO];
-    [self.signoutButton setHidden:YES];
-    [self updateStatus:@"Sign in or create a new account"];
-
-}
-
 - (IBAction)authClicked:(UIButton *)sender {
 
     UIAlertController *dialog = [UIAlertController alertControllerWithTitle:@"Authentication"
@@ -151,12 +117,12 @@
         textField.clearButtonMode = UITextFieldViewModeWhileEditing;
     }];
 
-    UIAlertAction *createAction = [UIAlertAction actionWithTitle:@"Log In"
-                                                           style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction *action) {
-                                                             passphrase = dialog.textFields[0].text;
-                                                             [self authenticate];
-                                                         }];
+    UIAlertAction *loginAction = [UIAlertAction actionWithTitle:@"Log In"
+                                                          style:UIAlertActionStyleDefault
+                                                        handler:^(UIAlertAction *action) {
+                                                            passphrase = dialog.textFields[0].text;
+                                                            [self authenticate];
+                                                        }];
     
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
                                                            style:UIAlertActionStyleCancel
@@ -164,19 +130,10 @@
                                                              passphrase = nil;
                                                          }];
     
-    [dialog addAction:createAction];
+    [dialog addAction:loginAction];
     [dialog addAction:cancelAction];
     
     [self presentViewController:dialog animated:YES completion:nil];
-    
-}
-
-- (void) authenticate {
-
-    [_activityIndicator startAnimating];
-    [_createAccountButton setHidden:YES];
-    Authenticator *auth = [[Authenticator alloc] initWithViewController:self withRESTSession:_session];
-    [auth authenticate:selectedAccount withPassphrase:passphrase];
     
 }
 
@@ -187,49 +144,52 @@
 
 }
 
-- (void)createAccount:(NSString*)accountName withPassphrase:(NSString *)passphrase {
-
+- (void) authenticate {
+    
     [_activityIndicator startAnimating];
-    NewAccountCreator *creator = [[NewAccountCreator alloc] initWithViewController:self withRESTSession:_session];
-    [creator createAccount:accountName withPassphrase:passphrase];
-
+    [_createAccountButton setHidden:YES];
+    Authenticator *auth = [[Authenticator alloc] initWithViewController:self];
+    [auth authenticate:selectedAccount withPassphrase:passphrase];
+    
 }
 
-- (void)authenticated:(NSString*)message {
-
-    [self updateActivityIndicator:NO];
-    [self updateStatus:message];
+- (void)authenticated {
+    
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_accountManager loadAccounts:NO];
-        [_accountPickerView reloadAllComponents];
-        [self.createAccountButton setHidden:YES];
-        [self.authButton setHidden:YES];
-        [self.accountPickerView setHidden:YES];
-        [self.signoutButton setHidden:NO];
+        [self dismissViewControllerAnimated:YES completion:nil];
     });
+    
+}
 
+- (void)restoreDefaultStatus {
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _statusLabel.text = defaultStatus;
+    });
+    
+}
+
+- (void)startActivityIndicator {
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_activityIndicator startAnimating];
+    });
+    
+}
+
+- (void)stopActivityIndicator {
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_activityIndicator stopAnimating];
+    });
+    
 }
 
 - (void)updateStatus:(NSString*)status {
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.statusLabel setText:status];
+        _statusLabel.text = status;
     });
-
-}
-
-- (void)updateActivityIndicator:(BOOL)start {
-
-    if (start) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.activityIndicator startAnimating];
-        });
-    }
-    else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.activityIndicator stopAnimating];
-        });
-    }
 
 }
 

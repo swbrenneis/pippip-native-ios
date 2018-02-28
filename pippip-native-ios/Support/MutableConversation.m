@@ -44,6 +44,14 @@
     [theDelegate addMessage:message];
 }
 
+- (void)deleteAllMessages {
+    [theDelegate deleteAllMessages];
+}
+
+- (void)deleteMessage:(NSDictionary *)triplet {
+    [theDelegate deleteMessage:triplet];
+}
+
 - (NSInteger)markMessageRead:(NSDictionary *)triplet {
     return [theDelegate markMessageRead:triplet];
 }

@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "SessionState.h"
-#import "MessageObserver.h"
-#import "ContactObserver.h"
 #import "ConversationCache.h"
 #import "RESTSession.h"
 #import "ResponseConsumer.h"
@@ -25,16 +23,8 @@
 
 - (void)resume;
 
-- (void)setContactObserver:(id<ContactObserver>)observer;
-
-- (void)setMessageObserver:(id<MessageObserver>)observer;
-
 - (void)suspend;
 
 - (void)startSession:(SessionState*)state;
-
-- (void)unsetContactObserver:(id<ContactObserver>)observer;
-
-- (void)unsetMessageObserver:(id<MessageObserver>)observer;
 
 @end

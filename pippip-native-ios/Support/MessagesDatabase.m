@@ -161,7 +161,13 @@
     NSArray *messageKeys = contact[@"messageKeys"];
     NSError *error = nil;
     [codec decrypt:messageKeys[message.keyIndex] withAuthData:contact[@"authData"] withError:&error];
-    return [codec getString];
+    if (error == nil) {
+        return [codec getString];
+    }
+    else {
+        NSLog(@"MessagesDatabase.decryptMessage GCM decryption error - %@", error.localizedDescription);
+        return @"";
+    }
 
 }
 
@@ -176,6 +182,22 @@
         [realm beginWriteTransaction];
         [realm deleteObject:message];
         [realm commitWriteTransaction];
+    }
+
+}
+
+- (void)deleteMessage:(NSInteger)messageId {
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageId = %ld", messageId];
+    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+    if (messages.count > 0) {
+        RLMRealm *realm = [RLMRealm defaultRealm];
+        [realm beginWriteTransaction];
+        [realm deleteObject:[messages firstObject]];
+        [realm commitWriteTransaction];
+    }
+    else {
+        NSLog(@"MessagesDatabase.deleteMessage Message with ID %ld not found", messageId);
     }
 
 }

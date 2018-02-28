@@ -1,17 +1,17 @@
 //
-//  PreviewTableViewCell.m
+//  PreviewCell.m
 //  pippip-native-ios
 //
 //  Created by Steve Brenneis on 2/3/18.
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
-#import "PreviewTableViewCell.h"
+#import "PreviewCell.h"
 
 static const NSInteger SEC_PER_HOUR = 3600;
 static const NSInteger ONE_DAY = SEC_PER_HOUR * 24;
 
-@interface PreviewTableViewCell ()
+@interface PreviewCell ()
 
 @property (weak, nonatomic) IBOutlet UIImageView *messageReadImage;
 @property (weak, nonatomic) IBOutlet UILabel *senderLabel;
@@ -20,7 +20,7 @@ static const NSInteger ONE_DAY = SEC_PER_HOUR * 24;
 
 @end
 
-@implementation PreviewTableViewCell
+@implementation PreviewCell
 
 - (void)awakeFromNib {
     [super awakeFromNib];

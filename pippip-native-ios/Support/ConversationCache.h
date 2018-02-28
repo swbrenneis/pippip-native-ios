@@ -20,6 +20,8 @@
 
 - (void)deleteAllMessages:(NSString*)publicId;
 
+- (void)deleteMessage:(NSDictionary*)message;
+
 - (Conversation*)getConversation:(NSString*)publicId;
 
 - (void)markMessagesRead:(NSString*)publicId;
