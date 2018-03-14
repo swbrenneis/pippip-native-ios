@@ -7,6 +7,7 @@
 //
 
 #import "ServerAuthorized.h"
+#import "ApplicationSingleton.h"
 #import "CKRSACodec.h"
 
 @interface ServerAuthorized ()
@@ -38,6 +39,12 @@
     [codec putBlock:sessionState.enclaveKey];
     NSData *data = [codec encrypt:sessionState.serverPublicKey];
     packet[@"data"] = [data base64EncodedStringWithOptions:0];
+#if TARGET_OS_SIMULATOR
+    packet[@"deviceToken"] = @"c2ltdWxhdG9y";      // "simulator"
+#else
+    AccountSession *accountSession = [ApplicationSingleton instance].accountSession;
+    packet[@"deviceToken"] = [accountSession.deviceToken base64EncodedStringWithOptions:0];
+#endif
 
     return packet;
     

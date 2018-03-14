@@ -16,40 +16,63 @@
 {
     NSString *publicId;
     Conversation *conversation;
-    NSMutableArray *cells;
+    NSMutableArray *messageIds;
 }
 
 @property (weak, nonatomic) ConversationCache *conversationCache;
+@property (weak, nonatomic) UITableView *conversationTableView;
 
 @end
 
 @implementation ConversationDataSource
-
-- (instancetype)init {
+/*
+- (instancetype)initWithTableView:(UITableView*)tableView {
     self = [super init];
 
+    _conversationTableView = tableView;
     _conversationCache = [ApplicationSingleton instance].conversationCache;
     conversation = nil;
-    cells = [NSMutableArray array];
-    
+    messageIds = [NSMutableArray array];
     return self;
     
 }
-
-- (instancetype)initWithPublicId:(NSString *)pid {
+*/
+- (instancetype)initWithTableView:(UITableView*)tableView withPublicId:(NSString *)pid {
     self = [super init];
 
+    _conversationTableView = tableView;
     publicId = pid;
     _conversationCache = [ApplicationSingleton instance].conversationCache;
     conversation = [_conversationCache getConversation:publicId];
-    cells = [NSMutableArray array];
+    messageIds = [[conversation allMessageIds] mutableCopy];
 
     return self;
+
+}
+
+- (void)messagesCleared {
+
+    [messageIds removeAllObjects];
 
 }
 
 - (void)messagesUpdated {
-    [cells removeAllObjects];
+
+    NSInteger index = messageIds.count - 1;
+    [messageIds addObjectsFromArray:[_conversationCache unreadMessageIds:publicId]];
+    NSMutableArray *paths = [NSMutableArray array];
+    while (index < messageIds.count - 1) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:0];
+        [paths addObject:indexPath];
+        index++;
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_conversationTableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationBottom];
+        //[_conversationTableView scrollToRowAtIndexPath:[paths lastObject]
+        //                              atScrollPosition:UITableViewScrollPositionBottom
+        //                                      animated:YES];
+    });
+    
 }
 
 #pragma mark - Table view data source
@@ -61,66 +84,36 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    
-    if (conversation != nil) {
-        return conversation.count;
-    }
-    else {
-        return 0;
-    }
-    
+
+    return messageIds.count;
+
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    if (cells.count <= indexPath.item) {
-        while (cells.count <= indexPath.item) {
-            ConversationTableViewCell *dummy = [[ConversationTableViewCell alloc] init];
-            dummy.configured = NO;
-            [cells addObject:dummy];
-        }
-    }
-    
-    ConversationTableViewCell *convCell = cells[indexPath.item];
-    if (!convCell.configured) {
-        NSDictionary *message = [conversation getIndexedMessage:indexPath.item];
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MessageCell"
-                                                                forIndexPath:indexPath];
-        // Configure the cell...
-        convCell = (ConversationTableViewCell*)cell;
-        [convCell configureCell:message];
-        convCell.configured = YES;
-        cells[indexPath.item] = cell;
-
-    }
-    return convCell;
-
-/*
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MessageCell" forIndexPath:indexPath];
+    NSMutableDictionary *message = [conversation getMessage:[messageIds[indexPath.item] integerValue]];
+    [_conversationCache markMessageRead:message];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MessageCell"
+                                                            forIndexPath:indexPath];
+    // Configure the cell...
     ConversationTableViewCell *convCell = (ConversationTableViewCell*)cell;
-    NSDictionary *message = [conversation getIndexedMessage:indexPath.item];
+    convCell.contentSize = tableView.contentSize;
     [convCell configureCell:message];
 
-    return cell;
-*/
+    return convCell;
+
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    if (cells.count > indexPath.item) {
-        ConversationTableViewCell *cell = cells[indexPath.item];
-        return cell.cellSize.height;
+    NSMutableDictionary *message = [conversation getMessage:[messageIds[indexPath.item] integerValue]];
+    NSNumber *height = message[@"cellHeight"];
+    if (height != nil) {
+        return [height doubleValue];
     }
     else {
-        NSLog(@"Cell size for row %ld not found!", indexPath.item);
-        return 20.0;
+        return 44.0;
     }
-
-/*
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    ConversationTableViewCell *convCell = (ConversationTableViewCell*)cell;
-    return convCell.cellSize.height;
-*/
 
 }
 
@@ -133,12 +126,9 @@
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [cells removeAllObjects];
-        NSDictionary *message = [conversation getIndexedMessage:indexPath.item];
-        [_conversationCache deleteMessage:message];
-        [tableView reloadData];
-//        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [messageIds removeObjectAtIndex:indexPath.item];
+        [_conversationCache deleteMessage:[messageIds[indexPath.item] integerValue] withPublicId:publicId];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }

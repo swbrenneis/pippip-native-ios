@@ -68,7 +68,6 @@
             }
         }
         [self nextPost];
-
     };
     
     id<PostPacket> packet = currentProcess.postPacket;
@@ -77,6 +76,7 @@
     NSData *json = [NSJSONSerialization dataWithJSONObject:packetData
                                                    options:0
                                                      error:&jsonError];
+    NSString *jsonStr = [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding];
     NSURL *postURL = [NSURL URLWithString:[packet restURL]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:postURL
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData

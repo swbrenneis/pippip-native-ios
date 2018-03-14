@@ -29,6 +29,8 @@
 		554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 554C17361FDD5990009434F5 /* MoreTableViewController.m */; };
 		55579E512024C21F00131A54 /* DatabaseContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 55579E502024C21F00131A54 /* DatabaseContact.m */; };
 		55579E542026293300131A54 /* ContactTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 55579E532026293300131A54 /* ContactTableViewCell.m */; };
+		555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 555B0D40204C887B00D99807 /* MBProgressHUD.m */; };
+		555B0D45204CD80000D99807 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 555B0D44204CD80000D99807 /* UserNotifications.framework */; };
 		5566664320169ADA00051ED2 /* ContactDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5566664220169ADA00051ED2 /* ContactDetailViewController.m */; };
 		55666646201A68AF00051ED2 /* AccountSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 55666645201A68AF00051ED2 /* AccountSession.m */; };
 		55666649201B7C9000051ED2 /* LoggingErrorDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 55666648201B7C9000051ED2 /* LoggingErrorDelegate.m */; };
@@ -104,6 +106,8 @@
 		55B0DBB12045EC8400F6B29B /* MessagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B0DBB02045EC8400F6B29B /* MessagesViewController.m */; };
 		55B0DBB42045F2C500F6B29B /* MessagesHeadingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B0DBB32045F2C500F6B29B /* MessagesHeadingCell.m */; };
 		55B0DBB72046CDE100F6B29B /* RequestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B0DBB62046CDE100F6B29B /* RequestsViewController.m */; };
+		55B0DBBA2048962400F6B29B /* CopyableLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B0DBB92048962400F6B29B /* CopyableLabel.m */; };
+		55B0DBBD20489C4D00F6B29B /* PublicIdCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B0DBBC20489C4D00F6B29B /* PublicIdCell.m */; };
 		55B3911C1FE17339004DAFF7 /* EnclaveRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B3911B1FE17339004DAFF7 /* EnclaveRequest.m */; };
 		55B3911F1FE17383004DAFF7 /* EnclaveResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B3911E1FE17383004DAFF7 /* EnclaveResponse.m */; };
 		55B781A41FDD77F800330B80 /* PublicIdTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B781A31FDD77F800330B80 /* PublicIdTableViewController.m */; };
@@ -200,6 +204,10 @@
 		55579E502024C21F00131A54 /* DatabaseContact.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseContact.m; sourceTree = "<group>"; };
 		55579E522026293300131A54 /* ContactTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactTableViewCell.h; sourceTree = "<group>"; };
 		55579E532026293300131A54 /* ContactTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactTableViewCell.m; sourceTree = "<group>"; };
+		555B0D40204C887B00D99807 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+		555B0D41204C887B00D99807 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		555B0D43204CA4E300D99807 /* pippip-native-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "pippip-native-ios.entitlements"; sourceTree = "<group>"; };
+		555B0D44204CD80000D99807 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		5566664120169ADA00051ED2 /* ContactDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactDetailViewController.h; sourceTree = "<group>"; };
 		5566664220169ADA00051ED2 /* ContactDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactDetailViewController.m; sourceTree = "<group>"; };
 		55666644201A68AF00051ED2 /* AccountSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountSession.h; sourceTree = "<group>"; };
@@ -372,6 +380,10 @@
 		55B0DBB32045F2C500F6B29B /* MessagesHeadingCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessagesHeadingCell.m; sourceTree = "<group>"; };
 		55B0DBB52046CDE100F6B29B /* RequestsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestsViewController.h; sourceTree = "<group>"; };
 		55B0DBB62046CDE100F6B29B /* RequestsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RequestsViewController.m; sourceTree = "<group>"; };
+		55B0DBB82048962400F6B29B /* CopyableLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CopyableLabel.h; sourceTree = "<group>"; };
+		55B0DBB92048962400F6B29B /* CopyableLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CopyableLabel.m; sourceTree = "<group>"; };
+		55B0DBBB20489C4D00F6B29B /* PublicIdCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PublicIdCell.h; sourceTree = "<group>"; };
+		55B0DBBC20489C4D00F6B29B /* PublicIdCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PublicIdCell.m; sourceTree = "<group>"; };
 		55B3911A1FE17339004DAFF7 /* EnclaveRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnclaveRequest.h; sourceTree = "<group>"; };
 		55B3911B1FE17339004DAFF7 /* EnclaveRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EnclaveRequest.m; sourceTree = "<group>"; };
 		55B3911D1FE17383004DAFF7 /* EnclaveResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnclaveResponse.h; sourceTree = "<group>"; };
@@ -434,6 +446,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				555B0D45204CD80000D99807 /* UserNotifications.framework in Frameworks */,
 				551051042020B648000A313E /* Realm.framework in Frameworks */,
 				553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */,
 			);
@@ -452,6 +465,7 @@
 		552062C71F8EB1740015A9A9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				555B0D44204CD80000D99807 /* UserNotifications.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -570,12 +584,16 @@
 				557CE58F2041165F008AF8CF /* AddFriendCell.m */,
 				557CE58520407D25008AF8CF /* ContactPolicyCell.h */,
 				557CE58620407D25008AF8CF /* ContactPolicyCell.m */,
+				55B0DBB82048962400F6B29B /* CopyableLabel.h */,
+				55B0DBB92048962400F6B29B /* CopyableLabel.m */,
 				554C17351FDD5990009434F5 /* MoreTableViewController.h */,
 				554C17361FDD5990009434F5 /* MoreTableViewController.m */,
 				557CE5882040A41F008AF8CF /* NicknameCell.h */,
 				557CE5892040A41F008AF8CF /* NicknameCell.m */,
 				5537899C200D2C7B0043BCF4 /* PendingContactViewController.h */,
 				5537899D200D2C7B0043BCF4 /* PendingContactViewController.m */,
+				55B0DBBB20489C4D00F6B29B /* PublicIdCell.h */,
+				55B0DBBC20489C4D00F6B29B /* PublicIdCell.m */,
 				55B781A21FDD77F800330B80 /* PublicIdTableViewController.h */,
 				55B781A31FDD77F800330B80 /* PublicIdTableViewController.m */,
 				55378999200CFABB0043BCF4 /* RequestsTableViewCell.h */,
@@ -630,9 +648,19 @@
 			path = API;
 			sourceTree = "<group>";
 		};
+		555B0D3F204C885900D99807 /* MBProgressHUD */ = {
+			isa = PBXGroup;
+			children = (
+				555B0D41204C887B00D99807 /* MBProgressHUD.h */,
+				555B0D40204C887B00D99807 /* MBProgressHUD.m */,
+			);
+			path = MBProgressHUD;
+			sourceTree = "<group>";
+		};
 		5592A57B1F8BBB4400F08BF5 = {
 			isa = PBXGroup;
 			children = (
+				555B0D3F204C885900D99807 /* MBProgressHUD */,
 				551051032020B648000A313E /* Realm.framework */,
 				55AA556D1FA1527C00A7026B /* libgmp.a */,
 				5592A5861F8BBB4400F08BF5 /* pippip-native-ios */,
@@ -654,6 +682,7 @@
 		5592A5861F8BBB4400F08BF5 /* pippip-native-ios */ = {
 			isa = PBXGroup;
 			children = (
+				555B0D43204CA4E300D99807 /* pippip-native-ios.entitlements */,
 				55AA54E41FA14B8900A7026B /* cryptokitty */,
 				55AA54C01FA14ACE00A7026B /* coder */,
 				5592A5991F8BBB4500F08BF5 /* main.mm */,
@@ -897,6 +926,14 @@
 					5592A5831F8BBB4400F08BF5 = {
 						CreatedOnToolsVersion = 9.0;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					5592A59E1F8BBB4500F08BF5 = {
 						CreatedOnToolsVersion = 9.0;
@@ -966,6 +1003,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				55D809A020310B0D008940CB /* ConversationDataSource.m in Sources */,
+				55B0DBBD20489C4D00F6B29B /* PublicIdCell.m in Sources */,
 				55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */,
 				55AA554C1FA14D7100A7026B /* DigestBase.cc in Sources */,
 				55579E512024C21F00131A54 /* DatabaseContact.m in Sources */,
@@ -1005,6 +1043,7 @@
 				55AA555E1FA14D7100A7026B /* SHA384.cc in Sources */,
 				55B781AA1FDE161E00330B80 /* Logout.m in Sources */,
 				55579E542026293300131A54 /* ContactTableViewCell.m in Sources */,
+				555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */,
 				55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */,
 				5537899E200D2C7B0043BCF4 /* PendingContactViewController.m in Sources */,
 				55AA55541FA14D7100A7026B /* SHA256.cc in Sources */,
@@ -1068,6 +1107,7 @@
 				55AA55531FA14D7100A7026B /* CCSecureRandom.cc in Sources */,
 				55FA87451FD5CA4F00FB96C0 /* AuthenticationResponse.m in Sources */,
 				55AA55601FA14D7100A7026B /* IosSecureRandom.cc in Sources */,
+				55B0DBBA2048962400F6B29B /* CopyableLabel.m in Sources */,
 				55FB2F69203245E1005E3730 /* Configurator.m in Sources */,
 				55AA554D1FA14D7100A7026B /* RSAPublicKey.cc in Sources */,
 				551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */,
@@ -1234,6 +1274,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "pippip-native-ios/pippip-native-ios.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YSKMP8WLKB;
 				ENABLE_BITCODE = NO;
@@ -1261,6 +1302,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "pippip-native-ios/pippip-native-ios.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YSKMP8WLKB;
 				ENABLE_BITCODE = NO;

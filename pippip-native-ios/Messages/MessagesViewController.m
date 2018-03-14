@@ -14,10 +14,12 @@
 #import "ConversationCache.h"
 #import "ConversationViewController.h"
 #import "Authenticator.h"
+#import "MBProgressHUD.h"
 
 @interface MessagesViewController ()
 {
     NSArray *mostRecent;
+//    UIActivityIndicatorView *activityIndicator;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -36,9 +38,15 @@
     mostRecent = [NSArray array];
     _tableView.dataSource = self;
     [_tableView setDelegate:self];
-    _sessionState = [ApplicationSingleton instance].accountSession.sessionState;
     _conversationCache = [ApplicationSingleton instance].conversationCache;
-
+/*
+    activityIndicator = [[UIActivityIndicatorView alloc]
+                         initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    activityIndicator.hidesWhenStopped = YES;
+    activityIndicator.hidesWhenStopped = YES;
+    [self.view addSubview:activityIndicator];
+    activityIndicator.center = self.view.center;
+*/
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(newSession:)
                                                name:@"NewSession" object:nil];
@@ -51,6 +59,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
 
+    _sessionState = [ApplicationSingleton instance].accountSession.sessionState;
     if (_sessionState.authenticated) {
         mostRecent = [_conversationCache mostRecentMessages];
     }
@@ -58,6 +67,23 @@
         mostRecent = [NSArray array];
     }
     [_tableView reloadData];
+
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(newSession:)
+                                               name:@"NewSession" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(newMessagesReceived:)
+                                               name:@"NewMessagesReceived" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(conversationLoaded:)
+                                               name:@"ConversationLoaded" object:nil];
+
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NewSession" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NewMessagesReceived" object:nil];
 
 }
 
@@ -72,6 +98,12 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)conversationLoaded:(NSNotification*)notification {
+
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
+
 }
 
 - (IBAction)signoutClicked:(UIBarButtonItem *)sender {
@@ -152,9 +184,14 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    if (mostRecent.count > 0 && indexPath.section == 1) {
-        
-    }
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.mode = MBProgressHUDModeIndeterminate;
+    hud.label.text = @"Decrypting messages";
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self performSegueWithIdentifier:@"ConversationSegue" sender:self];
+        });
+    });
 
 }
 
@@ -165,7 +202,7 @@
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
     UIViewController * view = [segue destinationViewController];
-    if ([view isKindOfClass:[ConversationViewController class]]) {
+    if ([segue.identifier isEqualToString:@"ConversationSegue"]) {
         ConversationViewController *conversationView = (ConversationViewController*)view;
         NSDictionary *message = mostRecent[self.tableView.indexPathForSelectedRow.item];
         conversationView.publicId = message[@"publicId"];

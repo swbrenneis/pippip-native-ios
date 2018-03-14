@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "ApplicationSingleton.h"
+#import "TargetConditionals.h"
 
 @interface AppDelegate ()
 
@@ -19,7 +20,23 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
 
-    //[ApplicationSingleton instance];
+#if TARGET_OS_SIMULATOR
+    [ApplicationSingleton instance].accountSession.simulator = YES;
+#else
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    center.delegate = [ApplicationSingleton instance].accountSession;
+    UNAuthorizationOptions options = UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge;
+    [center requestAuthorizationWithOptions:options completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        if (error == nil) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [application registerForRemoteNotifications];
+            });
+        }
+        else {
+            NSLog(@"Failed to authorize notifications - %@", error);
+        }
+    }];
+#endif
     return YES;
 
 }
@@ -60,5 +77,18 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+- (void)application:(UIApplication *)application
+        didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+
+    [ApplicationSingleton instance].accountSession.deviceToken = deviceToken;
+
+}
+
+- (void)application:(UIApplication *)application
+        didFailToRegisterForRemoteNotificationsWithError:(nonnull NSError *)error {
+    
+    NSLog(@"Failed to register for remote notifications: %@", error);
+
+}
 
 @end

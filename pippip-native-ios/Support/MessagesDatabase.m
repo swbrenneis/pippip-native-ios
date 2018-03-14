@@ -148,7 +148,13 @@
     NSError *error = nil;
     NSInteger keyIndex = [message[@"keyIndex"] integerValue];
     [codec decrypt:messageKeys[keyIndex] withAuthData:contact[@"authData"] withError:&error];
-    return [codec getString];
+    if (error != nil) {
+        NSLog(@"Error decrypting message - %@", error);
+        return @"";
+    }
+    else {
+        return [codec getString];
+    }
 
 }
 
@@ -202,20 +208,33 @@
 
 }
 
-- (NSArray*)loadConversation:(NSString*)publicId {
+- (NSMutableDictionary*)loadMessage:(NSInteger)messageId withPublicId:(NSString*)publicId {
 
-    NSMutableArray *conversation = [NSMutableArray array];
-    Configurator *config = [ApplicationSingleton instance].config;
-    NSInteger contactId = [config getContactId:publicId];
     NSDictionary *contact = [contactDatabase getContact:publicId];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+    NSInteger contactId = [[ApplicationSingleton instance].config getContactId:publicId];
+    NSPredicate *predicate =
+        [NSPredicate predicateWithFormat:@"messageId = %ld && contactId = %ld", messageId, contactId];
     RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
                                               sortedResultsUsingKeyPath:@"timestamp" ascending:YES];
-    for (DatabaseMessage *dbMessage in messages) {
-        NSMutableDictionary *message = [self decodeMessage:dbMessage withContact:contact];
-        [conversation addObject:message];
+    if (messages.count > 0) {
+        return [self decodeMessage:[messages firstObject] withContact:contact];
     }
-    return conversation;
+    else {
+        return nil;
+    }
+
+}
+
+- (NSArray*)loadMessageIds:(NSString *)publicId {
+
+    NSMutableArray *messageIds = [NSMutableArray array];
+    NSInteger contactId = [[ApplicationSingleton instance].config getContactId:publicId];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+    for (DatabaseMessage *dbMessage in messages) {
+        [messageIds addObject:[NSNumber numberWithInteger:dbMessage.messageId]];
+    }
+    return messageIds;
 
 }
 
@@ -238,18 +257,18 @@
 
 - (NSDictionary*)mostRecentMessage:(NSInteger)contactId {
 
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
-        RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
-                                                  sortedResultsUsingKeyPath:@"timestamp" ascending:NO];
-        if (messages.count > 0) {
-            NSDictionary *contact = [contactDatabase getContactById:contactId];
-            NSDictionary *message = [self decodeMessage:[messages firstObject] withContact:contact];
-            return message;
-        }
-        else {
-            NSLog(@"No messages found for contact %ld", contactId);
-            return nil;
-        }
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+    RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
+                                              sortedResultsUsingKeyPath:@"timestamp" ascending:NO];
+    if (messages.count > 0) {
+        NSDictionary *contact = [contactDatabase getContactById:contactId];
+        NSDictionary *message = [self decodeMessage:[messages firstObject] withContact:contact];
+        return message;
+    }
+    else {
+        NSLog(@"No messages found for contact %ld", contactId);
+        return nil;
+    }
 
 }
 
@@ -273,13 +292,19 @@
     return pending;
 
 }
-/*
-- (NSArray*)reloadConversation:(NSString *)publicId {
 
-    [conversations removeObjectForKey:publicId];
-    return [self getConversation:publicId];
+- (NSArray*)unreadMessageIds:(NSString *)publicId {
+
+    NSMutableArray *unread = [NSMutableArray array];
+    NSInteger contactId = [[ApplicationSingleton instance].config getContactId:publicId];
+    NSPredicate *predicate =
+        [NSPredicate predicateWithFormat:@"contactId = %ld && read == %@", contactId, @NO];
+    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+    for (DatabaseMessage *dbMessage in messages) {
+        [unread addObject:[NSNumber numberWithInteger:dbMessage.messageId]];
+    }
+    return unread;
 
 }
-*/
 
 @end

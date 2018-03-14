@@ -17,6 +17,7 @@
     NSArray *requests;
     NSInteger selectedRow;
     ContactManager *contactManager;
+    UIActivityIndicatorView *activityIndicator;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -36,11 +37,17 @@
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact Request Error"];
     [_tableView setDelegate:self];
     _tableView.dataSource = self;
-    
+
+    activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    activityIndicator.hidesWhenStopped = YES;
+    [self.view addSubview:activityIndicator];
+    activityIndicator.center = self.view.center;
+
 }
 
--(void)viewWillAppear:(BOOL)animated {
-    
+-(void)viewDidAppear:(BOOL)animated {
+
+    [activityIndicator startAnimating];
     [contactManager getRequests];
     
 }
@@ -60,6 +67,7 @@
     
     requests = info[@"requests"];
     dispatch_async(dispatch_get_main_queue(), ^{
+        [activityIndicator stopAnimating];
         if (requests.count > 0) {
             _tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         }
@@ -108,6 +116,12 @@
     }
     
     return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    return 75.0;
+
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

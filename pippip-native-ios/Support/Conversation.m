@@ -18,44 +18,36 @@
 
 @implementation Conversation
 
-- (instancetype)init {
+- (instancetype)initWithPublicId:(NSString *)publicId {
     self = [super init];
 
-    theDelegate = [[ConversationDelegate alloc] init];
+    theDelegate = [[ConversationDelegate alloc] initWithPublicId:publicId];
     _delegate = theDelegate;
 
     return self;
     
 }
-
-- (instancetype)initWithMessages:(NSArray *)messages {
+/*
+- (instancetype)initWithMessageIds:(NSArray *)messages {
     self = [super init];
     
-    theDelegate = [[ConversationDelegate alloc] initWithMessages:messages];
+    theDelegate = [[ConversationDelegate alloc] initWithMessageIds:messages];
     _delegate = theDelegate;
     
     return self;
     
 }
-
-- (NSArray*)allMessages {
-    return [theDelegate allMessages];
+*/
+- (NSArray*)allMessageIds {
+    return [theDelegate allMessageIds];
 }
 
 - (NSUInteger)count {
     return theDelegate.count;
 }
 
-- (NSDictionary*)getIndexedMessage:(NSUInteger)index {
-    return [theDelegate getIndexedMessage:index];
+- (NSMutableDictionary*)getMessage:(NSUInteger)messageId {
+    return [theDelegate getMessage:messageId];
 }
 
-- (NSInteger)messageExists:(NSDictionary *)triplet {
-    return [theDelegate messageExists:triplet];
-}
-/*
-- (NSArray*)pendingMessages {
-    return [theDelegate pendingMessages];
-}
-*/
 @end

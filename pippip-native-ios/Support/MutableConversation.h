@@ -10,16 +10,16 @@
 
 @interface MutableConversation : Conversation
 
-- (instancetype)initWithMessages:(NSArray*)messages;
+- (instancetype)initWithPublicId:(NSString*)publicId;
 
-- (void)acknowledgeMessage:(NSDictionary*)triplet;
+- (void)acknowledgeMessage:(NSInteger)messageId;
 
 - (void)addMessage:(NSMutableDictionary*)message;
 
 - (void)deleteAllMessages;
 
-- (void)deleteMessage:(NSDictionary*)triplet;
+- (void)deleteMessage:(NSInteger)messageId;
 
-- (NSInteger)markMessageRead:(NSDictionary*)triplet;
+- (void)markMessageRead:(NSInteger)messageId;
 
 @end

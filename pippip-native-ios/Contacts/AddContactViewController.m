@@ -9,6 +9,7 @@
 #import "AddContactViewController.h"
 #import "ContactsTableViewController.h"
 #import "ContactManager.h"
+#import "ContactDatabase.h"
 #import "Configurator.h"
 #import "ApplicationSingleton.h"
 #import "AlertErrorDelegate.h"
@@ -61,13 +62,16 @@
 
     NSString *result = response[@"result"];
     if ([result isEqualToString:@"pending"]) {
-        _addedContact = [NSMutableDictionary dictionary];
-        _addedContact[@"publicId"] = response[@"requestedContactId"];
-        _addedContact[@"status"] = result;
-        _addedContact[@"timestamp"] = response[@"timestamp"];
+        NSMutableDictionary *addedContact = [NSMutableDictionary dictionary];
+        addedContact = [NSMutableDictionary dictionary];
+        addedContact[@"publicId"] = response[@"requestedContactId"];
+        addedContact[@"status"] = result;
+        addedContact[@"timestamp"] = response[@"timestamp"];
         if (nickname != nil && nickname.length > 0) {
-            _addedContact[@"nickname"] =nickname;
+            addedContact[@"nickname"] =nickname;
         }
+        ContactDatabase *contactDatabase = [[ContactDatabase alloc] init];
+        [contactDatabase addContact:addedContact];
         UIAlertController *alert =
         [UIAlertController alertControllerWithTitle:@"Contact Request Added"
                                             message:@"Contact successfully requested"

@@ -7,7 +7,8 @@
 //
 
 #import "NewAccountFinish.h"
-#import "NSData+HexEncode.h"
+#import "ApplicationSingleton.h"
+//#import "NSData+HexEncode.h"
 #import "CKRSACodec.h"
 
 @interface NewAccountFinish ()
@@ -40,6 +41,12 @@
     [codec putBlock:_sessionState.svpswSalt];
     NSData *data = [codec encrypt:_sessionState.serverPublicKey];
     packet[@"data"] = [data base64EncodedStringWithOptions:0];
+#if TARGET_OS_SIMULATOR
+    packet[@"deviceToken"] = @"c2ltdWxhdG9y";      // "simulator"
+#else
+    AccountSession *accountSession = [ApplicationSingleton instance].accountSession;
+    packet[@"deviceToken"] = [accountSession.deviceToken base64EncodedStringWithOptions:0];
+#endif
 
     return packet;
 

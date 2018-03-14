@@ -11,7 +11,11 @@
 
 @interface ConversationDataSource : NSObject <UITableViewDataSource, UITableViewDelegate>
 
-- (instancetype)initWithPublicId:(NSString*)pid;
+//- (instancetype)initWithTableView:(UITableView*)tableView;
+
+- (instancetype)initWithTableView:(UITableView*)tableView withPublicId:(NSString*)pid;
+
+- (void)messagesCleared;
 
 - (void)messagesUpdated;
 

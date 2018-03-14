@@ -18,7 +18,7 @@
 //#import "NSData+HexEncode.h"
 #import <Realm/Realm.h>
 
-typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
+typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
 @interface AccountSession ()
 {
@@ -50,6 +50,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
     messageManager = [[MessageManager alloc] init];
     [messageManager setResponseConsumer:self];
     contactDatabase = [[ContactDatabase alloc] init];
+    _simulator = NO;
 
     return self;
 
@@ -62,12 +63,15 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
         [messageManager acknowledgePendingMessages];
     }
     else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
-                [self updateContacts];
-            }];
-        });
+        updateType = NONE;
     }
+//    else {
+//        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//            [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
+//                [self updateContacts];
+//            }];
+//        });
+//    }
 
 }
 
@@ -110,6 +114,9 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
         NSArray *exceptions = response[@"exceptions"];
         NSLog(@"Messages acknowledged, %ld exceptions", exceptions.count);
         [messageManager pendingMessagesAcknowledged];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+        });
     }
     else {
         NSLog(@"Error response: %@", error);
@@ -124,11 +131,16 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
         NSArray *messages = response[@"messages"];
         newMessageCount = messages.count;
         NSLog(@"Messages update, %ld messages", newMessageCount);
-        if (messages.count > 0) {
-            [_conversationCache addMessages:messages];
+        if (newMessageCount > 0) {
+            [_conversationCache addNewMessages:messages];
             dispatch_async(dispatch_get_main_queue(), ^{
                 [[NSNotificationCenter defaultCenter]
                     postNotification:[NSNotification notificationWithName:@"NewMessagesReceived" object:nil]];
+            });
+        }
+        else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
             });
         }
     }
@@ -144,13 +156,13 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
         switch (updateType) {
             case ACK_MESSAGES:
                 [self messagesAcknowledged:info];
-                if (sessionActive) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
-                            [self updateContacts];
-                        }];
-                    });
-                }
+//                if (sessionActive) {
+//                    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//                        [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
+//                            [self updateContacts];
+//                        }];
+//                    });
+//               }
                 break;
             case CONTACTS:
                 [self contactsUpdated:info];
@@ -164,6 +176,8 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
                     [self acknowledgeMessages];
                 }
                 break;
+            case NONE:
+                break;
         }
     }
 
@@ -174,11 +188,28 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
     NSDate *resumeTime = [NSDate date];
     if ([resumeTime timeIntervalSinceDate:suspendTime] < 180) {     // 30 minutes
         sessionActive = YES;
-        dispatch_async(dispatch_get_main_queue(), ^{
+        /*
+        [NSThread detachNewThreadWithBlock:^{
+            while (sessionActive) {
+                [NSThread sleepForTimeInterval:2.0];
+                [self updateContacts];
+            }
+        }];
+        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
                 [self updateContacts];
             }];
         });
+         */
+    }
+
+}
+
+- (void)runSession {
+
+    while (sessionActive) {
+        [NSThread sleepForTimeInterval:2.0];
+        [self updateContacts];
     }
 
 }
@@ -188,11 +219,22 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
     _sessionState = state;
     sessionActive = YES;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
-            [self updateContacts];
-        }];
+        NSInteger count = [UIApplication sharedApplication].applicationIconBadgeNumber;
+        if (count > 0) {
+            [self updateMessages];
+        }
     });
-    
+
+/*
+    if (_simulator) {
+        [NSThread detachNewThreadWithBlock:^{
+            while (sessionActive) {
+                [NSThread sleepForTimeInterval:2.0];
+                [self updateContacts];
+            }
+        }];
+    }
+*/
 }
 
 - (void)suspend {
@@ -219,6 +261,18 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES } UpdateType;
     updateType = MESSAGES;
     newMessageCount = 0;
     [messageManager getNewMessages];
+
+}
+
+#pragma Mark - Notification center delegate
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+
+    NSInteger messageCount = [notification.request.content.badge integerValue];
+    if (messageCount > 0) {
+        [self updateMessages];
+    }
+    completionHandler(UNNotificationPresentationOptionBadge);
 
 }
 

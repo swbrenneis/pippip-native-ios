@@ -12,16 +12,14 @@
 
 @property (readonly, nonatomic) id delegate;
 
-- (instancetype)initWithMessages:(NSArray*)messages;
+- (instancetype)initWithPublicId:(NSString*)publicId;
 
-- (NSArray*)allMessages;
+- (NSArray*)allMessageIds;
 
 - (NSUInteger)count;
 
-- (NSDictionary*)getIndexedMessage:(NSUInteger)index;
+- (NSMutableDictionary*)getMessage:(NSUInteger)messageId;
 
-- (NSInteger)messageExists:(NSDictionary*)triplet;
-
-//- (NSArray*)pendingMessages;
+//- (NSInteger)messageExists:(NSDictionary*)triplet;
 
 @end

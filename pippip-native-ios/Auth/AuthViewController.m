@@ -14,6 +14,7 @@
 #import "SessionState.h"
 #import "AccountManager.h"
 #import "RESTSession.h"
+#import "TargetConditionals.h"
 
 @interface AuthViewController ()
 {
@@ -108,15 +109,48 @@
 
 - (IBAction)authClicked:(UIButton *)sender {
 
+#if TARGET_OS_SIMULATOR
+    [self doAuthDialog];
+#else
+    AccountSession *accountSession = [ApplicationSingleton instance].accountSession;
+    if (accountSession.deviceToken != nil) {
+        [self doAuthDialog];
+    }
+    else {
+        UIAlertController *dialog = [UIAlertController alertControllerWithTitle:@"Authentication Error"
+                                                                        message:@"Notification token not received"
+                                                                 preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:nil];
+        
+        [dialog addAction:okAction];
+        
+        [self presentViewController:dialog animated:YES completion:nil];
+    }
+#endif
+
+}
+
+- (IBAction)createAccountClicked:(UIButton *)sender {
+
+    CreateAccountDialog *dialog = [[CreateAccountDialog alloc] initWithViewController:self];
+    [dialog present];
+
+}
+
+- (void)doAuthDialog {
+    
     UIAlertController *dialog = [UIAlertController alertControllerWithTitle:@"Authentication"
                                                                     message:selectedAccount
                                                              preferredStyle:UIAlertControllerStyleAlert];
-
+    
     [dialog addTextFieldWithConfigurationHandler:^(UITextField* textField) {
         textField.placeholder = @"Passphrase";
         textField.clearButtonMode = UITextFieldViewModeWhileEditing;
     }];
-
+    
     UIAlertAction *loginAction = [UIAlertAction actionWithTitle:@"Log In"
                                                           style:UIAlertActionStyleDefault
                                                         handler:^(UIAlertAction *action) {
@@ -134,13 +168,6 @@
     [dialog addAction:cancelAction];
     
     [self presentViewController:dialog animated:YES completion:nil];
-    
-}
-
-- (IBAction)createAccountClicked:(UIButton *)sender {
-
-    CreateAccountDialog *dialog = [[CreateAccountDialog alloc] initWithViewController:self];
-    [dialog present];
 
 }
 

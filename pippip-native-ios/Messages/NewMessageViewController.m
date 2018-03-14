@@ -14,6 +14,7 @@
 #import "MessageManager.h"
 #import "ContactManager.h"
 #import "AlertErrorDelegate.h"
+#import "MBProgressHUD.h"
 
 @interface NewMessageViewController ()
 {
@@ -22,6 +23,7 @@
     MessageManager *messageManager;
     ContactManager *contactManager;
     NSDictionary *contact;
+    BOOL contactSelected;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -47,7 +49,6 @@
     [messageManager setResponseConsumer:self];
     contactManager = [[ContactManager alloc] init];
     searchSource = [[ContactSearchDataSource alloc] init];
-    convSource = [[ConversationDataSource alloc] init];
     [_tableView setDelegate:self];
     _tableView.dataSource = searchSource;
     [_searchText setDelegate:self];
@@ -70,7 +71,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(newMessagesReceived:)
                                                  name:@"NewMessagesReceived" object:nil];
-    
+    contactSelected = NO;
+
 }
 - (void)viewWillDisappear:(BOOL)animated {
 
@@ -94,9 +96,11 @@
 
 - (IBAction)sendMessage:(UIButton *)sender {
 
-    [_sendFailedLabel setHidden:YES];
-    NSString *messageText = _messageText.text;
-    [messageManager sendMessage:messageText withPublicId:contact[@"publicId"]];
+    if (contactSelected && _messageText.text.length > 0) {
+        [_sendFailedLabel setHidden:YES];
+        NSString *messageText = _messageText.text;
+        [messageManager sendMessage:messageText withPublicId:contact[@"publicId"]];
+    }
 
 }
 
@@ -174,20 +178,35 @@
         CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
         [_tableView setContentOffset:newOffset animated:YES];
     }
+    [_stackView setHidden:NO];
+    contactSelected = YES;
 
 }
 
 - (IBAction)messageStarted:(UITextField *)sender {
 
-    [_searchStackView setHidden:YES];
-    convSource = [[ConversationDataSource alloc] initWithPublicId:contact[@"publicId"]];
-    _tableView.dataSource = convSource;
-    [_tableView reloadData];
+    CGRect stackRect = _searchStackView.frame;
+    stackRect.size.height = 0;
+    [_searchStackView setFrame:stackRect];
+//    [_searchStackView setHidden:YES];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.mode = MBProgressHUDModeIndeterminate;
+    hud.label.text = @"Decrypting messages";
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        convSource = [[ConversationDataSource alloc] initWithTableView:_tableView withPublicId:contact[@"publicId"]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _tableView.dataSource = convSource;
+            [_tableView reloadData];
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+        });
+    });
 
 }
 
 - (IBAction)searchDidChange:(UITextField *)sender {
 
+    [_stackView setHidden:YES];
+    contactSelected = NO;
     NSString *soFar = sender.text;
     if (soFar.length > 0) {
         [searchSource setContactList:[contactManager searchContacts:soFar]];

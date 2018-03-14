@@ -18,26 +18,26 @@
 
 @implementation MutableConversation
 
-- (instancetype)init {
-    self = [super init];
+- (instancetype)initWithPublicId:(NSString *)publicId {
+    self = [super initWithPublicId:publicId];
 
     theDelegate = super.delegate;
 
     return self;
 
 }
-
-- (instancetype)initWithMessages:(NSArray *)messages {
-    self = [super initWithMessages:messages];
+/*
+- (instancetype)initWithMessageIds:(NSArray *)messages {
+    self = [super initWithMessageIds:messages];
 
     theDelegate = super.delegate;
 
     return self;
 
 }
-
-- (void)acknowledgeMessage:(NSDictionary *)triplet {
-    [theDelegate acknowledgeMessage:triplet];
+*/
+- (void)acknowledgeMessage:(NSInteger)messageId {
+    [theDelegate acknowledgeMessage:messageId];
 }
 
 - (void)addMessage:(NSMutableDictionary *)message {
@@ -48,12 +48,12 @@
     [theDelegate deleteAllMessages];
 }
 
-- (void)deleteMessage:(NSDictionary *)triplet {
-    [theDelegate deleteMessage:triplet];
+- (void)deleteMessage:(NSInteger)messageId {
+    [theDelegate deleteMessage:messageId];
 }
 
-- (NSInteger)markMessageRead:(NSDictionary *)triplet {
-    return [theDelegate markMessageRead:triplet];
+- (void)markMessageRead:(NSInteger)messageId {
+    [theDelegate markMessageRead:messageId];
 }
 
 @end

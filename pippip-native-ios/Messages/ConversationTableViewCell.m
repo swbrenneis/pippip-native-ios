@@ -11,7 +11,8 @@
 
 @interface ConversationTableViewCell ()
 {
-    NSDictionary *message;
+    UIColor *sentColor;
+    UIColor *receivedColor;
 }
 @property (weak, nonatomic) IBOutlet UIImageView *messageBubbleImage;
 @property (weak, nonatomic) IBOutlet UILabel *messageText;
@@ -40,70 +41,77 @@
     // Configure the view for the selected state
 }
 
-- (void)configureCell:(NSDictionary *)msg {
+- (void)configureCell:(NSMutableDictionary *)msg {
 
-    message = msg;
-    BOOL sent = [message[@"sent"] boolValue];
-    if (sent) {
-        [self configureSentMessage];
+    BOOL sent = [msg[@"sent"] boolValue];
+    NSValue *value = msg[@"bubbleSize"];
+    CGSize bubbleSize = CGSizeMake(44.0, 44.0);;
+    if (value != nil) {
+        bubbleSize = value.CGSizeValue;
     }
     else {
-        [self configureReceivedMessage];
+        bubbleSize = [self calculatebubbleSize:msg];
+        msg[@"bubbleSize"] = [NSValue valueWithCGSize:bubbleSize];
+        msg[@"cellHeight"] = [NSNumber numberWithDouble:bubbleSize.height + 8];
+    }
+    if (sent) {
+        sentColor = [[UIColor alloc] initWithRed:240.0 / 255.0
+                                           green:130.0 / 255.0
+                                            blue:39.0 / 255.0
+                                           alpha:1.0];
+        [self setSentConstraints:bubbleSize];
+        [self configureSentMessage:msg];
+    }
+    else {
+        receivedColor = [[UIColor alloc] initWithRed:219.0 / 255.0
+                                               green:219.0 / 255.0
+                                                blue:219.0 / 255.0
+                                               alpha:1.0];
+        [self setReceivedConstraints:bubbleSize];
+        [self configureReceivedMessage:msg];
     }
 
 }
 
-- (void)configureSentMessage {
+- (CGSize)calculatebubbleSize:(NSDictionary*)message {
 
-    CGSize frameSize = self.frame.size;
+    _messageTextTrailing.constant = 16.0;
+    _messageTextLeading.constant = (_contentSize.width * .333) + 16;
+    NSString *text = message[@"cleartext"];
+    _messageText.text = text;
+    _messageText.numberOfLines = 0;
+    _messageText.lineBreakMode = NSLineBreakByWordWrapping;
+    CGSize maxSize = CGSizeMake((_contentSize.width * .667) - 28, CGFLOAT_MAX);
+    CGSize labelSize = [_messageText sizeThatFits:maxSize];
+    return CGSizeMake(labelSize.width + 28.0, labelSize.height + 22.0);
 
-    // Set fixed constraints
-    _messageBubbleTop.constant = 4.0;
-    _messageBubbleBottom.constant = 4.0;
-    _messageTextTrailing.constant = 10.0;
+}
+
+- (void)configureSentMessage:(NSDictionary*)message {
 
     NSString *text = message[@"cleartext"];
     _messageText.text = text;
-    _messageText.tintColor = [UIColor whiteColor];
+    _messageText.textColor = [UIColor whiteColor];
     _messageText.numberOfLines = 0;
     _messageText.lineBreakMode = NSLineBreakByWordWrapping;
-    _messageTextLeading.constant = (frameSize.width * .333) + 10;
-    CGSize maxSize = CGSizeMake((frameSize.width * .667) - 20, CGFLOAT_MAX);
-    CGSize labelSize = [_messageText sizeThatFits:maxSize];
 
     NSString *imageName = @"MessageBubbleRight";
     UIImage *bubble = [[[UIImage imageNamed:imageName]
-                        resizableImageWithCapInsets:UIEdgeInsetsMake(17, 21, 17, 21)
+                        resizableImageWithCapInsets:UIEdgeInsetsMake(21, 21, 21, 21)
                         resizingMode:UIImageResizingModeStretch]
                        imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     _messageBubbleImage.image = bubble;
-    _messageBubbleImage.tintColor = [UIColor orangeColor];
-    _messageBubbleLeading.constant = frameSize.width - labelSize.width - 20;
-    _messageTextLeading.constant = frameSize.width - labelSize.width - 12;
-
-    CGFloat cellHeight = labelSize.height + 28;
-    _cellSize = CGSizeMake(frameSize.width, cellHeight);
+    _messageBubbleImage.tintColor = sentColor;
 
 }
 
-- (void)configureReceivedMessage {
-
-    CGSize frameSize = self.frame.size;
-
-    // Set fixed constraints
-    _messageBubbleLeading.constant = 5.0;
-    _messageBubbleTop.constant = 4.0;
-    _messageBubbleBottom.constant = 4.0;
-    _messageTextLeading.constant = 17.0;
+- (void)configureReceivedMessage:(NSDictionary*)message {
 
     NSString *text = message[@"cleartext"];
     _messageText.text = text;
-    _messageText.tintColor = [UIColor whiteColor];
+    _messageText.textColor = [UIColor blackColor];
     _messageText.numberOfLines = 0;
     _messageText.lineBreakMode = NSLineBreakByWordWrapping;
-    _messageTextTrailing.constant = (frameSize.width * .333) + 10;
-    CGSize maxSize = CGSizeMake((frameSize.width * .667) - 20, CGFLOAT_MAX);
-    CGSize labelSize = [_messageText sizeThatFits:maxSize];
 
     NSString *imageName = @"MessageBubbleLeft";
     UIImage *bubble = [[[UIImage imageNamed:imageName]
@@ -111,12 +119,34 @@
                         resizingMode:UIImageResizingModeStretch]
                        imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     _messageBubbleImage.image = bubble;
-    _messageBubbleImage.tintColor = [UIColor lightGrayColor];
-    _messageBubbleTrailing.constant = frameSize.width - labelSize.width - 22;
+    _messageBubbleImage.tintColor = receivedColor;
 
-    CGFloat cellHeight = labelSize.height + 28;
-    _cellSize = CGSizeMake(frameSize.width, cellHeight);
+}
 
+- (void)setReceivedConstraints:(CGSize)bubbleSize {
+
+    _messageBubbleTop.constant = 4.0;
+    _messageBubbleBottom.constant = 4.0;
+    _messageBubbleLeading.constant = 0.0;
+    _messageBubbleTrailing.constant = _contentSize.width - bubbleSize.width;
+    _messageTextTop.constant = 0.0;
+    _messageTextBottom.constant = 0.0;
+    _messageTextLeading.constant = 16.0;
+    _messageTextTrailing.constant = _messageBubbleTrailing.constant + 12.0;
+
+}
+
+- (void)setSentConstraints:(CGSize)bubbleSize {
+
+    _messageBubbleTop.constant = 4.0;
+    _messageBubbleBottom.constant = 4.0;
+    _messageBubbleTrailing.constant = 0.0;
+    _messageBubbleLeading.constant = _contentSize.width - bubbleSize.width;
+    _messageTextTop.constant = 0.0;
+    _messageTextBottom.constant = 0.0;
+    _messageTextTrailing.constant = 16.0;
+    _messageTextLeading.constant = _messageBubbleLeading.constant + 12.0;
+    
 }
 
 @end

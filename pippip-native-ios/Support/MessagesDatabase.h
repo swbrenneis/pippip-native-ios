@@ -21,12 +21,16 @@
 
 - (void)deleteMessage:(NSInteger)messageId;
 
-- (NSArray*)loadConversation:(NSString*)publicId;
+- (NSMutableDictionary*)loadMessage:(NSInteger)messageId withPublicId:(NSString*)publicId;
+
+- (NSArray*)loadMessageIds:(NSString*)publicId;
 
 - (void)markMessageRead:(NSInteger)messageId;
 
 - (NSDictionary*)mostRecentMessage:(NSInteger)contactId;
 
 - (NSArray*)pendingMessages;
+
+- (NSArray*)unreadMessageIds:(NSString*)publicId;
 
 @end

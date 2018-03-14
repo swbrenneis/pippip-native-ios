@@ -81,7 +81,7 @@
     if ([method isEqualToString:@"MatchNickname"]) {
         if ([result isEqualToString:@"not matched"]) {
             method = @"SetNickname";
-            [contactManager createNickname:pendingNickname withOldNickname:currentNickname];
+            [contactManager updateNickname:pendingNickname withOldNickname:currentNickname];
         }
         else if ([result isEqualToString:@"matched"]) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -90,7 +90,7 @@
         }
     }
     else {
-        NSLog(@"Nickname %@", info[@"result"]);
+        NSLog(@"Nickname %@ set", info[@"result"]);
         [config setNickname:pendingNickname];
         currentNickname = pendingNickname;
         pendingNickname = nil;
@@ -131,7 +131,7 @@
             pendingNickname = nil;
             method = @"SetNickname";
             [contactManager setResponseConsumer:self];
-            [contactManager createNickname:nil withOldNickname:currentNickname];
+            [contactManager updateNickname:nil withOldNickname:currentNickname];
         }
     }
 

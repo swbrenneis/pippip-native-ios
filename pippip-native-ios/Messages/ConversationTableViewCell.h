@@ -10,9 +10,8 @@
 
 @interface ConversationTableViewCell : UITableViewCell
 
-@property (nonatomic) BOOL configured;
-@property (nonatomic) CGSize cellSize;
+@property (nonatomic) CGSize contentSize;
 
-- (void)configureCell:(NSDictionary*)message;
+- (void)configureCell:(NSMutableDictionary*)message;
 
 @end
