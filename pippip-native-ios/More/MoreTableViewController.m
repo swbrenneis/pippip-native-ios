@@ -10,14 +10,16 @@
 #import "ApplicationSingleton.h"
 #import "SessionState.h"
 #import "ContactPolicyCell.h"
+#import "CleartextMessageCell.h"
 #import "NicknameCell.h"
 
 static const NSInteger ACCOUNTS = 0;
 static const NSInteger PUBLIC_ID = 1;
 static const NSInteger CONTACT_POLICY = 2;
-static const NSInteger SET_NICKNAME = 3;
-static const NSInteger CONTACT_REQUESTS = 4;
-static const NSInteger EDIT_FRIENDS = 5;
+static const NSInteger CLEARTEXT_MESSAGES = 3;
+static const NSInteger SET_NICKNAME = 4;
+static const NSInteger CONTACT_REQUESTS = 5;
+static const NSInteger EDIT_FRIENDS = 6;
 
 @interface MoreTableViewController ()
 
@@ -64,10 +66,10 @@ static const NSInteger EDIT_FRIENDS = 5;
 
     NSString *contactPolicy = [[ApplicationSingleton instance].config getContactPolicy];
     if ([contactPolicy isEqualToString:@"public"]) {
-        return 5;
+        return 6;
     }
     else {
-        return 6;
+        return 7;
     }
 
 }
@@ -88,6 +90,10 @@ static const NSInteger EDIT_FRIENDS = 5;
         case CONTACT_POLICY:
             cell = [tableView dequeueReusableCellWithIdentifier:@"ContactPolicyCell" forIndexPath:indexPath];
             [(ContactPolicyCell*)cell setViewController:self];
+            break;
+        case CLEARTEXT_MESSAGES:
+            cell = [tableView dequeueReusableCellWithIdentifier:@"CleartextMessagesCell" forIndexPath:indexPath];
+            [(CleartextMessageCell*)cell setViewController:self];
             break;
         case SET_NICKNAME:
             cell = [tableView dequeueReusableCellWithIdentifier:@"NicknameCell" forIndexPath:indexPath];

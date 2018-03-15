@@ -214,6 +214,11 @@ static NSLock *idLock = nil;
 
 }
 
+- (BOOL)getCleartextMessages {
+    AccountConfig *config = [self getConfig];
+    return config.cleartextMessages;
+}
+
 - (AccountConfig*)getConfig {
 
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"accountName = %@", _sessionState.currentAccount];
@@ -293,6 +298,16 @@ static NSLock *idLock = nil;
     _sessionState = (SessionState*)notification.object;
     [idMap removeAllObjects];
     [privateWhitelist removeAllObjects];
+    
+}
+
+- (void)setCleartextMessages:(BOOL)cleartext {
+    
+    AccountConfig *config = [self getConfig];
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    [realm beginWriteTransaction];
+    config.cleartextMessages = cleartext;
+    [realm commitWriteTransaction];
     
 }
 

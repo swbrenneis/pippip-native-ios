@@ -23,6 +23,8 @@
 
 - (BOOL)deleteWhitelistEntry:(NSString*)publicId;
 
+- (BOOL)getCleartextMessages;
+
 - (NSInteger)getContactId:(NSString*)publicId;
 
 - (NSString*)getContactPolicy;
@@ -35,6 +37,8 @@
 
 - (NSInteger)newMessageId;
 
+- (void)setCleartextMessages:(BOOL)cleartext;
+    
 - (void)setContactPolicy:(NSString*)policy;
 
 - (void)setNickname:(NSString*)nickname;

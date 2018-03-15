@@ -29,4 +29,6 @@
 
 - (NSArray*)pendingMessages;
 
+- (void)scrubCleartext;
+
 @end

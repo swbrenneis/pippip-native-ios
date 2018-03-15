@@ -15,6 +15,8 @@
 #import "CKIVGenerator.h"
 #import "CKGCMCodec.h"
 
+static const float CURRENT_VERSION = 1.0;
+
 @interface MessagesDatabase ()
 {
     NSInteger messageId;
@@ -58,6 +60,7 @@
     // Add the message to the database
     DatabaseMessage *dbMessage = [[DatabaseMessage alloc] init];
     Configurator *config = [ApplicationSingleton instance].config;
+    dbMessage.version = CURRENT_VERSION;
     NSInteger messageId = [config newMessageId];
     dbMessage.messageId = messageId;
     dbMessage.contactId = [config getContactId:message[@"publicId"]];
@@ -69,6 +72,9 @@
     dbMessage.acknowledged = [message[@"acknowledged"] boolValue];
     dbMessage.sent = [message[@"sent"] boolValue];
     dbMessage.message = [[NSData alloc] initWithBase64EncodedString:message[@"body"] options:0];
+    if ([[ApplicationSingleton instance].config getCleartextMessages]) {
+        dbMessage.cleartext = [self decryptMessage:message];
+    }
     
     RLMRealm *realm = [RLMRealm defaultRealm];
     [realm beginWriteTransaction];
@@ -130,7 +136,12 @@
     message[@"timestamp"] = [NSNumber numberWithInteger:dbMessage.timestamp];
     message[@"sequence"] = [NSNumber numberWithInteger:dbMessage.sequence];
     message[@"sent"] = [NSNumber numberWithBool:dbMessage.sent];
-    message[@"cleartext"] = [self decryptMessage:dbMessage withContact:contact];
+    if ([[ApplicationSingleton instance].config getCleartextMessages]) {
+        message[@"cleartext"] = dbMessage.cleartext;
+    }
+    else {
+        message[@"cleartext"] = [self decryptMessage:dbMessage withContact:contact];
+    }
     return message;
 
 }
@@ -273,13 +284,17 @@
     return pending;
 
 }
-/*
-- (NSArray*)reloadConversation:(NSString *)publicId {
 
-    [conversations removeObjectForKey:publicId];
-    return [self getConversation:publicId];
+- (void)scrubCleartext {
+
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage allObjects];
+    for (DatabaseMessage *dbMessage in messages) {
+        [realm beginWriteTransaction];
+        dbMessage.cleartext = nil;
+        [realm commitWriteTransaction];
+    }
 
 }
-*/
 
 @end

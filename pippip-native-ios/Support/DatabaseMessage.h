@@ -10,10 +10,12 @@
 
 @interface DatabaseMessage : RLMObject
 
+@property float version;
 @property NSInteger contactId;
 @property NSInteger messageId;
 @property NSString *messageType;
 @property NSData *message;
+@property NSString *cleartext;
 @property NSInteger keyIndex;
 @property NSInteger sequence;
 @property NSInteger timestamp;

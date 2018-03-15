@@ -12,6 +12,7 @@
 		551051042020B648000A313E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 551051032020B648000A313E /* Realm.framework */; };
 		551051052020B648000A313E /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 551051032020B648000A313E /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		551051082020BC36000A313E /* DatabaseMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 551051072020BC36000A313E /* DatabaseMessage.m */; };
+		551641F3205AC4AF00CFCEEF /* CleartextMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 551641F2205AC4AF00CFCEEF /* CleartextMessageCell.m */; };
 		551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183E1FA0FA030050C93C /* NewAccountFinish.m */; };
 		551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A18411FA0FA740050C93C /* NewAccountFinal.m */; };
 		5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */; };
@@ -164,6 +165,8 @@
 		551051032020B648000A313E /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		551051062020BC36000A313E /* DatabaseMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseMessage.h; sourceTree = "<group>"; };
 		551051072020BC36000A313E /* DatabaseMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseMessage.m; sourceTree = "<group>"; };
+		551641F1205AC4AF00CFCEEF /* CleartextMessageCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CleartextMessageCell.h; sourceTree = "<group>"; };
+		551641F2205AC4AF00CFCEEF /* CleartextMessageCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CleartextMessageCell.m; sourceTree = "<group>"; };
 		551A183D1FA0FA030050C93C /* NewAccountFinish.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinish.h; sourceTree = "<group>"; };
 		551A183E1FA0FA030050C93C /* NewAccountFinish.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountFinish.m; sourceTree = "<group>"; };
 		551A18401FA0FA740050C93C /* NewAccountFinal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinal.h; sourceTree = "<group>"; };
@@ -568,6 +571,8 @@
 				55B781A61FDDA63900330B80 /* AccountsTableViewController.m */,
 				557CE58E2041165F008AF8CF /* AddFriendCell.h */,
 				557CE58F2041165F008AF8CF /* AddFriendCell.m */,
+				551641F1205AC4AF00CFCEEF /* CleartextMessageCell.h */,
+				551641F2205AC4AF00CFCEEF /* CleartextMessageCell.m */,
 				557CE58520407D25008AF8CF /* ContactPolicyCell.h */,
 				557CE58620407D25008AF8CF /* ContactPolicyCell.m */,
 				554C17351FDD5990009434F5 /* MoreTableViewController.h */,
@@ -992,6 +997,7 @@
 				55AA55581FA14D7100A7026B /* HMAC.cc in Sources */,
 				55AA54DE1FA14B1E00A7026B /* ByteStreamCodec.cc in Sources */,
 				55AA55001FA14C1300A7026B /* CKSHA1.mm in Sources */,
+				551641F3205AC4AF00CFCEEF /* CleartextMessageCell.m in Sources */,
 				55AA54E11FA14B1E00A7026B /* Unsigned64.cc in Sources */,
 				55AA54E01FA14B1E00A7026B /* Unsigned32.cc in Sources */,
 				55AA54FE1FA14C1300A7026B /* CKSecureRandom.mm in Sources */,
