@@ -460,7 +460,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kev-9s-ljc">
-                                            <rect key="frame" x="281.5" y="6.5" width="51" height="31"/>
+                                            <rect key="frame" x="261.5" y="6.5" width="51" height="31"/>
                                             <connections>
                                                 <action selector="policyChanged:" destination="hBl-IB-K85" eventType="valueChanged" id="K42-zF-73c"/>
                                             </connections>
@@ -468,7 +468,7 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="3Jh-Ap-dvX" firstAttribute="centerY" secondItem="gcq-6I-BVn" secondAttribute="centerY" id="7CU-3H-tMp"/>
-                                        <constraint firstItem="Kev-9s-ljc" firstAttribute="leading" secondItem="3Jh-Ap-dvX" secondAttribute="trailing" constant="60" id="DaB-Pq-zyZ"/>
+                                        <constraint firstItem="Kev-9s-ljc" firstAttribute="leading" secondItem="3Jh-Ap-dvX" secondAttribute="trailing" constant="40" id="DaB-Pq-zyZ"/>
                                         <constraint firstItem="3Jh-Ap-dvX" firstAttribute="leading" secondItem="gcq-6I-BVn" secondAttribute="leadingMargin" id="Ie0-HU-8lb"/>
                                         <constraint firstItem="Kev-9s-ljc" firstAttribute="centerY" secondItem="gcq-6I-BVn" secondAttribute="centerY" id="iy3-If-duw"/>
                                     </constraints>
@@ -526,23 +526,6 @@
                                     <outlet property="setNicknameButton" destination="08f-xG-rED" id="G6u-fF-kii"/>
                                 </connections>
                             </tableViewCell>
-<<<<<<< HEAD
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="CleartextMessagesCell" id="su4-dH-OsP" customClass="CleartextMessageCell">
-                                <rect key="frame" x="0.0" y="231.5" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="su4-dH-OsP" id="pI9-ht-gR5">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5No-kg-WhB">
-                                            <rect key="frame" x="282" y="7" width="51" height="31"/>
-                                            <connections>
-                                                <action selector="cleartextSelected:" destination="su4-dH-OsP" eventType="valueChanged" id="iPk-Wb-fnh"/>
-                                            </connections>
-                                        </switch>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Extra message security" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xmL-kz-eJU">
-                                            <rect key="frame" x="16" y="11" width="178" height="21"/>
-=======
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="PublicIdCell" rowHeight="51" id="AHI-D0-KRs" customClass="PublicIdCell">
                                 <rect key="frame" x="0.0" y="187.5" width="375" height="51"/>
                                 <autoresizingMask key="autoresizingMask"/>
@@ -552,23 +535,10 @@
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="My Public ID" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dak-BI-myn">
                                             <rect key="frame" x="16" y="5" width="95.5" height="21"/>
->>>>>>> build-28022018
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-<<<<<<< HEAD
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="xmL-kz-eJU" firstAttribute="centerY" secondItem="pI9-ht-gR5" secondAttribute="centerY" id="1Ob-TY-1J9"/>
-                                        <constraint firstItem="5No-kg-WhB" firstAttribute="centerY" secondItem="pI9-ht-gR5" secondAttribute="centerY" id="Mg3-hH-wZ7"/>
-                                        <constraint firstItem="xmL-kz-eJU" firstAttribute="leading" secondItem="pI9-ht-gR5" secondAttribute="leadingMargin" id="h94-ux-meq"/>
-                                        <constraint firstItem="5No-kg-WhB" firstAttribute="leading" secondItem="xmL-kz-eJU" secondAttribute="trailing" constant="88" id="hbM-nk-WAn"/>
-                                    </constraints>
-                                </tableViewCellContentView>
-                                <connections>
-                                    <outlet property="cleartextMessagesSwitch" destination="5No-kg-WhB" id="Tmo-2f-QiL"/>
-=======
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Public ID" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X3X-bJ-vNt">
                                             <rect key="frame" x="16" y="28" width="57" height="17"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -585,7 +555,6 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="publicIdLabel" destination="X3X-bJ-vNt" id="Dew-es-3xo"/>
->>>>>>> build-28022018
                                 </connections>
                             </tableViewCell>
                         </prototypes>
