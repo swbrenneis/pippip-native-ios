@@ -94,6 +94,7 @@
                     [contactDatabase addContact:entity];
                     [self contactAddedAlert];
                 }
+                [self dismissViewControllerAnimated:YES completion:nil];
             }
             else {
                 [self errorAlert:@"Encoding error"];

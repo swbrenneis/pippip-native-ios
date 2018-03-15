@@ -8,6 +8,7 @@
 
 #import "ConversationViewController.h"
 #import "ConversationDataSource.h"
+#import "Conversation.h"
 #import "ApplicationSingleton.h"
 #import "MessageManager.h"
 #import "ContactDatabase.h"
@@ -26,7 +27,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *sendFailedLabel;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navItem;
 
-@property (weak) ConversationCache *conversationCache;
+@property (weak, nonatomic) ConversationCache *conversationCache;
 
 @end
 
@@ -37,7 +38,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    dataSource = [[ConversationDataSource alloc] initWithPublicId:_publicId];
+    dataSource = [[ConversationDataSource alloc] initWithTableView:_conversationTableView withPublicId:_publicId];
     _conversationTableView.dataSource = dataSource;
     [_conversationTableView setDelegate:dataSource];
     [_sendFailedLabel setHidden:YES];
@@ -46,7 +47,6 @@
     [messageManager setResponseConsumer:self];
     // Public ID is set in the messages table prepare for segue.
     _conversationCache = [ApplicationSingleton instance].conversationCache;
-    [_conversationCache markMessagesRead:_publicId];
 
     ContactDatabase *contactDatabase = [[ContactDatabase alloc] init];
     NSDictionary *contact = [contactDatabase getContact:_publicId];
@@ -60,16 +60,25 @@
     }
 
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Messages Error"];
+
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"ConversationLoaded" object:nil];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    [_conversationTableView reloadData];
-    CGSize contentSize = _conversationTableView.contentSize;
-    CGSize viewSize = _conversationTableView.bounds.size;
-    //CGSize stackSize = _stackView.frame.size;
-    CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
-    [_conversationTableView setContentOffset:newOffset animated:YES];
+    Conversation *conversation = [_conversationCache getConversation:_publicId];
+
+    if ([conversation count] > 0) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[conversation count] - 1 inSection:0];
+        [_conversationTableView scrollToRowAtIndexPath:indexPath
+                                      atScrollPosition:UITableViewScrollPositionBottom
+                                              animated:YES];
+    }
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
@@ -82,7 +91,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(newMessagesReceived:)
                                                  name:@"NewMessagesReceived" object:nil];
-    
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -107,11 +116,11 @@
     CGFloat keyboardHeight = keyboardFrameRect.size.height;
     _stackViewBottom.constant = keyboardHeight + 2;
     [_stackView setNeedsDisplay];
-    CGSize contentSize = _conversationTableView.contentSize;
-    CGSize viewSize = _conversationTableView.bounds.size;
-    //CGSize stackSize = _stackView.frame.size;
-    CGPoint newOffset = CGPointMake(0, (contentSize.height - viewSize.height) + keyboardHeight);
-    [_conversationTableView setContentOffset:newOffset animated:YES];
+    Conversation *conversation = [_conversationCache getConversation:_publicId];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[conversation count] - 1 inSection:0];
+    [_conversationTableView scrollToRowAtIndexPath:indexPath
+                                  atScrollPosition:UITableViewScrollPositionBottom
+                                          animated:YES];
 
 }
 
@@ -123,15 +132,17 @@
 
 - (void)newMessagesReceived:(NSNotification*)notification {
 
+    // Do this here because the data source doesn't get notified when the view disappears.
     [dataSource messagesUpdated];
-    [_conversationCache markMessagesRead:_publicId];
-    [_conversationTableView reloadData];
+/*    [_conversationTableView reloadData];
     CGSize contentSize = _conversationTableView.contentSize;
     CGSize viewSize = _conversationTableView.bounds.size;
     if (contentSize.height > viewSize.height) {
         CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
-        [_conversationTableView setContentOffset:newOffset animated:YES];
-    }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_conversationTableView setContentOffset:newOffset animated:YES];
+        });
+    } */
 
 }
 
@@ -154,14 +165,11 @@
                 [_sendFailedLabel setHidden:success];
                 if (success) {
                     _messageText.text = @"";
-                    [_conversationTableView reloadData];
-                    CGSize contentSize = _conversationTableView.contentSize;
-                    CGSize viewSize = _conversationTableView.bounds.size;
-                    if (contentSize.height > viewSize.height) {
-                        CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
-                        [_conversationTableView setContentOffset:newOffset animated:YES];
-                    }
-                }
+                    Conversation *conversation = [_conversationCache getConversation:_publicId];
+                    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[conversation count] - 1 inSection:0];
+                    [_conversationTableView scrollToRowAtIndexPath:indexPath
+                                                  atScrollPosition:UITableViewScrollPositionBottom
+                                                          animated:YES];                }
             });
         }
     }
@@ -171,16 +179,18 @@
 - (IBAction)clearAllMessages:(UIBarButtonItem *)sender {
 
     [_conversationCache deleteAllMessages:_publicId];
-    [dataSource messagesUpdated];
+    [dataSource messagesCleared];
     [_conversationTableView reloadData];
 
 }
 
 - (IBAction)sendMessage:(id)sender {
 
-    [_sendFailedLabel setHidden:YES];
-    NSString *messageText = _messageText.text;
-    [messageManager sendMessage:messageText withPublicId:_publicId];
+    if (_messageText.text.length > 0) {
+        [_sendFailedLabel setHidden:YES];
+        NSString *messageText = _messageText.text;
+        [messageManager sendMessage:messageText withPublicId:_publicId];
+    }
 
 }
 

@@ -83,9 +83,7 @@ static const NSInteger EDIT_FRIENDS = 6;
             cell.textLabel.text = @"Account List";
             break;
         case PUBLIC_ID:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"SubtitleOptionsCell" forIndexPath:indexPath];
-            cell.textLabel.text = @"My Public ID";
-            cell.detailTextLabel.text = _sessionState.publicId;
+            cell = [tableView dequeueReusableCellWithIdentifier:@"PublicIdCell" forIndexPath:indexPath];
             break;
         case CONTACT_POLICY:
             cell = [tableView dequeueReusableCellWithIdentifier:@"ContactPolicyCell" forIndexPath:indexPath];
@@ -130,6 +128,16 @@ static const NSInteger EDIT_FRIENDS = 6;
 
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    switch (indexPath.item) {
+        case PUBLIC_ID:
+            return 51.0;
+        default:
+            return 44.0;
+    }
+
+}
 
 /*
 // Override to support conditional editing of the table view.

@@ -11,6 +11,6 @@
 
 @interface AddContactViewController : UIViewController <ResponseConsumer>
 
-@property (nonatomic) NSMutableDictionary *addedContact;
+// @property (nonatomic) NSMutableDictionary *addedContact;
 
 @end

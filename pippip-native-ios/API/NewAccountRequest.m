@@ -7,7 +7,7 @@
 //
 
 #import "NewAccountRequest.h"
-#import "NSData+HexEncode.h"
+//#import "NSData+HexEncode.h"
 
 
 @interface NewAccountRequest ()
@@ -30,10 +30,9 @@
     NSMutableDictionary *packet = [[NSMutableDictionary alloc] init];
     [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
                forKey:@"sessionId"];
-    [packet setObject:sessionState.userPublicKeyPEM
-               forKey:@"userPublicKey"];
-    [packet setObject:sessionState.publicId
-               forKey:@"publicId"];
+    packet[@"userPublicKey"] = sessionState.userPublicKeyPEM;
+    packet[@"publicId"] = sessionState.publicId;
+
     return packet;
 
 }

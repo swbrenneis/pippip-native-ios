@@ -11,24 +11,25 @@
 @interface ConversationDelegate : NSObject
 
 @property (nonatomic) NSUInteger count;
+@property (readonly, nonatomic) NSString *publicId;
 
-- (instancetype)initWithMessages:(NSArray*)messages;
+- (instancetype)initWithPublicId:(NSString*)publicId;
 
-- (void)acknowledgeMessage:(NSDictionary*)triplet;
+- (void)acknowledgeMessage:(NSInteger)messageId;
 
 - (void)addMessage:(NSMutableDictionary*)message;
 
-- (NSArray*)allMessages;
+- (NSArray*)allMessageIds;
 
 - (void)deleteAllMessages;
 
-- (void)deleteMessage:(NSDictionary*)triplet;
+- (void)deleteMessage:(NSInteger)messageId;
 
-- (NSDictionary*)getIndexedMessage:(NSUInteger)index;
+- (NSMutableDictionary*)getMessage:(NSInteger)messageId;
 
-- (NSInteger)markMessageRead:(NSDictionary*)triplet;
+- (void)markMessageRead:(NSInteger)messageId;
 
-- (NSInteger)messageExists:(NSDictionary*)triplet;
+//- (NSInteger)messageExists:(NSDictionary*)triplet;
 
 //- (NSArray*)pendingMessages;
 

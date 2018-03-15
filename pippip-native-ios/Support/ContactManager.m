@@ -67,20 +67,6 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     
 }
 
-- (void)createNickname:(NSString *)nickname withOldNickname:(NSString *)oldNickname {
-    
-    NSMutableDictionary *request = [NSMutableDictionary dictionary];
-    request[@"method"] = @"SetNickname";
-    if (nickname != nil) {
-        request[@"newNickname"] = nickname;
-    }
-    if (oldNickname != nil) {
-        request[@"oldNickname"] = oldNickname;
-    }
-    [self sendRequest:request];
-    
-}
-
 - (void)deleteContact:(NSString *)publicId {
 
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
@@ -291,6 +277,26 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
         }
         [contactDatabase updateContact:update];
     }
+    
+}
+
+- (void)updateNickname:(NSString *)nickname withOldNickname:(NSString *)oldNickname {
+    
+    NSMutableDictionary *request = [NSMutableDictionary dictionary];
+    request[@"method"] = @"SetNickname";
+    if (nickname != nil) {
+        request[@"newNickname"] = nickname;
+    }
+    else {
+        request[@"newNickname"] = @"";
+    }
+    if (oldNickname != nil) {
+        request[@"oldNickname"] = oldNickname;
+    }
+    else {
+        request[@"oldNickname"] = @"";
+    }
+    [self sendRequest:request];
     
 }
 

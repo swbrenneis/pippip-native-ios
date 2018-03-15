@@ -18,6 +18,7 @@
 {
     NSMutableDictionary<NSString*, MutableConversation*> *conversations;
     MessagesDatabase *messageDatabase;
+    ContactDatabase *contactDatabase;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -31,6 +32,7 @@
 
     conversations = [NSMutableDictionary dictionary];
     messageDatabase = [[MessagesDatabase alloc] init];
+    contactDatabase = [[ContactDatabase alloc] init];
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
     
@@ -41,47 +43,33 @@
 - (void)acknowledgeMessage:(NSDictionary *)message {
 
     MutableConversation *conversation = [self getMutableConversation:message[@"publicId"]];
-    NSInteger messageId = [conversation messageExists:message];
-    if (messageId != NSNotFound) {
-        [conversation acknowledgeMessage:message];
-        [messageDatabase acknowledgeMessage:messageId];
-    }
-    else {
-        NSLog(@"ConversationCache.acknowledgeMessage - Message not found in conversation");
-    }
+    NSInteger messageId = [message[@"messageId"] integerValue];
+    [conversation acknowledgeMessage:messageId];
+    [messageDatabase acknowledgeMessage:messageId];
 
 }
 
-// Filters duplicates, marries the cached message to its ID.
+// Marries the cached message to its ID.
 - (void)addMessage:(NSMutableDictionary*)message {
 
     MutableConversation *conversation = [self getMutableConversation:message[@"publicId"]];
-    NSInteger messageId = [conversation messageExists:message];
-    if (messageId == NSNotFound) {
-        messageId = [messageDatabase addMessage:message];
-        message[@"messageId"] = [NSNumber numberWithInteger:messageId];
-        [conversation addMessage:message];
-    }
+    NSInteger messageId = [messageDatabase addMessage:message];
+    message[@"messageId"] = [NSNumber numberWithInteger:messageId];
+    [conversation addMessage:message];
 
 }
 
-// Filters duplicates, marries the cached message to its ID.
-- (void)addMessages:(NSArray*)messages {
+// Marries the cached message to its ID.
+- (void)addNewMessages:(NSArray*)messages {
 
     NSDictionary *first = [messages firstObject];
     NSString *publicId = first[@"fromId"];
-    MutableConversation *conversation = [self getMutableConversation:publicId];
     for (NSDictionary *msg in messages) {
         NSMutableDictionary *message = [msg mutableCopy];
         message[@"publicId"] = publicId;
-        NSInteger messageId = [conversation messageExists:message];
-        if (messageId == NSNotFound) {
-            messageId = [messageDatabase addMessage:message];
-            message[@"cleartext"] = [messageDatabase decryptMessage:message];
-            message[@"sent"] = @NO;
-            message[@"messageId"] = [NSNumber numberWithInteger:messageId];
-            [conversation addMessage:message];
-        }
+        message[@"cleartext"] = [messageDatabase decryptMessage:message];
+        message[@"sent"] = @NO;
+        [self addMessage:message];
     }
 
 }
@@ -109,10 +97,10 @@
                                               return NSOrderedSame;
                                           }
                                           else if (time1 > time2) {
-                                              return NSOrderedDescending;
+                                              return NSOrderedAscending;
                                           }
                                           else {
-                                              return NSOrderedAscending;
+                                              return NSOrderedDescending;
                                           }
                                       }];
         [messageList insertObject:message atIndex:index];
@@ -128,11 +116,11 @@
 
 }
 
-- (void)deleteMessage:(NSDictionary*)message {
+- (void)deleteMessage:(NSInteger)messageId withPublicId:(NSString *)publicId {
 
-    [messageDatabase deleteMessage:[message[@"messageId"] integerValue]];
-    MutableConversation *conversation = [self getMutableConversation:message[@"publicId"]];
-    [conversation deleteMessage:message];
+    [messageDatabase deleteMessage:messageId];
+    MutableConversation *conversation = [self getMutableConversation:publicId];
+    [conversation deleteMessage:messageId];
 
 }
 
@@ -145,27 +133,26 @@
 - (MutableConversation*)getMutableConversation:(NSString*)publicId {
     
     MutableConversation *conversation = conversations[publicId];
-    if (conversation == nil) {  // Not in the cache, get it from the database
-        // This might return an empty array.
-        NSArray *messages = [messageDatabase loadConversation:publicId];
-        conversation = [[MutableConversation alloc] initWithMessages:messages];
+    if (conversation == nil) {
+        conversation = [[MutableConversation alloc] initWithPublicId:publicId];
         conversations[publicId] = conversation;
     }
     return conversation;
 
 }
 
-- (void)markMessagesRead:(NSString *)publicId {
+- (void)markMessageRead:(NSDictionary*)message {
 
-    MutableConversation *conversation = [self getMutableConversation:publicId];
-    NSArray *messages = [conversation allMessages];
-    for (NSMutableDictionary *message in messages) {
-        if (![message[@"read"] boolValue]) {
-            NSInteger messageId = [conversation markMessageRead:message];
-            if (messageId != NSNotFound) {
-                [messageDatabase markMessageRead:messageId];
-            }
-        }
+    BOOL read = [message[@"read"] boolValue];
+    if (!read) {
+        MutableConversation *conversation = [self getMutableConversation:message[@"publicId"]];
+        NSInteger messageId = [message[@"messageId"] integerValue];
+        [conversation markMessageRead:messageId];
+        [messageDatabase markMessageRead:messageId];
+        NSMutableDictionary *contact = [contactDatabase getContact:message[@"publicId"]];
+        NSInteger timestamp = [[NSDate date] timeIntervalSince1970];
+        contact[@"timestamp"] = [NSNumber numberWithInteger:timestamp];
+        [contactDatabase updateContact:contact];
     }
 
 }
@@ -189,6 +176,12 @@
 
     _sessionState = (SessionState*)notification.object;
     [conversations removeAllObjects];
+
+}
+
+- (NSArray*)unreadMessageIds:(NSString *)publicId {
+
+    return [messageDatabase unreadMessageIds:publicId];
 
 }
 

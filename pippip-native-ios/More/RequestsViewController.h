@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ResponseConsumer.h"
+#import "MoreTableViewController.h"
 
 @interface RequestsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, ResponseConsumer>
 

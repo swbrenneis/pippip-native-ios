@@ -21,7 +21,9 @@
 
 - (void)deleteMessage:(NSInteger)messageId;
 
-- (NSArray*)loadConversation:(NSString*)publicId;
+- (NSMutableDictionary*)loadMessage:(NSInteger)messageId withPublicId:(NSString*)publicId;
+
+- (NSArray*)loadMessageIds:(NSString*)publicId;
 
 - (void)markMessageRead:(NSInteger)messageId;
 
@@ -30,5 +32,7 @@
 - (NSArray*)pendingMessages;
 
 - (void)scrubCleartext;
+
+- (NSArray*)unreadMessageIds:(NSString*)publicId;
 
 @end

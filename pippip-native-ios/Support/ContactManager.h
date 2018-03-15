@@ -18,8 +18,6 @@
 
 - (void)addFriend:(NSString*)publicId;
 
-- (void)createNickname:(NSString*)nickname withOldNickname:(NSString*)oldNickname;
-
 - (void)deleteContact:(NSString*)publicId;
 
 - (void)deleteFriend:(NSString*)publicId;
@@ -41,6 +39,8 @@
 - (void)syncContacts;
 
 - (void)updateContact:(NSDictionary*)contact;
+
+- (void)updateNickname:(NSString*)nickname withOldNickname:(NSString*)oldNickname;
 
 - (NSUInteger)updatePendingContacts;
 

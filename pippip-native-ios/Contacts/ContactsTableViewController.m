@@ -39,24 +39,44 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 
+    contactManager = [[ContactManager alloc] init];
+    [contactManager setResponseConsumer:self];
+    contactDatabase = [[ContactDatabase alloc] init];
+
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact List Error"];
 
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    contactManager = [[ContactManager alloc] init];
-    [contactManager setResponseConsumer:self];
-    contactDatabase = [[ContactDatabase alloc] init];
     contactList = [contactDatabase getContactList];
 
     [self.tableView reloadData];
-    
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(contactsUpdated:)
+                                                 name:@"ContactsUpdated" object:nil];
+
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"ContactsUpdated" object:nil];
+
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)contactsUpdated:(NSNotification*)notification {
+
+    contactList = [contactDatabase getContactList];
+    dispatch_async(dispatch_get_main_queue(), ^ {
+        [self.tableView reloadData];
+    });
+
 }
 
 - (void)response:(NSDictionary *)info {
@@ -95,15 +115,6 @@
 - (IBAction)syncContacts:(id)sender {
 
     [contactManager syncContacts];
-
-}
-
-- (IBAction)unwindAfterRequestAdded:(UIStoryboardSegue*)segue {
-
-    AddContactViewController *view = (AddContactViewController*)segue.sourceViewController;
-    [contactDatabase addContact:view.addedContact];
-    contactList = [contactDatabase getContactList];
-    [self.tableView reloadData];
 
 }
 

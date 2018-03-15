@@ -16,16 +16,18 @@
 
 - (void)addMessage:(NSMutableDictionary*)message;
 
-- (void)addMessages:(NSArray*)messages;
+- (void)addNewMessages:(NSArray*)messages;
 
 - (void)deleteAllMessages:(NSString*)publicId;
 
-- (void)deleteMessage:(NSDictionary*)message;
+- (void)deleteMessage:(NSInteger)messageId withPublicId:(NSString*)publicId;
 
 - (Conversation*)getConversation:(NSString*)publicId;
 
-- (void)markMessagesRead:(NSString*)publicId;
+- (void)markMessageRead:(NSDictionary*)message;
 
 - (NSArray*)mostRecentMessages;
+
+- (NSArray*)unreadMessageIds:(NSString*)publicId;
 
 @end

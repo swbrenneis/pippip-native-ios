@@ -103,7 +103,7 @@
     if (sentMessage != nil) {
         sentMessage[@"timestamp"] = [NSNumber numberWithInteger:timestamp];
         sentMessage[@"acknowledged"] = @YES;
-        sentMessage[@"read"] = @YES;
+        sentMessage[@"read"] = @NO;
         sentMessage[@"publicId"] = sentMessage[@"toId"];
         NSDictionary *contact = [contactDatabase getContact:sentMessage[@"toId"]];
         sentMessage[@"contactId"] = contact[@"contactId"];
