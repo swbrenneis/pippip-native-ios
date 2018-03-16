@@ -17,6 +17,4 @@
 
 - (void)messagesCleared;
 
-- (void)messagesUpdated;
-
 @end

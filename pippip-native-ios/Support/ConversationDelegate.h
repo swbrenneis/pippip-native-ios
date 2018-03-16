@@ -29,8 +29,6 @@
 
 - (void)markMessageRead:(NSInteger)messageId;
 
-//- (NSInteger)messageExists:(NSDictionary*)triplet;
-
-//- (NSArray*)pendingMessages;
+- (NSArray*)latestMessageIds:(NSInteger)count;
 
 @end

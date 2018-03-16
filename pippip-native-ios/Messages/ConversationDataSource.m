@@ -46,7 +46,16 @@
     conversation = [_conversationCache getConversation:publicId];
     messageIds = [[conversation allMessageIds] mutableCopy];
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messagesUpdated:)
+                                                 name:@"MessagesUpdated" object:nil];
+
     return self;
+
+}
+
+- (void)dealloc {
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"MessagesUpdated" object:nil];
 
 }
 
@@ -56,21 +65,23 @@
 
 }
 
-- (void)messagesUpdated {
+- (void)messagesUpdated:(NSNotification*)notification {
 
-    NSInteger index = messageIds.count - 1;
-    [messageIds addObjectsFromArray:[_conversationCache unreadMessageIds:publicId]];
+    NSDictionary *messageCount = notification.userInfo;
+    NSInteger newMessageCount = [messageCount[@"count"] integerValue];
+    NSInteger currentIndex = messageIds.count;
+    [messageIds addObjectsFromArray:[_conversationCache getLatestMessageIds:newMessageCount withPublicId:publicId]];
+
     NSMutableArray *paths = [NSMutableArray array];
-    while (index < messageIds.count - 1) {
+    for (NSInteger index = currentIndex; index < messageIds.count; index++) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:0];
         [paths addObject:indexPath];
-        index++;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         [_conversationTableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationBottom];
-        //[_conversationTableView scrollToRowAtIndexPath:[paths lastObject]
-        //                              atScrollPosition:UITableViewScrollPositionBottom
-        //                                      animated:YES];
+        [_conversationTableView scrollToRowAtIndexPath:[paths lastObject]
+                                      atScrollPosition:UITableViewScrollPositionBottom
+                                              animated:YES];
     });
     
 }

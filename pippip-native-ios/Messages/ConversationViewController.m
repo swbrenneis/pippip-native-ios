@@ -88,9 +88,6 @@
                                              selector:@selector(keyboardDidHide:)
                                                  name:UIKeyboardDidHideNotification
                                                object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(newMessagesReceived:)
-                                                 name:@"NewMessagesReceived" object:nil];
 
 }
 
@@ -98,7 +95,6 @@
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NewMessagesReceived" object:nil];
 
 }
 
@@ -130,22 +126,6 @@
 
 }
 
-- (void)newMessagesReceived:(NSNotification*)notification {
-
-    // Do this here because the data source doesn't get notified when the view disappears.
-    [dataSource messagesUpdated];
-/*    [_conversationTableView reloadData];
-    CGSize contentSize = _conversationTableView.contentSize;
-    CGSize viewSize = _conversationTableView.bounds.size;
-    if (contentSize.height > viewSize.height) {
-        CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_conversationTableView setContentOffset:newOffset animated:YES];
-        });
-    } */
-
-}
-
 - (void)response:(NSDictionary *)info {
 
     BOOL success = NO;
@@ -159,7 +139,10 @@
             [messageManager messageSent:publicId
                            withSequence:[sq integerValue]
                           withTimestamp:[ts integerValue]];
-            [dataSource messagesUpdated];
+
+            NSMutableDictionary *messageCount = [NSMutableDictionary dictionary];
+            messageCount[@"count"] = [NSNumber numberWithUnsignedInteger:1];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"MessagesUpdated" object:nil userInfo:messageCount];
 
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_sendFailedLabel setHidden:success];

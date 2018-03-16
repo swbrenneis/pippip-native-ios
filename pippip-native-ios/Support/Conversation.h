@@ -20,6 +20,6 @@
 
 - (NSMutableDictionary*)getMessage:(NSUInteger)messageId;
 
-//- (NSInteger)messageExists:(NSDictionary*)triplet;
+- (NSArray*)latestMessageIds:(NSInteger)count;
 
 @end

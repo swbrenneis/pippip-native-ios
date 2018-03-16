@@ -68,9 +68,6 @@
                                              selector:@selector(keyboardDidHide:)
                                                  name:UIKeyboardDidHideNotification
                                                object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(newMessagesReceived:)
-                                                 name:@"NewMessagesReceived" object:nil];
     contactSelected = NO;
 
 }
@@ -78,20 +75,12 @@
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NewMessagesReceived" object:nil];
 
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)newMessagesReceived:(NSNotification*)notification {
-
-    [convSource messagesUpdated];
-    [self.tableView reloadData];
-
 }
 
 - (IBAction)sendMessage:(UIButton *)sender {
@@ -135,8 +124,10 @@
             [messageManager messageSent:publicId
                            withSequence:[sq integerValue]
                           withTimestamp:[ts integerValue]];
-            [convSource messagesUpdated];
 
+            NSMutableDictionary *messageCount = [NSMutableDictionary dictionary];
+            messageCount[@"count"] = [NSNumber numberWithInteger:1];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"MessagesUpdated" object:nil userInfo:messageCount];
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_sendFailedLabel setHidden:success];
                 if (success) {

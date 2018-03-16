@@ -27,17 +27,7 @@
     return self;
     
 }
-/*
-- (instancetype)initWithMessageIds:(NSArray *)messages {
-    self = [super init];
-    
-    theDelegate = [[ConversationDelegate alloc] initWithMessageIds:messages];
-    _delegate = theDelegate;
-    
-    return self;
-    
-}
-*/
+
 - (NSArray*)allMessageIds {
     return [theDelegate allMessageIds];
 }
@@ -48,6 +38,10 @@
 
 - (NSMutableDictionary*)getMessage:(NSUInteger)messageId {
     return [theDelegate getMessage:messageId];
+}
+
+- (NSArray*)latestMessageIds:(NSInteger)count {
+    return [theDelegate latestMessageIds:count];
 }
 
 @end

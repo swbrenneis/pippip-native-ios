@@ -102,7 +102,9 @@
 
 - (void)conversationLoaded:(NSNotification*)notification {
 
-    [MBProgressHUD hideHUDForView:self.view animated:YES];
+    if (![[ApplicationSingleton instance].config getCleartextMessages]) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    }
 
 }
 
@@ -184,9 +186,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.mode = MBProgressHUDModeIndeterminate;
-    hud.label.text = @"Decrypting messages";
+    if (![[ApplicationSingleton instance].config getCleartextMessages]) {
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.mode = MBProgressHUDModeIndeterminate;
+        hud.label.text = @"Decrypting messages";
+    }
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         dispatch_async(dispatch_get_main_queue(), ^{
             [self performSegueWithIdentifier:@"ConversationSegue" sender:self];

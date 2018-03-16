@@ -31,20 +31,7 @@
     return self;
 
 }
-/*
-- (instancetype)initWithMessageIds:(NSArray*)messages {
-    self = [super init];
-    
-    conversation = [NSMutableDictionary dictionary];
-    for (NSMutableDictionary *message in messages) {
-        conversation[message[@"messageId"]] = message;
-    }
-    _count = conversation.count;
-    
-    return self;
-    
-}
-*/
+
 - (void)acknowledgeMessage:(NSInteger)messageId {
     
     NSMutableDictionary *message = conversation[[NSNumber numberWithInteger:messageId]];
@@ -133,68 +120,23 @@
     return message;
     
 }
-/*
-- (NSString*)getMessageHash:(NSDictionary*)triplet {
-    
-    NSString *publicId = triplet[@"publicId"];
-    NSNumber *sq = triplet[@"sequence"];
-    NSInteger sequence = [sq integerValue];
-    NSNumber *ts = triplet[@"timestamp"];
-    NSInteger timestamp = [ts integerValue];
-    
-    CKSHA1 *sha1 = [[CKSHA1 alloc] init];
-    [sha1 update:[publicId dataUsingEncoding:NSUTF8StringEncoding]];
-    [sha1 update:[NSData dataWithBytes:&sequence length:sizeof(NSInteger)]];
-    [sha1 update:[NSData dataWithBytes:&timestamp length:sizeof(NSInteger)]];
-    return [[sha1 digest] base64EncodedStringWithOptions:0];
-    
-}
-*/
+
 - (void)markMessageRead:(NSInteger)messageId {
     
     NSMutableDictionary *message = conversation[[NSNumber numberWithInteger:messageId]];
     message[@"read"] = @YES;
     
 }
-/*
-- (NSInteger)messageExists:(NSDictionary *)triplet {
-    
-    NSString *hash = [self getMessageHash:triplet];
-    NSDictionary *message = conversation[hash];
-    if (message != nil) {
-        return [message[@"messageId"] integerValue];
+
+- (NSArray*)latestMessageIds:(NSInteger)count {
+
+    NSMutableArray *latest = [NSMutableArray array];
+    NSArray *ids = [messageDatabase loadMessageIds:_publicId];
+    for (NSInteger index = ids.count - count; latest.count < count; index++) {
+        [latest addObject:ids[index]];
     }
-    else {
-        return NSNotFound;
-    }
-    
+    return latest;
+
 }
 
-- (NSArray*)pendingMessages {
-    
-    if (messageList.count == 0) {
-        [self sortMessages];
-    }
-    NSMutableArray *pending = [NSMutableArray array];
-    for (NSDictionary *message in messageList) {
-        NSNumber *ack = message[@"acknowledged"];
-        if (![ack boolValue]) {
-            [pending addObject:message];
-        }
-    }
-    return pending;
-    
-}
-
-- (void)sortMessages {
-    
-    [messageList removeAllObjects];
-    if (conversation.count > 0) {
-        for (NSString *hash in conversation) {
-            [self addMessageSorted:conversation[hash]];
-        }
-    }
-    
-}
-*/
 @end

@@ -134,8 +134,10 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
         if (newMessageCount > 0) {
             [_conversationCache addNewMessages:messages];
             dispatch_async(dispatch_get_main_queue(), ^{
+                NSMutableDictionary *messageCount = [NSMutableDictionary dictionary];
+                messageCount[@"count"] = [NSNumber numberWithInteger:newMessageCount];
                 [[NSNotificationCenter defaultCenter]
-                    postNotification:[NSNotification notificationWithName:@"NewMessagesReceived" object:nil]];
+                 postNotificationName:@"MessagesUpdated" object:nil userInfo:messageCount];
             });
         }
         else {
@@ -166,9 +168,11 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
                 break;
             case CONTACTS:
                 [self contactsUpdated:info];
+#if TARGET_OS_SIMULATOR
                 if (sessionActive) {
                     [self updateMessages];
                 }
+#endif
                 break;
             case MESSAGES:
                 [self messagesUpdated:info];
@@ -188,19 +192,11 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     NSDate *resumeTime = [NSDate date];
     if ([resumeTime timeIntervalSinceDate:suspendTime] < 180) {     // 30 minutes
         sessionActive = YES;
-        /*
-        [NSThread detachNewThreadWithBlock:^{
-            while (sessionActive) {
-                [NSThread sleepForTimeInterval:2.0];
-                [self updateContacts];
-            }
-        }];
         dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
+            [NSTimer scheduledTimerWithTimeInterval:30.0 repeats:NO block:^(NSTimer *timer) {
                 [self updateContacts];
             }];
         });
-         */
     }
 
 }
@@ -225,16 +221,19 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
         }
     });
 
-/*
-    if (_simulator) {
-        [NSThread detachNewThreadWithBlock:^{
-            while (sessionActive) {
-                [NSThread sleepForTimeInterval:2.0];
-                [self updateContacts];
-            }
-        }];
-    }
-*/
+#if TARGET_OS_SIMULATOR
+    float interval = 2.0;
+#else
+    float interval = 30.0;
+#endif
+    [self updateContacts];
+    [NSThread detachNewThreadWithBlock:^{
+        while (sessionActive) {
+            [NSThread sleepForTimeInterval:interval];
+            [self updateContacts];
+        }
+    }];
+
 }
 
 - (void)suspend {
@@ -248,10 +247,14 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
     if (sessionActive) {
         updateType = CONTACTS;
+#if TARGET_OS_SIMULATOR
         if ([contactManager updatePendingContacts] == 0) {
             // No contacts updated, go directly to update messages.
             [self updateMessages];
         }
+#else
+        [contactManager updatePendingContacts];
+#endif
     }
 
 }

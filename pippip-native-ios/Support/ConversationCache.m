@@ -130,6 +130,13 @@
 
 }
 
+- (NSArray*)getLatestMessageIds:(NSInteger)count withPublicId:(NSString*)publicId {
+
+    Conversation *conversation = [self getConversation:publicId];
+    return [conversation latestMessageIds:count];
+
+}
+
 - (MutableConversation*)getMutableConversation:(NSString*)publicId {
     
     MutableConversation *conversation = conversations[publicId];

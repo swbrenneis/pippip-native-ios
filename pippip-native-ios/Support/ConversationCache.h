@@ -24,6 +24,8 @@
 
 - (Conversation*)getConversation:(NSString*)publicId;
 
+- (NSArray*)getLatestMessageIds:(NSInteger)count withPublicId:(NSString*)publicId;
+
 - (void)markMessageRead:(NSDictionary*)message;
 
 - (NSArray*)mostRecentMessages;
