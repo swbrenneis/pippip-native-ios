@@ -8,13 +8,16 @@
 
 #import "CleartextMessageCell.h"
 #import "ApplicationSingleton.h"
+#import "MBProgressHUD.h"
+#import "MessagesDatabase.h"
 
 @interface CleartextMessageCell ()
 {
-    MoreTableViewController *viewController;
+
 }
 
 @property (weak, nonatomic) IBOutlet UISwitch *cleartextMessagesSwitch;
+@property (weak, nonatomic) MoreTableViewController *viewController;
 
 @end
 
@@ -37,7 +40,15 @@
 - (IBAction)cleartextSelected:(UISwitch *)sender {
 
     if (sender.on) {
-        [[ApplicationSingleton instance].config setCleartextMessages:NO];
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:_viewController.view animated:YES];
+        hud.mode = MBProgressHUDModeIndeterminate;
+        hud.label.text = @"Scrubbing messages";
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[ApplicationSingleton instance].config setCleartextMessages:NO];
+            MessagesDatabase *messageDatabase = [[MessagesDatabase alloc] init];
+            [messageDatabase scrubCleartext];
+            [MBProgressHUD hideHUDForView:_viewController.view animated:YES];
+        });
     }
     else {
         NSString *cleartextMessage = @"Disabling extra message security will result in a performance increase but your messages could potentially be read if your device is lost or stolen. Do you want to continue?";
@@ -47,20 +58,28 @@
         UIAlertAction *yesAction = [UIAlertAction actionWithTitle:@"Yes"
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction *action) {
-                                                              [[ApplicationSingleton instance].config setCleartextMessages:YES];
+                                                              MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:_viewController.view animated:YES];
+                                                              hud.mode = MBProgressHUDModeIndeterminate;
+                                                              hud.label.text = @"Decrypting messages";
+                                                              dispatch_async(dispatch_get_main_queue(), ^{
+                                                                  [[ApplicationSingleton instance].config setCleartextMessages:YES];
+                                                                  MessagesDatabase *messageDatabase = [[MessagesDatabase alloc] init];
+                                                                  [messageDatabase decryptAll];
+                                                                  [MBProgressHUD hideHUDForView:_viewController.view animated:YES];
+                                                              });
                                                           }];
         UIAlertAction *noAction = [UIAlertAction actionWithTitle:@"No"
                                                            style:UIAlertActionStyleCancel
                                                          handler:nil];
         [alert addAction:yesAction];
         [alert addAction:noAction];
-        [viewController presentViewController:alert animated:YES completion:nil];
+        [_viewController presentViewController:alert animated:YES completion:nil];
     }
 
 }
 
 - (void)setViewController:(MoreTableViewController *)view {
-    viewController = view;
+    _viewController = view;
 }
 
 @end

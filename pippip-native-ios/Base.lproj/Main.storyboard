@@ -52,8 +52,8 @@
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="v1.0.2 403032018" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Af-Fx-X0y">
-                                <rect key="frame" x="137" y="612.5" width="102" height="14.5"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="v1.0.2 416032018" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Af-Fx-X0y">
+                                <rect key="frame" x="138" y="612.5" width="100" height="14.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -460,7 +460,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kev-9s-ljc">
-                                            <rect key="frame" x="261.5" y="6.5" width="51" height="31"/>
+                                            <rect key="frame" x="281.5" y="6.5" width="51" height="31"/>
                                             <connections>
                                                 <action selector="policyChanged:" destination="hBl-IB-K85" eventType="valueChanged" id="K42-zF-73c"/>
                                             </connections>
@@ -468,7 +468,7 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="3Jh-Ap-dvX" firstAttribute="centerY" secondItem="gcq-6I-BVn" secondAttribute="centerY" id="7CU-3H-tMp"/>
-                                        <constraint firstItem="Kev-9s-ljc" firstAttribute="leading" secondItem="3Jh-Ap-dvX" secondAttribute="trailing" constant="40" id="DaB-Pq-zyZ"/>
+                                        <constraint firstItem="Kev-9s-ljc" firstAttribute="leading" secondItem="3Jh-Ap-dvX" secondAttribute="trailing" constant="60" id="DaB-Pq-zyZ"/>
                                         <constraint firstItem="3Jh-Ap-dvX" firstAttribute="leading" secondItem="gcq-6I-BVn" secondAttribute="leadingMargin" id="Ie0-HU-8lb"/>
                                         <constraint firstItem="Kev-9s-ljc" firstAttribute="centerY" secondItem="gcq-6I-BVn" secondAttribute="centerY" id="iy3-If-duw"/>
                                     </constraints>
@@ -555,6 +555,37 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="publicIdLabel" destination="X3X-bJ-vNt" id="Dew-es-3xo"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="CleartextMessagesCell" id="Rb4-LB-fus" customClass="CleartextMessageCell">
+                                <rect key="frame" x="0.0" y="238.5" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Rb4-LB-fus" id="sZ4-7A-ewW">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Extra message security" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LJ6-6A-ouu">
+                                            <rect key="frame" x="16" y="12" width="178" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j9h-ww-ZCo">
+                                            <rect key="frame" x="282" y="6" width="51" height="31"/>
+                                            <connections>
+                                                <action selector="cleartextSelected:" destination="Rb4-LB-fus" eventType="valueChanged" id="jHO-92-o0L"/>
+                                            </connections>
+                                        </switch>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="j9h-ww-ZCo" firstAttribute="leading" secondItem="LJ6-6A-ouu" secondAttribute="trailing" constant="88" id="CCi-fg-H2T"/>
+                                        <constraint firstItem="LJ6-6A-ouu" firstAttribute="centerY" secondItem="sZ4-7A-ewW" secondAttribute="centerY" id="eyR-0b-VZE"/>
+                                        <constraint firstItem="j9h-ww-ZCo" firstAttribute="centerY" secondItem="sZ4-7A-ewW" secondAttribute="centerY" id="qno-fO-0JU"/>
+                                        <constraint firstItem="LJ6-6A-ouu" firstAttribute="leading" secondItem="sZ4-7A-ewW" secondAttribute="leadingMargin" id="wtE-ff-ZJP"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="cleartextMessagesSwitch" destination="j9h-ww-ZCo" id="HAx-z1-T6B"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

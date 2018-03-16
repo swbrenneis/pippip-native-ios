@@ -15,6 +15,8 @@
 
 - (NSInteger)addMessage:(NSDictionary*)message;
 
+- (void)decryptAll;
+
 - (NSString*)decryptMessage:(NSDictionary*)message;
 
 - (void)deleteAllMessages:(NSString*)publicId;

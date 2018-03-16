@@ -146,6 +146,19 @@ static const float CURRENT_VERSION = 1.0;
 
 }
 
+- (void)decryptAll {
+
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage allObjects];
+    for (DatabaseMessage *dbMessage in messages) {
+        NSDictionary *contact = [contactDatabase getContactById:dbMessage.contactId];
+        [realm beginWriteTransaction];
+        dbMessage.cleartext = [self decryptMessage:dbMessage withContact:contact];
+        [realm commitWriteTransaction];
+    }
+    
+}
+
 - (NSString*)decryptMessage:(NSDictionary *)message {
 
     NSDictionary *contact = [contactDatabase getContact:message[@"publicId"]];
@@ -160,7 +173,7 @@ static const float CURRENT_VERSION = 1.0;
     NSInteger keyIndex = [message[@"keyIndex"] integerValue];
     [codec decrypt:messageKeys[keyIndex] withAuthData:contact[@"authData"] withError:&error];
     if (error != nil) {
-        NSLog(@"Error decrypting message - %@", error);
+        NSLog(@"MessagesDatabase.decryptMessage GCM decryption error - %@", error.localizedDescription);
         return @"";
     }
     else {
@@ -228,9 +241,20 @@ static const float CURRENT_VERSION = 1.0;
     RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
                                               sortedResultsUsingKeyPath:@"timestamp" ascending:YES];
     if (messages.count > 0) {
-        return [self decodeMessage:[messages firstObject] withContact:contact];
+        DatabaseMessage *dbMessage = [messages firstObject];
+        if (dbMessage.message == nil) { // Clean it up.
+            RLMRealm *realm = [RLMRealm defaultRealm];
+            [realm beginWriteTransaction];
+            [realm deleteObject:dbMessage];
+            [realm commitWriteTransaction];
+            return nil;
+        }
+        else {
+            return [self decodeMessage:dbMessage withContact:contact];
+        }
     }
     else {
+        NSLog(@"Mesage with id %ld for contact with id %ld does not exist", messageId, contactId);
         return nil;
     }
 
@@ -313,6 +337,7 @@ static const float CURRENT_VERSION = 1.0;
         dbMessage.cleartext = nil;
         [realm commitWriteTransaction];
     }
+
 }
 
 - (NSArray*)unreadMessageIds:(NSString *)publicId {
