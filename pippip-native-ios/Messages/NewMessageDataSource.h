@@ -13,6 +13,8 @@
 
 - (instancetype)initWithTableView:(UITableView*)newMeaasgeTableView;
 
+- (void)messagesUpdated:(NSNotification*)notification;
+
 - (NSDictionary*)getSelectedContact;
 
 - (void)searchFieldChanged:(NSString*)partial;

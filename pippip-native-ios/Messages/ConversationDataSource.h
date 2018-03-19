@@ -17,4 +17,6 @@
 
 - (void)messagesCleared;
 
+- (void)messagesUpdated:(NSNotification*)notification;
+
 @end

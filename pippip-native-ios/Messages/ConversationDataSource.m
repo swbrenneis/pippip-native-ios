@@ -46,16 +46,7 @@
     conversation = [_conversationCache getConversation:publicId];
     messageIds = [[conversation allMessageIds] mutableCopy];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messagesUpdated:)
-                                                 name:@"MessagesUpdated" object:nil];
-
     return self;
-
-}
-
-- (void)dealloc {
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"MessagesUpdated" object:nil];
 
 }
 

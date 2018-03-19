@@ -78,6 +78,10 @@
                                              selector:@selector(recipientSelected:)
                                                  name:@"RecipientSelected"
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:dataSource
+                                             selector:@selector(messagesUpdated:)
+                                                 name:@"MessagesUpdated"
+                                               object:nil];
 
 }
 
@@ -86,6 +90,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"RecipientSelected" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:dataSource name:@"MessagesUpdated" object:nil];
 
 }
 

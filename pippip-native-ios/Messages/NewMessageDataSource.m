@@ -44,14 +44,8 @@
     contactManager = [[ContactManager alloc] init];
     lastPartialLength = 0;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messagesUpdated:)
-                                                 name:@"MessagesUpdated" object:nil];
     return self;
 
-}
-
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"MessagesUpdated" object:nil];
 }
 
 - (NSDictionary*)getSelectedContact {

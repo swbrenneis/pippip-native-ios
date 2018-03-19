@@ -72,8 +72,8 @@
                                            selector:@selector(newSession:)
                                                name:@"NewSession" object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(newMessagesReceived:)
-                                               name:@"NewMessagesReceived" object:nil];
+                                           selector:@selector(MessagesUpdated:)
+                                               name:@"MessagesUpdated" object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(conversationLoaded:)
                                                name:@"ConversationLoaded" object:nil];
@@ -83,7 +83,7 @@
 - (void)viewWillDisappear:(BOOL)animated {
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NewSession" object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NewMessagesReceived" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"MessagesUpdated" object:nil];
 
 }
 
@@ -124,7 +124,7 @@
 
 }
 
-- (void)newMessagesReceived:(NSNotification*)notification {
+- (void)MessagesUpdated:(NSNotification*)notification {
 
     mostRecent = [_conversationCache mostRecentMessages];
     dispatch_async(dispatch_get_main_queue(), ^{

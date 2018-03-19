@@ -89,12 +89,18 @@
                                                  name:UIKeyboardDidHideNotification
                                                object:nil];
 
+    [[NSNotificationCenter defaultCenter] addObserver:dataSource
+                                             selector:@selector(messagesUpdated:)
+                                                 name:@"MessagesUpdated"
+                                               object:nil];
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:dataSource name:@"MessagesUpdated" object:nil];
 
 }
 
