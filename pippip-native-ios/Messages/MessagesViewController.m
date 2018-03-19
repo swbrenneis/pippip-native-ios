@@ -51,10 +51,6 @@
                                            selector:@selector(newSession:)
                                                name:@"NewSession" object:nil];
     
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(newMessagesReceived:)
-                                               name:@"NewMessagesReeived" object:nil];
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
