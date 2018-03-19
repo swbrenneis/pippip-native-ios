@@ -22,11 +22,9 @@
 
 - (void)deleteFriend:(NSString*)publicId;
 
-- (void)getNickname:(NSString*)publicId;
-
 - (void)getRequests;
 
-- (void)matchNickname:(NSString*)nickname;
+- (void)matchNickname:(NSString*)nickname withPublicId:(NSString*)publicId;
 
 - (void)requestContact:(NSString*)publicId;
 

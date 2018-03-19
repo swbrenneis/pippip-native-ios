@@ -1214,31 +1214,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="P4P-hx-puh">
-                                <rect key="frame" x="5" y="64" width="365" height="50"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Cf-4I-0jb">
-                                        <rect key="frame" x="0.0" y="0.0" width="23.5" height="50"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="clT-2q-Efy">
-                                        <rect key="frame" x="27.5" y="0.0" width="337.5" height="50"/>
-                                        <nil key="textColor"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                        <connections>
-                                            <action selector="searchDidChange:" destination="zue-dS-e4v" eventType="editingChanged" id="ihb-p4-E2B"/>
-                                        </connections>
-                                    </textField>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="VU2-VL-Fm9"/>
-                                </constraints>
-                            </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Cf-4I-0jb">
+                                <rect key="frame" x="15" y="79" width="23.5" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="dXR-sT-9me">
-                                <rect key="frame" x="0.0" y="114" width="375" height="513"/>
+                                <rect key="frame" x="0.0" y="109.5" width="375" height="517.5"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="NewMessageContactCell" textLabel="3YW-Yh-4Ef" detailTextLabel="KUD-0W-PmX" style="IBUITableViewCellStyleSubtitle" id="4vf-a0-bFV">
@@ -1322,9 +1305,6 @@
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                        <connections>
-                                            <action selector="messageStarted:" destination="zue-dS-e4v" eventType="editingDidBegin" id="6HK-Pl-CLN"/>
-                                        </connections>
                                     </textField>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LiF-yh-fuV">
                                         <rect key="frame" x="330" y="0.0" width="35" height="35"/>
@@ -1338,18 +1318,28 @@
                                     </button>
                                 </subviews>
                             </stackView>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="clT-2q-Efy">
+                                <rect key="frame" x="46.5" y="79" width="288.5" height="19"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="searchFieldChanged:" destination="zue-dS-e4v" eventType="editingChanged" id="9um-mr-g5d"/>
+                                </connections>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="dXR-sT-9me" firstAttribute="trailing" secondItem="JUE-Pn-Jyd" secondAttribute="trailing" id="7Fo-11-wMs"/>
                             <constraint firstItem="dXR-sT-9me" firstAttribute="leading" secondItem="JUE-Pn-Jyd" secondAttribute="leading" id="Azq-cc-uzE"/>
-                            <constraint firstItem="dXR-sT-9me" firstAttribute="top" secondItem="P4P-hx-puh" secondAttribute="bottom" id="Ctx-lA-2lm"/>
-                            <constraint firstItem="P4P-hx-puh" firstAttribute="top" secondItem="JUE-Pn-Jyd" secondAttribute="top" id="LMM-QX-Tex"/>
+                            <constraint firstItem="clT-2q-Efy" firstAttribute="leading" secondItem="4Cf-4I-0jb" secondAttribute="trailing" constant="8" id="Grm-KR-j54"/>
+                            <constraint firstItem="dXR-sT-9me" firstAttribute="top" secondItem="JUE-Pn-Jyd" secondAttribute="top" constant="45.5" id="JoW-Xi-flD"/>
+                            <constraint firstItem="JUE-Pn-Jyd" firstAttribute="trailing" secondItem="clT-2q-Efy" secondAttribute="trailing" constant="40" id="KnE-Qd-ViN"/>
+                            <constraint firstItem="4Cf-4I-0jb" firstAttribute="leading" secondItem="JUE-Pn-Jyd" secondAttribute="leading" constant="15" id="OTo-I8-KYM"/>
+                            <constraint firstItem="clT-2q-Efy" firstAttribute="top" secondItem="JUE-Pn-Jyd" secondAttribute="top" constant="15" id="SQV-x5-Ydv"/>
                             <constraint firstItem="JUE-Pn-Jyd" firstAttribute="trailing" secondItem="sP0-ki-pGD" secondAttribute="trailing" constant="5" id="aln-Wn-pjF"/>
-                            <constraint firstAttribute="trailing" secondItem="P4P-hx-puh" secondAttribute="trailing" constant="5" id="lgh-kX-ikb"/>
+                            <constraint firstItem="4Cf-4I-0jb" firstAttribute="top" secondItem="JUE-Pn-Jyd" secondAttribute="top" constant="15" id="b1X-IC-Xpm"/>
                             <constraint firstItem="sP0-ki-pGD" firstAttribute="top" secondItem="dXR-sT-9me" secondAttribute="bottom" id="oG9-jb-az8"/>
-                            <constraint firstItem="dXR-sT-9me" firstAttribute="top" secondItem="P4P-hx-puh" secondAttribute="bottom" id="qlF-fg-kXU"/>
-                            <constraint firstItem="P4P-hx-puh" firstAttribute="leading" secondItem="JUE-Pn-Jyd" secondAttribute="leading" constant="5" id="rNK-H9-GDc"/>
                             <constraint firstItem="JUE-Pn-Jyd" firstAttribute="bottom" secondItem="sP0-ki-pGD" secondAttribute="bottom" constant="5" id="xeL-bz-Jfy"/>
                             <constraint firstItem="sP0-ki-pGD" firstAttribute="leading" secondItem="JUE-Pn-Jyd" secondAttribute="leading" constant="5" id="ykL-YK-fex"/>
                         </constraints>
@@ -1359,17 +1349,18 @@
                     <connections>
                         <outlet property="messageText" destination="yyb-ve-rRy" id="G5a-9b-GQZ"/>
                         <outlet property="navItem" destination="WhG-Ze-m4R" id="Tq3-iG-6dm"/>
-                        <outlet property="searchStackView" destination="P4P-hx-puh" id="RT1-mt-jmC"/>
-                        <outlet property="searchText" destination="clT-2q-Efy" id="8ZF-xd-VIz"/>
+                        <outlet property="searchTextField" destination="clT-2q-Efy" id="YoT-Sq-8Y1"/>
                         <outlet property="sendFailedLabel" destination="bRd-ic-X6b" id="6hh-P1-pCv"/>
                         <outlet property="stackView" destination="sP0-ki-pGD" id="9PY-cl-rcZ"/>
                         <outlet property="stackViewBottom" destination="xeL-bz-Jfy" id="CbO-ie-fvg"/>
                         <outlet property="tableView" destination="dXR-sT-9me" id="cwt-If-vTN"/>
+                        <outlet property="tableViewTop" destination="JoW-Xi-flD" id="1GJ-BO-MIH"/>
+                        <outlet property="toLabel" destination="4Cf-4I-0jb" id="FtQ-YC-pYQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HRU-8L-p5p" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2628" y="-1382"/>
+            <point key="canvasLocation" x="2628" y="-1382.1589205397302"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="t6p-yp-DOv">

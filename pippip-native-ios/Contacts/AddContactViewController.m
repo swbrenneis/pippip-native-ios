@@ -104,7 +104,7 @@
 - (void)matchNicknameComplete:(NSDictionary*)response {
     
     NSString *result = response[@"result"];
-    if ([result isEqualToString:@"matched"]) {
+    if ([result isEqualToString:@"found"]) {
         action = @"RequestContact";
         publicId = response[@"publicId"];
         if (![publicId isEqualToString:myPublicId]) {
@@ -147,7 +147,7 @@
     [contactManager setResponseConsumer:self];
     if (nickname.length != 0) {
         action = @"MatchNickname";
-        [contactManager matchNickname:nickname];
+        [contactManager matchNickname:nickname withPublicId:nil];
     }
     else if (publicId.length != 0) {
         if (![publicId isEqualToString:myPublicId]) {

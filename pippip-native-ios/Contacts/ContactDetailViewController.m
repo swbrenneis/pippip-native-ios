@@ -90,8 +90,8 @@
     [_nicknameNotAvailableLabel setHidden:YES];
     [_nicknameSavedLabel setHidden:YES];
 
-    action = @"GetNickname";
-    [contactManager getNickname:_contact[@"publicId"]];
+    action = @"MatchNickname";
+    [contactManager matchNickname:nil withPublicId:_contact[@"publicId"]];
 
 }
 
@@ -155,11 +155,11 @@
 
 - (void)response:(NSDictionary *)info {
 
-    if ([action isEqualToString:@"GetNickname"]) {
-        NSString *nickname = info[@"nickname"];
+    if ([action isEqualToString:@"MatchNickname"]) {
+        NSString *result = info[@"result"];
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (nickname != nil) {
-                _nicknameTextField.text = nickname;
+            if ([result isEqualToString:@"found"]) {
+                _nicknameTextField.text = info[@"nickname"];
             }
             else {
                 [_nicknameNotAvailableLabel setHidden:NO];

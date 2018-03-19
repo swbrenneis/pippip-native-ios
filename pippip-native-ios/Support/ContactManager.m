@@ -21,6 +21,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 {
     ContactDatabase *contactDatabase;
     ContactRequest contactRequest;
+    NSArray *contactList;
 }
 
 //@property (weak, nonatomic) UIViewController *viewController;
@@ -89,8 +90,10 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 - (NSArray*)getContacts:(NSString *)status {
     
     NSMutableArray *filtered = [NSMutableArray array];
-    NSArray *indexed = [contactDatabase getContactList];
-    for (NSDictionary *contact in indexed) {
+    if (contactList == nil) {
+        contactList = [contactDatabase getContactList];
+    }
+    for (NSDictionary *contact in contactList) {
         NSString *currentStatus = contact[@"status"];
         if ([status isEqualToString:currentStatus]) {
             // Make the contact immutable
@@ -98,15 +101,6 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
         }
     }
     return filtered;
-    
-}
-
-- (void)getNickname:(NSString *)publicId {
-
-    NSMutableDictionary *request = [NSMutableDictionary dictionary];
-    request[@"method"] = @"GetNickname";
-    request[@"publicId"] = publicId;
-    [self sendRequest:request];
     
 }
 
@@ -129,11 +123,16 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     
 }
 
-- (void)matchNickname:(NSString *)nickname {
+- (void)matchNickname:(NSString *)nickname withPublicId:(NSString *)publicId{
     
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
     request[@"method"] = @"MatchNickname";
-    request[@"nickname"] = nickname;
+    if (nickname != nil) {
+        request[@"nickname"] = nickname;
+    }
+    if (publicId != nil) {
+        request[@"publicId"] = publicId;
+    }
     [self sendRequest:request];
     
 }
@@ -170,19 +169,23 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     
 }
 
+/*
+ * fragment should be upper case
+ */
 - (NSArray*)searchContacts:(NSString *)fragment {
 
-    NSString *search = [fragment uppercaseString];
     NSMutableArray *results = [NSMutableArray array];
-    NSArray *indexed = [contactDatabase getContactList];
-    for (NSDictionary *contact in indexed) {
-        NSString *nickname = contact[@"nickname"];
-        NSString *publicId = contact[@"publicId"];
-        if ([[publicId uppercaseString] containsString:search]) {
+    if (contactList == nil) {
+        contactList = [contactDatabase getContactList];
+    }
+    for (NSDictionary *contact in contactList) {
+        NSString *nickname = [contact[@"nickname"] uppercaseString];
+        NSString *publicId = [contact[@"publicId"] uppercaseString];
+        if ([publicId containsString:fragment]) {
             [results addObject:contact];
         }
         else if (nickname != nil) {
-            if ([[nickname uppercaseString] containsString:search]) {
+            if ([nickname containsString:fragment]) {
                 [results addObject:contact];
             }
         }

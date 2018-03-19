@@ -8,32 +8,36 @@
 
 #import "NewMessageViewController.h"
 #import "ConversationViewController.h"
-#import "ContactSearchDataSource.h"
-#import "ConversationDataSource.h"
+#import "NewMessageDataSource.h"
 #import "ApplicationSingleton.h"
 #import "MessageManager.h"
-#import "ContactManager.h"
+#import "ConversationCache.h"
+//#import "ContactManager.h"
 #import "AlertErrorDelegate.h"
 #import "MBProgressHUD.h"
 
 @interface NewMessageViewController ()
 {
-    ContactSearchDataSource *searchSource;
-    ConversationDataSource *convSource;
+    //ContactSearchDataSource *searchSource;
+    //ConversationDataSource *convSource;
     MessageManager *messageManager;
-    ContactManager *contactManager;
-    NSDictionary *contact;
-    BOOL contactSelected;
+    NewMessageDataSource *dataSource;
+    //ContactManager *contactManager;
+    //NSDictionary *contact;
+    //BOOL contactSelected;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet UITextField *searchText;
 @property (weak, nonatomic) IBOutlet UILabel *sendFailedLabel;
 @property (weak, nonatomic) IBOutlet UITextField *messageText;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *stackViewBottom;
 @property (weak, nonatomic) IBOutlet UIStackView *stackView;
-@property (weak, nonatomic) IBOutlet UIStackView *searchStackView;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navItem;
+@property (weak, nonatomic) IBOutlet UITextField *searchTextField;
+@property (weak, nonatomic) IBOutlet UILabel *toLabel;
+
+@property (weak, nonatomic) ConversationCache *conversationCache;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewTop;
 
 @end
 
@@ -47,12 +51,14 @@
 
     messageManager = [[MessageManager alloc] init];
     [messageManager setResponseConsumer:self];
-    contactManager = [[ContactManager alloc] init];
-    searchSource = [[ContactSearchDataSource alloc] init];
-    [_tableView setDelegate:self];
-    _tableView.dataSource = searchSource;
-    [_searchText setDelegate:self];
-    [_searchText becomeFirstResponder];
+    _conversationCache = [ApplicationSingleton instance].conversationCache;
+    //contactManager = [[ContactManager alloc] init];
+    //searchSource = [[ContactSearchDataSource alloc] init];
+    dataSource = [[NewMessageDataSource alloc] initWithTableView:_tableView];
+    [_tableView setDelegate:dataSource];
+    _tableView.dataSource = dataSource;
+    [_searchTextField setDelegate:dataSource];
+    [_searchTextField becomeFirstResponder];
     [_sendFailedLabel setHidden:YES];
 
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Message Error"];
@@ -68,13 +74,18 @@
                                              selector:@selector(keyboardDidHide:)
                                                  name:UIKeyboardDidHideNotification
                                                object:nil];
-    contactSelected = NO;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(recipientSelected:)
+                                                 name:@"RecipientSelected"
+                                               object:nil];
 
 }
+
 - (void)viewWillDisappear:(BOOL)animated {
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"RecipientSelected" object:nil];
 
 }
 
@@ -83,9 +94,27 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)recipientSelected:(NSNotification*)notification {
+
+    NSDictionary *contact = notification.userInfo;
+    NSString *nickname = contact[@"nickname"];
+    NSString *publicId = contact[@"publicId"];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (nickname != nil) {
+            _searchTextField.text = nickname;
+        }
+        else {
+            _searchTextField.text = publicId;
+        }
+        [_tableView reloadData];
+    });
+
+}
+
 - (IBAction)sendMessage:(UIButton *)sender {
 
-    if (contactSelected && _messageText.text.length > 0) {
+    NSDictionary *contact = [dataSource getSelectedContact];
+    if (contact != nil && _messageText.text.length > 0) {
         [_sendFailedLabel setHidden:YES];
         NSString *messageText = _messageText.text;
         [messageManager sendMessage:messageText withPublicId:contact[@"publicId"]];
@@ -94,7 +123,7 @@
 }
 
 - (void)keyboardWillShow:(NSNotification*)notify {
-    
+
     // get height of visible keyboard
     NSDictionary* keyboardInfo = [notify userInfo];
     NSValue* keyboardFrame = [keyboardInfo valueForKey:UIKeyboardFrameEndUserInfoKey];
@@ -117,6 +146,7 @@
     if (info != nil) {
         NSString *result = info[@"result"];
         if ([result isEqualToString:@"sent"]) {
+            
             success = YES;
             NSNumber *sq = info[@"sequence"];
             NSNumber *ts = info[@"timestamp"];
@@ -124,21 +154,18 @@
             [messageManager messageSent:publicId
                            withSequence:[sq integerValue]
                           withTimestamp:[ts integerValue]];
-
+            
             NSMutableDictionary *messageCount = [NSMutableDictionary dictionary];
-            messageCount[@"count"] = [NSNumber numberWithInteger:1];
+            messageCount[@"count"] = [NSNumber numberWithUnsignedInteger:1];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"MessagesUpdated" object:nil userInfo:messageCount];
+            
             dispatch_async(dispatch_get_main_queue(), ^{
+                _searchTextField.alpha = 0.0;
+                _toLabel.alpha = 0.0;
+                _tableViewTop.constant = 0.0;
                 [_sendFailedLabel setHidden:success];
                 if (success) {
                     _messageText.text = @"";
-                    [_tableView reloadData];
-                    CGSize contentSize = _tableView.contentSize;
-                    CGSize viewSize = _tableView.bounds.size;
-                    if (contentSize.height > viewSize.height) {
-                        CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
-                        [_tableView setContentOffset:newOffset animated:YES];
-                    }
                 }
             });
         }
@@ -146,36 +173,14 @@
     
 }
 
-#pragma mark - Table view delegate
+- (IBAction)searchFieldChanged:(UITextField *)sender {
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    contact = [searchSource contactAtRow:indexPath.item];
-    NSString *nickname = contact[@"nickname"];
-    if (nickname != nil) {
-        _searchText.text = nickname;
-        _navItem.title = nickname;
-    }
-    else {
-        NSString *publicId = contact[@"publicId"];
-        _searchText.text = publicId;
-        NSString *fragment = [publicId substringWithRange:NSMakeRange(0, 6)];
-        _navItem.title = [fragment stringByAppendingString:@"..."];
-    }
-    [searchSource setContactList:nil];
-    CGSize contentSize = _tableView.contentSize;
-    CGSize viewSize = _tableView.bounds.size;
-    if (contentSize.height > viewSize.height) {
-        CGPoint newOffset = CGPointMake(0, contentSize.height - viewSize.height);
-        [_tableView setContentOffset:newOffset animated:YES];
-    }
-    [_stackView setHidden:NO];
-    contactSelected = YES;
+    [dataSource searchFieldChanged:sender.text];
 
 }
 
 - (IBAction)messageStarted:(UITextField *)sender {
-
+/*
     CGRect stackRect = _searchStackView.frame;
     stackRect.size.height = 0;
     [_searchStackView setFrame:stackRect];
@@ -191,37 +196,17 @@
             [MBProgressHUD hideHUDForView:self.view animated:YES];
         });
     });
-
-}
-
-- (IBAction)searchDidChange:(UITextField *)sender {
-
-    [_stackView setHidden:YES];
-    contactSelected = NO;
-    NSString *soFar = sender.text;
-    if (soFar.length > 0) {
-        [searchSource setContactList:[contactManager searchContacts:soFar]];
-    }
-    else {
-        [searchSource setContactList:nil];
-    }
-    _tableView.dataSource = searchSource;
-    [_tableView reloadData];
-
+*/
 }
 
 #pragma mark - Navigation
 
+/*
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
-    UIViewController *controller = [segue destinationViewController];
-    if ([controller isKindOfClass:[ConversationViewController class]]) {
-        ConversationViewController *convController = (ConversationViewController*)controller;
-        convController.publicId = contact[@"publicId"];
-    }
-
 }
+*/
 
 @end

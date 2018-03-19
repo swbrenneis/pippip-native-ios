@@ -109,7 +109,7 @@
     newPublicId = publicId;
     if (nickname.length != 0) {
         method = @"MatchNickname";
-        [contactManager matchNickname:nickname];
+        [contactManager matchNickname:nickname withPublicId:nil];
     }
     else if (publicId.length != 0) {
         method = @"UpdateWhitelist";
@@ -138,7 +138,7 @@
 - (void)matchNicknameComplete:(NSDictionary*)response {
     
     NSString *result = response[@"result"];
-    if ([result isEqualToString:@"matched"]) {
+    if ([result isEqualToString:@"found"]) {
         method = @"UpdateWhitelist";
         newPublicId = response[@"publicId"];
         [contactManager addFriend:newPublicId];

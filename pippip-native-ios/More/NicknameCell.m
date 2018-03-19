@@ -79,11 +79,11 @@
     
     NSString *result = info[@"result"];
     if ([method isEqualToString:@"MatchNickname"]) {
-        if ([result isEqualToString:@"not matched"]) {
+        if ([result isEqualToString:@"not found"]) {
             method = @"SetNickname";
             [contactManager updateNickname:pendingNickname withOldNickname:currentNickname];
         }
-        else if ([result isEqualToString:@"matched"]) {
+        else if ([result isEqualToString:@"found"]) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [errorDelegate responseError:@"This nickname is in use. Please choose another"];
             });
@@ -125,7 +125,7 @@
             pendingNickname = _nicknameTextField.text;
             method = @"MatchNickname";
             [contactManager setResponseConsumer:self];
-            [contactManager matchNickname:_nicknameTextField.text];
+            [contactManager matchNickname:_nicknameTextField.text withPublicId:nil];
         }
         else {
             pendingNickname = nil;

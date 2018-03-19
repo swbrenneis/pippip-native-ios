@@ -152,7 +152,8 @@
                     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[conversation count] - 1 inSection:0];
                     [_conversationTableView scrollToRowAtIndexPath:indexPath
                                                   atScrollPosition:UITableViewScrollPositionBottom
-                                                          animated:YES];                }
+                                                          animated:YES];
+                }
             });
         }
     }
