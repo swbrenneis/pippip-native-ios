@@ -10,9 +10,9 @@
 
 @protocol MultiCellItem <NSObject>
 
-@property (readonly, nonatomic) NSString *type;
-@property (nonatomic) NSInteger rowsInItem;
-@property (readonly, nonatomic) NSString *cellReuseId;
+//@property (readonly, nonatomic) NSString *type;
+//@property (nonatomic) NSInteger rowsInItem;
+@property (nonatomic) NSString *cellReuseId;
 @property (nonatomic) CGFloat cellHeight;
 @property (weak, nonatomic) UITableViewCell *currentCell;
 

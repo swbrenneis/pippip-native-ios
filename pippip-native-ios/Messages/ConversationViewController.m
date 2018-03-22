@@ -13,19 +13,23 @@
 #import "MessageManager.h"
 #import "ContactDatabase.h"
 #import "AlertErrorDelegate.h"
+#import "Authenticator.h"
+#import "AuthViewController.h"
 
 @interface ConversationViewController ()
 {
     MessageManager *messageManager;
     ConversationDataSource *dataSource;
+    AuthViewController *authView;
+    BOOL suspended;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *messageText;
-@property (weak, nonatomic) IBOutlet UITableView *conversationTableView;
 @property (weak, nonatomic) IBOutlet UIStackView *stackView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *stackViewBottom;
 @property (weak, nonatomic) IBOutlet UILabel *sendFailedLabel;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navItem;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @property (weak, nonatomic) ConversationCache *conversationCache;
 
@@ -38,10 +42,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    dataSource = [[ConversationDataSource alloc] initWithTableView:_conversationTableView withPublicId:_publicId];
-    _conversationTableView.dataSource = dataSource;
-    [_conversationTableView setDelegate:dataSource];
+    dataSource = [[ConversationDataSource alloc] initWithTableView:_tableView withPublicId:_publicId];
+    _tableView.dataSource = dataSource;
+    [_tableView setDelegate:dataSource];
     [_sendFailedLabel setHidden:YES];
+    authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
 
     messageManager = [[MessageManager alloc] init];
     [messageManager setResponseConsumer:self];
@@ -58,8 +63,18 @@
         NSString *fragment = [_publicId substringWithRange:NSMakeRange(0, 6)];
         _navItem.title = [fragment stringByAppendingString:@"..."];
     }
+    authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
+    suspended = NO;
 
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Messages Error"];
+
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(appResumed:)
+                                               name:@"AppResumed" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(appSuspended:)
+                                               name:@"AppSuspended" object:nil];
+    
 
 }
 
@@ -71,11 +86,10 @@
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    Conversation *conversation = [_conversationCache getConversation:_publicId];
-
-    if ([conversation count] > 0) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[conversation count] - 1 inSection:0];
-        [_conversationTableView scrollToRowAtIndexPath:indexPath
+    NSInteger messageCount = [dataSource getMessageCount];
+    if (messageCount > 0) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:messageCount - 1 inSection:0];
+        [_tableView scrollToRowAtIndexPath:indexPath
                                       atScrollPosition:UITableViewScrollPositionBottom
                                               animated:YES];
     }
@@ -109,6 +123,35 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)appResumed:(NSNotification*)notification {
+    
+    if (suspended) {
+        suspended = NO;
+        NSDictionary *info = notification.userInfo;
+        NSInteger suspendedTime = [info[@"suspendedTime"] integerValue];
+        if (suspendedTime > 0 && suspendedTime < 180) {
+            [authView setSuspended:YES];
+        }
+        else {
+            Authenticator *auth = [[Authenticator alloc] init];
+            [auth logout];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.view.window != nil) {
+                [self presentViewController:authView animated:YES completion:nil];
+            }
+        });
+    }
+    
+}
+
+- (void)appSuspended:(NSNotification*)notification {
+    
+    suspended = YES;
+    
+}
+
+
 - (void)keyboardWillShow:(NSNotification*)notify {
 
     // get height of visible keyboard
@@ -120,9 +163,9 @@
     [_stackView setNeedsDisplay];
     Conversation *conversation = [_conversationCache getConversation:_publicId];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[conversation count] - 1 inSection:0];
-    [_conversationTableView scrollToRowAtIndexPath:indexPath
-                                  atScrollPosition:UITableViewScrollPositionBottom
-                                          animated:YES];
+    [_tableView scrollToRowAtIndexPath:indexPath
+                      atScrollPosition:UITableViewScrollPositionBottom
+                              animated:YES];
 
 }
 
@@ -156,9 +199,9 @@
                     _messageText.text = @"";
                     Conversation *conversation = [_conversationCache getConversation:_publicId];
                     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[conversation count] - 1 inSection:0];
-                    [_conversationTableView scrollToRowAtIndexPath:indexPath
-                                                  atScrollPosition:UITableViewScrollPositionBottom
-                                                          animated:YES];
+                    [_tableView scrollToRowAtIndexPath:indexPath
+                                      atScrollPosition:UITableViewScrollPositionBottom
+                                              animated:YES];
                 }
             });
         }
@@ -170,7 +213,7 @@
 
     [_conversationCache deleteAllMessages:_publicId];
     [dataSource messagesCleared];
-    [_conversationTableView reloadData];
+    [_tableView reloadData];
 
 }
 

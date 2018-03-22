@@ -10,8 +10,7 @@
 #import "ApplicationSingleton.h"
 #import "AccountSession.h"
 #import "SessionState.h"
-#import "AlertErrorDelegate.h"
-#import "LoggingErrorDelegate.h"
+#import "NotificationErrorDelegate.h"
 #import "UserVault.h"
 #import "AuthenticationRequest.h"
 #import "AuthenticationResponse.h"
@@ -40,24 +39,12 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 @synthesize errorDelegate;
 @synthesize postPacket;
 
-- (instancetype)initWithViewController:(AuthViewController *)controller {
-    self = [super init];
-    
-    _viewController = controller;
-    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
-                                                             withTitle:@"Authentication Error"];
-    _session = [ApplicationSingleton instance].restSession;
-
-    return self;
-    
-}
-
 - (instancetype)init {
     self = [super init];
     
-    errorDelegate = [[LoggingErrorDelegate alloc] init];
+    errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"Authentication Error"];
     _session = [ApplicationSingleton instance].restSession;
-    
+
     return self;
     
 }
@@ -66,10 +53,12 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
     NSError *error = nil;
     [self loadSessionState:accountName withPassphrase:passphrase withError:&error];
+    NSMutableDictionary *info = [NSMutableDictionary dictionary];
+    info[@"progress"] = [NSNumber numberWithFloat:0.2];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateProgress" object:nil userInfo:info];
     if (error == nil) {
         step = REQUEST;
         // Start the session.
-        [_viewController updateStatus:@"Contacting the message server"];
         [_session startSession:self];
     }
     else {
@@ -86,8 +75,8 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     [app.accountManager loadConfig:sessionState.currentAccount];
     [app.accountSession startSession:sessionState];
     
-    [NSNotificationCenter.defaultCenter
-            postNotification:[NSNotification notificationWithName:@"NewSession" object:sessionState]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NewSession" object:sessionState];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"Authenticated" object:sessionState];
 
 }
 
@@ -95,7 +84,6 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
     step = AUTHORIZED;
     postPacket = [[ServerAuthorized alloc] initWithState:sessionState];
-    [_viewController updateStatus:@"Authorizing server"];
     [_session queuePost:self];
     
 }
@@ -104,7 +92,6 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
     step = CHALLENGE;
     postPacket = [[ClientAuthChallenge alloc] initWithState:sessionState];
-    [_viewController updateStatus:@"Performing challenge"];
     [_session queuePost:self];
 
 }
@@ -134,7 +121,6 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     [app.accountSession endSession];
     step = LOGOUT;
     postPacket = [[Logout alloc] initWithState:sessionState];
-    [_viewController updateStatus:@"Logging out"];
     [_session queuePost:self];
 
 }
@@ -145,18 +131,30 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
         switch (step) {
             case REQUEST:
                 if ([self validateResponse:response]) {
+                    NSMutableDictionary *info = [NSMutableDictionary dictionary];
+                    info[@"progress"] = [NSNumber numberWithFloat:0.6];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateProgress"
+                                                                        object:nil userInfo:info];
+
                     [self doChallenge];
                 }
                 break;
             case CHALLENGE:
                 if ([self validateChallenge:response]) {
+                    NSMutableDictionary *info = [NSMutableDictionary dictionary];
+                    info[@"progress"] = [NSNumber numberWithFloat:0.8];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateProgress"
+                                                                        object:nil userInfo:info];
                     [self doAuthorized];
                 }
                 break;
             case AUTHORIZED:
                 if ([self validateAuth:response]) {
+                    NSMutableDictionary *info = [NSMutableDictionary dictionary];
+                    info[@"progress"] = [NSNumber numberWithFloat:1.0];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateProgress" object:nil userInfo:info];
+
                     [self authenticated];
-                    [_viewController authenticated];
                 }
                 break;
             case LOGOUT:
@@ -184,8 +182,10 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
             sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
             step = REQUEST;
             postPacket = [[AuthenticationRequest alloc] initWithState:sessionState];
-            [_viewController updateStatus:@"Requesting authentication"];
-            [_session queuePost:self];
+            [_session queuePost:self];    NSMutableDictionary *info = [NSMutableDictionary dictionary];
+            info[@"progress"] = [NSNumber numberWithFloat:0.4];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateProgress" object:nil userInfo:info];
+
         }
     }
     

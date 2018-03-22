@@ -13,6 +13,8 @@
 
 - (instancetype)initWithTableView:(UITableView*)newMeaasgeTableView;
 
+- (void)appSuspended:(NSNotification*)notifictaion;
+
 - (void)messagesUpdated:(NSNotification*)notification;
 
 - (NSDictionary*)getSelectedContact;

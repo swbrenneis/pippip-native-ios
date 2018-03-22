@@ -10,65 +10,113 @@
 #import "Authenticator.h"
 #import "CreateAccountDialog.h"
 #import "ApplicationSingleton.h"
-#import "AppDelegate.h"
 #import "SessionState.h"
 #import "AccountManager.h"
+#import "NewAccountCreator.h"
 #import "RESTSession.h"
 #import "TargetConditionals.h"
+#import "MBProgressHUD.h"
+#import <LocalAuthentication/LAContext.h>
 
 @interface AuthViewController ()
 {
-    NSArray *accountNames;
-    NSString *selectedAccount;
+    NSString *accountName;
     NSString *passphrase;
-    NSString *defaultStatus;
+    BOOL suspended;
 }
 
-@property (weak, nonatomic) IBOutlet UIPickerView *accountPickerView;
 @property (weak, nonatomic) IBOutlet UIButton *authButton;
 @property (weak, nonatomic) IBOutlet UIButton *createAccountButton;
-@property (weak, nonatomic) IBOutlet UILabel *statusLabel;
+@property (weak, nonatomic) IBOutlet UILabel *accountNameLabel;
+@property (weak, nonatomic) IBOutlet UITextField *accountNameTextField;
+@property (weak, nonatomic) IBOutlet UITextField *passphraseTextField;
 
-@property (weak, nonatomic) AccountManager *accountManager;
 @property (weak, nonatomic) RESTSession *session;
-@property (nonatomic) UIActivityIndicatorView *activityIndicator;
 
 @end
 
 @implementation AuthViewController
 
+- (instancetype)init {
+    self = [super init];
+
+    suspended = false;
+
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    _activityIndicator.hidesWhenStopped = YES;
-    [self.view addSubview:_activityIndicator];
-    _activityIndicator.center = self.view.center;
-
-    // Get the account manager and REST client
-    _accountManager = [ApplicationSingleton instance].accountManager;
-
-    // Connect the picker.
-    self.accountPickerView.delegate = self;
-    self.accountPickerView.dataSource = self;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(authenticated:)
+                                                 name:@"Authenticated" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateProgress:)
+                                                 name:@"UpdateProgress" object:nil];
 
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    accountNames = [_accountManager loadAccounts:NO];
-    // Enable sign in if there are accounts on this device. Set the status accordingly.
-    if (accountNames.count == 0) {
-        [self.authButton setHidden:YES];
-        defaultStatus = @"Please create a new account";
+    accountName = [[ApplicationSingleton instance].accountManager loadAccount];
+    
+    if (accountName != nil) {
+        _accountNameLabel.text = accountName;
+        [_accountNameLabel setHidden:NO];
+        [_authButton setHidden:suspended];
+        [_createAccountButton setHidden:YES];
+        [_accountNameTextField setHidden:YES];
     }
     else {
-        selectedAccount = accountNames[0];
-        [self.authButton setHidden:NO];
-        defaultStatus = @"Sign in or create a new account";
+        [_accountNameLabel setHidden:YES];
+        [_authButton setHidden:YES];
+        [_createAccountButton setHidden:NO];
+        [_accountNameTextField setHidden:NO];
     }
-    _statusLabel.text = defaultStatus;
 
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(presentAlert:)
+                                               name:@"PresentAlert" object:nil];
+
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+
+    if (suspended) {
+        LAContext *laContext = [[LAContext alloc] init];
+        NSError *authError = nil;
+        if ([laContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&authError]) {
+            [laContext evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
+                      localizedReason:@"Please provide your thumbprint to open Pippip"
+                                reply:^(BOOL success, NSError *error) {
+                                    if (success) {
+                                        dispatch_async(dispatch_get_main_queue(), ^{
+                                            [self dismissViewControllerAnimated:YES completion:nil];
+                                        });
+                                    }
+                                    else {
+                                        NSLog(@"Thumbprint authentication failed - %@", error);
+                                        Authenticator *auth = [[Authenticator alloc] init];
+                                        [auth logout];
+                                        dispatch_async(dispatch_get_main_queue(), ^{
+                                            [_authButton setHidden:NO];
+                                            [_createAccountButton setHidden:NO];
+                                        });
+                                    }
+                                }];
+        }
+        else {
+            NSLog(@"Unable to evaluate thumbprint - %@", authError);
+        }
+    }
+
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"PresentAlert" object:nil];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -76,45 +124,23 @@
     // Dispose of any resources that can be recreated.
 }
 
-// Picker view column count
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView*)pickerView {
-    return 1;
-}
-
-// Picker view row count.
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    return accountNames.count;
-}
-
-- (NSAttributedString*)pickerView:(UIPickerView *)pickerView
-            attributedTitleForRow:(NSInteger)row forComponent:(NSInteger)component {
-
-    NSString *accountName = accountNames[row];
-    return [[NSAttributedString alloc] initWithString:accountName
-                                           attributes:@{NSForegroundColorAttributeName:
-                                                            [UIColor colorWithDisplayP3Red:246
-                                                                                     green:88
-                                                                                      blue:59
-                                                                                     alpha:1.0]}];
-
-}
-
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-
-    if (row < accountNames.count) {
-        selectedAccount = accountNames[row];
-    }
-
-}
-
 - (IBAction)authClicked:(UIButton *)sender {
 
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.mode = MBProgressHUDModeAnnularDeterminate;
+    hud.label.text = @"Authenticating...";
+
+    NSString *passphrase = _passphraseTextField.text;
+    _passphraseTextField.text = @"";
+
 #if TARGET_OS_SIMULATOR
-    [self doAuthDialog];
+    Authenticator *auth = [[Authenticator alloc] init];
+    [auth authenticate:accountName withPassphrase:passphrase];
 #else
     AccountSession *accountSession = [ApplicationSingleton instance].accountSession;
     if (accountSession.deviceToken != nil) {
-        [self doAuthDialog];
+        Authenticator *auth = [[Authenticator alloc] init];
+        [auth authenticate:accountName withPassphrase:passphrase];
     }
     else {
         UIAlertController *dialog = [UIAlertController alertControllerWithTitle:@"Authentication Error"
@@ -135,87 +161,99 @@
 
 - (IBAction)createAccountClicked:(UIButton *)sender {
 
-    CreateAccountDialog *dialog = [[CreateAccountDialog alloc] initWithViewController:self];
-    [dialog present];
+    accountName = _accountNameTextField.text;
+    passphrase = _passphraseTextField.text;
+    
+    if (accountName.length == 0) {
+        [self doAccountNameAlert];
+    }
+    else if (passphrase.length == 0) {
+        [self doPassphraseAlert];
+    }
+    else {
+        [self doCreateAccount];
+    }
 
 }
 
-- (void)doAuthDialog {
+- (void)doCreateAccount {
     
-    UIAlertController *dialog = [UIAlertController alertControllerWithTitle:@"Authentication"
-                                                                    message:selectedAccount
-                                                             preferredStyle:UIAlertControllerStyleAlert];
-    
-    [dialog addTextFieldWithConfigurationHandler:^(UITextField* textField) {
-        textField.placeholder = @"Passphrase";
-        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
-    }];
-    
-    UIAlertAction *loginAction = [UIAlertAction actionWithTitle:@"Log In"
-                                                          style:UIAlertActionStyleDefault
-                                                        handler:^(UIAlertAction *action) {
-                                                            passphrase = dialog.textFields[0].text;
-                                                            [self authenticate];
-                                                        }];
-    
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.mode = MBProgressHUDModeAnnularDeterminate;
+    hud.label.text = @"Creating Account...";
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _accountNameTextField.text = @"";
+        _passphraseTextField.text = @"";
+        NewAccountCreator *creator = [[NewAccountCreator alloc] init];
+        [creator createAccount:accountName withPassphrase:passphrase];
+    });
+
+}
+
+- (void)doAccountNameAlert {
+
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Account Name Error"
+                                                                   message:@"Please enter an Account Name"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:nil];
+    [alert addAction:okAction];
+    [self presentViewController:alert animated:YES completion:nil];
+
+}
+
+- (void)doPassphraseAlert {
+
+    NSString *message = @"Empty passphrases are discouraged.\nTap OK to continue, Cancel to enter a passphrase";
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Empty Passphrase"
+                                                                   message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction *action) {
+                                                         [self doCreateAccount];
+                                                     }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
                                                            style:UIAlertActionStyleCancel
-                                                         handler:^(UIAlertAction* action) {
-                                                             passphrase = nil;
-                                                         }];
-    
-    [dialog addAction:loginAction];
-    [dialog addAction:cancelAction];
-    
-    [self presentViewController:dialog animated:YES completion:nil];
-
-}
-
-- (void) authenticate {
-    
-    [_activityIndicator startAnimating];
-    [_createAccountButton setHidden:YES];
-    Authenticator *auth = [[Authenticator alloc] initWithViewController:self];
-    [auth authenticate:selectedAccount withPassphrase:passphrase];
+                                                         handler:nil];
+    [alert addAction:okAction];
+    [alert addAction:cancelAction];
+    [self presentViewController:alert animated:YES completion:nil];
     
 }
 
-- (void)authenticated {
-    
+- (void)authenticated:(NSNotification*)notification {
+
     dispatch_async(dispatch_get_main_queue(), ^{
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self dismissViewControllerAnimated:YES completion:nil];
     });
     
 }
 
-- (void)restoreDefaultStatus {
+- (void)presentAlert:(NSNotification*)notification {
     
+    NSDictionary *info = notification.userInfo;
+    UIAlertController *alert = info[@"alert"];
     dispatch_async(dispatch_get_main_queue(), ^{
-        _statusLabel.text = defaultStatus;
+        [self presentViewController:alert animated:YES completion:nil];
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
     });
     
 }
 
-- (void)startActivityIndicator {
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [_activityIndicator startAnimating];
-    });
-    
+- (void)setSuspended:(BOOL)susp {
+    suspended = susp;
 }
 
-- (void)stopActivityIndicator {
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [_activityIndicator stopAnimating];
-    });
-    
-}
-
-- (void)updateStatus:(NSString*)status {
+- (void)updateProgress:(NSNotification*)notification {
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        _statusLabel.text = status;
+        NSDictionary *info = notification.userInfo;
+        float progress = [info[@"progress"] floatValue];
+        [MBProgressHUD HUDForView:self.view].progress = progress;
     });
 
 }

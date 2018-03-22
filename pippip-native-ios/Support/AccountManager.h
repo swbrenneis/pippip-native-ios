@@ -10,7 +10,7 @@
 
 @interface AccountManager : NSObject
 
-- (NSArray*)loadAccounts:(BOOL)setCurrentAccount;
+- (NSString*)loadAccount;
 
 - (void)loadConfig:(NSString*)accountName;
 

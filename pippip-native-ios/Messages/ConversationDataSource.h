@@ -15,6 +15,8 @@
 
 - (instancetype)initWithTableView:(UITableView*)tableView withPublicId:(NSString*)pid;
 
+- (NSInteger)getMessageCount;
+
 - (void)messagesCleared;
 
 - (void)messagesUpdated:(NSNotification*)notification;

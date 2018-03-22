@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "ResponseConsumer.h"
-#import "MoreTableViewController.h"
+#import "MoreCellItem.h"
 
 @interface ContactPolicyCell : UITableViewCell <ResponseConsumer>
 
-- (void)setViewController:(MoreTableViewController*)view;
++ (MoreCellItem*)cellItem;
 
 @end

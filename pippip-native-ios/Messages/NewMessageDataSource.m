@@ -12,6 +12,7 @@
 #import "ApplicationSingleton.h"
 #import "ConversationCache.h"
 #import "ContactManager.h"
+#import "MBProgressHUD.h"
 
 @interface NewMessageDataSource()
 {
@@ -46,6 +47,10 @@
 
     return self;
 
+}
+
+- (void)appSuspended:(NSNotification *)notifictaion {
+    [contactList removeAllObjects];
 }
 
 - (NSDictionary*)getSelectedContact {
@@ -161,24 +166,36 @@
 #pragma - MARK - Table view delegate
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    NSMutableDictionary *message = [conversation getMessage:[messageIds[indexPath.item] integerValue]];
-    NSNumber *height = message[@"cellHeight"];
-    if (height != nil) {
-        return [height doubleValue];
+
+    if (toConversation) {
+        NSMutableDictionary *message = [conversation getMessage:[messageIds[indexPath.item] integerValue]];
+        NSNumber *height = message[@"cellHeight"];
+        if (height != nil) {
+            return [height doubleValue];
+        }
     }
-    else {
-        return 44.0;
-    }
-    
+    return 44.0;
+
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    if (![[ApplicationSingleton instance].config getCleartextMessages]) {
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:tableView animated:YES];
+        hud.mode = MBProgressHUDModeIndeterminate;
+        hud.label.text = @"Decrypting messages";
+    }
 
     selectedContact = contactList[indexPath.item];
     toConversation = YES;
     conversation = [_conversationCache getConversation:selectedContact[@"publicId"]];
     messageIds = [[conversation allMessageIds] mutableCopy];
+    if (messageIds.count > 0 && ![[ApplicationSingleton instance].config getCleartextMessages]) {
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:tableView animated:YES];
+        hud.mode = MBProgressHUDModeIndeterminate;
+        hud.label.text = @"Decrypting messages";
+    }
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"RecipientSelected" object:nil userInfo:selectedContact];
 
 }

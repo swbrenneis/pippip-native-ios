@@ -17,36 +17,59 @@
     NSString *publicId;
     Conversation *conversation;
     NSMutableArray *messageIds;
+    NSMutableArray *suspendIds;
+    BOOL suspended;
 }
 
 @property (weak, nonatomic) ConversationCache *conversationCache;
-@property (weak, nonatomic) UITableView *conversationTableView;
+@property (weak, nonatomic) UITableView *tableView;
 
 @end
 
 @implementation ConversationDataSource
-/*
-- (instancetype)initWithTableView:(UITableView*)tableView {
+
+- (instancetype)initWithTableView:(UITableView*)view withPublicId:(NSString *)pid {
     self = [super init];
 
-    _conversationTableView = tableView;
-    _conversationCache = [ApplicationSingleton instance].conversationCache;
-    conversation = nil;
-    messageIds = [NSMutableArray array];
-    return self;
-    
-}
-*/
-- (instancetype)initWithTableView:(UITableView*)tableView withPublicId:(NSString *)pid {
-    self = [super init];
-
-    _conversationTableView = tableView;
+    _tableView = view;
     publicId = pid;
     _conversationCache = [ApplicationSingleton instance].conversationCache;
     conversation = [_conversationCache getConversation:publicId];
     messageIds = [[conversation allMessageIds] mutableCopy];
+    suspended = NO;
 
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(appResumed:)
+                                               name:@"AppResumed" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(appSuspended:)
+                                               name:@"AppSuspended" object:nil];
+    
     return self;
+
+}
+
+- (void)appResumed:(NSNotification*)notification {
+
+    if (suspended) {
+        suspended = NO;
+        messageIds = suspendIds;
+        suspendIds = nil;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_tableView reloadData];
+        });
+    }
+
+}
+
+- (void)appSuspended:(NSNotification*)notification {
+
+    suspended = YES;
+    suspendIds = messageIds;
+    messageIds = [NSMutableArray array];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_tableView reloadData];
+    });
 
 }
 
@@ -54,6 +77,10 @@
 
     [messageIds removeAllObjects];
 
+}
+
+- (NSInteger)getMessageCount {
+    return messageIds.count;
 }
 
 - (void)messagesUpdated:(NSNotification*)notification {
@@ -69,10 +96,10 @@
         [paths addObject:indexPath];
     }
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_conversationTableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationBottom];
-        [_conversationTableView scrollToRowAtIndexPath:[paths lastObject]
-                                      atScrollPosition:UITableViewScrollPositionBottom
-                                              animated:YES];
+        [_tableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationBottom];
+        [_tableView scrollToRowAtIndexPath:[paths lastObject]
+                          atScrollPosition:UITableViewScrollPositionBottom
+                                  animated:YES];
     });
     
 }

@@ -1,27 +1,35 @@
 //
-//  CleartextMessageCell.m
+//  CleartextMessagesCell.m
 //  pippip-native-ios
 //
 //  Created by Steve Brenneis on 3/15/18.
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
-#import "CleartextMessageCell.h"
+#import "CleartextMessagesCell.h"
 #import "ApplicationSingleton.h"
 #import "MBProgressHUD.h"
 #import "MessagesDatabase.h"
 
-@interface CleartextMessageCell ()
+@interface CleartextMessagesCell ()
 {
 
 }
 
 @property (weak, nonatomic) IBOutlet UISwitch *cleartextMessagesSwitch;
-@property (weak, nonatomic) MoreTableViewController *viewController;
 
 @end
 
-@implementation CleartextMessageCell
+@implementation CleartextMessagesCell
+
++ (MoreCellItem*)cellItem {
+
+    MoreCellItem *item = [[MoreCellItem alloc] init];
+    item.cellHeight = 65.0;
+    item.cellReuseId = @"CleartextMessagesCell";
+    return item;
+
+}
 
 - (void)awakeFromNib {
     [super awakeFromNib];
@@ -40,14 +48,14 @@
 - (IBAction)cleartextSelected:(UISwitch *)sender {
 
     if (sender.on) {
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:_viewController.view animated:YES];
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.superview animated:YES];
         hud.mode = MBProgressHUDModeIndeterminate;
         hud.label.text = @"Scrubbing messages";
         dispatch_async(dispatch_get_main_queue(), ^{
             [[ApplicationSingleton instance].config setCleartextMessages:NO];
             MessagesDatabase *messageDatabase = [[MessagesDatabase alloc] init];
             [messageDatabase scrubCleartext];
-            [MBProgressHUD hideHUDForView:_viewController.view animated:YES];
+            [MBProgressHUD hideHUDForView:self.superview animated:YES];
         });
     }
     else {
@@ -58,28 +66,34 @@
         UIAlertAction *yesAction = [UIAlertAction actionWithTitle:@"Yes"
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction *action) {
-                                                              MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:_viewController.view animated:YES];
+                                                              MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.superview animated:YES];
                                                               hud.mode = MBProgressHUDModeIndeterminate;
                                                               hud.label.text = @"Decrypting messages";
                                                               dispatch_async(dispatch_get_main_queue(), ^{
                                                                   [[ApplicationSingleton instance].config setCleartextMessages:YES];
                                                                   MessagesDatabase *messageDatabase = [[MessagesDatabase alloc] init];
                                                                   [messageDatabase decryptAll];
-                                                                  [MBProgressHUD hideHUDForView:_viewController.view animated:YES];
+                                                                  [MBProgressHUD hideHUDForView:self.superview animated:YES];
                                                               });
                                                           }];
         UIAlertAction *noAction = [UIAlertAction actionWithTitle:@"No"
                                                            style:UIAlertActionStyleCancel
-                                                         handler:nil];
+                                                         handler:^(UIAlertAction *action){
+                                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                                 [sender setOn:YES];
+                                                             });
+                                                         }];
         [alert addAction:yesAction];
         [alert addAction:noAction];
-        [_viewController presentViewController:alert animated:YES completion:nil];
+        NSMutableDictionary *info = [NSMutableDictionary dictionary];
+        info[@"alert"] = alert;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"PresentAlert" object:nil userInfo:info];
     }
 
 }
-
+/*
 - (void)setViewController:(MoreTableViewController *)view {
     _viewController = view;
 }
-
+*/
 @end

@@ -58,8 +58,7 @@
 
 - (void)createAccount {
 
-    [_viewController startActivityIndicator];
-    NewAccountCreator *creator = [[NewAccountCreator alloc] initWithViewController:_viewController];
+    NewAccountCreator *creator = [[NewAccountCreator alloc] init];
     [creator createAccount:accountName withPassphrase:passphrase];
 
 }

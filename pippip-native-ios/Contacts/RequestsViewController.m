@@ -11,6 +11,7 @@
 #import "RequestsTableViewCell.h"
 #import "PendingContactViewController.h"
 #import "AlertErrorDelegate.h"
+#import "MBProgressHUD.h"
 
 @interface RequestsViewController ()
 {
@@ -38,16 +39,12 @@
     [_tableView setDelegate:self];
     _tableView.dataSource = self;
 
-    activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    activityIndicator.hidesWhenStopped = YES;
-    [self.view addSubview:activityIndicator];
-    activityIndicator.center = self.view.center;
-
 }
 
 -(void)viewDidAppear:(BOOL)animated {
 
-    [activityIndicator startAnimating];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.label.text = @"Retrieving Contact Requests";
     [contactManager getRequests];
     
 }
@@ -64,10 +61,10 @@
 }
 
 - (void)response:(NSDictionary *)info {
-    
+
     requests = info[@"requests"];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [activityIndicator stopAnimating];
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         if (requests.count > 0) {
             _tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         }
@@ -88,13 +85,8 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    
-    if (requests == nil || requests.count == 0) {
-        return 1;
-    }
-    else {
-        return requests.count;
-    }
+
+    return requests.count;
     
 }
 
@@ -102,18 +94,12 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"RequestCell" forIndexPath:indexPath];
     RequestsTableViewCell *requestsCell = (RequestsTableViewCell*)cell;
     
-    if (requests == nil || requests.count == 0) {
-        requestsCell.nicknameLabel.text = @"No Requests";
-        requestsCell.publicIdLabel.text = @"";
+    NSDictionary *entity = requests[indexPath.item];
+    NSString *nickname = entity[@"nickname"];
+    if (nickname != nil) {
+        requestsCell.nicknameLabel.text = nickname;
     }
-    else {
-        NSDictionary *entity = requests[indexPath.item];
-        NSString *nickname = entity[@"nickname"];
-        if (nickname != nil) {
-            requestsCell.nicknameLabel.text = nickname;
-        }
-        requestsCell.publicIdLabel.text = entity[@"publicId"];
-    }
+    requestsCell.publicIdLabel.text = entity[@"publicId"];
     
     return cell;
 }

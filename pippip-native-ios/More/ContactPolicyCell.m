@@ -7,7 +7,7 @@
 //
 
 #import "ContactPolicyCell.h"
-#import "AlertErrorDelegate.h"
+#import "NotificationErrorDelegate.h"
 #import "Configurator.h"
 #import "ContactManager.h"
 #import "ApplicationSingleton.h"
@@ -21,13 +21,21 @@
 }
 
 @property (weak, nonatomic) IBOutlet UISwitch *contactPolicySwitch;
-@property (weak, nonatomic) MoreTableViewController *moreView;
 
 @end
 
 @implementation ContactPolicyCell
 
 @synthesize errorDelegate;
+
++ (MoreCellItem*)cellItem {
+
+    MoreCellItem *item = [[MoreCellItem alloc] init];
+    item.cellReuseId = @"ContactPolicyCell";
+    item.cellHeight = 65.0;
+    return item;
+
+}
 
 - (void)awakeFromNib {
     [super awakeFromNib];
@@ -42,6 +50,7 @@
     else {
         [_contactPolicySwitch setOn:NO animated:YES];
     }
+    errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"Contact Policy Error"];
 
 }
 
@@ -60,26 +69,27 @@
             [config setContactPolicy:selectedPolicy];
         }
         dispatch_async(dispatch_get_main_queue(), ^{
-            [_moreView.activityIndicator stopAnimating];
             if ([currentPolicy isEqualToString:@"public"]) {
                 [_contactPolicySwitch setOn:YES animated:YES];
             }
             else {
                 [_contactPolicySwitch setOn:NO animated:YES];
             }
-            [_moreView.tableView reloadData];
         });
+        NSMutableDictionary *info = [NSMutableDictionary dictionary];
+        info[@"policy"] = currentPolicy;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"PolicyChanged" object:nil userInfo:info];
     }
 
 }
-
+/*
 - (void)setViewController:(MoreTableViewController*)view {
 
     _moreView = view;
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:view withTitle:@"Contact Policy Error"];
 
 }
-
+*/
 - (IBAction)policyChanged:(UISwitch *)sender {
 
     if (sender.on) {
@@ -88,7 +98,6 @@
     else {
         selectedPolicy = @"whitelist";
     }
-    [_moreView.activityIndicator startAnimating];
     [contactManager setResponseConsumer:self];
     [contactManager setContactPolicy:selectedPolicy];
 

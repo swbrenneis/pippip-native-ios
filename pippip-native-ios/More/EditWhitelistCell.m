@@ -1,18 +1,27 @@
 //
-//  WhitelistTableViewCell.m
+//  EditWhitelistCell.m
 //  pippip-native-ios
 //
 //  Created by Steve Brenneis on 12/28/17.
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
-#import "WhitelistTableViewCell.h"
+#import "EditWhitelistCell.h"
 
-@interface WhitelistTableViewCell ()
+@interface EditWhitelistCell ()
 
 @end
 
-@implementation WhitelistTableViewCell
+@implementation EditWhitelistCell
+
++ (MoreCellItem*)cellItem {
+
+    MoreCellItem *item = [[MoreCellItem alloc] init];
+    item.cellReuseId = @"EditWhitelistCell";
+    item.cellHeight = 45.0;
+    return item;
+
+}
 
 - (void)awakeFromNib {
     [super awakeFromNib];

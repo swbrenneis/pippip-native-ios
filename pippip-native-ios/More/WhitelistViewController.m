@@ -8,7 +8,6 @@
 
 #import "WhitelistViewController.h"
 #import "ApplicationSingleton.h"
-#import "WhitelistTableViewCell.h"
 #import "AddFriendCell.h"
 #import "ContactManager.h"
 #import "AlertErrorDelegate.h"
@@ -201,11 +200,9 @@
     }
     else {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"WhitelistCell" forIndexPath:indexPath];
-        WhitelistTableViewCell *whitelistCell = (WhitelistTableViewCell*)cell;
-        
         NSDictionary *entity = _config.whitelist[indexPath.item];
-        whitelistCell.nicknameLabel.text = entity[@"nickname"];
-        whitelistCell.publicIdLabel.text = entity[@"publicId"];
+        cell.textLabel.text = entity[@"nickname"];
+        cell.detailTextLabel.text = entity[@"publicId"];
         
         return cell;
     }

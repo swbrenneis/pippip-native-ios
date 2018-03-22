@@ -14,12 +14,15 @@
 #import "ConversationCache.h"
 #import "ConversationViewController.h"
 #import "Authenticator.h"
+#import "AuthViewController.h"
 #import "MBProgressHUD.h"
 
 @interface MessagesViewController ()
 {
     NSArray *mostRecent;
-//    UIActivityIndicatorView *activityIndicator;
+    AuthViewController *authView;
+    BOOL suspended;
+    BOOL accountDeleted;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -39,28 +42,37 @@
     _tableView.dataSource = self;
     [_tableView setDelegate:self];
     _conversationCache = [ApplicationSingleton instance].conversationCache;
-/*
-    activityIndicator = [[UIActivityIndicatorView alloc]
-                         initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    activityIndicator.hidesWhenStopped = YES;
-    activityIndicator.hidesWhenStopped = YES;
-    [self.view addSubview:activityIndicator];
-    activityIndicator.center = self.view.center;
-*/
+    authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
+    suspended = YES;
+    accountDeleted = NO;
+
     [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(newSession:)
-                                               name:@"NewSession" object:nil];
-    
+                                           selector:@selector(appResumed:)
+                                               name:@"AppResumed" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(appSuspended:)
+                                               name:@"AppSuspended" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(conversationLoaded:)
+                                               name:@"ConversationLoaded" object:nil];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    _sessionState = [ApplicationSingleton instance].accountSession.sessionState;
-    if (_sessionState.authenticated) {
-        mostRecent = [_conversationCache mostRecentMessages];
+    if (accountDeleted) {
+        mostRecent = [NSArray array];
+        [self presentViewController:authView animated:YES completion:nil];
+        accountDeleted = NO;
     }
     else {
-        mostRecent = [NSArray array];
+        _sessionState = [ApplicationSingleton instance].accountSession.sessionState;
+        if (_sessionState.authenticated) {
+            mostRecent = [_conversationCache mostRecentMessages];
+        }
+        else {
+            mostRecent = [NSArray array];
+        }
     }
     [_tableView reloadData];
 
@@ -70,9 +82,6 @@
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(MessagesUpdated:)
                                                name:@"MessagesUpdated" object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(conversationLoaded:)
-                                               name:@"ConversationLoaded" object:nil];
 
 }
 
@@ -83,17 +92,49 @@
 
 }
 
+/*
 - (void)viewDidAppear:(BOOL)animated {
 
-    if (!_sessionState.authenticated) {
-        [self performSegueWithIdentifier:@"AuthModalSegue" sender:nil];
-    }
+    [self presentViewController:authView animated:YES completion:nil];
 
 }
+*/
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)appResumed:(NSNotification*)notification {
+
+    if (suspended) {
+        suspended = NO;
+        NSDictionary *info = notification.userInfo;
+        NSInteger suspendedTime = [info[@"suspendedTime"] integerValue];
+        if (suspendedTime > 0 && suspendedTime < 180) {
+            [authView setSuspended:YES];
+        }
+        else {
+            Authenticator *auth = [[Authenticator alloc] init];
+            [auth logout];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.view.window != nil) {
+                [self presentViewController:authView animated:YES completion:nil];
+            }
+        });
+    }
+
+}
+
+- (void)appSuspended:(NSNotification*)notification {
+
+    suspended = YES;
+    mostRecent = [NSArray array];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_tableView reloadData];
+    });
+
 }
 
 - (void)conversationLoaded:(NSNotification*)notification {
@@ -108,7 +149,14 @@
 
     Authenticator *auth = [[Authenticator alloc] init];
     [auth logout];
-    [self performSegueWithIdentifier:@"AuthModalSegue" sender:nil];
+    [self presentViewController:authView animated:YES completion:nil];
+//    [self performSegueWithIdentifier:@"AuthModalSegue" sender:nil];
+
+}
+
+- (IBAction)unwindAfterAccountDeleted:(UIStoryboardSegue*)segue {
+
+    accountDeleted = YES;
 
 }
 
@@ -182,16 +230,18 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    if (![[ApplicationSingleton instance].config getCleartextMessages]) {
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        hud.mode = MBProgressHUDModeIndeterminate;
-        hud.label.text = @"Decrypting messages";
-    }
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self performSegueWithIdentifier:@"ConversationSegue" sender:self];
+    if (indexPath.section == 1) {
+        if (![[ApplicationSingleton instance].config getCleartextMessages]) {
+            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.mode = MBProgressHUDModeIndeterminate;
+            hud.label.text = @"Decrypting messages";
+        }
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self performSegueWithIdentifier:@"ConversationSegue" sender:self];
+            });
         });
-    });
+    }
 
 }
 

@@ -18,6 +18,15 @@
 
 @implementation PublicIdCell
 
++ (MoreCellItem*)cellItem {
+
+    MoreCellItem *item = [[MoreCellItem alloc] init];
+    item.cellHeight = 65.0;
+    item.cellReuseId = @"PublicIdCell";
+    return item;
+    
+}
+
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code

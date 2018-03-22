@@ -1,4 +1,4 @@
-//
+////
 //  AccountSession.m
 //  pippip-native-ios
 //
@@ -190,7 +190,8 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 - (void)resume {
 
     NSDate *resumeTime = [NSDate date];
-    if ([resumeTime timeIntervalSinceDate:suspendTime] < 180) {     // 30 minutes
+    NSInteger suspendedTime = [resumeTime timeIntervalSinceDate:suspendTime];
+    if (suspendedTime < 180) {     // 30 minutes
         sessionActive = YES;
         dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [NSTimer scheduledTimerWithTimeInterval:30.0 repeats:NO block:^(NSTimer *timer) {
@@ -198,6 +199,9 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
             }];
         });
     }
+    NSMutableDictionary *info = [NSMutableDictionary dictionary];
+    info[@"suspendedTime"] = [NSNumber numberWithInteger:suspendedTime];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"AppResumed" object:nil userInfo:info];
 
 }
 
@@ -240,6 +244,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
     sessionActive = NO;
     suspendTime = [NSDate date];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"AppSuspended" object:nil];
 
 }
 
@@ -249,7 +254,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
         updateType = CONTACTS;
 #if TARGET_OS_SIMULATOR
         if ([contactManager updatePendingContacts] == 0) {
-            // No contacts updated, go directly to update messages.
             [self updateMessages];
         }
 #else

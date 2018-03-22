@@ -12,19 +12,17 @@
 #import "ApplicationSingleton.h"
 #import "MessageManager.h"
 #import "ConversationCache.h"
-//#import "ContactManager.h"
 #import "AlertErrorDelegate.h"
+#import "AuthViewController.h"
+#import "Authenticator.h"
 #import "MBProgressHUD.h"
 
 @interface NewMessageViewController ()
 {
-    //ContactSearchDataSource *searchSource;
-    //ConversationDataSource *convSource;
     MessageManager *messageManager;
     NewMessageDataSource *dataSource;
-    //ContactManager *contactManager;
-    //NSDictionary *contact;
-    //BOOL contactSelected;
+    AuthViewController *authView;
+    BOOL suspended;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -55,16 +53,29 @@
     //contactManager = [[ContactManager alloc] init];
     //searchSource = [[ContactSearchDataSource alloc] init];
     dataSource = [[NewMessageDataSource alloc] initWithTableView:_tableView];
+    authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
     [_tableView setDelegate:dataSource];
     _tableView.dataSource = dataSource;
     [_searchTextField setDelegate:dataSource];
-    [_searchTextField becomeFirstResponder];
     [_sendFailedLabel setHidden:YES];
+    suspended = NO;
 
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Message Error"];
+
+    [NSNotificationCenter.defaultCenter addObserver:dataSource
+                                           selector:@selector(appSuspended:)
+                                               name:@"AppSuspended" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(appResumed:)
+                                               name:@"AppResumed" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(appSuspended:)
+                                               name:@"AppSuspended" object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+
+    [_searchTextField becomeFirstResponder];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
@@ -99,6 +110,40 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)appResumed:(NSNotification*)notification {
+
+    if (suspended) {
+        suspended = NO;
+        NSDictionary *info = notification.userInfo;
+        NSInteger suspendedTime = [info[@"suspendedTime"] integerValue];
+        if (suspendedTime > 0 && suspendedTime < 180) {
+            [authView setSuspended:YES];
+        }
+        else {
+            Authenticator *auth = [[Authenticator alloc] init];
+            [auth logout];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.view.window != nil) {
+                [self presentViewController:authView animated:YES completion:^{
+                    [_searchTextField becomeFirstResponder];
+                }];
+            }
+        });
+    }
+
+}
+
+- (void)appSuspended:(NSNotification*)notification {
+ 
+    suspended = YES;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _searchTextField.text = @"";
+        [self.tableView reloadData];
+    });
+    
+}
+
 - (void)recipientSelected:(NSNotification*)notification {
 
     NSDictionary *contact = notification.userInfo;
@@ -112,6 +157,9 @@
             _searchTextField.text = publicId;
         }
         [_tableView reloadData];
+        if (![[ApplicationSingleton instance].config getCleartextMessages]) {
+            [MBProgressHUD hideHUDForView:_tableView animated:YES];
+        }
     });
 
 }
@@ -182,26 +230,6 @@
 
     [dataSource searchFieldChanged:sender.text];
 
-}
-
-- (IBAction)messageStarted:(UITextField *)sender {
-/*
-    CGRect stackRect = _searchStackView.frame;
-    stackRect.size.height = 0;
-    [_searchStackView setFrame:stackRect];
-//    [_searchStackView setHidden:YES];
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.mode = MBProgressHUDModeIndeterminate;
-    hud.label.text = @"Decrypting messages";
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        convSource = [[ConversationDataSource alloc] initWithTableView:_tableView withPublicId:contact[@"publicId"]];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            _tableView.dataSource = convSource;
-            [_tableView reloadData];
-            [MBProgressHUD hideHUDForView:self.view animated:YES];
-        });
-    });
-*/
 }
 
 #pragma mark - Navigation

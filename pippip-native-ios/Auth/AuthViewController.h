@@ -8,19 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AuthViewController : UIViewController<UIPickerViewDelegate, UIPickerViewDataSource>
+@interface AuthViewController : UIViewController
 
-- (void)authenticated;
-
-//- (void)createAccount:(NSString*)accountName withPassphrase:(NSString*)passphrase;
-
-- (void)updateStatus:(NSString*)status;
-
-- (void)restoreDefaultStatus;
-
-- (void)startActivityIndicator;
-
-- (void)stopActivityIndicator;
+- (void)setSuspended:(BOOL)suspended;
 
 @end
 

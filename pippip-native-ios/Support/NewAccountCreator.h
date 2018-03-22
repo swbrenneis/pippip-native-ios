@@ -8,12 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "RequestProcess.h"
-#import "AuthViewController.h"
-#import "RESTSession.h"
 
 @interface NewAccountCreator : NSObject <RequestProcess>
-
-- (instancetype) initWithViewController:(AuthViewController*)controller;
 
 - (void) createAccount:(NSString*)accountName withPassphrase:(NSString*)passphrase;
 

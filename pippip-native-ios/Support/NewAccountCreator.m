@@ -11,7 +11,7 @@
 #import "NewAccountResponse.h"
 #import "NewAccountFinish.h"
 #import "NewAccountFinal.h"
-#import "AlertErrorDelegate.h"
+#import "LoggingErrorDelegate.h"
 #import "ParameterGenerator.h"
 #import "ApplicationSingleton.h"
 #import "AccountSession.h"
@@ -27,7 +27,6 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
     NSString *passphrase;
 }
 
-@property (weak, nonatomic) AuthViewController *viewController;
 @property (weak, nonatomic) RESTSession *session;
 
 @end
@@ -37,12 +36,10 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 @synthesize errorDelegate;
 @synthesize postPacket;
 
-- (instancetype)initWithViewController:(AuthViewController *)controller {
+- (instancetype)init {
     self = [super init];
 
-    _viewController = controller;
-    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:_viewController
-                                                             withTitle:@"New Account Creation Error"];
+    errorDelegate = [[LoggingErrorDelegate alloc] init];
     _session = [ApplicationSingleton instance].restSession;
 
     return self;
@@ -57,20 +54,21 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
     [app.accountManager loadConfig:sessionState.currentAccount];
     [app.accountSession startSession:sessionState];
 
-    [NSNotificationCenter.defaultCenter
-     postNotification:[NSNotification notificationWithName:@"NewSession" object:sessionState]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"Authenticated" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NewSession" object:sessionState];
     
 }
 
 - (void)createAccount:(NSString*)accountName withPassphrase:(NSString *)pass {
 
     passphrase = pass;
-    [_viewController updateStatus:@"Generating user data"];
     ParameterGenerator *generator = [[ParameterGenerator alloc] init];
     [generator generateParameters:accountName];
+    NSMutableDictionary *info = [NSMutableDictionary dictionary];
+    info[@"progress"] = [NSNumber numberWithFloat:0.25];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateProgress" object:nil userInfo:info];
     sessionState = generator;
     // Start the session.
-    [_viewController updateStatus:@"Contacting the message server"];
     [_session startSession:self];
 
 }
@@ -79,7 +77,6 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
     step = FINISH;
     postPacket = [[NewAccountFinish alloc] initWithState:sessionState];
-    [_viewController updateStatus:@"Finishing account creation"];
     [_session queuePost:self];
 
 }
@@ -91,13 +88,20 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
         switch (step) {
             case REQUEST:
                 if ([self validateResponse:response]) {
+                    NSMutableDictionary *info = [NSMutableDictionary dictionary];
+                    info[@"progress"] = [NSNumber numberWithFloat:0.75];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateProgress"
+                                                                        object:nil userInfo:info];
                     [self doFinish];
                 }
                 break;
             case FINISH:
                 if ([self validateFinish:response]) {
+                    NSMutableDictionary *info = [NSMutableDictionary dictionary];
+                    info[@"progress"] = [NSNumber numberWithFloat:1.0];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateProgress"
+                                                                        object:nil userInfo:info];
                     [self accountCreated];
-                    [_viewController authenticated];
                 }
                 break;
         }
@@ -118,12 +122,14 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
             [errorDelegate sessionError:@"Invalid server response, missing public key"];
         }
         else {
+            NSMutableDictionary *info = [NSMutableDictionary dictionary];
+            info[@"progress"] = [NSNumber numberWithFloat:0.5];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateProgress" object:nil userInfo:info];
             sessionState.sessionId = [sessionId intValue];
             CKPEMCodec *pem = [[CKPEMCodec alloc] init];
             sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
             step = REQUEST;
             postPacket = [[NewAccountRequest alloc] initWithState:sessionState];
-            [_viewController updateStatus:@"Requesting account"];
             [_session queuePost:self];
         }
     }

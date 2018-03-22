@@ -14,6 +14,9 @@
 #import "ContactDetailViewController.h"
 #import "ContactTableViewCell.h"
 #import "AlertErrorDelegate.h"
+#import "AuthViewController.h"
+#import "Authenticator.h"
+#import "NewRequestsCell.h"
 
 @interface ContactsTableViewController ()
 {
@@ -21,8 +24,10 @@
     ContactDatabase *contactDatabase;
     NSArray *contactList;
     ContactManager *contactManager;
+    BOOL suspended;
+    AuthViewController *authView;
+    NSInteger requestCount;
 }
-
 
 @end
 
@@ -42,16 +47,28 @@
     contactManager = [[ContactManager alloc] init];
     [contactManager setResponseConsumer:self];
     contactDatabase = [[ContactDatabase alloc] init];
+    authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
+    suspended = NO;
+    requestCount = 0;
 
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact List Error"];
+
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(appResumed:)
+                                               name:@"AppResumed" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(appSuspended:)
+                                               name:@"AppSuspended" object:nil];
 
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    contactList = [contactDatabase getContactList];
-
-    [self.tableView reloadData];
+    requestCount = 0;
+    if (!suspended) {
+        contactList = [contactDatabase getContactList];
+        [contactManager getRequests];
+    }
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(contactsUpdated:)
@@ -70,6 +87,38 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)appResumed:(NSNotification*)notification {
+    
+    if (suspended) {
+        suspended = NO;
+        NSDictionary *info = notification.userInfo;
+        NSInteger suspendedTime = [info[@"suspendedTime"] integerValue];
+        if (suspendedTime > 0 && suspendedTime < 180) {
+            [authView setSuspended:YES];
+        }
+        else {
+            Authenticator *auth = [[Authenticator alloc] init];
+            [auth logout];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.view.window != nil) {
+                [self presentViewController:authView animated:YES completion:nil];
+            }
+        });
+    }
+    
+}
+
+- (void)appSuspended:(NSNotification*)notification {
+    
+    suspended = YES;
+    contactList = [NSArray array];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
+    
+}
+
 - (void)contactsUpdated:(NSNotification*)notification {
 
     contactList = [contactDatabase getContactList];
@@ -81,26 +130,10 @@
 
 - (void)response:(NSDictionary *)info {
 
-    NSString *result = info[@"result"];
-    NSString *prefix = @"Contact synchronization ";
-    NSString *message;
-    if ([result isEqualToString:@"contacts set"]) {
-        message = [prefix stringByAppendingString:@"successful"];
-    }
-    else {
-        NSLog(@"Contact sync server response: %@", result);
-        message = [prefix stringByAppendingString:@"failed"];
-    }
-
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Synchronize Contacts"
-                                                                   message:message
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
-                                                       style:UIAlertActionStyleDefault
-                                                     handler:nil];
-    [alert addAction:okAction];
+    NSArray *requests = info[@"requests"];
+    requestCount = requests.count;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self presentViewController:alert animated:YES completion:nil];
+        [self.tableView reloadData];
     });
 
 }
@@ -112,50 +145,77 @@
 
 }
 
+- (IBAction)checkRequests:(UIBarButtonItem *)sender {
+}
+
+/*
 - (IBAction)syncContacts:(id)sender {
 
     [contactManager syncContacts];
 
 }
-
+*/
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 
-    return 1;
+    if (requestCount > 0) {
+        return 2;
+    }
+    else {
+        return 1;
+    }
 
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return contactList.count;
+    if (requestCount > 0 && section == 0) {
+        return 1;
+    }
+    else {
+        return contactList.count;
+    }
 
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell" forIndexPath:indexPath];
-    
-    NSDictionary *entity = contactList[indexPath.item];
-    if (entity != nil) {
-        NSString *nickname = entity[@"nickname"];
-        NSString *publicId = entity[@"publicId"];
-        NSString *status = entity[@"status"];
 
-        ContactTableViewCell *contactCell = (ContactTableViewCell*)cell;
-        if (nickname != nil) {
-            contactCell.nicknameLabel.text = nickname;
+    if (requestCount > 0 && indexPath.section == 0) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"NewRequestsCell"
+                                                                forIndexPath:indexPath];
+        NewRequestsCell *newRequests = (NewRequestsCell*)cell;
+        if (requestCount < 10) {
+            newRequests.badgeCountLabel.text = [NSString stringWithFormat:@" %ld", requestCount];
         }
         else {
-            contactCell.nicknameLabel.text = @"";
+            newRequests.badgeCountLabel.text = [NSString stringWithFormat:@"%ld", requestCount];
         }
-        contactCell.publicIdLabel.text = publicId;
-        contactCell.statusImageView.image = [UIImage imageNamed:status];
+        return cell;
     }
     else {
-        NSLog(@"Contact index %ld out of range", (long)indexPath.item);
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell" forIndexPath:indexPath];
+        NSDictionary *entity = contactList[indexPath.item];
+        if (entity != nil) {
+            NSString *nickname = entity[@"nickname"];
+            NSString *publicId = entity[@"publicId"];
+            NSString *status = entity[@"status"];
+            
+            ContactTableViewCell *contactCell = (ContactTableViewCell*)cell;
+            if (nickname != nil) {
+                contactCell.nicknameLabel.text = nickname;
+            }
+            else {
+                contactCell.nicknameLabel.text = @"";
+            }
+            contactCell.publicIdLabel.text = publicId;
+            contactCell.statusImageView.image = [UIImage imageNamed:status];
+        }
+        else {
+            NSLog(@"Contact index %ld out of range", (long)indexPath.item);
+        }
+        return cell;
     }
-
-    return cell;
 
 }
 

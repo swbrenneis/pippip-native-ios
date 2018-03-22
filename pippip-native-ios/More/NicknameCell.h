@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MoreTableViewController.h"
 #import "ResponseConsumer.h"
+#import "MoreCellItem.h"
 
 @interface NicknameCell : UITableViewCell <ResponseConsumer, UITextFieldDelegate>
 
-- (void)setViewController:(MoreTableViewController*)view;
++ (MoreCellItem*)cellItem;
 
 @end

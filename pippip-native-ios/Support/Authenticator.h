@@ -6,14 +6,12 @@
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "RequestProcess.h"
 #import "AuthViewController.h"
 #import "RESTSession.h"
 
 @interface Authenticator : NSObject <RequestProcess>
-
-- (instancetype) initWithViewController:(AuthViewController*)controller;
 
 - (void)authenticate:(NSString*)accountName withPassphrase:(NSString*)passphrase;
 

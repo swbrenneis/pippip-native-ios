@@ -25,16 +25,7 @@ static const float CURRENT_VERSION = 1.0;
 
 @implementation AccountManager
 
-- (instancetype)init {
-    self = [super init];
-
-    [self loadAccounts:YES];
-
-    return self;
-    
-}
-
-- (NSArray*)loadAccounts:(BOOL)setCurrentAccount {
+- (NSString*)loadAccount {
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docPath = [paths objectAtIndex:0];
@@ -45,7 +36,12 @@ static const float CURRENT_VERSION = 1.0;
     if (accountNames.count > 0) {
         [accountNames removeObject:@".DS_Store"];
     }
-    return accountNames;
+    if (accountNames.count > 0) {
+        return [accountNames firstObject];
+    }
+    else {
+        return nil;
+    }
 
 }
 

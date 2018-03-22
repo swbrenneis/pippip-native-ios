@@ -39,7 +39,6 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         alert.message = error;
         [view presentViewController:alert animated:YES completion:nil];
-        [self updateViewStatus];
     });
 }
 
@@ -48,7 +47,6 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         alert.message = error;
         [view presentViewController:alert animated:YES completion:nil];
-        [self updateViewStatus];
     });
 
 }
@@ -58,7 +56,6 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         alert.message = error;
         [view presentViewController:alert animated:YES completion:nil];
-        [self updateViewStatus];
     });
 
 }
@@ -68,17 +65,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         alert.message = error;
         [view presentViewController:alert animated:YES completion:nil];
-        [self updateViewStatus];
     });
-
-}
-
-- (void)updateViewStatus {
-
-    if ([view isKindOfClass:[AuthViewController class]]) {
-        [(AuthViewController*)view stopActivityIndicator];
-        [(AuthViewController*)view restoreDefaultStatus];
-    }
 
 }
 
