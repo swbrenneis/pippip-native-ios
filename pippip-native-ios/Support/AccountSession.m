@@ -228,7 +228,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 #if TARGET_OS_SIMULATOR
     float interval = 2.0;
 #else
-    float interval = 30.0;
+    float interval = 15.0;
 #endif
     [self updateContacts];
     [NSThread detachNewThreadWithBlock:^{

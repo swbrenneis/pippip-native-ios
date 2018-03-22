@@ -42,9 +42,21 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     _session = nil;
     contactDatabase = [[ContactDatabase alloc] init];
 
-//    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(contactsUpdated:)
+                                               name:@"ContactsUpdated" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(newSession:)
+                                               name:@"NewSession" object:nil];
 
     return self;
+
+}
+
+- (void)dealloc {
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"ContactsUpdated" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NewSession" object:nil];
 
 }
 
@@ -66,6 +78,12 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     request[@"id"] = publicId;
     [self sendRequest:request];
     
+}
+
+- (void)contactsUpdated:(NSNotification*)notification {
+
+    contactList = nil;
+
 }
 
 - (void)deleteContact:(NSString *)publicId {
@@ -136,13 +154,13 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     [self sendRequest:request];
     
 }
-/*
+
 - (void)newSession:(NSNotification*)notification {
 
-    _sessionState = (SessionState*)notification.object;
+    contactList = nil;
 
 }
-*/
+
 - (void)postComplete:(NSDictionary*)response {
 
     if (response != nil) {

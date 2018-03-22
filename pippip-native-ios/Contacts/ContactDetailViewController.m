@@ -191,6 +191,7 @@
         [contactDatabase deleteContact:_contact[@"publicId"]];
         ApplicationSingleton *app = [ApplicationSingleton instance];
         [app.conversationCache deleteAllMessages:_contact[@"publicId"]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"ContactsUpdated" object:nil];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self deletedAlert];
 

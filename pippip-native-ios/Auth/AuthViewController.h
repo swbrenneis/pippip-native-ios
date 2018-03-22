@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AuthViewController : UIViewController
+@interface AuthViewController : UIViewController <UITextFieldDelegate>
 
 - (void)setSuspended:(BOOL)suspended;
 

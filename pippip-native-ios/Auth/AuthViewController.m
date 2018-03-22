@@ -48,6 +48,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    [_passphraseTextField setDelegate:self];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(authenticated:)
                                                  name:@"Authenticated" object:nil];
@@ -126,13 +127,36 @@
 
 - (IBAction)authClicked:(UIButton *)sender {
 
+    [self doAuthenticate];
+
+}
+
+- (IBAction)createAccountClicked:(UIButton *)sender {
+
+    accountName = _accountNameTextField.text;
+    passphrase = _passphraseTextField.text;
+    
+    if (accountName.length == 0) {
+        [self doAccountNameAlert];
+    }
+    else if (passphrase.length == 0) {
+        [self doPassphraseAlert];
+    }
+    else {
+        [self doCreateAccount];
+    }
+
+}
+
+- (void)doAuthenticate {
+
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.mode = MBProgressHUDModeAnnularDeterminate;
     hud.label.text = @"Authenticating...";
-
+    
     NSString *passphrase = _passphraseTextField.text;
     _passphraseTextField.text = @"";
-
+    
 #if TARGET_OS_SIMULATOR
     Authenticator *auth = [[Authenticator alloc] init];
     [auth authenticate:accountName withPassphrase:passphrase];
@@ -156,24 +180,7 @@
         [self presentViewController:dialog animated:YES completion:nil];
     }
 #endif
-
-}
-
-- (IBAction)createAccountClicked:(UIButton *)sender {
-
-    accountName = _accountNameTextField.text;
-    passphrase = _passphraseTextField.text;
     
-    if (accountName.length == 0) {
-        [self doAccountNameAlert];
-    }
-    else if (passphrase.length == 0) {
-        [self doPassphraseAlert];
-    }
-    else {
-        [self doCreateAccount];
-    }
-
 }
 
 - (void)doCreateAccount {
@@ -255,6 +262,15 @@
         float progress = [info[@"progress"] floatValue];
         [MBProgressHUD HUDForView:self.view].progress = progress;
     });
+
+}
+
+#pragma - MARK - Text field delegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+
+    [self doAuthenticate];
+    return YES;
 
 }
 
