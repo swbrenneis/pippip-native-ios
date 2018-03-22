@@ -166,7 +166,9 @@
     NSData *key = keys[keyIndex];
     NSData *authData = contact[@"authData"];
     NSData *nonce = contact[@"nonce"];
-    [contactDatabase updateContact:contact];
+    NSMutableArray *contacts = [NSMutableArray array];
+    [contacts addObject:contact];
+    [contactDatabase updateContacts:contacts];
 
     // Encrypt the message.
     CKIVGenerator *ivGen = [[CKIVGenerator alloc] init];

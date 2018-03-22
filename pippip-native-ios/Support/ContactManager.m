@@ -121,7 +121,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     return filtered;
     
 }
-
+/*
 - (NSArray*)getPendingContactIds {
 
     NSMutableArray *pending = [NSMutableArray array];
@@ -132,7 +132,7 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
     return pending;
 
 }
-
+*/
 - (void)getRequests {
 
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
@@ -268,37 +268,41 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 }
 
-- (void)updateContact:(NSDictionary*)contact {
+- (void)updateContacts:(NSArray*)contacts {
     
-    NSString *publicId = contact[@"publicId"];
-    NSDictionary *entity = [contactDatabase getContact:publicId];
-    if (entity == nil) {
-        // Something really wrong here
-        NSLog(@"Process contact, contact %@ does not exist", publicId);
-    }
-    else {
-        NSMutableDictionary *update = [entity mutableCopy];
-        NSString *status = contact[@"status"];
-        update[@"status"] = status;
-        update[@"timestamp"] = contact[@"timestamp"];
-        if ([status isEqualToString:@"accepted"]) {
-            update[@"currentSequence"] = [NSNumber numberWithLong:0L];
-            update[@"currentIndex"] = [NSNumber numberWithLong:0L];
-            NSData *authData = [[NSData alloc] initWithBase64EncodedString:contact[@"authData"] options:0];
-            update[@"authData"] = authData;
-            NSData *nonce = [[NSData alloc] initWithBase64EncodedString:contact[@"nonce"] options:0];
-            update[@"nonce"] = nonce;
-            NSArray *messageKeys = contact[@"messageKeys"];
-            NSMutableArray *keys = [NSMutableArray array];
-            for (NSString *keyString in messageKeys) {
-                NSData *key = [[NSData alloc] initWithBase64EncodedString:keyString options:0];
-                [keys addObject:key];
-            }
-            update[@"messageKeys"] = keys;
+    NSMutableArray *updates = [NSMutableArray array];
+    for (NSDictionary *contact in contacts) {
+        NSString *publicId = contact[@"publicId"];
+        NSDictionary *entity = [contactDatabase getContact:publicId];
+        if (entity == nil) {
+            // Something really wrong here
+            NSLog(@"Process contact, contact %@ does not exist", publicId);
         }
-        [contactDatabase updateContact:update];
+        else {
+            NSMutableDictionary *update = [entity mutableCopy];
+            NSString *status = contact[@"status"];
+            update[@"status"] = status;
+            update[@"timestamp"] = contact[@"timestamp"];
+            if ([status isEqualToString:@"accepted"]) {
+                update[@"currentSequence"] = [NSNumber numberWithLong:0L];
+                update[@"currentIndex"] = [NSNumber numberWithLong:0L];
+                NSData *authData = [[NSData alloc] initWithBase64EncodedString:contact[@"authData"] options:0];
+                update[@"authData"] = authData;
+                NSData *nonce = [[NSData alloc] initWithBase64EncodedString:contact[@"nonce"] options:0];
+                update[@"nonce"] = nonce;
+                NSArray *messageKeys = contact[@"messageKeys"];
+                NSMutableArray *keys = [NSMutableArray array];
+                for (NSString *keyString in messageKeys) {
+                    NSData *key = [[NSData alloc] initWithBase64EncodedString:keyString options:0];
+                    [keys addObject:key];
+                }
+                update[@"messageKeys"] = keys;
+            }
+            [updates addObject:update];
+        }
     }
-    
+    [contactDatabase updateContacts:updates];
+
 }
 
 - (void)updateNickname:(NSString *)nickname withOldNickname:(NSString *)oldNickname {
@@ -323,14 +327,18 @@ typedef enum REQUEST { SET_NICKNAME, REQUEST_CONTACT } ContactRequest;
 
 - (NSUInteger)updatePendingContacts {
 
-     NSArray *pending = [self getPendingContactIds];
-     if (pending.count > 0) {
-         NSLog(@"%@", @"Updating pending contacts");
-         NSMutableDictionary *request = [NSMutableDictionary dictionary];
-         request[@"method"] = @"UpdatePendingContacts";
-         request[@"pending"] = pending;
-         [self sendRequest:request];
-     }
+    NSMutableArray *pending = [NSMutableArray array];
+    NSArray *filtered = [self getContacts:@"pending"];
+    for (NSDictionary *entity in filtered) {
+        [pending addObject:entity[@"publicId"]];
+    }
+    if (pending.count > 0) {
+        NSLog(@"%@", @"Updating pending contacts");
+        NSMutableDictionary *request = [NSMutableDictionary dictionary];
+        request[@"method"] = @"UpdatePendingContacts";
+        request[@"pending"] = pending;
+        [self sendRequest:request];
+    }
     return pending.count;
 
 }

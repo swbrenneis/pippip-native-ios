@@ -13,7 +13,7 @@
 
 - (NSInteger)addContact:(NSMutableDictionary*)contact;
 
-- (void)deleteContact:(NSString*)publicId;
+- (void)deleteContacts:(NSArray*)contacts;
 
 - (NSMutableDictionary*)getContact:(NSString*)publicId;
 
@@ -21,6 +21,6 @@
 
 - (NSArray*)getContactList;
 
-- (void)updateContact:(NSMutableDictionary*)contact;
+- (void)updateContacts:(NSArray*)contacts;
 
 @end

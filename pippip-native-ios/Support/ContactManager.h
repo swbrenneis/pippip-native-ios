@@ -36,7 +36,7 @@
 
 - (void)syncContacts;
 
-- (void)updateContact:(NSDictionary*)contact;
+- (void)updateContacts:(NSArray*)contacts;
 
 - (void)updateNickname:(NSString*)nickname withOldNickname:(NSString*)oldNickname;
 

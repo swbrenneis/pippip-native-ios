@@ -40,6 +40,7 @@
         [realm addObject:dbContact];
         [realm commitWriteTransaction];
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"ContactsUpdated" object:nil];
     return contactId;
 
 }
@@ -81,22 +82,25 @@
 
 }
 
-- (void)deleteContact:(NSString *)publicId {
+- (void)deleteContacts:(NSArray*)contacts {
 
     Configurator *config = [ApplicationSingleton instance].config;
-    NSInteger contactId = [config getContactId:publicId];
-    [config deleteContactId:publicId];
-    // Delete from the realm
-    RLMRealm *realm = [RLMRealm defaultRealm];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
-    RLMResults<DatabaseContact*> *contacts = [DatabaseContact objectsWithPredicate:predicate];
-    if (contacts.count > 0) {
-        if (realm != nil) {
-            [realm beginWriteTransaction];
-            [realm deleteObject:[contacts firstObject]];
-            [realm commitWriteTransaction];
+    for (NSString *publicId in contacts) {
+        NSInteger contactId = [config getContactId:publicId];
+        [config deleteContactId:publicId];
+        // Delete from the realm
+        RLMRealm *realm = [RLMRealm defaultRealm];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+        RLMResults<DatabaseContact*> *contacts = [DatabaseContact objectsWithPredicate:predicate];
+        if (contacts.count > 0) {
+            if (realm != nil) {
+                [realm beginWriteTransaction];
+                [realm deleteObject:[contacts firstObject]];
+                [realm commitWriteTransaction];
+            }
         }
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"ContactsUpdated" object:nil];
 
 }
 
@@ -207,19 +211,22 @@
 
 }
 
-- (void)updateContact:(NSMutableDictionary*)contact {
+- (void)updateContacts:(NSArray*)contacts {
 
-    NSString *publicId = contact[@"publicId"];
-    NSMutableDictionary *entity = [self getContact:publicId];
-    if (entity == nil) {
-        // Not in the database.
-        NSLog(@"Update contact, contact %@ not found", publicId);
+    for (NSMutableDictionary *contact in contacts) {
+        NSString *publicId = contact[@"publicId"];
+        NSMutableDictionary *entity = [self getContact:publicId];
+        if (entity == nil) {
+            // Not in the database.
+            NSLog(@"Update contact, contact %@ not found", publicId);
+        }
+        else {
+            Configurator *config = [ApplicationSingleton instance].config;
+            NSInteger contactId = [config getContactId:publicId];
+            [self updateDatabaseContact:contact withContactId:contactId];
+        }
     }
-    else {
-        Configurator *config = [ApplicationSingleton instance].config;
-        NSInteger contactId = [config getContactId:publicId];
-        [self updateDatabaseContact:contact withContactId:contactId];
-    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"ContactsUpdated" object:nil];
 
 }
 

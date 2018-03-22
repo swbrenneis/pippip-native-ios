@@ -77,21 +77,18 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
 - (void)contactsUpdated:(NSDictionary*)response {
 
-        NSString *error = response[@"error"];
-        if (error == nil) {
-            NSArray *contacts = response[@"contacts"];
-            NSLog(@"%ld contacts updated", contacts.count);
-            for (NSDictionary *contact in contacts) {
-                [contactManager updateContact:contact];
-            }
-            if (contacts.count > 0) {
-                [[NSNotificationCenter defaultCenter]
-                        postNotification:[NSNotification notificationWithName:@"ContactsUpdated" object:nil]];
-            }
-        }
-        else {
-            NSLog(@"Error response: %@", error);
-        }
+    NSString *error = response[@"error"];
+    if (error == nil) {
+        NSArray *contacts = response[@"contacts"];
+        NSLog(@"%ld contacts updated", contacts.count);
+        [contactManager updateContacts:contacts];
+    }
+    else {
+        NSLog(@"Error response: %@", error);
+    }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [self updateContacts];
+    });
 
 }
 
@@ -121,7 +118,12 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     else {
         NSLog(@"Error response: %@", error);
     }
-    
+#if TARGET_OS_SIMULATOR
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [self updateContacts];
+    });
+#endif
+
 }
 
 - (void)messagesUpdated:(NSDictionary*)response {
@@ -144,6 +146,11 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
             });
+#if TARGET_OS_SIMULATOR
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                [self updateContacts];
+            });
+#endif
         }
     }
     else {
@@ -158,13 +165,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
         switch (updateType) {
             case ACK_MESSAGES:
                 [self messagesAcknowledged:info];
-//                if (sessionActive) {
-//                    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//                        [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
-//                            [self updateContacts];
-//                        }];
-//                    });
-//               }
                 break;
             case CONTACTS:
                 [self contactsUpdated:info];
@@ -193,10 +193,8 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     NSInteger suspendedTime = [resumeTime timeIntervalSinceDate:suspendTime];
     if (suspendedTime < 180) {     // 30 minutes
         sessionActive = YES;
-        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [NSTimer scheduledTimerWithTimeInterval:30.0 repeats:NO block:^(NSTimer *timer) {
-                [self updateContacts];
-            }];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [self updateContacts];
         });
     }
     NSMutableDictionary *info = [NSMutableDictionary dictionary];
@@ -225,18 +223,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
         }
     });
 
-#if TARGET_OS_SIMULATOR
-    float interval = 2.0;
-#else
-    float interval = 15.0;
-#endif
     [self updateContacts];
-    [NSThread detachNewThreadWithBlock:^{
-        while (sessionActive) {
-            [NSThread sleepForTimeInterval:interval];
-            [self updateContacts];
-        }
-    }];
 
 }
 
@@ -250,15 +237,18 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
 - (void)updateContacts {
 
+    updateType = CONTACTS;
     if (sessionActive) {
-        updateType = CONTACTS;
-#if TARGET_OS_SIMULATOR
         if ([contactManager updatePendingContacts] == 0) {
+#if TARGET_OS_SIMULATOR
             [self updateMessages];
-        }
 #else
-        [contactManager updatePendingContacts];
+            NSLog(@"No pending contacts, scheduling next update");
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                [self updateContacts];
+            });
 #endif
+        }
     }
 
 }

@@ -123,7 +123,9 @@
     if (nickname.length > 0) {
         NSMutableDictionary *cont = [contactDatabase getContact:_contact[@"publicId"]];
         cont[@"nickname"] = _nicknameTextField.text;
-        [contactDatabase updateContact:cont];
+        NSMutableArray *contacts = [NSMutableArray array];
+        [contacts addObject:cont];
+        [contactDatabase updateContacts:contacts];
         [_nicknameSavedLabel setHidden:NO];
     }
 
@@ -188,10 +190,11 @@
     else {
         NSString *result = info[@"result"];
         NSLog(@"Delete result: %@", result);
-        [contactDatabase deleteContact:_contact[@"publicId"]];
+        NSMutableArray *contacts = [NSMutableArray array];
+        [contacts addObject:_contact[@"publicId"]];
+        [contactDatabase deleteContacts:contacts];
         ApplicationSingleton *app = [ApplicationSingleton instance];
         [app.conversationCache deleteAllMessages:_contact[@"publicId"]];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"ContactsUpdated" object:nil];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self deletedAlert];
 

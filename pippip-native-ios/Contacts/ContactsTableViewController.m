@@ -68,6 +68,7 @@
     if (!suspended) {
         contactList = [contactDatabase getContactList];
         [contactManager getRequests];
+        [self.tableView reloadData];
     }
 
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -132,8 +133,13 @@
 
     NSArray *requests = info[@"requests"];
     requestCount = requests.count;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableView reloadData];
+    if (requestCount > 0) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [contactManager getRequests];
     });
 
 }

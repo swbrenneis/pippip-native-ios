@@ -159,7 +159,9 @@
         NSMutableDictionary *contact = [contactDatabase getContact:message[@"publicId"]];
         NSInteger timestamp = [[NSDate date] timeIntervalSince1970];
         contact[@"timestamp"] = [NSNumber numberWithInteger:timestamp];
-        [contactDatabase updateContact:contact];
+        NSMutableArray *contacts = [NSMutableArray array];
+        [contacts addObject:contact];
+        [contactDatabase updateContacts:contacts];
     }
 
 }
