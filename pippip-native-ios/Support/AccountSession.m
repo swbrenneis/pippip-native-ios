@@ -146,11 +146,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
             });
-#if TARGET_OS_SIMULATOR
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                [self updateContacts];
-            });
-#endif
         }
     }
     else {
@@ -178,6 +173,11 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
                 [self messagesUpdated:info];
                 if (sessionActive) {
                     [self acknowledgeMessages];
+#if TARGET_OS_SIMULATOR
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                        [self updateContacts];
+                    });
+#endif
                 }
                 break;
             case NONE:
@@ -216,14 +216,19 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
     _sessionState = state;
     sessionActive = YES;
+#if TARGET_OS_SIMULATOR
+    [self updateContacts];
+#else
     dispatch_async(dispatch_get_main_queue(), ^{
         NSInteger count = [UIApplication sharedApplication].applicationIconBadgeNumber;
         if (count > 0) {
             [self updateMessages];
         }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [self updateContacts];
+        });
     });
-
-    [self updateContacts];
+#endif
 
 }
 
