@@ -7,6 +7,7 @@
 //
 
 #import "AuthenticationResponse.h"
+#import "pippip_native_ios-Swift.h"
 #import "CKRSACodec.h"
 
 @interface AuthenticationResponse () {

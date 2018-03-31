@@ -7,6 +7,7 @@
 //
 
 #import "EnclaveResponse.h"
+#import "pippip_native_ios-Swift.h"
 #import "ApplicationSingleton.h"
 #import "CKGCMCodec.h"
 
@@ -30,7 +31,6 @@
 }
 
 - (BOOL)processResponse:(NSDictionary*)enclaveResponse errorDelegate:(id<ErrorDelegate>)errorDelegate {
-    
     NSString *responseStr = [enclaveResponse objectForKey:@"response"];
     NSString *errorStr = [enclaveResponse objectForKey:@"error"];
     if (errorStr != nil) {
@@ -65,13 +65,14 @@
         [errorDelegate responseError:[error localizedDescription]];
         return NO;
     }
-
+/*
+ * Errors need to be processed at the recipient
     NSString *errorResponse = response[@"error"];
     if (errorResponse != nil) {
         [errorDelegate responseError:errorResponse];
         return NO;
     }
-
+*/
     return YES;
     
 }

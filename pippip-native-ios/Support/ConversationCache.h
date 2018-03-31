@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SessionState.h"
 #import "Conversation.h"
+#import "ContactDatabase.h"
 
 @interface ConversationCache : NSObject
 
@@ -30,6 +30,6 @@
 
 - (NSArray*)mostRecentMessages;
 
-- (NSArray*)unreadMessageIds:(NSString*)publicId;
+//- (NSArray*)unreadMessageIds:(NSString*)publicId;
 
 @end

@@ -7,7 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ErrorDelegate.h"
+//#import "ErrorDelegate.h"
+
+@protocol ErrorDelegate;
 
 @protocol RESTResponse <NSObject>
 

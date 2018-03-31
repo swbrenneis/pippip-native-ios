@@ -7,6 +7,7 @@
 //
 
 #import "AccountSession.h"
+#import "pippip_native_ios-Swift.h"
 #import "ApplicationSingleton.h"
 #import "EnclaveRequest.h"
 #import "EnclaveResponse.h"
@@ -15,7 +16,6 @@
 #import "ContactManager.h"
 #import "MessageManager.h"
 #import "RESTSession.h"
-//#import "NSData+HexEncode.h"
 #import <Realm/Realm.h>
 
 typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
@@ -29,6 +29,8 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     ContactManager *contactManager;
     NSInteger newMessageCount;
     NSDate *suspendTime;
+    BOOL notificationComplete;
+    BOOL suspended;
 }
 
 @property (weak, nonatomic) RESTSession *session;
@@ -46,11 +48,21 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     errorDelegate = [[LoggingErrorDelegate alloc] init];
     sessionActive = NO;
     contactManager = [[ContactManager alloc] init];
-    [contactManager setResponseConsumer:self];
+    //[contactManager setResponseConsumer:self];
     messageManager = [[MessageManager alloc] init];
     [messageManager setResponseConsumer:self];
     contactDatabase = [[ContactDatabase alloc] init];
-    _simulator = NO;
+    notificationComplete = YES;
+    suspended = NO;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(newSession:)
+                                                 name:@"NewSession"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(sessionEnded:)
+                                                 name:@"SessionEnded"
+                                               object:nil];
 
     return self;
 
@@ -65,13 +77,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     else {
         updateType = NONE;
     }
-//    else {
-//        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//            [NSTimer scheduledTimerWithTimeInterval:2.0 repeats:NO block:^(NSTimer *timer) {
-//                [self updateContacts];
-//            }];
-//        });
-//    }
 
 }
 
@@ -92,18 +97,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
 }
 
-- (void)endSession {
-    
-    sessionActive = NO;
-    /*
-    contactManager = nil;
-    messageManager = nil;
-    contactDatabase = nil;
-    messageDatabase = nil;
-     */
-
-}
-
 -(void)messagesAcknowledged:(NSDictionary*)response {
     
     NSString *error = response[@"error"];
@@ -118,6 +111,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     else {
         NSLog(@"Error response: %@", error);
     }
+    notificationComplete = YES;
 #if TARGET_OS_SIMULATOR
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self updateContacts];
@@ -142,16 +136,31 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
                  postNotificationName:@"MessagesUpdated" object:nil userInfo:messageCount];
             });
         }
-        else {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
-            });
-        }
     }
     else {
         NSLog(@"Error response: %@", error);
     }
 
+}
+
+- (void)newSession:(NSNotification*)notification {
+    
+    //_sessionState = state;
+    sessionActive = YES;
+#if TARGET_OS_SIMULATOR
+    [self updateContacts];
+#else
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSInteger count = [UIApplication sharedApplication].applicationIconBadgeNumber;
+        if (count > 0) {
+            [self updateMessages];
+        }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [self updateContacts];
+        });
+    });
+#endif
+    
 }
 
 - (void)response:(NSDictionary *)info {
@@ -175,7 +184,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
                     [self acknowledgeMessages];
 #if TARGET_OS_SIMULATOR
                     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                        [self updateContacts];
+                        // [self updateContacts];
                     });
 #endif
                 }
@@ -189,17 +198,24 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
 - (void)resume {
 
-    NSDate *resumeTime = [NSDate date];
-    NSInteger suspendedTime = [resumeTime timeIntervalSinceDate:suspendTime];
-    if (suspendedTime < 180) {     // 30 minutes
-        sessionActive = YES;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            [self updateContacts];
-        });
+    if (suspended) {
+        suspended = NO;
+        NSDate *resumeTime = [NSDate date];
+        NSInteger suspendedTime = [resumeTime timeIntervalSinceDate:suspendTime];
+        if (suspendedTime > 0 && suspendedTime < 180) {     // 30 minutes
+            sessionActive = YES;
+            NSInteger count = [UIApplication sharedApplication].applicationIconBadgeNumber;
+            if (count > 0) {
+                [self updateMessages];
+            }
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                [self updateContacts];
+            });
+        }
+        NSMutableDictionary *info = [NSMutableDictionary dictionary];
+        info[@"suspendedTime"] = [NSNumber numberWithInteger:suspendedTime];
+        [AsyncNotifier notifyWithName:@"AppResumed" object:nil userInfo:info];
     }
-    NSMutableDictionary *info = [NSMutableDictionary dictionary];
-    info[@"suspendedTime"] = [NSNumber numberWithInteger:suspendedTime];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"AppResumed" object:nil userInfo:info];
 
 }
 
@@ -212,29 +228,16 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
 }
 
-- (void)startSession:(SessionState *)state {
-
-    _sessionState = state;
-    sessionActive = YES;
-#if TARGET_OS_SIMULATOR
-    [self updateContacts];
-#else
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSInteger count = [UIApplication sharedApplication].applicationIconBadgeNumber;
-        if (count > 0) {
-            [self updateMessages];
-        }
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            [self updateContacts];
-        });
-    });
-#endif
-
+- (void)sessionEnded:(NSNotification*)notification {
+    
+    sessionActive = NO;
+    
 }
 
 - (void)suspend {
 
     sessionActive = NO;
+    suspended = YES;
     suspendTime = [NSDate date];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"AppSuspended" object:nil];
 
@@ -270,9 +273,12 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
 
-    NSInteger messageCount = [notification.request.content.badge integerValue];
-    if (messageCount > 0) {
-        [self updateMessages];
+    if (sessionActive && notificationComplete) {
+        NSInteger messageCount = [notification.request.content.badge integerValue];
+        if (messageCount > 0) {
+            notificationComplete = NO;
+            [self updateMessages];
+        }
     }
     completionHandler(UNNotificationPresentationOptionBadge);
 

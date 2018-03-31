@@ -8,11 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <UserNotifications/UserNotifications.h>
-#import "SessionState.h"
+#import "ResponseConsumer.h"
 #import "ConversationCache.h"
 #import "RESTSession.h"
-#import "ResponseConsumer.h"
-#import "ErrorDelegate.h"
+
+@class SessionState;
 
 @interface AccountSession : NSObject <ResponseConsumer, UNUserNotificationCenterDelegate>
 
@@ -20,14 +20,13 @@
 @property (weak, nonatomic) RESTSession *restSession;
 @property (weak, nonatomic) ConversationCache *conversationCache;
 @property (nonatomic) NSData *deviceToken;
-@property (nonatomic) BOOL simulator;
 
-- (void)endSession;
+//- (void)endSession;
 
 - (void)resume;
 
 - (void)suspend;
 
-- (void)startSession:(SessionState*)state;
+//- (void)startSession:(SessionState*)state;
 
 @end

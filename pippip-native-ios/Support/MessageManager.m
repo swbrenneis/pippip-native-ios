@@ -9,7 +9,7 @@
 #import "MessageManager.h"
 #import "ApplicationSingleton.h"
 #import "ConversationCache.h"
-#import "ContactDatabase.h"
+#import "ContactManager.h"
 #import "EnclaveRequest.h"
 #import "EnclaveResponse.h"
 #import "MessagesDatabase.h"
@@ -18,7 +18,7 @@
 
 @interface MessageManager ()
 {
-    ContactDatabase *contactDatabase;
+    ContactManager *contactManager;
     MessagesDatabase *messageDatabase;
     NSMutableDictionary *sentMessage;
     NSArray *pendingMessages;
@@ -40,7 +40,7 @@
     self = [super init];
 
     _session = nil;
-    contactDatabase = [[ContactDatabase alloc] init];
+    contactManager = [[ContactManager alloc] init];
     messageDatabase = [[MessagesDatabase alloc] init];
 //    _conversationCache = nil;
 
@@ -52,15 +52,15 @@
 
 - (void)acknowledgePendingMessages {
 
-    pendingMessages = [messageDatabase pendingMessages];
+    pendingMessages = [messageDatabase pendingMessageInfo];
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
     request[@"method"] = @"AcknowledgeMessages";
     NSMutableArray *triplets = [NSMutableArray array];
-    for (NSDictionary *message in pendingMessages) {
+    for (NSDictionary *info in pendingMessages) {
         NSMutableDictionary *triplet = [NSMutableDictionary dictionary];
-        triplet[@"publicId"] = message[@"publicId"];
-        triplet[@"sequence"] = message[@"sequence"];
-        triplet[@"timestamp"] = message[@"timestamp"];
+        triplet[@"publicId"] = info[@"publicId"];
+        triplet[@"sequence"] = info[@"sequence"];
+        triplet[@"timestamp"] = info[@"timestamp"];
         [triplets addObject:triplet];
     }
     request[@"messages"] = triplets;
@@ -105,7 +105,7 @@
         sentMessage[@"acknowledged"] = @YES;
         sentMessage[@"read"] = @NO;
         sentMessage[@"publicId"] = sentMessage[@"toId"];
-        NSDictionary *contact = [contactDatabase getContact:sentMessage[@"toId"]];
+        NSDictionary *contact = [contactManager getContact:sentMessage[@"toId"]];
         sentMessage[@"contactId"] = contact[@"contactId"];
         NSString *nickname = contact[@"nickname"];
         if (nickname != nil) {
@@ -152,7 +152,7 @@
 
 - (void)sendMessage:(NSString *)message withPublicId:(NSString *)publicId {
 
-    NSMutableDictionary *contact = [contactDatabase getContact:publicId];
+    NSMutableDictionary *contact = [contactManager getContact:publicId];
     NSNumber *sq = contact[@"currentSequence"];
     NSInteger sequence = [sq integerValue] + 1;
     contact[@"currentSequence"] = [NSNumber numberWithInteger:sequence];
@@ -168,7 +168,7 @@
     NSData *nonce = contact[@"nonce"];
     NSMutableArray *contacts = [NSMutableArray array];
     [contacts addObject:contact];
-    [contactDatabase updateContacts:contacts];
+    [contactManager updateContacts:contacts];
 
     // Encrypt the message.
     CKIVGenerator *ivGen = [[CKIVGenerator alloc] init];

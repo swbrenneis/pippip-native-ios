@@ -7,6 +7,7 @@
 //
 
 #import "EnclaveRequest.h"
+#import "pippip_native_ios-Swift.h"
 #import "ApplicationSingleton.h"
 #import "CKGCMCodec.h"
 

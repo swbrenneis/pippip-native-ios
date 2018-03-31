@@ -8,10 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import "RESTResponse.h"
-#import "SessionState.h"
 
 @interface EnclaveResponse : NSObject<RESTResponse>
 
-- (NSDictionary*) getResponse;
+- (NSDictionary*)getResponse;
 
 @end

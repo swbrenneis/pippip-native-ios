@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "RequestProcess.h"
 #import "RESTSession.h"
-#import "SessionState.h"
 #import "ResponseConsumer.h"
 
 @interface MessageManager : NSObject <RequestProcess>

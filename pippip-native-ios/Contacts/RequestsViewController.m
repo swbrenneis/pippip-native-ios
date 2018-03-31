@@ -34,11 +34,15 @@
     // Do any additional setup after loading the view.
 
     contactManager = [[ContactManager alloc] init];
-    [contactManager setResponseConsumer:self];
+    //[contactManager setResponseConsumer:self];
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact Request Error"];
     [_tableView setDelegate:self];
     _tableView.dataSource = self;
 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appSuspended:)
+                                                 name:@"AppSuspended"
+                                               object:nil];
 }
 
 -(void)viewDidAppear:(BOOL)animated {
@@ -52,6 +56,12 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)appSuspended:(NSNotification*)notification {
+
+    [self dismissViewControllerAnimated:YES completion:nil];
+
 }
 
 - (IBAction)doneClicked:(UIBarButtonItem *)sender {

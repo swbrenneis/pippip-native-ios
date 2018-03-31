@@ -7,11 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ResponseConsumer.h"
 #import "MoreCellItem.h"
 
-@interface NicknameCell : UITableViewCell <ResponseConsumer, UITextFieldDelegate>
+@interface NicknameCell : UITableViewCell <UITextFieldDelegate>
 
 + (MoreCellItem*)cellItem;
+
+- (void)nicknameMatched:(NSNotification*)notification;
+
+- (void)nicknameUpdated:(NSNotification*)notification;
 
 @end

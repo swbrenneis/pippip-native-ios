@@ -8,15 +8,14 @@
 
 #import "ContactDetailViewController.h"
 #import "ContactManager.h"
-#import "ContactDatabase.h"
 #import "AlertErrorDelegate.h"
+#import "Notifications.h"
 #import "ApplicationSingleton.h"
 #import <time.h>
 
 @interface ContactDetailViewController ()
 {
     NSString *action;
-    ContactDatabase *contactDatabase;
     ContactManager *contactManager;
 }
 
@@ -37,13 +36,17 @@
     // Do any additional setup after loading the view.
 
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact Error"];
+
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(appSuspended:)
+                                               name:APP_SUSPENDED object:nil];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
     contactManager = [[ContactManager alloc] init];
-    [contactManager setResponseConsumer:self];
-    contactDatabase = [[ContactDatabase alloc] init];
+    //[contactManager setResponseConsumer:self];
 
     [_nicknameSavedLabel setHidden:YES];
     [_nicknameNotAvailableLabel setHidden:YES];
@@ -73,18 +76,14 @@
         _timestampLabel.text = @"Never";
     }
 
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(appSuspended:)
-                                               name:@"AppSuspended" object:nil];
-
 }
-
+/*
 - (void)viewWillDisappear:(BOOL)animated {
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"AppSuspended" object:nil];
     
 }
-
+*/
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -121,11 +120,11 @@
     
     NSString *nickname = _nicknameTextField.text;
     if (nickname.length > 0) {
-        NSMutableDictionary *cont = [contactDatabase getContact:_contact[@"publicId"]];
+        NSMutableDictionary *cont = [contactManager getContact:_contact[@"publicId"]];
         cont[@"nickname"] = _nicknameTextField.text;
         NSMutableArray *contacts = [NSMutableArray array];
         [contacts addObject:cont];
-        [contactDatabase updateContacts:contacts];
+        [contactManager updateContacts:contacts];
         [_nicknameSavedLabel setHidden:NO];
     }
 
@@ -190,9 +189,7 @@
     else {
         NSString *result = info[@"result"];
         NSLog(@"Delete result: %@", result);
-        NSMutableArray *contacts = [NSMutableArray array];
-        [contacts addObject:_contact[@"publicId"]];
-        [contactDatabase deleteContacts:contacts];
+        [contactManager deleteContact:_contact[@"publicId"]];
         ApplicationSingleton *app = [ApplicationSingleton instance];
         [app.conversationCache deleteAllMessages:_contact[@"publicId"]];
         dispatch_async(dispatch_get_main_queue(), ^{

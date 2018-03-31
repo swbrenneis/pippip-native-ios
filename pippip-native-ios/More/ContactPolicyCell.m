@@ -7,9 +7,10 @@
 //
 
 #import "ContactPolicyCell.h"
-#import "NotificationErrorDelegate.h"
+#import "pippip_native_ios-Swift.h"
 #import "Configurator.h"
 #import "ContactManager.h"
+#import "Notifications.h"
 #import "ApplicationSingleton.h"
 
 @interface ContactPolicyCell ()
@@ -25,8 +26,6 @@
 @end
 
 @implementation ContactPolicyCell
-
-@synthesize errorDelegate;
 
 + (MoreCellItem*)cellItem {
 
@@ -50,7 +49,11 @@
     else {
         [_contactPolicySwitch setOn:NO animated:YES];
     }
-    errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"Contact Policy Error"];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(policyUpdated:)
+                                                 name:POLICY_UPDATED
+                                               object:nil];
 
 }
 
@@ -60,13 +63,15 @@
     // Configure the view for the selected state
 }
 
-- (void)response:(NSDictionary *)info {
+- (void)policyUpdated:(NSNotification*)notification {
 
+    NSDictionary *info = notification.userInfo;
     if (info != nil) {
         NSString *result = info[@"result"];
         if ([result isEqualToString:@"policySet"]) {
             currentPolicy = selectedPolicy;
             [config setContactPolicy:selectedPolicy];
+            NSLog(@"Contact policy set to %@", currentPolicy);
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             if ([currentPolicy isEqualToString:@"public"]) {
@@ -78,18 +83,11 @@
         });
         NSMutableDictionary *info = [NSMutableDictionary dictionary];
         info[@"policy"] = currentPolicy;
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"PolicyChanged" object:nil userInfo:info];
+        [AsyncNotifier notifyWithName:POLICY_CHANGED object:nil userInfo:info];
     }
 
 }
-/*
-- (void)setViewController:(MoreTableViewController*)view {
 
-    _moreView = view;
-    errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:view withTitle:@"Contact Policy Error"];
-
-}
-*/
 - (IBAction)policyChanged:(UISwitch *)sender {
 
     if (sender.on) {
@@ -98,7 +96,6 @@
     else {
         selectedPolicy = @"whitelist";
     }
-    [contactManager setResponseConsumer:self];
     [contactManager setContactPolicy:selectedPolicy];
 
 }

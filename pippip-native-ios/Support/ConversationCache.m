@@ -8,7 +8,7 @@
 
 #import "ConversationCache.h"
 #import "MessagesDatabase.h"
-#import "ContactDatabase.h"
+#import "ContactManager.h"
 #import "MutableConversation.h"
 #import "DatabaseMessage.h"
 #import "ApplicationSingleton.h"
@@ -18,7 +18,7 @@
 {
     NSMutableDictionary<NSString*, MutableConversation*> *conversations;
     MessagesDatabase *messageDatabase;
-    ContactDatabase *contactDatabase;
+    ContactManager *contactManager;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -32,7 +32,7 @@
 
     conversations = [NSMutableDictionary dictionary];
     messageDatabase = [[MessagesDatabase alloc] init];
-    contactDatabase = [[ContactDatabase alloc] init];
+    contactManager = [[ContactManager alloc] init];
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
     
@@ -156,12 +156,12 @@
         NSInteger messageId = [message[@"messageId"] integerValue];
         [conversation markMessageRead:messageId];
         [messageDatabase markMessageRead:messageId];
-        NSMutableDictionary *contact = [contactDatabase getContact:message[@"publicId"]];
+        NSMutableDictionary *contact = [contactManager getContact:message[@"publicId"]];
         NSInteger timestamp = [[NSDate date] timeIntervalSince1970];
         contact[@"timestamp"] = [NSNumber numberWithInteger:timestamp];
         NSMutableArray *contacts = [NSMutableArray array];
         [contacts addObject:contact];
-        [contactDatabase updateContacts:contacts];
+        [contactManager updateContacts:contacts];
     }
 
 }
@@ -187,11 +187,11 @@
     [conversations removeAllObjects];
 
 }
-
+/*
 - (NSArray*)unreadMessageIds:(NSString *)publicId {
 
     return [messageDatabase unreadMessageIds:publicId];
 
 }
-
+*/
 @end

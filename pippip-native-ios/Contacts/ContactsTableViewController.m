@@ -12,22 +12,24 @@
 #import "ContactDatabase.h"
 #import "AddContactViewController.h"
 #import "ContactDetailViewController.h"
-#import "ContactTableViewCell.h"
 #import "AlertErrorDelegate.h"
-#import "AuthViewController.h"
 #import "Authenticator.h"
-#import "NewRequestsCell.h"
+#import "Notifications.h"
 
 @interface ContactsTableViewController ()
 {
     NSDictionary *addedContact;
-    ContactDatabase *contactDatabase;
     NSArray *contactList;
     ContactManager *contactManager;
     BOOL suspended;
     AuthViewController *authView;
     NSInteger requestCount;
+    NSInteger lastCount;
+    UIBarButtonItem *badgeButtonItem;
+    UIButton *badgeButton;
 }
+
+@property (weak, nonatomic) ContactDatabase *contactDatabase;
 
 @end
 
@@ -45,20 +47,22 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 
     contactManager = [[ContactManager alloc] init];
-    [contactManager setResponseConsumer:self];
-    contactDatabase = [[ContactDatabase alloc] init];
+    _contactDatabase = [ApplicationSingleton instance].contactDatabase;
     authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
     suspended = NO;
     requestCount = 0;
+    lastCount = 0;
+    
+    [self createBarButton];
 
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact List Error"];
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(appResumed:)
-                                               name:@"AppResumed" object:nil];
+                                               name:APP_RESUMED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(appSuspended:)
-                                               name:@"AppSuspended" object:nil];
+                                               name:APP_SUSPENDED object:nil];
 
 }
 
@@ -66,20 +70,19 @@
 
     requestCount = 0;
     if (!suspended) {
-        contactList = [contactDatabase getContactList];
+        contactList = [_contactDatabase getContactList];
         [contactManager getRequests];
-        [self.tableView reloadData];
     }
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(contactsUpdated:)
-                                                 name:@"ContactsUpdated" object:nil];
+                                                 name:CONTACTS_UPDATED object:nil];
 
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"ContactsUpdated" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:CONTACTS_UPDATED object:nil];
 
 }
 
@@ -122,10 +125,28 @@
 
 - (void)contactsUpdated:(NSNotification*)notification {
 
-    contactList = [contactDatabase getContactList];
+    contactList = [_contactDatabase getContactList];
     dispatch_async(dispatch_get_main_queue(), ^ {
         [self.tableView reloadData];
     });
+
+}
+
+- (void)createBarButton {
+
+    UIView *badgeView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 40.0, 40.0)];
+
+    badgeButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    badgeButton.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"badge"]];
+    badgeButton.frame = badgeView.frame;
+    [badgeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    badgeButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+    badgeButton.autoresizesSubviews = YES;
+    badgeButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin;
+    [badgeButton addTarget:self action:@selector(viewRequests:) forControlEvents:UIControlEventTouchUpInside];
+    [badgeView addSubview:badgeButton];
+
+    badgeButtonItem = [[UIBarButtonItem alloc] initWithCustomView:badgeView];
 
 }
 
@@ -133,10 +154,27 @@
 
     NSArray *requests = info[@"requests"];
     requestCount = requests.count;
-    if (requestCount > 0) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
-        });
+    if (lastCount != requestCount) {
+        if (requestCount > 0) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //[self.tableView reloadData];
+                [badgeButton setTitle:[NSString stringWithFormat:@"%ld", requestCount] forState:UIControlStateNormal];
+                NSMutableArray<UIBarButtonItem*> *items =
+                [NSMutableArray arrayWithArray:self.navigationItem.rightBarButtonItems];
+                [items addObject:badgeButtonItem];
+                [self.navigationItem setRightBarButtonItems:items];
+            });
+        }
+        else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //[self.tableView reloadData];
+                NSMutableArray<UIBarButtonItem*> *items =
+                [NSMutableArray arrayWithArray:self.navigationItem.rightBarButtonItems];
+                [items removeObject:badgeButtonItem];
+                [self.navigationItem setRightBarButtonItems:items];
+            });
+        }
+        lastCount = requestCount;
     }
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [contactManager getRequests];
@@ -144,49 +182,45 @@
 
 }
 
-- (void)contactsUpdated {
+- (IBAction)viewRequests:(UIButton*)sender {
 
-    contactList = [contactDatabase getContactList];
-    [self.tableView reloadData];
-
-}
-
-- (IBAction)checkRequests:(UIBarButtonItem *)sender {
-}
-
-/*
-- (IBAction)syncContacts:(id)sender {
-
-    [contactManager syncContacts];
+    [self performSegueWithIdentifier:@"PendingRequestsSegue" sender:nil];
 
 }
-*/
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 
+    /*
     if (requestCount > 0) {
         return 2;
     }
     else {
         return 1;
     }
+     */
+    return 1;
 
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
+    /*
     if (requestCount > 0 && section == 0) {
         return 1;
     }
     else {
         return contactList.count;
     }
+     */
+    return contactList.count;
 
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
+    /*
     if (requestCount > 0 && indexPath.section == 0) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"NewRequestsCell"
                                                                 forIndexPath:indexPath];
@@ -221,7 +255,10 @@
             NSLog(@"Contact index %ld out of range", (long)indexPath.item);
         }
         return cell;
-    }
+    //}
+     */
+
+    return nil;
 
 }
 

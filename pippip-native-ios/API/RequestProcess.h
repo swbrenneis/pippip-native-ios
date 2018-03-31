@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SessionState.h"
+//#import "SessionState.h"
 
 @protocol ErrorDelegate;
 @protocol PostPacket;

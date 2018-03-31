@@ -9,36 +9,44 @@
 #import <UIKit/UIKit.h>
 #import "RequestProcess.h"
 #import "RESTSession.h"
-#import "ResponseConsumer.h"
-#import "SessionState.h"
+#import "ContactDatabase.h"
 
-@interface ContactManager : NSObject <RequestProcess>
+@class SessionState;
+@protocol ResponseConsumer;
 
-- (void)acknowledgeRequest:(NSString*)response withId:(NSString*)publicId;
+@interface ContactManager : NSObject <RequestProcess, ErrorDelegate>
 
-- (void)addFriend:(NSString*)publicId;
+- (void)acknowledgeRequest:(NSString*_Nonnull)response
+                    withId:(NSString*_Nonnull)publicId
+              withNickname:(NSString*_Nullable)nickname;
 
-- (void)deleteContact:(NSString*)publicId;
+- (BOOL)addFriend:(NSString*_Nonnull)publicId;
 
-- (void)deleteFriend:(NSString*)publicId;
+- (void)deleteContact:(NSString*_Nonnull)publicId;
+
+- (void)deleteFriend:(NSString*_Nonnull)publicId;
+
+- (NSMutableDictionary*_Nullable)getContact:(NSString*_Nullable)publicId;
+
+- (NSMutableDictionary*_Nullable)getContactById:(NSInteger)contactId;
+
+- (NSArray<NSDictionary*>*_Nonnull)getContactList;
 
 - (void)getRequests;
 
-- (void)matchNickname:(NSString*)nickname withPublicId:(NSString*)publicId;
+- (void)matchNickname:( NSString* _Nullable )nickname withPublicId:( NSString* _Nullable )publicId;
 
-- (void)requestContact:(NSString*)publicId;
+- (void)requestContact:(NSString*_Nonnull)publicId withNickname:(NSString*_Nullable)nickname;
 
-- (NSArray*)searchContacts:(NSString*)fragment;
+- (NSArray*_Nonnull)searchContacts:(NSString*_Nonnull)fragment;
 
-- (void)setContactPolicy:(NSString*)policy;
-
-- (void)setResponseConsumer:(id<ResponseConsumer>)consumer;
+- (void)setContactPolicy:(NSString*_Nonnull)policy;
 
 - (void)syncContacts;
 
-- (void)updateContacts:(NSArray*)contacts;
+- (void)updateContacts:(NSArray*_Nonnull)contacts;
 
-- (void)updateNickname:(NSString*)nickname withOldNickname:(NSString*)oldNickname;
+- (void)updateNickname:(NSString*_Nullable)nickname withOldNickname:(NSString*_Nullable)oldNickname;
 
 - (NSUInteger)updatePendingContacts;
 

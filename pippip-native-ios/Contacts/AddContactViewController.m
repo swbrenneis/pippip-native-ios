@@ -7,6 +7,7 @@
 //
 
 #import "AddContactViewController.h"
+#import "pippip_native_ios-Swift.h"
 #import "ContactsTableViewController.h"
 #import "ContactManager.h"
 #import "ContactDatabase.h"
@@ -37,6 +38,7 @@
     [super viewDidLoad];
 
     errorDelegate = [[AlertErrorDelegate alloc] initWithViewController:self withTitle:@"Contact Error"];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -50,12 +52,28 @@
     _nicknameText.text = @"";
     _publicIdText.text = @"";
     [_nicknameText becomeFirstResponder];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appSuspended:)
+                                                 name:@"AppSuspended" object:nil];
+
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"AppSuspended" object:nil];
 
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)appSuspended:(NSNotification*)notification {
+
+    [self dismissViewControllerAnimated:YES completion:nil];
+
 }
 
 - (void)addContactComplete:(NSDictionary*)response {
@@ -111,7 +129,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 _publicIdText.text = publicId;
             });
-            [contactManager requestContact:publicId];
+            [contactManager requestContact:publicId withNickname:response[@"nickname"]];
         }
         else {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -144,7 +162,7 @@
 
     nickname = _nicknameText.text;
     publicId = _publicIdText.text;
-    [contactManager setResponseConsumer:self];
+    //[contactManager setResponseConsumer:self];
     if (nickname.length != 0) {
         action = @"MatchNickname";
         [contactManager matchNickname:nickname withPublicId:nil];
@@ -152,7 +170,7 @@
     else if (publicId.length != 0) {
         if (![publicId isEqualToString:myPublicId]) {
             action = @"RequestContact";
-            [contactManager requestContact:publicId];
+            [contactManager requestContact:publicId withNickname:nil];
         }
         else {
             [self selfContactAlert];

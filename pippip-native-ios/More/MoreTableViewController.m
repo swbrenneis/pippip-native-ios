@@ -7,17 +7,15 @@
 //
 
 #import "MoreTableViewController.h"
+#import "pippip_native_ios-Swift.h"
 #import "ApplicationSingleton.h"
-#import "SessionState.h"
 #import "ContactPolicyCell.h"
 #import "CleartextMessagesCell.h"
 #import "NicknameCell.h"
-#import "PublicIdCell.h"
 #import "LocalPasswordCell.h"
-#import "EditWhitelistCell.h"
 #import "DeleteAccountCell.h"
-#import "AuthViewController.h"
 #import "Authenticator.h"
+#import "Notifications.h"
 #import "MoreCellItem.h"
 
 static const NSInteger EDIT_INDEX = 4;
@@ -27,6 +25,9 @@ static const NSInteger EDIT_INDEX = 4;
     AuthViewController *authView;
     BOOL suspended;
     NSMutableArray<MoreCellItem*> *cellItems;
+    MoreCellItem *deleteItem;
+    UIView *headingView;
+    NicknameCell *nicknameCell;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -42,17 +43,23 @@ static const NSInteger EDIT_INDEX = 4;
     authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
     suspended = NO;
     cellItems = [NSMutableArray array];
+    deleteItem = [DeleteAccountCell cellItem];
+    nicknameCell = [self.tableView dequeueReusableCellWithIdentifier:@"NicknameCell"];
 
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
+    headingView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width, 40.0)];
+    headingView.backgroundColor = [UIColor colorNamed:@"Pale Gray"];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(newSession:)
+                                               name:NEW_SESSION object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(appResumed:)
-                                               name:@"AppResumed" object:nil];
+                                               name:APP_RESUMED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(appSuspended:)
-                                               name:@"AppSuspended" object:nil];
+                                               name:APP_SUSPENDED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(policyChanged:)
-                                               name:@"PolicyChanged" object:nil];
+                                               name:POLICY_CHANGED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(accountDeleted:)
                                                name:@"AccountDeleted" object:nil];
@@ -66,31 +73,40 @@ static const NSInteger EDIT_INDEX = 4;
 
 - (void)viewWillAppear:(BOOL)animated {
 
-    [cellItems removeAllObjects];
     [cellItems addObject:[PublicIdCell cellItem]];
-    [cellItems addObject:[NicknameCell cellItem]];
+    MoreCellItem *nicknameItem = [NicknameCell cellItem];
+    nicknameItem.currentCell = nicknameCell;
+    [cellItems addObject:nicknameItem];
     [cellItems addObject:[LocalPasswordCell cellItem]];
+    [cellItems addObject:[CleartextMessagesCell cellItem]];
     [cellItems addObject:[ContactPolicyCell cellItem]];
-
+    
     NSString *policy = [[ApplicationSingleton instance].config getContactPolicy];
     if ([policy isEqualToString:@"whitelist"]) {
         [cellItems addObject:[EditWhitelistCell cellItem]];
-    }
-
-    [cellItems addObject:[CleartextMessagesCell cellItem]];
-    [cellItems addObject:[DeleteAccountCell cellItem]];
-
-    [self.tableView reloadData];
+    }    
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(presentAlert:)
-                                               name:@"PresentAlert" object:nil];
+                                               name:PRESENT_ALERT object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:nicknameCell
+                                           selector:@selector(newSession:)
+                                               name:NEW_SESSION object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:nicknameCell
+                                           selector:@selector(nicknameUpdated:)
+                                               name:NICKNAME_UPDATED object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:nicknameCell
+                                           selector:@selector(nicknameMatched:)
+                                               name:NICKNAME_MATCHED object:nil];
 
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"PresentAlert" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:PRESENT_ALERT object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:nicknameCell name:NEW_SESSION object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:nicknameCell name:NICKNAME_MATCHED object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:nicknameCell name:NICKNAME_UPDATED object:nil];
 
 }
 
@@ -109,7 +125,7 @@ static const NSInteger EDIT_INDEX = 4;
         NSDictionary *info = notification.userInfo;
         NSInteger suspendedTime = [info[@"suspendedTime"] integerValue];
         if (suspendedTime > 0 && suspendedTime < 180) {
-            [authView setSuspended:YES];
+            authView.suspended = YES;
         }
         else {
             Authenticator *auth = [[Authenticator alloc] init];
@@ -136,13 +152,20 @@ static const NSInteger EDIT_INDEX = 4;
     NSString *policy = info[@"policy"];
     if ([policy isEqualToString:@"public"]) {
         [cellItems removeObjectAtIndex:EDIT_INDEX];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSIndexPath *path = [NSIndexPath indexPathForRow:5 inSection:0];
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:path, nil]
+                                  withRowAnimation:UITableViewRowAnimationLeft];
+        });
     }
     else {
         [cellItems insertObject:[EditWhitelistCell cellItem] atIndex:EDIT_INDEX];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSIndexPath *path = [NSIndexPath indexPathForRow:5 inSection:0];
+            [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObjects:path, nil]
+                                  withRowAnimation:UITableViewRowAnimationRight];
+        });
     }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableView reloadData];
-    });
 
 }
 
@@ -165,82 +188,72 @@ static const NSInteger EDIT_INDEX = 4;
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    return cellItems.count;
+    if (section == 0) {
+        return cellItems.count;
+    }
+    else {
+        return 1;
+    }
 
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    MoreCellItem *item = cellItems[indexPath.item];
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:item.cellReuseId forIndexPath:indexPath];
-    return cell;
-/*
-    switch (indexPath.item) {
-        case ACCOUNTS:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"BasicOptionsCell" forIndexPath:indexPath];
-            cell.textLabel.text = @"Account List";
-            break;
-        case PUBLIC_ID:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"PublicIdCell" forIndexPath:indexPath];
-            break;
-        case CONTACT_POLICY:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"ContactPolicyCell" forIndexPath:indexPath];
-            [(ContactPolicyCell*)cell setViewController:self];
-            break;
-        case CLEARTEXT_MESSAGES:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"CleartextMessagesCell" forIndexPath:indexPath];
-            [(CleartextMessageCell*)cell setViewController:self];
-            break;
-        case SET_NICKNAME:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"NicknameCell" forIndexPath:indexPath];
-            [(NicknameCell*)cell setViewController:self];
-            break;
-        case CHANGE_PASSWORD:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"LocalPasswordCell" forIndexPath:indexPath];
-            [(LocalPasswordCell*)cell setViewController:self];
-            break;
-        case CONTACT_REQUESTS:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"BasicOptionsCell" forIndexPath:indexPath];
-            cell.textLabel.text = @"Check Contact Requests";
-            break;
-        case EDIT_FRIENDS:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"BasicOptionsCell" forIndexPath:indexPath];
-            cell.textLabel.text = @"Edit Friends List";
-            break;
+    if (indexPath.section == 0) {
+        MoreCellItem *item = cellItems[indexPath.item];
+        if (item.currentCell != nil) {
+            return item.currentCell;
+        }
+        else {
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:item.cellReuseId forIndexPath:indexPath];
+            return cell;
+        }
     }
-    
-    // Configure the cell...
-    
-    return cell;
- */
-}
-/*
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    switch (indexPath.item) {
-        case ACCOUNTS:
-            [self performSegueWithIdentifier:@"AccountListSegue" sender:self];
-            break;
-        case CONTACT_REQUESTS:
-            [self performSegueWithIdentifier:@"PendingRequestsSegue" sender:self];
-            break;
-        case EDIT_FRIENDS:
-            [self performSegueWithIdentifier:@"WhitelistSegue" sender:self];
-            break;
+    else {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:deleteItem.cellReuseId
+                                                                forIndexPath:indexPath];
+        return cell;
     }
 
 }
-*/
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    id<MultiCellItem> item = cellItems[indexPath.item];
-    return item.cellHeight;
+    if (indexPath.section == 0) {
+        id<MultiCellItem> item = cellItems[indexPath.item];
+        return item.cellHeight;
+    }
+    else {
+        return deleteItem.cellHeight;
+    }
 
+}
+
+- (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+
+    if (section == 1) {
+        return headingView;
+    }
+    else {
+        return nil;
+    }
+
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+
+    if (section == 1) {
+        return 40.0;
+    }
+    else {
+        return 0.0;
+    }
+    
 }
 
 /*

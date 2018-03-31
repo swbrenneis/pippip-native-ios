@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SessionState.h"
 
 @interface MessagesDatabase : NSObject
 
@@ -31,10 +30,10 @@
 
 - (NSDictionary*)mostRecentMessage:(NSInteger)contactId;
 
-- (NSArray*)pendingMessages;
+- (NSArray*)pendingMessageInfo;
 
 - (void)scrubCleartext;
 
-- (NSArray*)unreadMessageIds:(NSString*)publicId;
+//- (NSArray*)unreadMessageIds:(NSString*)publicId;
 
 @end

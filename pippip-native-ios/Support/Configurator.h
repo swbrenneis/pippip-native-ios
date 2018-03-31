@@ -7,11 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SessionState.h"
+
+@class SessionState;
 
 @interface Configurator : NSObject
 
-@property (nonatomic) NSArray *whitelist;
+@property (nonatomic) NSArray<NSDictionary*> *whitelist;
 
 - (void)addContactId:(NSInteger)contactId withPublicId:(NSString*)publicId;
 
@@ -42,5 +43,7 @@
 - (void)setContactPolicy:(NSString*)policy;
 
 - (void)setNickname:(NSString*)nickname;
+
+- (NSInteger)whitelistIndexOf:(NSString*)publicId;
 
 @end

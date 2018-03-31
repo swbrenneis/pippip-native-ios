@@ -7,6 +7,7 @@
 //
 
 #import "DeleteAccountCell.h"
+#import "pippip_native_ios-Swift.h"
 #import "ApplicationSingleton.h"
 #import "UserVault.h"
 #import "Authenticator.h"

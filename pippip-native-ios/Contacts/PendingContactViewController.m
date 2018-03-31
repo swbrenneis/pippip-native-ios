@@ -38,7 +38,7 @@
 - (void)viewWillAppear:(BOOL)animated {
 
     contactManager = [[ContactManager alloc] init];
-    [contactManager setResponseConsumer:self];
+    //[contactManager setResponseConsumer:self];
     contactDatabase = [[ContactDatabase alloc] init];
     
     if (_requestNickname != nil) {
@@ -74,36 +74,11 @@
     }
     else {
         if ([status isEqualToString:@"accepted"]) {
-            NSMutableDictionary *entity = [NSMutableDictionary dictionary];
-            entity[@"publicId"] = publicId;
-            if (_requestNickname != nil) {
-                entity[@"nickname"] = _requestNickname;
-            }
-            entity[@"currentIndex"] = [NSNumber numberWithLongLong:0];
-            entity[@"currentSequence"] = [NSNumber numberWithLongLong:0];
-            entity[@"timestamp"] = contact[@"timestamp"];
-            entity[@"status"] = status;
-            NSData *adBytes = [[NSData alloc] initWithBase64EncodedString:authData options:0];
-            NSData *nonceBytes = [[NSData alloc] initWithBase64EncodedString:nonce options:0];
-            if (adBytes != nil && nonceBytes != nil) {
-                entity[@"authData"] = adBytes;
-                entity[@"nonce"] = nonceBytes;
-                NSArray *keys = [self decodeKeys:keyStrings];
-                if (keys != nil) {
-                    entity[@"messageKeys"] = keys;
-                    [contactDatabase addContact:entity];
-                    [self contactAddedAlert];
-                }
-                [self dismissViewControllerAnimated:YES completion:nil];
-            }
-            else {
-                [self errorAlert:@"Encoding error"];
-            }
         }
     }
 
 }
-
+/*
 - (IBAction)acceptRequest:(id)sender {
 
     [contactManager acknowledgeRequest:@"accept" withId:_publicIdLabel.text];
@@ -121,7 +96,7 @@
     [contactManager acknowledgeRequest:@"ignore" withId:_publicIdLabel.text];
     
 }
-
+*/
 - (void)contactAddedAlert {
 
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Contact Added"
