@@ -1,0 +1,6 @@
+framework module Pods_pippip_native_ios {
+  umbrella header "Pods-pippip-native-ios-umbrella.h"
+
+  export *
+  module * { export * }
+}
