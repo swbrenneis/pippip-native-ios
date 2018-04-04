@@ -13,7 +13,7 @@ class ContactCellView: UIView {
     @IBOutlet var contentView: ContactCellView!
     @IBOutlet weak var nicknameLabel: UILabel!
     @IBOutlet weak var publicIdLabel: UILabel!
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
