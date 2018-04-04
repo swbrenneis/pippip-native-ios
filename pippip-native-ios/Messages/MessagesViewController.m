@@ -7,20 +7,22 @@
 //
 
 #import "MessagesViewController.h"
+#import "pippip_native_ios-Swift.h"
+#import "Notifications.h"
 #import "PreviewCell.h"
 #import "MessagesHeadingCell.h"
 #import "ApplicationSingleton.h"
-#import "SessionState.h"
 #import "ConversationCache.h"
 #import "ConversationViewController.h"
 #import "Authenticator.h"
-#import "AuthViewController.h"
+#import "MessageManager.h"
 #import "MBProgressHUD.h"
 
 @interface MessagesViewController ()
 {
     NSArray *mostRecent;
     AuthViewController *authView;
+    MessageManager *messageManager;
     BOOL suspended;
     BOOL accountDeleted;
 }
@@ -38,6 +40,7 @@
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
+    messageManager = [[MessageManager alloc] init];
     mostRecent = [NSArray array];
     _tableView.dataSource = self;
     [_tableView setDelegate:self];
@@ -48,57 +51,53 @@
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(appResumed:)
-                                               name:@"AppResumed" object:nil];
+                                               name:APP_RESUMED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(appSuspended:)
-                                               name:@"AppSuspended" object:nil];
+                                               name:APP_SUSPENDED object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(newSession:)
+                                               name:NEW_SESSION object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(conversationLoaded:)
-                                               name:@"ConversationLoaded" object:nil];
+                                               name:CONVERSATION_LOADED object:nil];
 
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(MessagesUpdated:)
+                                               name:MESSAGES_UPDATED object:nil];
+
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:MESSAGES_UPDATED object:nil];
+
+}
+
+
+- (void)viewDidAppear:(BOOL)animated {
 
     if (accountDeleted) {
         mostRecent = [NSArray array];
         [self presentViewController:authView animated:YES completion:nil];
         accountDeleted = NO;
     }
-    else {
-        _sessionState = [ApplicationSingleton instance].accountSession.sessionState;
-        if (_sessionState.authenticated) {
-            mostRecent = [_conversationCache mostRecentMessages];
-        }
-        else {
-            mostRecent = [NSArray array];
-        }
+    else if (![[ApplicationSingleton instance].accountSession.sessionState authenticated]) {
+        [self presentViewController:authView animated:YES completion:nil];
     }
-    [_tableView reloadData];
-
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(newSession:)
-                                               name:@"NewSession" object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(MessagesUpdated:)
-                                               name:@"MessagesUpdated" object:nil];
 
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (IBAction)composeMessage:(id)sender {
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NewSession" object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"MessagesUpdated" object:nil];
-
-}
-
-/*
-- (void)viewDidAppear:(BOOL)animated {
-
-    [self presentViewController:authView animated:YES completion:nil];
+    ChattoConversationViewController *controller = [[ChattoConversationViewController alloc] init];
+    [self.navigationController pushViewController:controller animated:YES];
 
 }
-*/
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -137,6 +136,16 @@
 
 }
 
+- (void)newSession:(NSNotification*)notification {
+    
+    _sessionState = (SessionState*)notification.object;
+    mostRecent = [_conversationCache mostRecentMessages];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_tableView reloadData];
+    });
+    
+}
+
 - (void)conversationLoaded:(NSNotification*)notification {
 
     if (![[ApplicationSingleton instance].config getCleartextMessages]) {
@@ -149,6 +158,7 @@
 
     Authenticator *auth = [[Authenticator alloc] init];
     [auth logout];
+    [authView setSuspended:NO];
     [self presentViewController:authView animated:YES completion:nil];
 //    [self performSegueWithIdentifier:@"AuthModalSegue" sender:nil];
 
@@ -160,13 +170,11 @@
 
 }
 
-#pragma mark - Message handling
-
-- (void)newSession:(NSNotification*)notification {
-
-    _sessionState = (SessionState*)notification.object;
-
+- (IBAction)unwindAfterNoContact:(UIStoryboardSegue*)segue {
+    
 }
+
+#pragma mark - Message handling
 
 - (void)MessagesUpdated:(NSNotification*)notification {
 
@@ -231,16 +239,22 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
     if (indexPath.section == 1) {
-        if (![[ApplicationSingleton instance].config getCleartextMessages]) {
+/*        if (![[ApplicationSingleton instance].config getCleartextMessages]) {
             MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
             hud.mode = MBProgressHUDModeIndeterminate;
             hud.label.text = @"Decrypting messages";
-        }
+        }*/
+        ChattoConversationViewController *conversationView = [[ChattoConversationViewController alloc] init];
+        NSDictionary *message = mostRecent[self.tableView.indexPathForSelectedRow.item];
+        conversationView.publicId = message[@"publicId"];
+        [self.navigationController pushViewController:conversationView animated:YES];
+        /*
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self performSegueWithIdentifier:@"ConversationSegue" sender:self];
             });
         });
+         */
     }
 
 }

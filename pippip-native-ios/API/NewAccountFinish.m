@@ -7,8 +7,8 @@
 //
 
 #import "NewAccountFinish.h"
+#import "pippip_native_ios-Swift.h"
 #import "ApplicationSingleton.h"
-//#import "NSData+HexEncode.h"
 #import "CKRSACodec.h"
 
 @interface NewAccountFinish ()

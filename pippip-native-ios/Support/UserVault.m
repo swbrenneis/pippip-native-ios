@@ -7,6 +7,7 @@
 //
 
 #import "UserVault.h"
+#import "pippip_native_ios-Swift.h"
 #import "CKSHA256.h"
 #import "CKGCMCodec.h"
 #import "CKPEMCodec.h"

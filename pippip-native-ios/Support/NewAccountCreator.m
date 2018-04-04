@@ -7,15 +7,15 @@
 //
 
 #import "NewAccountCreator.h"
+#import "pippip_native_ios-Swift.h"
 #import "NewAccountRequest.h"
 #import "NewAccountResponse.h"
 #import "NewAccountFinish.h"
 #import "NewAccountFinal.h"
-#import "LoggingErrorDelegate.h"
-#import "ParameterGenerator.h"
 #import "ApplicationSingleton.h"
 #import "AccountSession.h"
 #import "UserVault.h"
+#import "Notifications.h"
 #import "CKPEMCodec.h"
 
 typedef enum STEP { REQUEST, FINISH } ProcessStep;
@@ -39,7 +39,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 - (instancetype)init {
     self = [super init];
 
-    errorDelegate = [[LoggingErrorDelegate alloc] init];
+    errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"New Account Error"];
     _session = [ApplicationSingleton instance].restSession;
 
     return self;
@@ -49,13 +49,10 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 - (void)accountCreated {
 
     [self storeVault];
-    sessionState.authenticated = YES;
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    [app.accountManager loadConfig:sessionState.currentAccount];
-    [app.accountSession startSession:sessionState];
+    [ApplicationSingleton instance].accountSession.sessionState = sessionState;
+    [[ApplicationSingleton instance].accountManager loadConfig:sessionState.currentAccount];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"Authenticated" object:nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"NewSession" object:sessionState];
+    [[NSNotificationCenter defaultCenter] postNotificationName:AUTHENTICATED object:sessionState];
     
 }
 

@@ -7,8 +7,8 @@
 //
 
 #import "LocalPasswordCell.h"
+#import "pippip_native_ios-Swift.h"
 #import "ApplicationSingleton.h"
-#import "SessionState.h"
 #import "UserVault.h"
 
 @interface LocalPasswordCell ()

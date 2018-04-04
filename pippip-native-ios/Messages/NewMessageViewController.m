@@ -13,8 +13,8 @@
 #import "MessageManager.h"
 #import "ConversationCache.h"
 #import "AlertErrorDelegate.h"
-#import "AuthViewController.h"
 #import "Authenticator.h"
+#import "Notifications.h"
 #import "MBProgressHUD.h"
 
 @interface NewMessageViewController ()
@@ -64,13 +64,10 @@
 
     [NSNotificationCenter.defaultCenter addObserver:dataSource
                                            selector:@selector(appSuspended:)
-                                               name:@"AppSuspended" object:nil];
+                                               name:APP_SUSPENDED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(appResumed:)
-                                               name:@"AppResumed" object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(appSuspended:)
-                                               name:@"AppSuspended" object:nil];
+                                               name:APP_RESUMED object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -91,7 +88,7 @@
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:dataSource
                                              selector:@selector(messagesUpdated:)
-                                                 name:@"MessagesUpdated"
+                                                 name:MESSAGES_UPDATED
                                                object:nil];
 
 }
@@ -101,7 +98,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"RecipientSelected" object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:dataSource name:@"MessagesUpdated" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:dataSource name:MESSAGES_UPDATED object:nil];
 
 }
 

@@ -7,34 +7,37 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SessionState.h"
+
+@class TextMessage;
 
 @interface MessagesDatabase : NSObject
 
-- (void)acknowledgeMessage:(NSInteger)messageId;
+// - (void)acknowledgeMessage:(NSInteger)messageId;
 
-- (NSInteger)addMessage:(NSDictionary*)message;
+//- (NSInteger)addMessage:(NSDictionary*)message;
 
 - (void)decryptAll;
 
-- (NSString*)decryptMessage:(NSDictionary*)message;
+//- (NSString*)decryptMessage:(NSDictionary*)message;
 
-- (void)deleteAllMessages:(NSString*)publicId;
+//- (void)deleteAllMessages:(NSString*)publicId;
 
-- (void)deleteMessage:(NSInteger)messageId;
+//- (void)deleteMessage:(NSInteger)messageId;
 
-- (NSMutableDictionary*)loadMessage:(NSInteger)messageId withPublicId:(NSString*)publicId;
+- (TextMessage*)loadMessage:(NSInteger)messageId;   // Returns a raw, encrypted message
 
-- (NSArray*)loadMessageIds:(NSString*)publicId;
+//- (NSMutableDictionary*)loadMessage:(NSInteger)messageId withPublicId:(NSString*)publicId;
 
-- (void)markMessageRead:(NSInteger)messageId;
+- (NSArray*)loadMessageIds:(NSInteger)contactId;
 
-- (NSDictionary*)mostRecentMessage:(NSInteger)contactId;
+//- (void)markMessageRead:(NSInteger)messageId;
 
-- (NSArray*)pendingMessages;
+- (TextMessage*)mostRecentMessage:(NSInteger)contactId;
+
+- (NSArray*)pendingMessageInfo;
 
 - (void)scrubCleartext;
 
-- (NSArray*)unreadMessageIds:(NSString*)publicId;
+//- (NSArray*)unreadMessageIds:(NSString*)publicId;
 
 @end

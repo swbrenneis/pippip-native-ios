@@ -7,32 +7,29 @@
 //
 
 #import "ApplicationSingleton.h"
+#import "pippip_native_ios-Swift.h"
 
 static ApplicationSingleton *theInstance = nil;
 
 @implementation ApplicationSingleton
 
-+ (ApplicationSingleton*)instance {
++ (void)bootstrap {
 
-    if (theInstance == nil) {
-        theInstance = [[ApplicationSingleton alloc] init];
-    }
-    return theInstance;
+    theInstance = [[ApplicationSingleton alloc] init];
+    // Order is important!
+    theInstance.accountManager = [[AccountManager alloc] init];
+    theInstance.restSession = [[RESTSession alloc] init];
+    theInstance.contactDatabase = [[ContactDatabase alloc] init];
+    theInstance.conversationCache = [[ConversationCache alloc] init];
+    theInstance.config = [[Configurator alloc] init];
+    theInstance.accountSession = [[AccountSession alloc] init];
+    theInstance.accountSession.sessionState = [[SessionState alloc] init];
 
 }
 
-- (instancetype)init {
-    self = [super init];
++ (ApplicationSingleton*)instance {
 
-    _accountManager = [[AccountManager alloc] init];
-    _restSession = [[RESTSession alloc] init];
-    _conversationCache = [[ConversationCache alloc] init];
-    _config = [[Configurator alloc] init];
-    _accountSession = [[AccountSession alloc] init];
-    _accountSession.restSession = _restSession;
-    _accountSession.conversationCache = _conversationCache;
-
-    return self;
+    return theInstance;
 
 }
 

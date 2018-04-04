@@ -7,8 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SessionState.h"
 #import "RESTResponse.h"
+
+@class SessionState;
 
 @interface AuthenticationResponse : NSObject<RESTResponse>
 

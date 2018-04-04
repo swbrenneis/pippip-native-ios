@@ -7,10 +7,9 @@
 //
 
 #import "Authenticator.h"
+#import "pippip_native_ios-Swift.h"
 #import "ApplicationSingleton.h"
 #import "AccountSession.h"
-#import "SessionState.h"
-#import "NotificationErrorDelegate.h"
 #import "UserVault.h"
 #import "AuthenticationRequest.h"
 #import "AuthenticationResponse.h"
@@ -19,6 +18,7 @@
 #import "ServerAuthorized.h"
 #import "ClientAuthorized.h"
 #import "Logout.h"
+#import "Notifications.h"
 #import "CKPEMCodec.h"
 
 typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
@@ -69,14 +69,10 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 - (void)authenticated {
 
-    sessionState.authenticated = YES;
+    [ApplicationSingleton instance].accountSession.sessionState = sessionState;
+    [[ApplicationSingleton instance].accountManager loadConfig:sessionState.currentAccount];
 
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    [app.accountManager loadConfig:sessionState.currentAccount];
-    [app.accountSession startSession:sessionState];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"NewSession" object:sessionState];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"Authenticated" object:sessionState];
+    [[NSNotificationCenter defaultCenter] postNotificationName:AUTHENTICATED object:sessionState];
 
 }
 
@@ -111,17 +107,29 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     
 }
 
+- (void)localAuthenticate:(NSString *)accountName withPassphrase:(NSString *)passphrase {
+    
+    NSError *error = nil;
+    [self loadSessionState:accountName withPassphrase:passphrase withError:&error];
+    if (error == nil) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"Authenticated" object:sessionState];
+    }
+    else {
+        [errorDelegate sessionError:@"Invalid passphrase"];
+    }
+
+}
+
 /*
  * This is invoked from the main thread.
  */
 - (void) logout {
 
-    ApplicationSingleton *app = [ApplicationSingleton instance];
-    sessionState = app.accountSession.sessionState;
-    [app.accountSession endSession];
+    sessionState = [ApplicationSingleton instance].accountSession.sessionState;
     step = LOGOUT;
     postPacket = [[Logout alloc] initWithState:sessionState];
     [_session queuePost:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"SessionEnded" object:nil];
 
 }
 

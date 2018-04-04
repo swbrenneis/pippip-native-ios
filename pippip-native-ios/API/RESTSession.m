@@ -7,9 +7,9 @@
 //
 
 #import "RESTSession.h"
-#import "ErrorDelegate.h"
+#import "pippip_native_ios-Swift.h"
+//#import "ErrorDelegate.h"
 #import "PostPacket.h"
-#import "SessionState.h"
 #import "stdio.h"
 
 @interface RESTSession ()

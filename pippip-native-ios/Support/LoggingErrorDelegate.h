@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ErrorDelegate.h"
+#import "pippip_native_ios-Swift.h"
+//#import "ErrorDelegate.h"
 
 @interface LoggingErrorDelegate : NSObject <ErrorDelegate>
 

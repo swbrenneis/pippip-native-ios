@@ -7,20 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SessionState.h"
+
+@class Contact;
 
 @interface ContactDatabase : NSObject
 
-- (NSInteger)addContact:(NSMutableDictionary*)contact;
+- (NSInteger)addContact:(Contact*)contact;
 
-- (void)deleteContacts:(NSArray*)contacts;
+- (void)deleteContacts:(NSArray<NSString*>*)contacts;
 
-- (NSMutableDictionary*)getContact:(NSString*)publicId;
+- (NSArray<Contact*>*)getContactList;
 
-- (NSMutableDictionary*)getContactById:(NSInteger)contactId;
-
-- (NSArray*)getContactList;
-
-- (void)updateContacts:(NSArray*)contacts;
+- (void)updateContacts:(NSArray<Contact*>*)contacts;
 
 @end

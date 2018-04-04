@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ResponseConsumer.h"
 #import "MoreCellItem.h"
 
-@interface ContactPolicyCell : UITableViewCell <ResponseConsumer>
+@interface ContactPolicyCell : UITableViewCell
 
 + (MoreCellItem*)cellItem;
 

@@ -7,6 +7,7 @@
 //
 
 #import "NewAccountFinal.h"
+#import "pippip_native_ios-Swift.h"
 
 @interface NewAccountFinal ()
 {

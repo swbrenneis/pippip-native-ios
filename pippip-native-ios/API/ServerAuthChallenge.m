@@ -7,6 +7,7 @@
 //
 
 #import "ServerAuthChallenge.h"
+#import "pippip_native_ios-Swift.h"
 #import "CKHMAC.h"
 #import "CKSignature.h"
 #import "CKSHA256.h"

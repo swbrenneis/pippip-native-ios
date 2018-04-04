@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ErrorDelegate.h"
+#import "pippip_native_ios-Swift.h"
 
 @interface AlertErrorDelegate : NSObject <ErrorDelegate>
 

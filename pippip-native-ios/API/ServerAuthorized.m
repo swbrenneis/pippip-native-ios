@@ -7,6 +7,7 @@
 //
 
 #import "ServerAuthorized.h"
+#import "pippip_native_ios-Swift.h"
 #import "ApplicationSingleton.h"
 #import "CKRSACodec.h"
 
@@ -32,18 +33,20 @@
 - (NSDictionary*)restPacket {
     
     NSMutableDictionary *packet = [[NSMutableDictionary alloc] init];
-    [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
-               forKey:@"sessionId"];
-    
+
+    packet[@"sessionId"] = [NSNumber numberWithInt:sessionState.sessionId];
     CKRSACodec *codec = [[CKRSACodec alloc] init];
     [codec putBlock:sessionState.enclaveKey];
     NSData *data = [codec encrypt:sessionState.serverPublicKey];
     packet[@"data"] = [data base64EncodedStringWithOptions:0];
-#if TARGET_OS_SIMULATOR
-    packet[@"deviceToken"] = @"c2ltdWxhdG9y";      // "simulator"
-#else
+#if !TARGET_OS_SIMULATOR
     AccountSession *accountSession = [ApplicationSingleton instance].accountSession;
     packet[@"deviceToken"] = [accountSession.deviceToken base64EncodedStringWithOptions:0];
+#endif
+#ifdef DEBUG
+    packet[@"developer"] = [NSNumber numberWithBool:YES];
+#else
+    packet[@"developer"] = [NSNumber numberWithBool:NO];
 #endif
 
     return packet;

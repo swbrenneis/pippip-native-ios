@@ -9,12 +9,19 @@
 #import <UIKit/UIKit.h>
 #import "RequestProcess.h"
 #import "RESTSession.h"
-#import "SessionState.h"
 #import "ResponseConsumer.h"
+
+@class TextMessage;
 
 @interface MessageManager : NSObject <RequestProcess>
 
 - (void)acknowledgePendingMessages;
+
+- (TextMessage*)getMessage:(NSInteger)messageId;
+
+- (NSArray<NSNumber*>*)getMessageIds;
+
+- (NSArray*)getMostRecentMessages;
 
 - (void)getNewMessages;
 

@@ -8,9 +8,10 @@
 
 #import <Realm/Realm.h>
 #import "MessagesDatabase.h"
+#import "pippip_native_ios-Swift.h"
 #import "ApplicationSingleton.h"
 #import "DatabaseMessage.h"
-#import "ContactDatabase.h"
+#import "ContactManager.h"
 #import "Configurator.h"
 #import "CKIVGenerator.h"
 #import "CKGCMCodec.h"
@@ -20,7 +21,7 @@ static const float CURRENT_VERSION = 1.0;
 @interface MessagesDatabase ()
 {
     NSInteger messageId;
-    ContactDatabase *contactDatabase;
+    ContactManager *contactManager;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -32,7 +33,7 @@ static const float CURRENT_VERSION = 1.0;
 - (instancetype)init {
     self = [super init];
 
-    contactDatabase = [[ContactDatabase alloc] init];
+    contactManager = [[ContactManager alloc] init];
 
     return self;
 
@@ -119,18 +120,17 @@ static const float CURRENT_VERSION = 1.0;
     
 }
 
-- (NSMutableDictionary*)decodeMessage:(DatabaseMessage*)dbMessage withContact:(NSDictionary*)contact {
+- (NSMutableDictionary*)decodeMessage:(DatabaseMessage*)dbMessage withContact:(Contact*)contact {
 
     NSMutableDictionary *message = [NSMutableDictionary dictionary];
-    message[@"publicId"] = contact[@"publicId"];
-    NSString *nickname = contact[@"nickname"];
+    message[@"publicId"] = contact.publicId;
+    NSString *nickname = contact.nickname;
     if (nickname != nil) {
         message[@"nickname"] = nickname;
     }
     message[@"contactId"] = [NSNumber numberWithInteger:dbMessage.contactId];
     message[@"messageId"] = [NSNumber numberWithInteger:dbMessage.messageId];
     message[@"messageType"] = dbMessage.messageType;
-    message[@"messageType"] = [NSNumber numberWithInteger:dbMessage.timestamp];
     message[@"read"] = [NSNumber numberWithBool:dbMessage.read];
     message[@"acknowledged"] = [NSNumber numberWithBool:dbMessage.acknowledged];
     message[@"timestamp"] = [NSNumber numberWithInteger:dbMessage.timestamp];
@@ -151,7 +151,7 @@ static const float CURRENT_VERSION = 1.0;
     RLMRealm *realm = [RLMRealm defaultRealm];
     RLMResults<DatabaseMessage*> *messages = [DatabaseMessage allObjects];
     for (DatabaseMessage *dbMessage in messages) {
-        NSDictionary *contact = [contactDatabase getContactById:dbMessage.contactId];
+        Contact *contact = [contactManager getContactById:dbMessage.contactId];
         [realm beginWriteTransaction];
         dbMessage.cleartext = [self decryptMessage:dbMessage withContact:contact];
         [realm commitWriteTransaction];
@@ -161,17 +161,17 @@ static const float CURRENT_VERSION = 1.0;
 
 - (NSString*)decryptMessage:(NSDictionary *)message {
 
-    NSDictionary *contact = [contactDatabase getContact:message[@"publicId"]];
+    Contact *contact = [contactManager getContact:message[@"publicId"]];
     CKIVGenerator *ivGen = [[CKIVGenerator alloc] init];
     NSInteger sequence = [message[@"sequence"] integerValue];
-    NSData *iv = [ivGen generate:sequence withNonce:contact[@"nonce"]];
+    NSData *iv = [ivGen generate:sequence withNonce:contact.nonce];
     NSData *ciphertext = [[NSData alloc] initWithBase64EncodedString:message[@"body"] options:0];
     CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:ciphertext];
     [codec setIV:iv];
-    NSArray *messageKeys = contact[@"messageKeys"];
+    NSArray *messageKeys = contact.messageKeys;
     NSError *error = nil;
     NSInteger keyIndex = [message[@"keyIndex"] integerValue];
-    [codec decrypt:messageKeys[keyIndex] withAuthData:contact[@"authData"] withError:&error];
+    [codec decrypt:messageKeys[keyIndex] withAuthData:contact.authData withError:&error];
     if (error != nil) {
         NSLog(@"MessagesDatabase.decryptMessage GCM decryption error - %@", error.localizedDescription);
         return @"";
@@ -182,15 +182,15 @@ static const float CURRENT_VERSION = 1.0;
 
 }
 
-- (NSString*)decryptMessage:(DatabaseMessage*)message withContact:(NSDictionary*)contact {
+- (NSString*)decryptMessage:(DatabaseMessage*)message withContact:(Contact*)contact {
 
     CKIVGenerator *ivGen = [[CKIVGenerator alloc] init];
-    NSData *iv = [ivGen generate:message.sequence withNonce:contact[@"nonce"]];
+    NSData *iv = [ivGen generate:message.sequence withNonce:contact.nonce];
     CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:message.message];
     [codec setIV:iv];
-    NSArray *messageKeys = contact[@"messageKeys"];
+    NSArray *messageKeys = contact.messageKeys;
     NSError *error = nil;
-    [codec decrypt:messageKeys[message.keyIndex] withAuthData:contact[@"authData"] withError:&error];
+    [codec decrypt:messageKeys[message.keyIndex] withAuthData:contact.authData withError:&error];
     if (error == nil) {
         return [codec getString];
     }
@@ -234,7 +234,7 @@ static const float CURRENT_VERSION = 1.0;
 
 - (NSMutableDictionary*)loadMessage:(NSInteger)messageId withPublicId:(NSString*)publicId {
 
-    NSDictionary *contact = [contactDatabase getContact:publicId];
+    Contact *contact = [contactManager getContact:publicId];
     NSInteger contactId = [[ApplicationSingleton instance].config getContactId:publicId];
     NSPredicate *predicate =
         [NSPredicate predicateWithFormat:@"messageId = %ld && contactId = %ld", messageId, contactId];
@@ -260,12 +260,14 @@ static const float CURRENT_VERSION = 1.0;
 
 }
 
-- (NSArray*)loadMessageIds:(NSString *)publicId {
+- (NSArray*)loadMessageIds:(NSInteger)contactId {
 
     NSMutableArray *messageIds = [NSMutableArray array];
-    NSInteger contactId = [[ApplicationSingleton instance].config getContactId:publicId];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
-    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+    RLMResults<DatabaseMessage*> *messages =
+        [[DatabaseMessage objectsWithPredicate:predicate] sortedResultsUsingDescriptors:@[
+                                    [RLMSortDescriptor sortDescriptorWithKeyPath:@"timestamp" ascending:YES]
+                                    ]];
     for (DatabaseMessage *dbMessage in messages) {
         [messageIds addObject:[NSNumber numberWithInteger:dbMessage.messageId]];
     }
@@ -296,7 +298,7 @@ static const float CURRENT_VERSION = 1.0;
     RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
                                               sortedResultsUsingKeyPath:@"timestamp" ascending:NO];
     if (messages.count > 0) {
-        NSDictionary *contact = [contactDatabase getContactById:contactId];
+        Contact *contact = [contactManager getContactById:contactId];
         NSDictionary *message = [self decodeMessage:[messages firstObject] withContact:contact];
         return message;
     }
@@ -307,21 +309,26 @@ static const float CURRENT_VERSION = 1.0;
 
 }
 
-- (NSArray*)pendingMessages {
+- (NSArray*)pendingMessageInfo {
 
     NSMutableArray *pending = [NSMutableArray array];
     Configurator *config = [ApplicationSingleton instance].config;
     NSArray *contactIds = [config allContactIds];
     for (NSNumber *cid in contactIds) {
         NSInteger contactId = [cid integerValue];
-//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
+        Contact *contact = [contactManager getContactById:contactId];
         NSPredicate *predicate =
             [NSPredicate predicateWithFormat:@"contactId = %ld && acknowledged == %@", contactId, @NO];
         RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+        NSLog(@"%ld pending messages in database", messages.count);
+        NSInteger count = 1;
         for (DatabaseMessage *dbMessage in messages) {
-            NSDictionary *contact = [contactDatabase getContactById:contactId];
-            NSDictionary *message = [self decodeMessage:dbMessage withContact:contact];
-            [pending addObject:message];
+            NSLog(@"Adding message %ld of %ld", count++, messages.count);
+            NSMutableDictionary *info = [NSMutableDictionary dictionary];
+            info[@"publicId"] = contact.publicId;
+            info[@"sequence"] = [NSNumber numberWithInteger:dbMessage.sequence];
+            info[@"timestamp"] = [NSNumber numberWithInteger:dbMessage.timestamp];
+            [pending addObject:info];
         }
     }
     return pending;
@@ -339,7 +346,7 @@ static const float CURRENT_VERSION = 1.0;
     }
 
 }
-
+/*
 - (NSArray*)unreadMessageIds:(NSString *)publicId {
 
     NSMutableArray *unread = [NSMutableArray array];
@@ -353,5 +360,5 @@ static const float CURRENT_VERSION = 1.0;
     return unread;
 
 }
-
+*/
 @end

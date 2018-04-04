@@ -7,6 +7,7 @@
 //
 
 #import "Configurator.h"
+#import "pippip_native_ios-Swift.h"
 #import "ApplicationSingleton.h"
 #import "AccountConfig.h"
 #import "CKGCMCodec.h"
@@ -18,6 +19,7 @@ static NSLock *idLock = nil;
 {
     NSMutableArray *privateWhitelist;
     NSMutableDictionary<NSString*, NSNumber*> *idMap;
+    NSMutableDictionary *keyIndexes;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -32,6 +34,7 @@ static NSLock *idLock = nil;
     privateWhitelist = [NSMutableArray array];
     _whitelist = privateWhitelist;
     idMap = [NSMutableDictionary dictionary];
+    keyIndexes = [NSMutableDictionary dictionary];
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
     
@@ -190,8 +193,9 @@ static NSLock *idLock = nil;
             if (nickname == nil) {
                 nickname = @"";
             }
+            NSString *publicId = entity[@"publicId"];
             [codec putString:nickname];
-            [codec putString:entity[@"publicId"]];
+            [codec putString:publicId];
         }
         NSError *error = nil;
         NSData *encoded = [codec encrypt:_sessionState.contactsKey
@@ -223,6 +227,7 @@ static NSLock *idLock = nil;
 
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"accountName = %@", _sessionState.currentAccount];
     RLMResults<AccountConfig*> *configResults = [AccountConfig objectsWithPredicate:predicate];
+    // NSLog(@"Config results count = %ld", configResults.count);
     return [configResults firstObject];
 
 }
@@ -247,9 +252,28 @@ static NSLock *idLock = nil;
     return config.contactPolicy;
 }
 
+- (NSInteger)getKeyIndex:(NSInteger)contactId {
+
+    NSInteger index = 0;
+    NSNumber *ki = keyIndexes[[NSNumber numberWithInteger:contactId]];
+    if (ki != nil) {
+        index = [ki integerValue] + 1;
+        if (index == 10) {
+            index = 0;
+        }
+        keyIndexes[[NSNumber numberWithInteger:contactId]] = [NSNumber numberWithInteger:index];
+    }
+    else {
+        keyIndexes[[NSNumber numberWithInteger:contactId]] = [NSNumber numberWithInteger:1];
+    }
+    return index;
+
+}
+
 - (NSString*)getNickname {
     AccountConfig *config = [self getConfig];
-    return config.nickname;
+    NSString *nickname = config.nickname;
+    return nickname;
 }
 
 - (void)loadWhitelist {
@@ -328,6 +352,20 @@ static NSLock *idLock = nil;
     [realm beginWriteTransaction];
     config.nickname = nickname;
     [realm commitWriteTransaction];
+
+}
+
+- (NSInteger)whitelistIndexOf:(NSString *)publicId {
+
+    NSInteger index = 0;
+    for (NSDictionary *entry in privateWhitelist) {
+        NSString *entryId = entry[@"publicId"];
+        if ([entryId isEqualToString:publicId]) {
+            return index;
+        }
+        index++;
+    }
+    return NSNotFound;
 
 }
 

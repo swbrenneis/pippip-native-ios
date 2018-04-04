@@ -7,7 +7,7 @@
 //
 
 #import "NewAccountRequest.h"
-//#import "NSData+HexEncode.h"
+#import "pippip_native_ios-Swift.h"
 
 
 @interface NewAccountRequest ()

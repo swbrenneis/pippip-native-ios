@@ -11,10 +11,10 @@
 #import "Conversation.h"
 #import "ApplicationSingleton.h"
 #import "MessageManager.h"
-#import "ContactDatabase.h"
+#import "ContactManager.h"
 #import "AlertErrorDelegate.h"
 #import "Authenticator.h"
-#import "AuthViewController.h"
+#import "Notifications.h"
 
 @interface ConversationViewController ()
 {
@@ -53,11 +53,10 @@
     // Public ID is set in the messages table prepare for segue.
     _conversationCache = [ApplicationSingleton instance].conversationCache;
 
-    ContactDatabase *contactDatabase = [[ContactDatabase alloc] init];
-    NSDictionary *contact = [contactDatabase getContact:_publicId];
-    NSString *nickname = contact[@"nickname"];
-    if (nickname != nil) {
-        _navItem.title = nickname;
+    ContactManager *contactManager = [[ContactManager alloc] init];
+    Contact *contact = [contactManager getContact:_publicId];
+    if (contact.nickname != nil) {
+        _navItem.title = contact.nickname;
     }
     else {
         NSString *fragment = [_publicId substringWithRange:NSMakeRange(0, 6)];
@@ -70,10 +69,10 @@
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(appResumed:)
-                                               name:@"AppResumed" object:nil];
+                                               name:APP_RESUMED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(appSuspended:)
-                                               name:@"AppSuspended" object:nil];
+                                               name:APP_SUSPENDED object:nil];
     
 
 }
@@ -105,7 +104,7 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:dataSource
                                              selector:@selector(messagesUpdated:)
-                                                 name:@"MessagesUpdated"
+                                                 name:MESSAGES_UPDATED
                                                object:nil];
 
 }
@@ -114,7 +113,7 @@
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:dataSource name:@"MessagesUpdated" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:dataSource name:MESSAGES_UPDATED object:nil];
 
 }
 

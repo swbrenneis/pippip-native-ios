@@ -40,7 +40,7 @@ static const float CURRENT_VERSION = 1.0;
         return [accountNames firstObject];
     }
     else {
-        return nil;
+        return @"";
     }
 
 }
@@ -92,9 +92,9 @@ static const float CURRENT_VERSION = 1.0;
     config.fileURL = [[[config.fileURL URLByDeletingLastPathComponent]
                        URLByAppendingPathComponent:name]
                       URLByAppendingPathExtension:@"realm"];
-    config.schemaVersion = 5;
+    config.schemaVersion = 6;
     config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
-        if (oldSchemaVersion < 3) {
+        if (oldSchemaVersion < 6) {
             // No migration necessary
         }
     };

@@ -12,8 +12,11 @@
 #import "RESTSession.h"
 #import "ConversationCache.h"
 #import "Configurator.h"
+#import "ContactDatabase.h"
 
 @interface ApplicationSingleton : NSObject
+
++ (void)bootstrap;
 
 + (ApplicationSingleton*)instance;
 
@@ -22,5 +25,6 @@
 @property (strong, nonatomic) RESTSession *restSession;
 @property (strong, nonatomic) ConversationCache *conversationCache;
 @property (strong, nonatomic) Configurator *config;
+@property (strong, nonatomic) ContactDatabase *contactDatabase;
 
 @end

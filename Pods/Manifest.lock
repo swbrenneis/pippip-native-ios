@@ -1,0 +1,42 @@
+PODS:
+  - ChameleonFramework/Default (2.1.0)
+  - ChameleonFramework/Swift (2.1.0):
+    - ChameleonFramework/Default
+  - Chatto (3.3.0)
+  - ChattoAdditions (3.3.0):
+    - Chatto
+  - PMAlertController (3.2.0)
+  - Realm (3.3.2):
+    - Realm/Headers (= 3.3.2)
+  - Realm/Headers (3.3.2)
+  - RKDropdownAlert (0.3.0)
+
+DEPENDENCIES:
+  - ChameleonFramework/Swift (from `https://github.com/ViccAlexander/Chameleon.git`)
+  - Chatto (= 3.3.0)
+  - ChattoAdditions (= 3.3.0)
+  - PMAlertController
+  - Realm
+  - Realm/Headers
+  - RKDropdownAlert
+
+EXTERNAL SOURCES:
+  ChameleonFramework:
+    :git: https://github.com/ViccAlexander/Chameleon.git
+
+CHECKOUT OPTIONS:
+  ChameleonFramework:
+    :commit: 6dd284bde21ea2e7f9fd89bc36f40df16e16369d
+    :git: https://github.com/ViccAlexander/Chameleon.git
+
+SPEC CHECKSUMS:
+  ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
+  Chatto: d9f67acd6230f08323a51a11c4b639d40c1f8d99
+  ChattoAdditions: 9ee09ac09a89d8c0aa3dc87019e3a22efb2cbac6
+  PMAlertController: 46047b840f6e1833c2a5395c91ccad29e72ae2c0
+  Realm: d927fbf66df5532cfafc08afb5f7e53ded37b894
+  RKDropdownAlert: f4b3364c251829ad439dc666836a1f2dad26f4c7
+
+PODFILE CHECKSUM: 553a25cc409a18abc84ced106031aef10e90990f
+
+COCOAPODS: 1.4.0

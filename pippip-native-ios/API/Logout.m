@@ -7,6 +7,7 @@
 //
 
 #import "Logout.h"
+#import "pippip_native_ios-Swift.h"
 
 @interface Logout ()
 {

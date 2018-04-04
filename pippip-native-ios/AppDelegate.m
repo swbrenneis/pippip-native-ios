@@ -20,9 +20,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
 
-#if TARGET_OS_SIMULATOR
-    [ApplicationSingleton instance].accountSession.simulator = YES;
-#else
+#if !TARGET_OS_SIMULATOR
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     center.delegate = [ApplicationSingleton instance].accountSession;
     UNAuthorizationOptions options = UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge;
@@ -37,6 +35,7 @@
         }
     }];
 #endif
+    [ApplicationSingleton bootstrap];
     return YES;
 
 }

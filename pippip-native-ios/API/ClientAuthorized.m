@@ -7,6 +7,7 @@
 //
 
 #import "ClientAuthorized.h"
+#import "pippip_native_ios-Swift.h"
 
 @interface ClientAuthorized ()
 {

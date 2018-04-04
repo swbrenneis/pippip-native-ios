@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SessionState.h"
+
+@class SessionState;
 
 @interface ConversationDataSource : NSObject <UITableViewDataSource, UITableViewDelegate>
 

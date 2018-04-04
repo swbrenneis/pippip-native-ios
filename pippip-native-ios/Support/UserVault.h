@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SessionState.h"
+
+@class SessionState;
 
 @interface UserVault : NSObject
 

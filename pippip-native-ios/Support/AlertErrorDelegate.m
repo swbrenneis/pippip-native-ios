@@ -7,7 +7,6 @@
 //
 
 #import "AlertErrorDelegate.h"
-#import "AuthViewController.h"
 
 @interface AlertErrorDelegate ()
 {

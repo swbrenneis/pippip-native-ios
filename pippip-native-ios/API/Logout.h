@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "PostPacket.h"
-#import "SessionState.h"
+
+@class SessionState;
 
 @interface Logout : NSObject<PostPacket>
 

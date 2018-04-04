@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ErrorDelegate.h"
+
+@protocol ErrorDelegate;
 
 @protocol ResponseConsumer <NSObject>
 

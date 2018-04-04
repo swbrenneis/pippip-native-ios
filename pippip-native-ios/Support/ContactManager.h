@@ -9,36 +9,51 @@
 #import <UIKit/UIKit.h>
 #import "RequestProcess.h"
 #import "RESTSession.h"
-#import "ResponseConsumer.h"
-#import "SessionState.h"
+#import "ContactDatabase.h"
+
+@class SessionState;
+@class Contact;
+@protocol ResponseConsumer;
 
 @interface ContactManager : NSObject <RequestProcess>
 
-- (void)acknowledgeRequest:(NSString*)response withId:(NSString*)publicId;
+- (void)acknowledgeRequest:(NSString*_Nonnull)response
+                    withId:(NSString*_Nonnull)publicId
+              withNickname:(NSString*_Nullable)nickname;
 
-- (void)addFriend:(NSString*)publicId;
+- (BOOL)addFriend:(NSString*_Nonnull)publicId;
 
-- (void)deleteContact:(NSString*)publicId;
+- (void)deleteContact:(NSString*_Nonnull)publicId;
 
-- (void)deleteFriend:(NSString*)publicId;
+- (void)deleteFriend:(NSString*_Nonnull)publicId;
+
+- (Contact*_Nullable)getContact:(NSString*_Nullable)publicId;
+
+- (Contact*_Nullable)getContactById:(NSInteger)contactId;
+
+- (NSString*_Nullable)getContactPublicId:(NSString*_Nonnull)nickname;
+
+- (NSArray<Contact*>*_Nonnull)getContactList;
 
 - (void)getRequests;
 
-- (void)matchNickname:(NSString*)nickname withPublicId:(NSString*)publicId;
+- (void)loadContactList;
 
-- (void)requestContact:(NSString*)publicId;
+- (void)matchNickname:( NSString* _Nullable )nickname withPublicId:( NSString* _Nullable )publicId;
 
-- (NSArray*)searchContacts:(NSString*)fragment;
+- (void)requestContact:(NSString*_Nonnull)publicId withNickname:(NSString*_Nullable)nickname;
 
-- (void)setContactPolicy:(NSString*)policy;
+- (NSArray<Contact*>*_Nonnull)searchContacts:(NSString*_Nonnull)fragment;
 
-- (void)setResponseConsumer:(id<ResponseConsumer>)consumer;
+- (void)setContactPolicy:(NSString*_Nonnull)policy;
 
 - (void)syncContacts;
 
-- (void)updateContacts:(NSArray*)contacts;
+- (void)updateContact:(Contact*_Nonnull)contact;
 
-- (void)updateNickname:(NSString*)nickname withOldNickname:(NSString*)oldNickname;
+- (void)updateContacts:(NSArray<NSDictionary*>*_Nonnull)serverContacts;
+
+- (void)updateNickname:(NSString*_Nullable)nickname withOldNickname:(NSString*_Nullable)oldNickname;
 
 - (NSUInteger)updatePendingContacts;
 

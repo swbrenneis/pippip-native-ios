@@ -8,6 +8,7 @@
 
 #import "ConversationDelegate.h"
 #import "MessagesDatabase.h"
+#import "ApplicationSingleton.h"
 //#import "CKSHA1.h"
 
 @interface ConversationDelegate ()
@@ -80,10 +81,11 @@
     }
     
 }
-
+/*
 - (NSArray*)allMessageIds {
 
-    NSArray *ids = [messageDatabase loadMessageIds:_publicId];
+    NSInteger contactId = [[ApplicationSingleton instance].config getContactId:_publicId];
+    NSArray *ids = [messageDatabase loadMessageIds:contactId];
     if (ids.count < conversation.count) {
         for (NSNumber *mid in ids) {
             if (conversation[mid] == nil) {
@@ -95,7 +97,7 @@
     return ids;
     
 }
-
+*/
 - (void)deleteAllMessages {
 
     [conversation removeAllObjects];
@@ -109,7 +111,7 @@
     _count = conversation.count;
 
 }
-
+/*
 - (NSMutableDictionary*)getMessage:(NSInteger)messageId {
 
     NSMutableDictionary *message = conversation[[NSNumber numberWithInteger:messageId]];
@@ -120,23 +122,24 @@
     return message;
     
 }
-
+*/
 - (void)markMessageRead:(NSInteger)messageId {
     
     NSMutableDictionary *message = conversation[[NSNumber numberWithInteger:messageId]];
     message[@"read"] = @YES;
     
 }
-
+/*
 - (NSArray*)latestMessageIds:(NSInteger)count {
 
     NSMutableArray *latest = [NSMutableArray array];
-    NSArray *ids = [messageDatabase loadMessageIds:_publicId];
+    NSInteger contactId = [[ApplicationSingleton instance].config getContactId:_publicId];
+    NSArray *ids = [messageDatabase loadMessageIds:contactId];
     for (NSInteger index = ids.count - count; latest.count < count; index++) {
         [latest addObject:ids[index]];
     }
     return latest;
 
 }
-
+*/
 @end
