@@ -46,7 +46,7 @@
     MutableConversation *conversation = [self getMutableConversation:message[@"publicId"]];
     NSInteger messageId = [message[@"messageId"] integerValue];
     [conversation acknowledgeMessage:messageId];
-    [messageDatabase acknowledgeMessage:messageId];
+    //[messageDatabase acknowledgeMessage:messageId];
 
 }
 
@@ -54,8 +54,8 @@
 - (void)addMessage:(NSMutableDictionary*)message {
 
     MutableConversation *conversation = [self getMutableConversation:message[@"publicId"]];
-    NSInteger messageId = [messageDatabase addMessage:message];
-    message[@"messageId"] = [NSNumber numberWithInteger:messageId];
+    //NSInteger messageId = [messageDatabase addMessage:message];
+    //message[@"messageId"] = [NSNumber numberWithInteger:messageId];
     [conversation addMessage:message];
 
 }
@@ -68,7 +68,7 @@
     for (NSDictionary *msg in messages) {
         NSMutableDictionary *message = [msg mutableCopy];
         message[@"publicId"] = publicId;
-        message[@"cleartext"] = [messageDatabase decryptMessage:message];
+        //message[@"cleartext"] = [messageDatabase decryptMessage:message];
         message[@"sent"] = @NO;
         [self addMessage:message];
     }
@@ -113,13 +113,13 @@
 
     MutableConversation *conversation = [self getMutableConversation:publicId];
     [conversation deleteAllMessages];
-    [messageDatabase deleteAllMessages:publicId];
+    //[messageDatabase deleteAllMessages:publicId];
 
 }
 
 - (void)deleteMessage:(NSInteger)messageId withPublicId:(NSString *)publicId {
 
-    [messageDatabase deleteMessage:messageId];
+    //[messageDatabase deleteMessage:messageId];
     MutableConversation *conversation = [self getMutableConversation:publicId];
     [conversation deleteMessage:messageId];
 
@@ -156,7 +156,7 @@
         MutableConversation *conversation = [self getMutableConversation:message[@"publicId"]];
         NSInteger messageId = [message[@"messageId"] integerValue];
         [conversation markMessageRead:messageId];
-        [messageDatabase markMessageRead:messageId];
+        //[messageDatabase markMessageRead:messageId];
         Contact *contact = [contactManager getContact:message[@"publicId"]];
         contact.timestamp = [[NSDate date] timeIntervalSince1970];
         NSMutableArray *contacts = [NSMutableArray array];
@@ -171,12 +171,12 @@
     NSMutableArray *messages = [NSMutableArray array];
     Configurator *config = [ApplicationSingleton instance].config;
     NSArray *ids = [config allContactIds];
-    for (NSNumber *cid in ids) {
+    /*for (NSNumber *cid in ids) {
         NSDictionary *message = [messageDatabase mostRecentMessage:[cid integerValue]];
         if (message != nil) {
             [self addMessageSorted:message withMessageList:messages];
         }
-    }
+    }*/
     return messages;
 
 }

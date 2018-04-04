@@ -16,10 +16,11 @@ class TextDataSource: ChatDataSourceProtocol {
     var chatItems: [ChatItemProtocol]
     
     var delegate: ChatDataSourceDelegateProtocol?
-    var scrollingScource : ScrollingDataSource<TextMessage>
+    var scrollingSource : ScrollingDataSource<TextMessage>
 
     init() {
         chatItems = [ChatItemProtocol]()
+        scrollingSource = ScrollingDataSource(count: 0, pageSize: 30, itemGenerator: nil)
     }
 
     func addTextMessage(_ text: String) {

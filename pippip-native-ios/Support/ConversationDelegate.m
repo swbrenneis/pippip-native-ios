@@ -81,7 +81,7 @@
     }
     
 }
-
+/*
 - (NSArray*)allMessageIds {
 
     NSInteger contactId = [[ApplicationSingleton instance].config getContactId:_publicId];
@@ -97,7 +97,7 @@
     return ids;
     
 }
-
+*/
 - (void)deleteAllMessages {
 
     [conversation removeAllObjects];
@@ -111,7 +111,7 @@
     _count = conversation.count;
 
 }
-
+/*
 - (NSMutableDictionary*)getMessage:(NSInteger)messageId {
 
     NSMutableDictionary *message = conversation[[NSNumber numberWithInteger:messageId]];
@@ -122,14 +122,14 @@
     return message;
     
 }
-
+*/
 - (void)markMessageRead:(NSInteger)messageId {
     
     NSMutableDictionary *message = conversation[[NSNumber numberWithInteger:messageId]];
     message[@"read"] = @YES;
     
 }
-
+/*
 - (NSArray*)latestMessageIds:(NSInteger)count {
 
     NSMutableArray *latest = [NSMutableArray array];
@@ -141,5 +141,5 @@
     return latest;
 
 }
-
+*/
 @end

@@ -17,8 +17,6 @@
 		5500D15A2073B34D0016AC71 /* ConversationMessageSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500D1592073B34D0016AC71 /* ConversationMessageSender.swift */; };
 		5500D15F2073B3AE0016AC71 /* ConversationTextModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500D15B2073B3AD0016AC71 /* ConversationTextModel.swift */; };
 		5500D1622073B3AE0016AC71 /* ConversationTextViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500D15E2073B3AE0016AC71 /* ConversationTextViewModel.swift */; };
-		5500D1642073BA480016AC71 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500D1632073BA480016AC71 /* Realm.framework */; };
-		5500D1652073BA480016AC71 /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5500D1632073BA480016AC71 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5500D168207404A10016AC71 /* TableViewCellWithController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500D167207404A10016AC71 /* TableViewCellWithController.swift */; };
 		5500D16A207405190016AC71 /* DeleteAccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500D169207405190016AC71 /* DeleteAccountCell.swift */; };
 		5500D16D2074104A0016AC71 /* AccountDeleter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5500D16C2074104A0016AC71 /* AccountDeleter.m */; };
@@ -206,7 +204,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5500D1652073BA480016AC71 /* Realm.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -227,7 +224,6 @@
 		5500D1592073B34D0016AC71 /* ConversationMessageSender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationMessageSender.swift; sourceTree = "<group>"; };
 		5500D15B2073B3AD0016AC71 /* ConversationTextModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationTextModel.swift; sourceTree = "<group>"; };
 		5500D15E2073B3AE0016AC71 /* ConversationTextViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationTextViewModel.swift; sourceTree = "<group>"; };
-		5500D1632073BA480016AC71 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		5500D167207404A10016AC71 /* TableViewCellWithController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellWithController.swift; sourceTree = "<group>"; };
 		5500D169207405190016AC71 /* DeleteAccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountCell.swift; sourceTree = "<group>"; };
 		5500D16B2074104A0016AC71 /* AccountDeleter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountDeleter.h; sourceTree = "<group>"; };
@@ -548,7 +544,6 @@
 				555B0D45204CD80000D99807 /* UserNotifications.framework in Frameworks */,
 				553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */,
 				DB8E5608B57779E96F780B3B /* Pods_pippip_native_ios.framework in Frameworks */,
-				5500D1642073BA480016AC71 /* Realm.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -800,7 +795,6 @@
 		5592A57B1F8BBB4400F08BF5 = {
 			isa = PBXGroup;
 			children = (
-				5500D1632073BA480016AC71 /* Realm.framework */,
 				555B0D3F204C885900D99807 /* MBProgressHUD */,
 				55AA556D1FA1527C00A7026B /* libgmp.a */,
 				5592A5861F8BBB4400F08BF5 /* pippip-native-ios */,
@@ -1071,7 +1065,6 @@
 				5592A5801F8BBB4400F08BF5 /* Sources */,
 				5592A5811F8BBB4400F08BF5 /* Frameworks */,
 				5592A5821F8BBB4400F08BF5 /* Resources */,
-				557CE5912041A6F1008AF8CF /* ShellScript */,
 				BC61BC2F1CD8402690E41BE0 /* [CP] Embed Pods Frameworks */,
 				D907CC264B3800FBEC4424F2 /* [CP] Copy Pods Resources */,
 				5500D1662073BA480016AC71 /* Embed Frameworks */,
@@ -1210,19 +1203,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		557CE5912041A6F1008AF8CF /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework/strip-frameworks.sh\"";
-		};
 		843E91C728431456F6E37C78 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1248,18 +1228,18 @@
 				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
 				"${BUILT_PRODUCTS_DIR}/Chatto/Chatto.framework",
 				"${BUILT_PRODUCTS_DIR}/ChattoAdditions/ChattoAdditions.framework",
-				"${BUILT_PRODUCTS_DIR}/ExpandableCell/ExpandableCell.framework",
 				"${BUILT_PRODUCTS_DIR}/PMAlertController/PMAlertController.framework",
 				"${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChameleonFramework.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Chatto.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChattoAdditions.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ExpandableCell.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PMAlertController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RKDropdownAlert.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1662,12 +1642,7 @@
 					"$(USER_LIBRARY_DIR)/Frameworks",
 					"$(PROJECT_DIR)",
 				);
-				"FRAMEWORK_SEARCH_PATHS[arch=*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/pippip-native-ios",
-					"$(USER_LIBRARY_DIR)/Frameworks",
-					"$(PROJECT_DIR)",
-				);
+				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "$(inherited) $(PROJECT_DIR)/pippip-native-ios $(USER_LIBRARY_DIR)/Frameworks $(PROJECT_DIR)";
 				INFOPLIST_FILE = "pippip-native-ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
