@@ -116,8 +116,8 @@ import LocalAuthentication
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
-            textField?.returnKeyType = .go
-            textField?.delegate = self
+            //textField?.returnKeyType = .go
+            //textField?.delegate = self
         })
         alert.addAction(PMAlertAction(title: "Sign In",
                                       style: .default, action: { () in
@@ -140,16 +140,16 @@ import LocalAuthentication
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
-            textField?.returnKeyType = .go
-            textField?.delegate = self
+            //textField?.returnKeyType = .go
+            //textField?.delegate = self
         })
         alert.addTextField({ (textField) in
             textField?.placeholder = "Passphrase"
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
-            textField?.returnKeyType = .go
-            textField?.delegate = self
+            //textField?.returnKeyType = .go
+            //textField?.delegate = self
         })
         alert.addAction(PMAlertAction(title: "Create Account",
                                       style: .default, action: { () in
@@ -259,7 +259,7 @@ import LocalAuthentication
         }
 
     }
-
+/*
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 
         if (accountName.utf8.count > 0) {
@@ -271,7 +271,7 @@ import LocalAuthentication
         return true
 
     }
-
+*/
     func dropdownAlertWasTapped(_ alert: RKDropdownAlert!) -> Bool {
         return true
     }

@@ -29,7 +29,7 @@ class FriendCellData: CellDataProtocol {
 }
 
 class FriendCell : ExpandingTableViewCell {
-    
+
     var cellView: ContactCellView?
     
     public override init(style: UITableViewCellStyle, reuseIdentifier: String?) {

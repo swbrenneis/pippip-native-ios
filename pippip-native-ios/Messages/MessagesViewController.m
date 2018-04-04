@@ -93,10 +93,10 @@
 }
 
 - (IBAction)composeMessage:(id)sender {
-/*
-    ChattoConversationViewController *controller = [[ChattoConversationViewController alloc] init];
+
+    ConversationViewController *controller = [[ConversationViewController alloc] init];
     [self.navigationController pushViewController:controller animated:YES];
-*/
+
 }
 
 - (void)didReceiveMemoryWarning {

@@ -1,7 +1,4 @@
 PODS:
-  - AsyncMessagesViewController (0.1):
-    - SlackTextViewController (= 1.9.6)
-    - Texture (= 2.6)
   - ChameleonFramework/Default (2.1.0)
   - ChameleonFramework/Swift (2.1.0):
     - ChameleonFramework/Default
@@ -35,12 +32,13 @@ PODS:
     - Texture/Core
 
 DEPENDENCIES:
-  - AsyncMessagesViewController
   - ChameleonFramework/Swift (from `https://github.com/ViccAlexander/Chameleon.git`)
   - PMAlertController
   - Realm
   - Realm/Headers
   - RKDropdownAlert
+  - SlackTextViewController
+  - Texture
 
 EXTERNAL SOURCES:
   ChameleonFramework:
@@ -52,7 +50,6 @@ CHECKOUT OPTIONS:
     :git: https://github.com/ViccAlexander/Chameleon.git
 
 SPEC CHECKSUMS:
-  AsyncMessagesViewController: ff098a88d92a5f043fe1de123a7679aaafd9d9d6
   ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
   PINCache: d195fdba255283f7e9900a55e3cced377f431f9b
   PINOperation: a6219e6fc9db9c269eb7a7b871ac193bcf400aac
@@ -63,6 +60,6 @@ SPEC CHECKSUMS:
   SlackTextViewController: b854e62c1c156336bc4fd409c6ca79b5773e8f9d
   Texture: 7249074582daf75e524e59df5428b66b8e8db0e4
 
-PODFILE CHECKSUM: bfddef825c2b504b9edf423e920eee97e0fd29af
+PODFILE CHECKSUM: ed765541a455bcd9525fcaf1e24e238ab5374cc0
 
 COCOAPODS: 1.4.0

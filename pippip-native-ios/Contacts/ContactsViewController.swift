@@ -138,11 +138,13 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     
     @objc func contactsUpdated(_ notification: Notification) {
 
-        contactsModel.clear(0)
-        tableView.deleteRows(at: contactsModel.deletePaths, with: .top)
-        let contactList = contactManager.getContactList()
-        contactsModel.setContacts(contactList)
-        tableView.insertRows(at: contactsModel.insertPaths, with: .bottom)
+        DispatchQueue.main.async {
+            self.contactsModel.clear(0)
+            self.tableView.deleteRows(at: self.contactsModel.deletePaths, with: .top)
+            let contactList = self.contactManager.getContactList()
+            self.contactsModel.setContacts(contactList)
+            self.tableView.insertRows(at: self.contactsModel.insertPaths, with: .bottom)
+        }
     
     }
 

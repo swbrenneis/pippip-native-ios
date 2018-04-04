@@ -7,7 +7,6 @@
 //
 
 #import "ObjcConversationViewController.h"
-#import "ConversationDataSource.h"
 #import "Conversation.h"
 #import "ApplicationSingleton.h"
 #import "MessageManager.h"
@@ -19,7 +18,7 @@
 @interface ObjcConversationViewController ()
 {
     MessageManager *messageManager;
-    ConversationDataSource *dataSource;
+//    ConversationDataSource *dataSource;
     AuthViewController *authView;
     BOOL suspended;
 }
@@ -42,9 +41,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    dataSource = [[ConversationDataSource alloc] initWithTableView:_tableView withPublicId:_publicId];
-    _tableView.dataSource = dataSource;
-    [_tableView setDelegate:dataSource];
+//    dataSource = [[ConversationDataSource alloc] initWithTableView:_tableView withPublicId:_publicId];
+//    _tableView.dataSource = dataSource;
+//    [_tableView setDelegate:dataSource];
     [_sendFailedLabel setHidden:YES];
     authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
 
@@ -84,7 +83,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-
+/*
     NSInteger messageCount = [dataSource getMessageCount];
     if (messageCount > 0) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:messageCount - 1 inSection:0];
@@ -106,14 +105,14 @@
                                              selector:@selector(messagesUpdated:)
                                                  name:MESSAGES_UPDATED
                                                object:nil];
-
+*/
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:dataSource name:MESSAGES_UPDATED object:nil];
+//    [[NSNotificationCenter defaultCenter] removeObserver:dataSource name:MESSAGES_UPDATED object:nil];
 
 }
 
@@ -211,7 +210,7 @@
 - (IBAction)clearAllMessages:(UIBarButtonItem *)sender {
 
     [_conversationCache deleteAllMessages:_publicId];
-    [dataSource messagesCleared];
+//    [dataSource messagesCleared];
     [_tableView reloadData];
 
 }

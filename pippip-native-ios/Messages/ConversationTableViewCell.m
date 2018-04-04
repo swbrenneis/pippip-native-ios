@@ -7,7 +7,6 @@
 //
 
 #import "ConversationTableViewCell.h"
-#import "ConversationDataSource.h"
 
 @interface ConversationTableViewCell ()
 {
