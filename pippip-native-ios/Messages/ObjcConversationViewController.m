@@ -6,7 +6,7 @@
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
-#import "ConversationViewController.h"
+#import "ObjcConversationViewController.h"
 #import "ConversationDataSource.h"
 #import "Conversation.h"
 #import "ApplicationSingleton.h"
@@ -16,7 +16,7 @@
 #import "Authenticator.h"
 #import "Notifications.h"
 
-@interface ConversationViewController ()
+@interface ObjcConversationViewController ()
 {
     MessageManager *messageManager;
     ConversationDataSource *dataSource;
@@ -35,7 +35,7 @@
 
 @end
 
-@implementation ConversationViewController
+@implementation ObjcConversationViewController
 
 @synthesize errorDelegate;
 

@@ -13,7 +13,7 @@
 #import "MessagesHeadingCell.h"
 #import "ApplicationSingleton.h"
 #import "ConversationCache.h"
-#import "ConversationViewController.h"
+#import "ObjcConversationViewController.h"
 #import "Authenticator.h"
 #import "MessageManager.h"
 #import "MBProgressHUD.h"
@@ -93,10 +93,10 @@
 }
 
 - (IBAction)composeMessage:(id)sender {
-
+/*
     ChattoConversationViewController *controller = [[ChattoConversationViewController alloc] init];
     [self.navigationController pushViewController:controller animated:YES];
-
+*/
 }
 
 - (void)didReceiveMemoryWarning {
@@ -244,10 +244,10 @@
             hud.mode = MBProgressHUDModeIndeterminate;
             hud.label.text = @"Decrypting messages";
         }*/
-        ChattoConversationViewController *conversationView = [[ChattoConversationViewController alloc] init];
-        NSDictionary *message = mostRecent[self.tableView.indexPathForSelectedRow.item];
-        conversationView.publicId = message[@"publicId"];
-        [self.navigationController pushViewController:conversationView animated:YES];
+//        ChattoConversationViewController *conversationView = [[ChattoConversationViewController alloc] init];
+//        NSDictionary *message = mostRecent[self.tableView.indexPathForSelectedRow.item];
+ //       conversationView.publicId = message[@"publicId"];
+ //       [self.navigationController pushViewController:conversationView animated:YES];
         /*
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -267,7 +267,7 @@
     // Pass the selected object to the new view controller.
     UIViewController * view = [segue destinationViewController];
     if ([segue.identifier isEqualToString:@"ConversationSegue"]) {
-        ConversationViewController *conversationView = (ConversationViewController*)view;
+        ObjcConversationViewController *conversationView = (ObjcConversationViewController*)view;
         NSDictionary *message = mostRecent[self.tableView.indexPathForSelectedRow.item];
         conversationView.publicId = message[@"publicId"];
     }

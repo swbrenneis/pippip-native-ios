@@ -834,7 +834,7 @@
         <!--Conversation-->
         <scene sceneID="CJa-DO-Skw">
             <objects>
-                <viewController title="Conversation" id="W8U-Wg-QYH" customClass="ConversationViewController" sceneMemberID="viewController">
+                <viewController title="Conversation" id="W8U-Wg-QYH" customClass="ObjcConversationViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="R18-2X-Z0X">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

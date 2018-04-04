@@ -7,17 +7,10 @@
 //
 
 import UIKit
-import Chatto
 
-class TextMessage: ChatItemProtocol {
+class TextMessage {
 
-    var type = "text"
-    var uid = ""
-    var messageId: Int64 = 0 {
-        didSet {
-            uid = "\(messageId)"
-        }
-    }
+    var messageId: Int64 = 0
     var contactId: Int = 0
     var ciphertext: Data?
     var cleartext: String?
@@ -46,7 +39,6 @@ class TextMessage: ChatItemProtocol {
         let config = ApplicationSingleton.instance().config!
         contactId = config.getContactId(publicId)
         messageId = Int64(config.newMessageId())
-        uid = "\(messageId)"
         originating = false
         
     }

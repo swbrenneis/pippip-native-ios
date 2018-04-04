@@ -7,7 +7,7 @@
 //
 
 #import "NewMessageViewController.h"
-#import "ConversationViewController.h"
+#import "ObjcConversationViewController.h"
 #import "NewMessageDataSource.h"
 #import "ApplicationSingleton.h"
 #import "MessageManager.h"
