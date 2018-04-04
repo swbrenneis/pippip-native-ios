@@ -6,12 +6,14 @@ target 'pippip-native-ios' do
   use_frameworks!
 
   # Pods for pippip-native-ios
-  pod 'ExpandableCell'
+#  pod 'ExpandableCell'
   pod 'PMAlertController'
   pod 'ChameleonFramework/Swift', :git => 'https://github.com/ViccAlexander/Chameleon.git'
   pod 'Chatto', '= 3.3.0'
   pod 'ChattoAdditions', '= 3.3.0'
   pod 'RKDropdownAlert'
+  pod 'Realm'
+  pod 'Realm/Headers'
 
   target 'pippip-native-iosTests' do
     inherit! :search_paths
