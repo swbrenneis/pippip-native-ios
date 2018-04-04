@@ -17,38 +17,58 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     @IBOutlet weak var tableView: ExpandingTableView!
     @IBOutlet weak var tableBottom: NSLayoutConstraint!
     
-    var contactManager = ContactManager()
-    var contactsModel: ContactsTableModel?
-    var headingView: UIView?
-    var expandedContact: [ AnyHashable: Any ]?
-    var contactIndex = 0
-    var requestIndex = 0
-    var authView: AuthViewController?
+    var contactManager: ContactManager
+    var contactsModel: ContactsTableModel
+    var authView: AuthViewController
+    var nickname: String?
+    var publicId = ""
+    var debugDelete = false
     var debugging = false
-    var pendingContactCells = [ UITableViewCell ]()
-    var acknowledgedPath: IndexPath?
+    var suspended = false
+
+    init() {
+
+        contactManager = ContactManager()
+        contactsModel = ContactsTableModel()
+        authView = AuthViewController()
+
+        super.init(nibName: nil, bundle: nil)
+
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+
+        contactManager = ContactManager()
+        contactsModel = ContactsTableModel()
+        authView = AuthViewController()
+        
+        super.init(coder: aDecoder)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        contactsModel = ContactsTableModel(self)
         tableView.expandingModel = contactsModel
+        contactsModel.viewController = self
+        let headerFrame = CGRect(x: 0.0, y:0.0, width: self.view.frame.size.width, height:40.0)
+        contactsModel.headerViews[1] = ContactsHeaderView(headerFrame)
+
         authView = AuthViewController()
-        authView?.suspended = true
+        authView.suspended = true
 
-        NotificationCenter.default.addObserver(self, selector: #selector(requestsUpdated(_:)),
-                                               name: Notifications.RequestsUpdated, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
-                                               name: Notifications.PresentAlert, object: nil)
+        var items = [UIBarButtonItem]()
+        let addItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addContact(_:)))
+        items.append(addItem)
+        if (debugging) {
+            let deleteItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteContact(_:)))
+            items.append(deleteItem)
+        }
+        self.navigationItem.rightBarButtonItems = items
 
+        NotificationCenter.default.addObserver(self, selector: #selector(contactsUpdated(_:)),
+                                               name: Notifications.ContactsUpdated, object: nil)
 /*
-        NotificationCenter.default.addObserver(self, selector: #selector(contactDeleted(_:)),
-                                               name: Notifications.ContactDeleted, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(contactRequested(_:)),
-                                               name: Notifications.ContactRequested, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(nicknameMatched(_:)),
-                                               name: Notifications.NicknameMatched, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestAcknowledged(_:)),
                                                name: Notifications.RequestAcknowledged, object: nil)
 */
@@ -56,68 +76,203 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
 
-        contactsModel!.setContacts(contactManager.getContactList(), viewController: self)
+        NotificationCenter.default.addObserver(self, selector: #selector(requestsUpdated(_:)),
+                                               name: Notifications.RequestsUpdated, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
+                                               name: Notifications.PresentAlert, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(contactRequested(_:)),
+                                               name: Notifications.ContactRequested, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(nicknameMatched(_:)),
+                                               name: Notifications.NicknameMatched, object: nil)
+
+        contactsModel.setContacts(contactManager.getContactList())
         contactManager.getRequests()
 
     }
-/*
+
     override func viewWillDisappear(_ animated: Bool) {
 
-//        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardDidShow, object: nil)
-//        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardDidHide, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.RequestsUpdated, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.FriendAdded, object: nil)
 
     }
-*/
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 
-    @objc func nicknameMatched(_ notification: Notification) {
+    @objc func appResumed(_ notification: Notification) {
 
-        let info = notification.userInfo
-        if let publicId = info?[AnyHashable("publicId")] as? String {
-            let nickname = info?[AnyHashable("nickname")] as? String
-            DispatchQueue.main.async {
-                self.contactManager.requestContact(publicId, withNickname: nickname)
+        if (suspended) {
+            suspended = false
+            let info = notification.userInfo
+            if let suspendedTime = info?[AnyHashable("suspendedTime")] as? NSNumber {
+                if (suspendedTime.intValue > 0 && suspendedTime.intValue < 180) {
+                    authView.suspended = true
+                }
+                else {
+                    let auth = Authenticator()
+                    auth.logout()
+                }
+                DispatchQueue.main.async {
+                    self.present(self.authView, animated: true, completion: nil)
+                }
+            }
+            
+        }
+
+    }
+    
+    @objc func appSuspended(_ notification: Notification) {
+
+        suspended = true
+        DispatchQueue.main.async {
+            self.contactsModel.clear(1)
+            self.tableView.deleteRows(at: self.contactsModel.deletePaths, with: .top)
+        }
+
+    }
+    
+    @objc func contactsUpdated(_ notification: Notification) {
+
+        contactsModel.clear(0)
+        tableView.deleteRows(at: contactsModel.deletePaths, with: .top)
+        let contactList = contactManager.getContactList()
+        contactsModel.setContacts(contactList)
+        tableView.insertRows(at: contactsModel.insertPaths, with: .bottom)
+    
+    }
+
+    @objc func contactRequested(_ notification: Notification) {
+
+        DispatchQueue.main.async {
+            let contact = notification.object as! Contact
+            let contactCell = self.tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
+            if let nickname = contact.nickname {
+                contactCell.identLabel.text = nickname
+            }
+            else {
+                let fragment = contact.publicId.prefix(10)
+                contactCell.identLabel.text = String(fragment) + " ..."
+            }
+            contactCell.statusImageView.image = UIImage(named: contact.status)
+            let cellData = ContactCellData(contactCell: contactCell,
+                                           contact: contact, viewController: self)
+            if let model = self.tableView.expandingModel {
+                model.appendCell(cellData, section: 1)
+                let alertColor = UIColor.flatLime
+                RKDropdownAlert.title("Contact Added", message: "This contact has been added to your contacts list",
+                                      backgroundColor: alertColor,
+                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                      time: 2, delegate: nil)
+                self.tableView.insertRows(at: model.insertPaths, with: .right)
+            }
+        }
+        
+    }
+
+    @objc func deleteContact(_ sender: Any) {
+
+        let alert = PMAlertController(title: "Delete A Server Contact",
+                                      description: "Enter a nickname or public ID",
+                                      image: nil,
+                                      style: PMAlertControllerStyle.alert)
+        alert.addTextField({ (textField) in
+            textField?.placeholder = "Nickname"
+            textField?.autocorrectionType = .no
+            textField?.spellCheckingType = .no
+        })
+        alert.addAction(PMAlertAction(title: "Delete",
+                                      style: .default, action: { () in
+                                        self.debugDelete = true
+                                        self.nickname = alert.textFields[0].text ?? ""
+                                        self.contactManager.matchNickname(self.nickname, withPublicId: nil)
+        }))
+        alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
+        self.present(alert, animated: true, completion: nil)
+        
+    }
+
+    @objc func nicknameMatched(_ notification: Notification) {
+        
+        let info = notification.userInfo!
+        if let puid = info["publicId"] as? String {
+            publicId = puid
+            nickname = info["nickname"] as? String ?? ""
+            if (debugDelete) {
+                debugDelete = false
+                contactManager.deleteContact(publicId)
+            }
+            else {
+                contactManager.requestContact(publicId, withNickname: nickname)
             }
         }
         else {
-            let alert = PMAlertController(title: "Add Contact Error",
-                                          description: "That nickname doesn't exist",
-                                          image: nil,
-                                          style: PMAlertControllerStyle.alert)
-            alert.addAction(PMAlertAction(title: "OK", style: .default, action: nil))
-            self.present(alert, animated: true, completion: nil)
-        }
-
-    }
-
-    @objc func requestsUpdated(_ notification: Notification) {
-/*
-        let info = notification.userInfo
-        if let requests = info?[AnyHashable("requests")] as? [ [ AnyHashable: Any ] ] {
-            pendingRequests = requests
-            if pendingRequests.count > 0 {
-            }
-        }
-*/
-    }
-    
-    @objc func requestAcknowledged(_ notification: Notification) {
-/*
-        let info = notification.userInfo
-        if let pending = info?[AnyHashable("pending")] as? [ [AnyHashable: Any] ] {
-            pendingRequests = pending
             DispatchQueue.main.async {
-                //self.tableView.closeExpandedCell(IndexPath(row: self.requestIndex + 1, section: 1))
-                //self.tableView.deleteRows(at: [IndexPath(row: 1, section: 1)], with: .bottom)
-                //self.contactManager.getRequests()
+                let alertColor = UIColor.flatSand
+                RKDropdownAlert.title("Add Contact Error", message: "That nickname doesn't exist",
+                                      backgroundColor: alertColor,
+                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                      time: 2, delegate: nil)
             }
         }
-*/
+        
     }
     
+    @objc func requestsUpdated(_ notification: Notification) {
+
+        // Notification only happens for non-zero request count
+        if let requests = notification.object as? [[AnyHashable: Any]] {
+            let count = tableView.expandingModel!.tableModel[0]!.count
+            if count == 0 {
+                DispatchQueue.main.async {
+                    let cellData = PendingRequestsCellData(requests, viewController: self)
+                    self.tableView.expandingModel!.insertCell(cellData, section: 0, row: 0)
+                    self.tableView.insertRows(at: self.tableView.expandingModel!.insertPaths, with: .top)
+                }
+            }
+        }
+        let _ = DispatchQueue.global().asyncAfter(deadline: .now() + 15.0, execute: {
+            self.contactManager.getRequests()
+            })
+
+    }
+
+    @objc func addContact(_ item: Any) {
+
+        let alert = PMAlertController(title: "Add A New Contact",
+                                      description: "Enter a nickname or public ID",
+                                      image: nil,
+                                      style: PMAlertControllerStyle.alert)
+        alert.addTextField({ (textField) in
+            textField?.placeholder = "Nickname"
+            textField?.autocorrectionType = .no
+            textField?.spellCheckingType = .no
+        })
+        alert.addTextField({ (textField) in
+            textField?.placeholder = "Public ID"
+            textField?.autocorrectionType = .no
+            textField?.spellCheckingType = .no
+        })
+        alert.addAction(PMAlertAction(title: "Add Contact",
+                                      style: .default, action: { () in
+                                        self.nickname = alert.textFields[0].text ?? ""
+                                        self.publicId = alert.textFields[1].text ?? ""
+                                        if self.nickname!.utf8.count > 0 {
+                                            self.contactManager.matchNickname(self.nickname, withPublicId: nil)
+                                        }
+                                        else if self.publicId.utf8.count > 0 {
+                                            self.contactManager.requestContact(self.publicId, withNickname: nil)
+                                        }
+        }))
+        alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
+        self.present(alert, animated: true, completion: nil)
+
+    }
+
     @objc func presentAlert(_ notification: Notification) {
 
         let userInfo = notification.userInfo!
@@ -131,230 +286,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         }
 
     }
-    
-/*
-    func keyboardWillShow(_ notification: Notification) {
-        
-        let keyboardInfo = notification.userInfo;
-        let keyboardFrame = keyboardInfo![UIKeyboardFrameEndUserInfoKey] as? NSValue;
-        let keyboardFrameRect = keyboardFrame?.cgRectValue;
-        tableBottom.constant = (keyboardFrameRect?.size.height)!
-        let tableHeight = UIEdgeInsetsInsetRect(tableView.frame, tableView.safeAreaInsets).height
-        let contentHeight = tableView.contentSize.height
-        let offset = CGPoint(x: 0, y: tableHeight - contentHeight - 55.0)
-        tableView.setContentOffset(offset, animated: true)
-    }
-    
-    func keyboardDidHide(_ notification: Notification) {
-        
-        tableBottom.constant = 0.0
-        
-    }
-*/
-    // MARK: - ExpandableDelegate
-/*
-    func numberOfSections(in expandableTableView: ExpandableTableView) -> Int {
 
-        return 2;
-
-    }
-
-    func expandableTableView(_ expandableTableView: ExpandableTableView, numberOfRowsInSection section: Int) -> Int {
-    }
-
-    func expandableTableView(_ expandableTableView: ExpandableTableView,
-                             cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    }
-
-    func expandableTableView(_ expandableTableView: ExpandableTableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-
-        if indexPath.section == 0 {
-            return 75.0
-        }
-        else {
-            return 50.0
-        }
-
-    }
-
-    func expandableTableView(_ expandableTableView: ExpandableTableView, expandedCellsForRowAt indexPath: IndexPath) -> [UITableViewCell]? {
-
-        tableView.closeAll()
-        if indexPath.section == 0 {
-            if let contact = contactList?[indexPath.item] {
-                expandedContact = contact
-                contactIndex = indexPath.item
-                // Last seen cell
-                let timestamp = contact[AnyHashable("timestamp")] as? NSNumber
-                let tsDate = Date.init(timeIntervalSince1970: (timestamp?.doubleValue)!)
-                let dayTimePeriodFormatter = DateFormatter()
-                dayTimePeriodFormatter.dateFormat = "MMM dd YYYY hh:mm"
-                let lastSeenCell = tableView.dequeueReusableCell(withIdentifier: "LastSeenCell") as? LastSeenCell
-                lastSeenCell?.lastSeenLabel.text = dayTimePeriodFormatter.string(from: tsDate)
-                // Public ID cell
-                let publicIdCell =
-                    tableView.dequeueReusableCell(withIdentifier: "ContactPublicIdCell") as? ContactPublicIdCell
-                let publicId = contact[AnyHashable("publicId")] as? String
-                publicIdCell?.publicIdLabel.text = publicId
-                let deleteContactCell = tableView.dequeueReusableCell(withIdentifier: "DeleteContactCell")
-                return [ publicIdCell!, lastSeenCell!, deleteContactCell! ]
-            }
-            else {
-                return nil
-            }
-        }
-        else if indexPath.item == 1 {
-            var cells = [ UITableViewCell ]()
-            var index = 0
-            while cells.count < pendingRequests!.count {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "PendingContactCell") as? PendingContactCell
-                if let nickname = pendingRequests![index][AnyHashable("nickname")] as? String {
-                    cell!.nicknameLabel.text = nickname
-                }
-                else {
-                    cell!.nicknameLabel.text = ""
-                }
-                if let publicId = pendingRequests![index][AnyHashable("publicId")] as? String {
-                    cell!.publicIdLabel.text = publicId
-                }
-                else {
-                    cell!.publicIdLabel.text = ""
-                }
-                cells.append(cell!)
-                index += 1
-            }
-            return cells
-        }
-        else {
-            return nil
-        }
-
-    }
-
-    func expandableTableView(_ expandableTableView: ExpandableTableView, heightsForExpandedRowAt indexPath: IndexPath) -> [CGFloat]? {
-
-        if indexPath.section == 0 {
-            return [ 63.0, 44.0, 50.0 ]
-        }
-        else if indexPath.item == 1 {
-            return [CGFloat](repeatElement(63.0, count: pendingRequests!.count))
-        }
-        else {
-            return nil
-        }
-
-    }
-
-    func expandableTableView(_ expandableTableView: ExpandableTableView, didSelectRowAt indexPath: IndexPath) {
-
-        if indexPath.section == 1 {
-            switch (indexPath.item) {
-            case 0:
-                let alert = PMAlertController(title: "Add A New Contact",
-                                              description: "Enter a nickname or public ID",
-                                              image: nil,
-                                              style: PMAlertControllerStyle.alert)
-                alert.addTextField({ (textField) in
-                    textField?.placeholder = "Nickname"
-                })
-                alert.addTextField({ (textField) in
-                    textField?.placeholder = "Public ID"
-                })
-                alert.addAction(PMAlertAction(title: "Request Contact",
-                                              style: .default, action: { () in
-                                                let nickname = alert.textFields[0].text ?? ""
-                                                let publicId = alert.textFields[1].text ?? ""
-                                                if nickname.utf8.count > 0 {
-                                                    self.contactManager.matchNickname(nickname, withPublicId: nil)
-                                                }
-                                                else if publicId.utf8.count > 0 {
-                                                    self.contactManager.requestContact(publicId, withNickname: nickname)
-                                                }
-                }))
-                alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
-                self.present(alert, animated: true, completion: nil)
-                break;
-            case 2:
-                if debugging  {
-                    contactManager.syncContacts()
-                }
-                break;
-            default:
-                break;
-            }
-        }
-    
-    }
-
-    func expandableTableView(_ expandableTableView: ExpandableTableView, didSelectExpandedRowAt indexPath: IndexPath) {
-
-        if indexPath.section == 0 && indexPath.item == contactIndex + 3 {
-            if let publicId = expandedContact?[AnyHashable("publicId")] as? String {
-                let message = "You are about to delete this contact and all of its messages.\n"
-                                + "This action cannot be undone.\nContinue?"
-                let alert = PMAlertController(title: "Caution!",
-                                              description: message,
-                                              image: nil,
-                                              style: .alert)
-                alert.addAction(PMAlertAction(title: "Yes",
-                                              style: .default,
-                                              action: { () in
-                                                self.contactManager.deleteContact(publicId)
-                }))
-                alert.addAction(PMAlertAction(title: "No", style: .cancel, action:nil))
-                self.present(alert, animated: true, completion: nil)
-            }
-        }
-        else if indexPath.section == 1 {
-            requestIndex = indexPath.item - 2;
-            if let publicId = pendingRequests![requestIndex][AnyHashable("publicId")] as? String {
-                let nickname = pendingRequests![requestIndex][AnyHashable("nickname")] as? String
-                let alert = PMAlertController(title: "Pending Request",
-                                              description: "Please respond to this request",
-                                              image: nil,
-                                              style: .alert)
-                alert.addAction(PMAlertAction(title: "Accept", style: .default, action: { () in
-                    self.acknowledgedPath = indexPath
-                    self.contactManager.acknowledgeRequest("accept", withId: publicId, withNickname: nickname)
-                }))
-                alert.addAction(PMAlertAction(title: "Reject", style: .default, action: { () in
-                    self.acknowledgedPath = indexPath
-                    self.contactManager.acknowledgeRequest("reject", withId: publicId, withNickname: nickname)
-                }))
-                alert.addAction(PMAlertAction(title: "Hide", style: .default, action: { () in
-                    self.acknowledgedPath = indexPath
-                    self.contactManager.acknowledgeRequest("ignore", withId: publicId, withNickname: nickname)
-                }))
-                alert.addAction(PMAlertAction(title: "Cancel", style: .cancel, action: nil))
-                self.present(alert, animated: true, completion: nil)
-            }
-        }
-
-    }
-
-    func expandableTableView(_ expandableTableView: ExpandableTableView, viewForHeaderInSection section: Int) -> UIView? {
-        
-        if section == 1 {
-            return headingView
-        }
-        else {
-            return nil
-        }
-        
-    }
-    
-    func expandableTableView(_ expandableTableView: ExpandableTableView,
-                             heightForHeaderInSection section: Int) -> CGFloat {
-        
-        if section == 1 {
-            return 40.0
-        }
-        else {
-            return 0.0
-        }
-        
-    }
-*/
     func dropdownAlertWasTapped(_ alert: RKDropdownAlert!) -> Bool {
         return true
     }

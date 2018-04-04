@@ -33,23 +33,26 @@ class WhitelistTableModel: ExpandingTableModelProtocol {
 
         self.viewController = viewController
 
-        tableModel = [ 1: [ AddFriendCellData(viewController) ] ]
-        let headerFrame = CGRect(x: 0.0, y:0.0, width: viewController.view.frame.size.width, height:40.0)
-        headerViews = [ 1: WhitelistHeaderView(headerFrame) ]
+        tableModel = [ Int: [ CellDataProtocol ] ]()
+//        let headerFrame = CGRect(x: 0.0, y:0.0, width: viewController.view.frame.size.width, height:40.0)
+        headerViews = [ Int: ViewDataProtocol ]()
         insertPaths = [ IndexPath ]()
         deletePaths = [ IndexPath ]()
         
     }
 
-    func clear() {
-
-        tableModel.removeAll()
-        headerViews.removeAll()
-        insertPaths.removeAll()
-        deletePaths.removeAll()
-
+    func clear(_ section: Int) {
+        
+        deletePaths = [ IndexPath ]()
+        if let cells = tableModel[section] {
+            for item in 0..<cells.count {
+                deletePaths.append(IndexPath(row: item, section: section))
+            }
+        }
+        tableModel[section] = [ CellDataProtocol ]()
+        
     }
-
+    
     func appendCell(_ cell: CellDataProtocol, section: Int) {
 
         if tableModel[section] == nil {

@@ -29,26 +29,28 @@ class ContactsTableModel: ExpandingTableModelProtocol {
     var deletePaths: [IndexPath]
     weak var viewController: ContactsViewController?
     
-    init(_ viewController: ContactsViewController) {
-        
-        self.viewController = viewController
+    init() {
 
-        tableModel = [Int : [CellDataProtocol]]()
-        tableModel = [ 1: [ NewContactCellData(viewController) ] ]
-        let headerFrame = CGRect(x: 0.0, y:0.0, width: viewController.view.frame.size.width, height:40.0)
-        headerViews = [ 1: ContactsHeaderView(headerFrame) ]
+
+        tableModel = [0 : [CellDataProtocol]()]
+        tableModel[1] = [CellDataProtocol]()
+        headerViews = [ Int: ViewDataProtocol ]()
+//        headerViews = [ 2: ContactsHeaderView(headerFrame) ]
         insertPaths = [ IndexPath ]()
         deletePaths = [ IndexPath ]()
         
     }
     
-    func clear() {
-        
-        tableModel.removeAll()
-        headerViews.removeAll()
-        insertPaths.removeAll()
-        deletePaths.removeAll()
-        
+    func clear(_ section: Int) {
+
+        deletePaths = [ IndexPath ]()
+        if let cells = tableModel[section] {
+            for item in 0..<cells.count {
+                deletePaths.append(IndexPath(row: item, section: section))
+            }
+        }
+        tableModel[section] = [ CellDataProtocol ]()
+
     }
 
     func appendCell(_ cell: CellDataProtocol, section: Int) {
@@ -59,7 +61,7 @@ class ContactsTableModel: ExpandingTableModelProtocol {
         else {
             tableModel[section]?.append(cell)
         }
-        insertPaths = [ IndexPath(row: tableModel[section]!.count, section: section)]
+        insertPaths = [ IndexPath(row: tableModel[section]!.count-1, section: section)]
         
     }
     
@@ -160,31 +162,26 @@ class ContactsTableModel: ExpandingTableModelProtocol {
         
     }
 
-    func setContacts(_ contactList: [ [ AnyHashable: Any] ], viewController: ContactsViewController) {
+    func setContacts(_ contactList: [ Contact ]) {
 
         var cells = [ CellDataProtocol ]()
         for contact in contactList {
-            let tableView = viewController.tableView!
+            let tableView = viewController!.tableView!
             let contactCell = tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
-            if let nickname = contact[AnyHashable("nickname")] as? String {
+            if let nickname = contact.nickname {
                 contactCell.identLabel.text = nickname
             }
-            else if let publicId = contact[AnyHashable("publicId")] as? String {
-                let fragment = publicId.prefix(10)
+            else {
+                let fragment = contact.publicId.prefix(10)
                 contactCell.identLabel.text = String(fragment) + " ..."
             }
-            else {
-                contactCell.identLabel.text = ""
-            }
-            if let status = contact[AnyHashable("status")] as? String {
-                contactCell.statusImageView.image = UIImage(named: status)
-            }
+            contactCell.statusImageView.image = UIImage(named: contact.status)
             let cellData = ContactCellData(contactCell: contactCell,
-                                           contact: contact, viewController: viewController)
+                                           contact: contact, viewController: viewController!)
             cells.append(cellData)
         }
         if cells.count > 0 {
-            insertCells(cells, section: 0, at: 0)
+            insertCells(cells, section: 1, at: 0)
         }
 
     }

@@ -10,6 +10,7 @@ import Foundation
 
 @objc class Notifications: NSObject {
 
+    static let AccountDeleted = NSNotification.Name("AccountDeleted")
     static let Authenticated = NSNotification.Name("Authenticated")
     static let NewSession = NSNotification.Name("NewSession")
     static let AppResumed = NSNotification.Name("AppResumed")
@@ -23,7 +24,8 @@ import Foundation
     static let ContactRequested = NSNotification.Name("ContactRequested")
     static let ContactsSynchronized = NSNotification.Name("ContactsSynchronized")
     static let RequestsUpdated = NSNotification.Name("RequestsUpdated")
-    static let RequestAcknowledged = NSNotification.Name("RequestsAcknowledged");
-    static let UpdateProgress = NSNotification.Name("UpdateProgress");
+    static let RequestAcknowledged = NSNotification.Name("RequestsAcknowledged")
+    static let UpdateProgress = NSNotification.Name("UpdateProgress")
+    static let ContactsUpdated = NSNotification.Name("ContactsUpdated")
 
 }

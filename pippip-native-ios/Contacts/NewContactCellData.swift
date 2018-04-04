@@ -53,7 +53,7 @@ class NewContactSelector: ExpandingTableSelectorProtocol {
                                                name: Notifications.ContactRequested, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(nicknameMatched(_:)),
                                                name: Notifications.NicknameMatched, object: nil)
-        
+
         cell?.setSelected(false, animated: true)
         let alert = PMAlertController(title: "Add A New Contact",
                                       description: "Enter a nickname or public ID",
@@ -85,39 +85,35 @@ class NewContactSelector: ExpandingTableSelectorProtocol {
     }
     
     @objc func contactRequested(_ notification: Notification) {
-        
+
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.FriendAdded, object: nil)
         DispatchQueue.main.async {
-            let contact = notification.userInfo!
+            let contact = notification.object as! Contact
             let contactCell = self.tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
-            if let nickname = contact[AnyHashable("nickname")] as? String {
+            if let nickname = contact.nickname {
                 contactCell.identLabel.text = nickname
             }
-            else if let publicId = contact[AnyHashable("publicId")] as? String {
-                let fragment = publicId.prefix(10)
+            else {
+                let fragment = contact.publicId.prefix(10)
                 contactCell.identLabel.text = String(fragment) + " ..."
             }
-            else {
-                contactCell.identLabel.text = ""
-            }
-            if let status = contact[AnyHashable("status")] as? String {
-                contactCell.statusImageView.image = UIImage(named: status)
-            }
+            contactCell.statusImageView.image = UIImage(named: contact.status)
             let cellData = ContactCellData(contactCell: contactCell,
                                            contact: contact, viewController: self.viewController!)
-            let model = self.tableView.expandingModel
-            model?.appendCell(cellData, section: 0)
-            let alertColor = UIColor.flatLime
-            RKDropdownAlert.title("Contact Added", message: "This contact has been added to your contacts list",
-                                  backgroundColor: alertColor,
-                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                  time: 2, delegate: nil)
-            self.tableView.insertRows(at: (model?.insertPaths)!, with: .right)
+            if let model = self.tableView.expandingModel {
+                model.appendCell(cellData, section: 0)
+                let alertColor = UIColor.flatLime
+                RKDropdownAlert.title("Contact Added", message: "This contact has been added to your contacts list",
+                                      backgroundColor: alertColor,
+                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                      time: 2, delegate: nil)
+                self.tableView.insertRows(at: model.insertPaths, with: .right)
+            }
         }
 
     }
-    
+
     @objc func nicknameMatched(_ notification: Notification) {
         
         let info = notification.userInfo!

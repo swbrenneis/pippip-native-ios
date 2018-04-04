@@ -116,6 +116,8 @@ import LocalAuthentication
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
+            textField?.returnKeyType = .go
+            textField?.delegate = self
         })
         alert.addAction(PMAlertAction(title: "Sign In",
                                       style: .default, action: { () in
@@ -138,12 +140,16 @@ import LocalAuthentication
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
+            textField?.returnKeyType = .go
+            textField?.delegate = self
         })
         alert.addTextField({ (textField) in
             textField?.placeholder = "Passphrase"
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
+            textField?.returnKeyType = .go
+            textField?.delegate = self
         })
         alert.addAction(PMAlertAction(title: "Create Account",
                                       style: .default, action: { () in
@@ -235,6 +241,7 @@ import LocalAuthentication
         let title = userInfo["title"] as? String
         let message = userInfo["message"] as? String
         DispatchQueue.main.async {
+            MBProgressHUD.hide(for: self.view, animated: true)
             let alertColor = UIColor.flatSand
             RKDropdownAlert.title(title, message: message, backgroundColor: alertColor,
                                   textColor: ContrastColorOf(alertColor, returnFlat: true),
@@ -250,6 +257,18 @@ import LocalAuthentication
         DispatchQueue.main.async {
             MBProgressHUD(for: self.view)?.progress = p.floatValue
         }
+
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+
+        if (accountName.utf8.count > 0) {
+            doAuthenticateAlerts()
+        }
+        else {
+            doNewAccountAlerts()
+        }
+        return true
 
     }
 

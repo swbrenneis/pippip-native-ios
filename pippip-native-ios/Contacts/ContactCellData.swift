@@ -15,7 +15,7 @@ class ContactCellData: CellDataProtocol {
     var selector: ExpandingTableSelectorProtocol
     var userData: [String : Any]?
     
-    init(contactCell: ContactCell, contact: [AnyHashable: Any], viewController: ContactsViewController) {
+    init(contactCell: ContactCell, contact: Contact, viewController: ContactsViewController) {
         
         cell = contactCell
         cellHeight = ContactCell.cellHeight
@@ -32,10 +32,10 @@ class ContactCellSelector: ExpandingTableSelectorProtocol {
     weak var viewController: ContactsViewController?
     weak var contactCell: ContactCell?
     weak var tableView: ExpandingTableView?
-    var contact: [AnyHashable: Any]
+    var contact: Contact
     var lastSeenFormatter: DateFormatter
 
-    init(_ contact: [AnyHashable: Any], viewController: ContactsViewController) {
+    init(_ contact: Contact, viewController: ContactsViewController) {
         self.contact = contact
         self.viewController = viewController
         self.tableView = viewController.tableView
@@ -55,23 +55,20 @@ class ContactCellSelector: ExpandingTableSelectorProtocol {
             // Public ID cell
             let publicIdCell =
                 tableView?.dequeueReusableCell(withIdentifier: "ContactPublicIdCell") as? ContactPublicIdCell
-            let publicId = contact[AnyHashable("publicId")] as? String
-            publicIdCell?.publicIdLabel.text = publicId
+            publicIdCell?.publicIdLabel.text = contact.publicId
             cells.append(ContactPublicIdData(contactPublicIdCell: publicIdCell!, tableView: tableView!))
             // Last seen cell
             let lastSeenCell = tableView?.dequeueReusableCell(withIdentifier: "LastSeenCell") as? LastSeenCell
-            let ts = contact[AnyHashable("timestamp")] as? NSNumber
-            let timestamp = ts?.doubleValue ?? 0.0
-            if (timestamp == 0) {
+            if (contact.timestamp == 0) {
                 lastSeenCell?.lastSeenLabel.text = "Never"
             }
             else {
-                let tsDate = Date.init(timeIntervalSince1970: timestamp)
+                let tsDate = Date.init(timeIntervalSince1970: TimeInterval(contact.timestamp))
                 lastSeenCell?.lastSeenLabel.text = lastSeenFormatter.string(from: tsDate)
             }
             cells.append(LastSeenCellData(contactCell: lastSeenCell!, tableView: tableView!))
             // Delete contact cell
-            cells.append(DeleteContactData(publicId: publicId!, viewController: viewController!))
+            cells.append(DeleteContactData(publicId: contact.publicId, viewController: viewController!))
             tableView?.expandRow(at: indexPath, cells: cells)
         }
     }

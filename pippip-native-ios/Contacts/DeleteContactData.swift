@@ -60,6 +60,7 @@ class DeleteContactSelector: ExpandingTableSelectorProtocol {
         }))
         alert.addAction(PMAlertAction(title: "No", style: .default))
         viewController?.present(alert, animated: true, completion: nil)
+
     }
     
     @objc func contactDeleted(_ : Notification) {
