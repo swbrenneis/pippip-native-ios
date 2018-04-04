@@ -19,6 +19,7 @@ static NSLock *idLock = nil;
 {
     NSMutableArray *privateWhitelist;
     NSMutableDictionary<NSString*, NSNumber*> *idMap;
+    NSMutableDictionary *keyIndexes;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -33,6 +34,7 @@ static NSLock *idLock = nil;
     privateWhitelist = [NSMutableArray array];
     _whitelist = privateWhitelist;
     idMap = [NSMutableDictionary dictionary];
+    keyIndexes = [NSMutableDictionary dictionary];
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
     
@@ -248,6 +250,24 @@ static NSLock *idLock = nil;
 - (NSString*)getContactPolicy {
     AccountConfig *config = [self getConfig];
     return config.contactPolicy;
+}
+
+- (NSInteger)getKeyIndex:(NSInteger)contactId {
+
+    NSInteger index = 0;
+    NSNumber *ki = keyIndexes[[NSNumber numberWithInteger:contactId]];
+    if (ki != nil) {
+        index = [ki integerValue] + 1;
+        if (index == 10) {
+            index = 0;
+        }
+        keyIndexes[[NSNumber numberWithInteger:contactId]] = [NSNumber numberWithInteger:index];
+    }
+    else {
+        keyIndexes[[NSNumber numberWithInteger:contactId]] = [NSNumber numberWithInteger:1];
+    }
+    return index;
+
 }
 
 - (NSString*)getNickname {

@@ -54,10 +54,9 @@
     _conversationCache = [ApplicationSingleton instance].conversationCache;
 
     ContactManager *contactManager = [[ContactManager alloc] init];
-    NSDictionary *contact = [contactManager getContact:_publicId];
-    NSString *nickname = contact[@"nickname"];
-    if (nickname != nil) {
-        _navItem.title = nickname;
+    Contact *contact = [contactManager getContact:_publicId];
+    if (contact.nickname != nil) {
+        _navItem.title = contact.nickname;
     }
     else {
         NSString *fragment = [_publicId substringWithRange:NSMakeRange(0, 6)];

@@ -10,6 +10,8 @@
 #import "CKSHA256.h"
 #import "CKSHA1.h"
 #import "CKPEMCodec.h"
+#import "CKGCMCodec.h"
+#import "CKIVGenerator.h"
 #import "HexCodec.h"
 #import "MoreCellItem.h"
 #import "ApplicationSingleton.h"
@@ -18,4 +20,6 @@
 #import "MBProgressHUD.h"
 #import "Authenticator.h"
 #import "NewAccountCreator.h"
+#import "MessageManager.h"
+#import "AccountDeleter.h"
 

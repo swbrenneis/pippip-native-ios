@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class TextMessage;
+
 @interface MessagesDatabase : NSObject
 
 - (void)acknowledgeMessage:(NSInteger)messageId;
@@ -22,9 +24,11 @@
 
 - (void)deleteMessage:(NSInteger)messageId;
 
+- (TextMessage*)loadMessage:(NSInteger)messageId;   // Returns a raw, encrypted message
+
 - (NSMutableDictionary*)loadMessage:(NSInteger)messageId withPublicId:(NSString*)publicId;
 
-- (NSArray*)loadMessageIds:(NSString*)publicId;
+- (NSArray*)loadMessageIds:(NSInteger)contactId;
 
 - (void)markMessageRead:(NSInteger)messageId;
 

@@ -234,7 +234,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="PendingContactsCell" textLabel="zjY-vi-yZ4" rowHeight="50" style="IBUITableViewCellStyleDefault" id="hac-8s-SBm" customClass="ExpandableCell" customModule="ExpandableCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="PendingRequestsCell" textLabel="zjY-vi-yZ4" rowHeight="50" style="IBUITableViewCellStyleDefault" id="hac-8s-SBm" customClass="ExpandingTableViewCell" customModule="pippip_native_ios" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="361" width="375" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hac-8s-SBm" id="G7n-tJ-uvg">
@@ -251,11 +251,11 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="PendingContactCell" rowHeight="63" id="lb3-zJ-oDN" customClass="PendingContactCell" customModule="pippip_native_ios" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="411" width="375" height="63"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="PendingRequestCell" rowHeight="65" id="lb3-zJ-oDN" customClass="PendingRequestCell" customModule="pippip_native_ios" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="411" width="375" height="65"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="lb3-zJ-oDN" id="YHa-s5-NcZ">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="62.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="64.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nickname" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a4z-Ts-ok0">
@@ -279,8 +279,8 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="nicknameLabel" destination="a4z-Ts-ok0" id="YAu-iS-zCf"/>
-                                            <outlet property="publicIdLabel" destination="kZP-ex-ygM" id="pkL-tv-4HA"/>
+                                            <outlet property="nicknameLabel" destination="a4z-Ts-ok0" id="fHy-Hb-bZO"/>
+                                            <outlet property="publicIdLabel" destination="kZP-ex-ygM" id="5bR-ha-uDH"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -315,7 +315,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="DeleteAccountCell" textLabel="py9-Ww-PTO" style="IBUITableViewCellStyleDefault" id="ewP-2A-Glc" customClass="DeleteAccountCell">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="DeleteAccountCell" textLabel="py9-Ww-PTO" style="IBUITableViewCellStyleDefault" id="ewP-2A-Glc" customClass="DeleteAccountCell" customModule="pippip_native_ios" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ewP-2A-Glc" id="t4E-LJ-xxl">
@@ -538,7 +538,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="b5P-2T-qqB" kind="presentation" id="a3D-iu-dNc"/>
+                                    <segue destination="b5P-2T-qqB" kind="presentation" identifier="FriendsListSegue" id="a3D-iu-dNc"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -573,6 +573,11 @@
                                         <barButtonItem key="leftBarButtonItem" systemItem="done" id="wEf-GT-4Fr">
                                             <connections>
                                                 <action selector="done:" destination="b5P-2T-qqB" id="MPW-Z1-3Dn"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="zj6-Nv-a3l">
+                                            <connections>
+                                                <action selector="addFriend:" destination="b5P-2T-qqB" id="POd-Mi-2y4"/>
                                             </connections>
                                         </barButtonItem>
                                     </navigationItem>
@@ -680,19 +685,19 @@
                                         <leftBarButtonItems>
                                             <barButtonItem image="contacts" id="JOL-xh-FuF">
                                                 <connections>
-                                                    <segue destination="s3j-T1-6Lr" kind="show" id="9Gi-6t-2Pw"/>
+                                                    <segue destination="s3j-T1-6Lr" kind="show" identifier="ContactsSegue" id="9Gi-6t-2Pw"/>
                                                 </connections>
                                             </barButtonItem>
                                             <barButtonItem image="compose" id="iRY-Oa-pjB">
                                                 <connections>
-                                                    <segue destination="zue-dS-e4v" kind="show" id="64Y-Hb-za2"/>
+                                                    <action selector="composeMessage:" destination="iDD-sa-uwr" id="gYS-gf-JcQ"/>
                                                 </connections>
                                             </barButtonItem>
                                         </leftBarButtonItems>
                                         <rightBarButtonItems>
                                             <barButtonItem image="menu" id="0Kk-95-WZl">
                                                 <connections>
-                                                    <segue destination="d5L-gm-f7z" kind="show" id="iWa-fQ-Zzw"/>
+                                                    <segue destination="d5L-gm-f7z" kind="show" identifier="OptionsSegue" id="iWa-fQ-Zzw"/>
                                                 </connections>
                                             </barButtonItem>
                                             <barButtonItem image="signout" id="g7A-6w-RfV">
@@ -819,7 +824,7 @@
                     <connections>
                         <outlet property="tableView" destination="ELg-Um-hxx" id="1aQ-IQ-Kel"/>
                         <segue destination="9pv-A4-QxB" kind="presentation" identifier="AuthModalSegue" id="T6P-Ie-yen"/>
-                        <segue destination="W8U-Wg-QYH" kind="presentation" id="H6f-Xa-6kN"/>
+                        <segue destination="W8U-Wg-QYH" kind="presentation" identifier="ConversationSegue" id="H6f-Xa-6kN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BGW-rK-6gj" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -954,13 +959,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Cf-4I-0jb">
-                                <rect key="frame" x="15" y="79" width="23.5" height="20.5"/>
+                                <rect key="frame" x="15" y="35" width="23.5" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="dXR-sT-9me">
-                                <rect key="frame" x="0.0" y="109.5" width="375" height="517.5"/>
+                                <rect key="frame" x="0.0" y="65.5" width="375" height="561.5"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="NewMessageContactCell" textLabel="3YW-Yh-4Ef" detailTextLabel="KUD-0W-PmX" style="IBUITableViewCellStyleSubtitle" id="4vf-a0-bFV">
@@ -1058,7 +1063,7 @@
                                 </subviews>
                             </stackView>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="clT-2q-Efy">
-                                <rect key="frame" x="46.5" y="79" width="288.5" height="19"/>
+                                <rect key="frame" x="46.5" y="35" width="288.5" height="19"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>

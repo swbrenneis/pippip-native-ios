@@ -15,8 +15,8 @@
 #import "LoggingErrorDelegate.h"
 #import "ContactManager.h"
 #import "MessageManager.h"
-#import "RESTSession.h"
-#import <Realm/Realm.h>
+#import "Notifications.h"
+#import "Notifications.h"
 
 typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
@@ -24,7 +24,6 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 {
     UpdateType updateType;
     BOOL sessionActive;
-    ContactDatabase *contactDatabase;
     MessageManager *messageManager;
     ContactManager *contactManager;
     NSInteger newMessageCount;
@@ -33,25 +32,16 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     BOOL suspended;
 }
 
-@property (weak, nonatomic) RESTSession *session;
-
 @end
 
 @implementation AccountSession
 
-@synthesize errorDelegate;
-//@synthesize postPacket;
-
 - (instancetype)init {
     self = [super init];
 
-    errorDelegate = [[LoggingErrorDelegate alloc] init];
     sessionActive = NO;
     contactManager = [[ContactManager alloc] init];
-    //[contactManager setResponseConsumer:self];
     messageManager = [[MessageManager alloc] init];
-    [messageManager setResponseConsumer:self];
-    contactDatabase = [[ContactDatabase alloc] init];
     notificationComplete = YES;
     suspended = NO;
 
@@ -62,6 +52,10 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(sessionEnded:)
                                                  name:@"SessionEnded"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(contactsUpdated:)
+                                                 name: CONTACTS_UPDATED
                                                object:nil];
 
     return self;
@@ -80,120 +74,29 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
 }
 
-- (void)contactsUpdated:(NSDictionary*)response {
+- (void)contactsUpdated:(NSNotification*)notification {
 
-    NSString *error = response[@"error"];
-    if (error == nil) {
-        NSArray *contacts = response[@"contacts"];
-        NSLog(@"%ld contacts updated", contacts.count);
-        [contactManager updateContacts:contacts];
-    }
-    else {
-        NSLog(@"Error response: %@", error);
-    }
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        [self updateContacts];
-    });
-
-}
-
--(void)messagesAcknowledged:(NSDictionary*)response {
-    
-    NSString *error = response[@"error"];
-    if (error == nil) {
-        NSArray *exceptions = response[@"exceptions"];
-        NSLog(@"Messages acknowledged, %ld exceptions", exceptions.count);
-        [messageManager pendingMessagesAcknowledged];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
-        });
-    }
-    else {
-        NSLog(@"Error response: %@", error);
-    }
-    notificationComplete = YES;
 #if TARGET_OS_SIMULATOR
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        [self updateContacts];
-    });
+    [messageManager getNewMessages];
 #endif
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [contactManager updatePendingContacts];
+    });
 
 }
 
-- (void)messagesUpdated:(NSDictionary*)response {
-
-    NSString *error = response[@"error"];
-    if (error == nil) {
-        NSArray *messages = response[@"messages"];
-        newMessageCount = messages.count;
-        NSLog(@"Messages update, %ld messages", newMessageCount);
-        if (newMessageCount > 0) {
-            [_conversationCache addNewMessages:messages];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSMutableDictionary *messageCount = [NSMutableDictionary dictionary];
-                messageCount[@"count"] = [NSNumber numberWithInteger:newMessageCount];
-                [[NSNotificationCenter defaultCenter]
-                 postNotificationName:@"MessagesUpdated" object:nil userInfo:messageCount];
-            });
-        }
-    }
-    else {
-        NSLog(@"Error response: %@", error);
-    }
-
+- (void)messagesUpdated:(NSNotification*)notification {
 }
 
 - (void)newSession:(NSNotification*)notification {
     
-    //_sessionState = state;
     sessionActive = YES;
-#if TARGET_OS_SIMULATOR
-    [self updateContacts];
-#else
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSInteger count = [UIApplication sharedApplication].applicationIconBadgeNumber;
-        if (count > 0) {
-            [self updateMessages];
-        }
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            [self updateContacts];
+            [contactManager updatePendingContacts];
         });
     });
-#endif
     
-}
-
-- (void)response:(NSDictionary *)info {
-
-    if (info != nil) {
-        switch (updateType) {
-            case ACK_MESSAGES:
-                [self messagesAcknowledged:info];
-                break;
-            case CONTACTS:
-                [self contactsUpdated:info];
-#if TARGET_OS_SIMULATOR
-                if (sessionActive) {
-                    [self updateMessages];
-                }
-#endif
-                break;
-            case MESSAGES:
-                [self messagesUpdated:info];
-                if (sessionActive) {
-                    [self acknowledgeMessages];
-#if TARGET_OS_SIMULATOR
-                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                        // [self updateContacts];
-                    });
-#endif
-                }
-                break;
-            case NONE:
-                break;
-        }
-    }
-
 }
 
 - (void)resume {

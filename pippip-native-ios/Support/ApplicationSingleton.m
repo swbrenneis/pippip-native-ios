@@ -23,8 +23,6 @@ static ApplicationSingleton *theInstance = nil;
     theInstance.conversationCache = [[ConversationCache alloc] init];
     theInstance.config = [[Configurator alloc] init];
     theInstance.accountSession = [[AccountSession alloc] init];
-    theInstance.accountSession.restSession = theInstance.restSession;
-    theInstance.accountSession.conversationCache = theInstance.conversationCache;
     theInstance.accountSession.sessionState = [[SessionState alloc] init];
 
 }

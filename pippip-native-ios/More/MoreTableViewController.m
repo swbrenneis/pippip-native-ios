@@ -13,10 +13,11 @@
 #import "CleartextMessagesCell.h"
 #import "NicknameCell.h"
 #import "LocalPasswordCell.h"
-#import "DeleteAccountCell.h"
 #import "Authenticator.h"
 #import "Notifications.h"
 #import "MoreCellItem.h"
+#import "RKDropdownAlert.h"
+#import "Chameleon.h"
 
 static const NSInteger EDIT_INDEX = 4;
 
@@ -84,7 +85,7 @@ static const NSInteger EDIT_INDEX = 4;
     NSString *policy = [[ApplicationSingleton instance].config getContactPolicy];
     if ([policy isEqualToString:@"whitelist"]) {
         [cellItems addObject:[EditWhitelistCell cellItem]];
-    }    
+    }
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(presentAlert:)
@@ -172,9 +173,12 @@ static const NSInteger EDIT_INDEX = 4;
 - (void)presentAlert:(NSNotification*)notification {
 
     NSDictionary *info = notification.userInfo;
-    UIAlertController *alert = info[@"alert"];
+    NSString *title = info[@"title"];
+    NSString *message = info[@"message"];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self presentViewController:alert animated:YES completion:nil];
+        UIColor *alertColor = UIColor.flatSandColor;
+        [RKDropdownAlert title:title message: message backgroundColor:alertColor
+                     textColor:ContrastColor(alertColor, true) time:2 delegate:nil];
     });
 
 }
@@ -207,16 +211,24 @@ static const NSInteger EDIT_INDEX = 4;
     if (indexPath.section == 0) {
         MoreCellItem *item = cellItems[indexPath.item];
         if (item.currentCell != nil) {
+            if ([item.currentCell isKindOfClass:TableViewCellWithController.class]) {
+                ((TableViewCellWithController*)item.currentCell).viewController = self;
+            }
             return item.currentCell;
         }
         else {
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:item.cellReuseId forIndexPath:indexPath];
+            item.currentCell = cell;
+            if ([cell isKindOfClass:TableViewCellWithController.class]) {
+                ((TableViewCellWithController*)cell).viewController = self;
+            }
             return cell;
         }
     }
     else {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:deleteItem.cellReuseId
                                                                 forIndexPath:indexPath];
+        ((DeleteAccountCell*)cell).viewController = self;
         return cell;
     }
 

@@ -30,6 +30,8 @@
 
 - (NSString*)getContactPolicy;
 
+- (NSInteger)getNextMessageSequence;
+
 - (NSString*)getNickname;
 
 - (void)loadWhitelist;

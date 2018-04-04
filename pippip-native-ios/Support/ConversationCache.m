@@ -7,6 +7,7 @@
 //
 
 #import "ConversationCache.h"
+#import "pippip_native_ios-Swift.h"
 #import "MessagesDatabase.h"
 #import "ContactManager.h"
 #import "MutableConversation.h"
@@ -156,9 +157,8 @@
         NSInteger messageId = [message[@"messageId"] integerValue];
         [conversation markMessageRead:messageId];
         [messageDatabase markMessageRead:messageId];
-        NSMutableDictionary *contact = [contactManager getContact:message[@"publicId"]];
-        NSInteger timestamp = [[NSDate date] timeIntervalSince1970];
-        contact[@"timestamp"] = [NSNumber numberWithInteger:timestamp];
+        Contact *contact = [contactManager getContact:message[@"publicId"]];
+        contact.timestamp = [[NSDate date] timeIntervalSince1970];
         NSMutableArray *contacts = [NSMutableArray array];
         [contacts addObject:contact];
         [contactManager updateContacts:contacts];

@@ -94,7 +94,7 @@ static const float CURRENT_VERSION = 1.0;
                       URLByAppendingPathExtension:@"realm"];
     config.schemaVersion = 6;
     config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
-        if (oldSchemaVersion < 3) {
+        if (oldSchemaVersion < 6) {
             // No migration necessary
         }
     };

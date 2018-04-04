@@ -15,7 +15,6 @@
 #import "EnclaveResponse.h"
 #import "ContactDatabase.h"
 #import "Notifications.h"
-//#import "CKGCMCodec.h"
 
 typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTACT,
                         ACKNOWLEDGE_REQUEST, GET_REQUESTS, DELETE_CONTACT, UPDATE_POLICY,
@@ -25,8 +24,8 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
 @interface ContactManager ()
 {
     ContactRequest contactRequest;
-    NSMutableArray *contactList;
-    NSMutableDictionary *contactMap;
+    NSMutableArray<Contact*> *contactList;
+    NSMutableDictionary<NSString*, Contact*> *contactMap;
     NSString *requestedNickname;
     NSString *acknowledgedNickname;
 }
@@ -48,14 +47,14 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
     _contactDatabase = [ApplicationSingleton instance].contactDatabase;
     contactMap = [NSMutableDictionary dictionary];
     contactRequest = NONE;
-    
+    errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"Contact Error"];
+
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(contactsUpdated:)
                                                name:CONTACTS_UPDATED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(newSession:)
                                                name:NEW_SESSION object:nil];
-    errorDelegate = self;
     return self;
     
 }
@@ -157,14 +156,15 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
             break;
         case REQUEST_CONTACT:
         {
-            NSMutableDictionary *contact = [NSMutableDictionary dictionary];
-            contact[@"publicId"] = response[@"requestedContactId"];
-            contact[@"status"] = response[@"result"];
+            NSMutableDictionary *convert = [NSMutableDictionary dictionary];
+            convert[@"publicId"] = response[@"requestedContactId"];
+            convert[@"status"] = response[@"result"];
             if (requestedNickname != nil) {
-                contact[@"nickname"] = requestedNickname;
+                convert[@"nickname"] = requestedNickname;
             }
+            Contact *contact = [[Contact alloc] init:convert];
             [_contactDatabase addContact:contact];  // Sends contacts updated notification
-            [AsyncNotifier notifyWithName:CONTACT_REQUESTED object:nil userInfo:contact];
+            [AsyncNotifier notifyWithName:CONTACT_REQUESTED object:contact userInfo:nil];
         }
             break;
         case UPDATE_NICKNAME:
@@ -174,7 +174,12 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
             [AsyncNotifier notifyWithName:POLICY_UPDATED object:nil userInfo:response];
             break;
         case GET_REQUESTS:
-            [AsyncNotifier notifyWithName:REQUESTS_UPDATED object:nil userInfo:response];
+        {
+            NSArray *requests = response[@"requests"];
+            if (requests.count > 0) {
+                [AsyncNotifier notifyWithName:REQUESTS_UPDATED object:requests userInfo:nil];
+            }
+        }
             break;
         case SYNC_CONTACTS:
         {
@@ -188,37 +193,40 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
         case ACKNOWLEDGE_REQUEST:
         {
             NSDictionary *contact = response[@"acknowledged"];
-            NSMutableDictionary *translated = [self translateContact:contact];
-            if (translated != nil) {
+            Contact *translated = [self translateContact:contact];
+            if (translated != nil && [translated.status isEqualToString:@"accepted"]) {
                 [_contactDatabase addContact:translated];
+                [self loadContactList];
             }
-            [AsyncNotifier notifyWithName:REQUEST_ACKNOWLEDGED object:nil userInfo:response];
+            NSArray *pending = response[@"pending"];
+            [AsyncNotifier notifyWithName:REQUEST_ACKNOWLEDGED object:pending userInfo:nil];
         }
+            break;
+        case UPDATE_PENDING_CONTACTS:
+        {
+            NSArray *contacts = response[@"contacts"];
+            if (contacts != nil && contacts.count > 0)
+            [self updateContacts:contacts];
+            [AsyncNotifier notifyWithName:CONTACTS_UPDATED object:nil userInfo:nil];
+        }
+            break;
+        case NONE:
             break;
     }
 
 }
 
-- (NSMutableDictionary*)getContact:(NSString *)publicId {
+- (Contact*)getContact:(NSString *)publicId {
 
     return contactMap[publicId];
 
 }
 
-- (void)loadContactList {
-
-    if (contactList == nil) {
-        contactList = [[_contactDatabase getContactList] mutableCopy];
-        [self mapContacts];
-    }
-
-}
-
-- (NSMutableDictionary*)getContactById:(NSInteger)contactId {
+- (Contact*)getContactById:(NSInteger)contactId {
 
     [self loadContactList];
-    for (NSMutableDictionary *contact in contactList) {
-        if ([contact[@"contactId"] integerValue] == contactId) {
+    for (Contact *contact in contactList) {
+        if (contact.contactId == contactId) {
             return contact;
         }
     }
@@ -233,14 +241,24 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
 
 }
 
-- (NSArray*)getContacts:(NSString *)status {
+- (NSString*)getContactPublicId:(NSString*)nickname {
+
+    for (Contact *contact in contactList) {
+        if ([contact.nickname isEqualToString:nickname]) {
+            return contact.publicId;
+        }
+    }
+    return nil;
+
+}
+
+- (NSArray<Contact*>*)getContacts:(NSString *)status {
     
     NSMutableArray *filtered = [NSMutableArray array];
-    for (NSDictionary *contact in contactList) {
-        NSString *currentStatus = contact[@"status"];
+    for (Contact *contact in contactList) {
+        NSString *currentStatus = contact.status;
         if ([status isEqualToString:currentStatus]) {
-            // Make the contact immutable
-            [filtered addObject:[NSDictionary dictionaryWithDictionary:contact]];
+            [filtered addObject:contact];
         }
     }
     return filtered;
@@ -255,11 +273,20 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
     
 }
 
+- (void)loadContactList {
+    
+    if (contactList == nil) {
+        contactList = [[_contactDatabase getContactList] mutableCopy];
+        [self mapContacts];
+    }
+    
+}
+
 - (void)mapContacts {
 
     [contactMap removeAllObjects];
-    for (NSDictionary *contact in contactList) {
-        contactMap[contact[@"publicId"]] = contact;
+    for (Contact *contact in contactList) {
+        contactMap[contact.publicId] = contact;
     }
 
 }
@@ -311,12 +338,15 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
 /*
  * fragment should be upper case
  */
-- (NSArray*)searchContacts:(NSString *)fragment {
+- (NSArray<Contact*>*)searchContacts:(NSString *)fragment {
 
     NSMutableArray *results = [NSMutableArray array];
-    for (NSDictionary *contact in contactList) {
-        NSString *nickname = [contact[@"nickname"] uppercaseString];
-        NSString *publicId = [contact[@"publicId"] uppercaseString];
+    for (Contact *contact in contactList) {
+        NSString *nickname = nil;
+        if (contact.nickname != nil) {
+            nickname = [contact.nickname uppercaseString];
+        }
+        NSString *publicId = [contact.publicId uppercaseString];
         if ([publicId containsString:fragment]) {
             [results addObject:contact];
         }
@@ -328,15 +358,6 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
     }
     
     return results;
-
-}
-
-- (void)sendAlert:(NSString*)title with:(NSString*)message {
-
-    NSMutableDictionary *info = [NSMutableDictionary dictionary];
-    info[@"title"] = title;
-    info[@"message"] = message;
-    [[NSNotificationCenter defaultCenter] postNotificationName:PRESENT_ALERT object:nil userInfo:info];
 
 }
 
@@ -372,26 +393,19 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
     [self sendRequest:request with:UPDATE_POLICY];
 
 }
-/*
-- (void)setResponseConsumer:(id<ResponseConsumer>)consumer {
 
-    _responseConsumer = consumer;
-    errorDelegate = _responseConsumer.errorDelegate;
-
-}
-*/
 - (void)syncContacts {
 
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
     NSArray *contactList = [_contactDatabase getContactList];
     NSMutableArray *syncList = [NSMutableArray array];
-    for (NSDictionary *contact in contactList) {
-        NSMutableDictionary *sync = [NSMutableDictionary dictionary];
-        sync[@"publicId"] = contact[@"publicId"];
-        sync[@"status"] = contact[@"status"];
-        sync[@"currentSequence"] = contact[@"currentSequence"];
-        sync[@"currentIndex"] = contact[@"currentIndex"];
-        sync[@"timestamp"] = contact[@"timestamp"];
+    for (Contact *contact in contactList) {
+        Contact *sync = [[Contact alloc] init];
+        sync.publicId = contact.publicId;
+        sync.status = contact.status;
+        sync.currentSequence = contact.currentSequence;
+        sync.currentIndex = contact.currentIndex;
+        sync.timestamp = contact.timestamp;
         [syncList addObject:sync];
     }
     request[@"method"] = @"SyncContacts";
@@ -400,7 +414,7 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
 
 }
 
-- (NSMutableDictionary*)translateContact:(NSDictionary*)serverContact {
+- (Contact*)translateContact:(NSDictionary*)serverContact {
 
     NSString *publicId = serverContact[@"publicId"];
     NSString *status = serverContact[@"status"];
@@ -412,23 +426,23 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
         return nil;
     }
     else if ([status isEqualToString:@"accepted"]) {
-        NSMutableDictionary *entity = [NSMutableDictionary dictionary];
-        entity[@"publicId"] = publicId;
+        Contact *entity = [[Contact alloc] init];
+        entity.publicId = publicId;
         if (acknowledgedNickname != nil) {
-            entity[@"nickname"] = acknowledgedNickname;
+            entity.nickname = acknowledgedNickname;
         }
-        entity[@"currentIndex"] = [NSNumber numberWithLongLong:0];
-        entity[@"currentSequence"] = [NSNumber numberWithLongLong:0];
-        entity[@"timestamp"] = serverContact[@"timestamp"];
-        entity[@"status"] = status;
+        entity.currentIndex = 0;
+        entity.currentSequence = 0;
+        entity.timestamp = [serverContact[@"timestamp"] integerValue];
+        entity.status = status;
         NSData *adBytes = [[NSData alloc] initWithBase64EncodedString:authData options:0];
         NSData *nonceBytes = [[NSData alloc] initWithBase64EncodedString:nonce options:0];
         if (adBytes != nil && nonceBytes != nil) {
-            entity[@"authData"] = adBytes;
-            entity[@"nonce"] = nonceBytes;
+            entity.authData = adBytes;
+            entity.nonce = nonceBytes;
             NSArray *keys = [self decodeKeys:keyStrings];
             if (keys != nil) {
-                entity[@"messageKeys"] = keys;
+                entity.messageKeys = keys;
                 return entity;
             }
         }
@@ -440,34 +454,32 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
 
 }
 
-- (void)updateContacts:(NSArray*)contacts {
+- (void)updateContacts:(NSArray<NSDictionary*>*)serverContacts {
     
     NSMutableArray *updates = [NSMutableArray array];
-    for (NSDictionary *contact in contacts) {
-        NSString *publicId = contact[@"publicId"];
-        NSMutableDictionary *update = contactMap[publicId];
+    for (NSDictionary *serverContact in serverContacts) {
+        NSString *publicId = serverContact[@"publicId"];
+        Contact *update = contactMap[publicId];
         if (update == nil) {
             // Something really wrong here
             NSLog(@"Process contact, contact %@ does not exist", publicId);
         }
         else {
-            NSString *status = contact[@"status"];
-            update[@"status"] = status;
-            update[@"timestamp"] = contact[@"timestamp"];
+            NSString *status = serverContact[@"status"];
+            update.status = status;
+            update.timestamp = [serverContact[@"timestamp"] integerValue];
             if ([status isEqualToString:@"accepted"]) {
-                update[@"currentSequence"] = [NSNumber numberWithLong:0L];
-                update[@"currentIndex"] = [NSNumber numberWithLong:0L];
-                NSData *authData = [[NSData alloc] initWithBase64EncodedString:contact[@"authData"] options:0];
-                update[@"authData"] = authData;
-                NSData *nonce = [[NSData alloc] initWithBase64EncodedString:contact[@"nonce"] options:0];
-                update[@"nonce"] = nonce;
-                NSArray *messageKeys = contact[@"messageKeys"];
+                update.currentSequence = 0;
+                update.currentIndex = 0;
+                update.authData = [[NSData alloc] initWithBase64EncodedString:serverContact[@"authData"] options:0];
+                update.nonce = [[NSData alloc] initWithBase64EncodedString:serverContact[@"nonce"] options:0];
+                NSArray *messageKeys = serverContact[@"messageKeys"];
                 NSMutableArray *keys = [NSMutableArray array];
                 for (NSString *keyString in messageKeys) {
                     NSData *key = [[NSData alloc] initWithBase64EncodedString:keyString options:0];
                     [keys addObject:key];
                 }
-                update[@"messageKeys"] = keys;
+                update.messageKeys = keys;
             }
             [updates addObject:update];
         }
@@ -500,8 +512,8 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
 
     NSMutableArray *pending = [NSMutableArray array];
     NSArray *filtered = [self getContacts:@"pending"];
-    for (NSDictionary *entity in filtered) {
-        [pending addObject:entity[@"publicId"]];
+    for (Contact *entity in filtered) {
+        [pending addObject:entity.publicId];
     }
     if (pending.count > 0) {
         NSLog(@"%@", @"Updating pending contacts");
@@ -512,32 +524,6 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
     }
     return pending.count;
 
-}
-
-// Error delegate
-
-- (void)postMethodError:(NSString *)_ {
-    
-    [self sendAlert:@"Contact Server Error" with:_];
-    
-}
-
-- (void)getMethodError:(NSString *)_ {
-    
-    [self sendAlert:@"Contact Server Error" with:_];
-    
-}
-
-- (void)sessionError:(NSString *)_ {
-    
-    [self sendAlert:@"Contact Server Error" with:_];
-    
-}
-
-- (void)responseError:(NSString *)_ {
-    
-    [self sendAlert:@"Contact Error" with:_];
-    
 }
 
 @end

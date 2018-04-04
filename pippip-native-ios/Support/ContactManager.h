@@ -12,9 +12,10 @@
 #import "ContactDatabase.h"
 
 @class SessionState;
+@class Contact;
 @protocol ResponseConsumer;
 
-@interface ContactManager : NSObject <RequestProcess, ErrorDelegate>
+@interface ContactManager : NSObject <RequestProcess>
 
 - (void)acknowledgeRequest:(NSString*_Nonnull)response
                     withId:(NSString*_Nonnull)publicId
@@ -26,25 +27,31 @@
 
 - (void)deleteFriend:(NSString*_Nonnull)publicId;
 
-- (NSMutableDictionary*_Nullable)getContact:(NSString*_Nullable)publicId;
+- (Contact*_Nullable)getContact:(NSString*_Nullable)publicId;
 
-- (NSMutableDictionary*_Nullable)getContactById:(NSInteger)contactId;
+- (Contact*_Nullable)getContactById:(NSInteger)contactId;
 
-- (NSArray<NSDictionary*>*_Nonnull)getContactList;
+- (NSString*_Nullable)getContactPublicId:(NSString*_Nonnull)nickname;
+
+- (NSArray<Contact*>*_Nonnull)getContactList;
 
 - (void)getRequests;
+
+- (void)loadContactList;
 
 - (void)matchNickname:( NSString* _Nullable )nickname withPublicId:( NSString* _Nullable )publicId;
 
 - (void)requestContact:(NSString*_Nonnull)publicId withNickname:(NSString*_Nullable)nickname;
 
-- (NSArray*_Nonnull)searchContacts:(NSString*_Nonnull)fragment;
+- (NSArray<Contact*>*_Nonnull)searchContacts:(NSString*_Nonnull)fragment;
 
 - (void)setContactPolicy:(NSString*_Nonnull)policy;
 
 - (void)syncContacts;
 
-- (void)updateContacts:(NSArray*_Nonnull)contacts;
+- (void)updateContact:(Contact*_Nonnull)contact;
+
+- (void)updateContacts:(NSArray<NSDictionary*>*_Nonnull)serverContacts;
 
 - (void)updateNickname:(NSString*_Nullable)nickname withOldNickname:(NSString*_Nullable)oldNickname;
 

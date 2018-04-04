@@ -8,6 +8,7 @@
 
 #import "ConversationDelegate.h"
 #import "MessagesDatabase.h"
+#import "ApplicationSingleton.h"
 //#import "CKSHA1.h"
 
 @interface ConversationDelegate ()
@@ -83,7 +84,8 @@
 
 - (NSArray*)allMessageIds {
 
-    NSArray *ids = [messageDatabase loadMessageIds:_publicId];
+    NSInteger contactId = [[ApplicationSingleton instance].config getContactId:_publicId];
+    NSArray *ids = [messageDatabase loadMessageIds:contactId];
     if (ids.count < conversation.count) {
         for (NSNumber *mid in ids) {
             if (conversation[mid] == nil) {
@@ -131,7 +133,8 @@
 - (NSArray*)latestMessageIds:(NSInteger)count {
 
     NSMutableArray *latest = [NSMutableArray array];
-    NSArray *ids = [messageDatabase loadMessageIds:_publicId];
+    NSInteger contactId = [[ApplicationSingleton instance].config getContactId:_publicId];
+    NSArray *ids = [messageDatabase loadMessageIds:contactId];
     for (NSInteger index = ids.count - count; latest.count < count; index++) {
         [latest addObject:ids[index]];
     }

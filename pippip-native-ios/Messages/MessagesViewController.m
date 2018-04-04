@@ -15,12 +15,14 @@
 #import "ConversationCache.h"
 #import "ConversationViewController.h"
 #import "Authenticator.h"
+#import "MessageManager.h"
 #import "MBProgressHUD.h"
 
 @interface MessagesViewController ()
 {
     NSArray *mostRecent;
     AuthViewController *authView;
+    MessageManager *messageManager;
     BOOL suspended;
     BOOL accountDeleted;
 }
@@ -38,6 +40,7 @@
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
+    messageManager = [[MessageManager alloc] init];
     mostRecent = [NSArray array];
     _tableView.dataSource = self;
     [_tableView setDelegate:self];
@@ -62,7 +65,6 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(MessagesUpdated:)
@@ -90,6 +92,12 @@
 
 }
 
+- (IBAction)composeMessage:(id)sender {
+
+    ChattoConversationViewController *controller = [[ChattoConversationViewController alloc] init];
+    [self.navigationController pushViewController:controller animated:YES];
+
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -128,6 +136,16 @@
 
 }
 
+- (void)newSession:(NSNotification*)notification {
+    
+    _sessionState = (SessionState*)notification.object;
+    mostRecent = [_conversationCache mostRecentMessages];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_tableView reloadData];
+    });
+    
+}
+
 - (void)conversationLoaded:(NSNotification*)notification {
 
     if (![[ApplicationSingleton instance].config getCleartextMessages]) {
@@ -152,17 +170,11 @@
 
 }
 
-#pragma mark - Message handling
-
-- (void)newSession:(NSNotification*)notification {
-
-    _sessionState = (SessionState*)notification.object;
-    mostRecent = [_conversationCache mostRecentMessages];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [_tableView reloadData];
-    });
-
+- (IBAction)unwindAfterNoContact:(UIStoryboardSegue*)segue {
+    
 }
+
+#pragma mark - Message handling
 
 - (void)MessagesUpdated:(NSNotification*)notification {
 
@@ -232,7 +244,9 @@
             hud.mode = MBProgressHUDModeIndeterminate;
             hud.label.text = @"Decrypting messages";
         }*/
-        SwiftConversationViewController *conversationView = [[SwiftConversationViewController alloc] init];
+        ChattoConversationViewController *conversationView = [[ChattoConversationViewController alloc] init];
+        NSDictionary *message = mostRecent[self.tableView.indexPathForSelectedRow.item];
+        conversationView.publicId = message[@"publicId"];
         [self.navigationController pushViewController:conversationView animated:YES];
         /*
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{

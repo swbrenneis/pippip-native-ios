@@ -4,17 +4,35 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            scope = "0"
+            stopOnStyle = "0">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.DebuggerCommand">
+                  <ActionContent
+                     consoleCommand = "">
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "pippip-native-ios/Contacts/NewContactCellData.swift"
-            timestampString = "544218381.249187"
+            timestampString = "544481596.323727"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
+            startingLineNumber = "104"
+            endingLineNumber = "104"
             landmarkName = "contactRequested(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -25,12 +43,28 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "pippip-native-ios/Contacts/NewContactCellData.swift"
-            timestampString = "544218381.249265"
+            filePath = "pippip-native-ios/Support/ContactManager.m"
+            timestampString = "544481596.3238111"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "123"
-            endingLineNumber = "123"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
+            landmarkName = "-dispatchResponse:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "pippip-native-ios/More/WhitelistViewController.swift"
+            timestampString = "544394977.420092"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
             landmarkName = "nicknameMatched(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -42,12 +76,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "pippip-native-ios/Support/ContactManager.m"
-            timestampString = "544218381.249329"
+            timestampString = "544481596.323904"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "290"
-            endingLineNumber = "290"
-            landmarkName = "-postComplete:"
+            startingLineNumber = "195"
+            endingLineNumber = "195"
+            landmarkName = "-dispatchResponse:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -57,109 +91,29 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "pippip-native-ios/More/AddFriendCellData.swift"
-            timestampString = "544218381.249384"
+            filePath = "pippip-native-ios/Support/ContactManager.m"
+            timestampString = "544481596.3239501"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
-            landmarkName = "nicknameMatched(_:)"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
+            landmarkName = "-acknowledgeRequest:withId:withNickname:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "pippip-native-ios/More/DeleteFriendCellData.swift"
-            timestampString = "544218381.249442"
+            filePath = "pippip-native-ios/Auth/AuthViewController.swift"
+            timestampString = "544471261.740544"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
-            landmarkName = "friendDeleted(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "pippip-native-ios/More/AddFriendCellData.swift"
-            timestampString = "544218381.249494"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "104"
-            endingLineNumber = "104"
-            landmarkName = "friendAdded(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "pippip-native-ios/More/AddFriendCellData.swift"
-            timestampString = "544218381.249543"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "70"
-            endingLineNumber = "70"
-            landmarkName = "didSelect(_:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #3 () -&gt; () in pippip_native_ios.AddFriendSelector.didSelect(Foundation.IndexPath) -&gt; ()"
-                  moduleName = "pippip-native-ios"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/stevebrenneis/Development/XCode/pippip-native-ios/pippip-native-ios/More/AddFriendCellData.swift"
-                  timestampString = "544207446.5426331"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "70"
-                  endingLineNumber = "70"
-                  offsetFromSymbolStart = "40">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "implicit closure #1 : @autoclosure () throws -&gt; Swift.String in closure #3 () -&gt; () in pippip_native_ios.AddFriendSelector.didSelect(Foundation.IndexPath) -&gt; ()"
-                  moduleName = "pippip-native-ios"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/stevebrenneis/Development/XCode/pippip-native-ios/pippip-native-ios/More/AddFriendCellData.swift"
-                  timestampString = "544207446.544726"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "70"
-                  endingLineNumber = "70"
-                  offsetFromSymbolStart = "12">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "pippip-native-ios/Auth/AuthViewController.m"
-            timestampString = "544210189.851383"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "64"
-            endingLineNumber = "64"
-            landmarkName = "-viewWillAppear:"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
+            landmarkName = "textFieldShouldReturn(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
