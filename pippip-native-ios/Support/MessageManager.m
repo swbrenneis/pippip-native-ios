@@ -71,8 +71,8 @@
 
 - (TextMessage*)getMessage:(NSInteger)messageId {
 
-    return [messageDatabase loadMessage:messageId];
-
+    //return [messageDatabase loadMessage:messageId];
+    return nil;
 }
 
 - (NSArray*)getMessageIds:(NSString*)publicId {

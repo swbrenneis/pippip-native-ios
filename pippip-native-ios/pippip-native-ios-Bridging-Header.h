@@ -22,4 +22,5 @@
 #import "NewAccountCreator.h"
 #import "MessageManager.h"
 #import "AccountDeleter.h"
+#import "DatabaseMessage.h"
 

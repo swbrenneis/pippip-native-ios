@@ -15,8 +15,8 @@ open class AsyncMessagesViewController: SLKTextViewController {
     open let dataSource: AsyncMessagesCollectionViewDataSource
     open let delegate: ASCollectionDelegate
     open let asyncCollectionNode: ASCollectionNode
-    override open var collectionView: ASCollectionView? {
-        return scrollView as? ASCollectionView
+    override open var collectionView: ASCollectionView {
+        return scrollView as! ASCollectionView
     }
 
     public init?(dataSource: AsyncMessagesCollectionViewDataSource, delegate: ASCollectionDelegate) {
@@ -41,18 +41,14 @@ open class AsyncMessagesViewController: SLKTextViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public override init?(tableViewStyle style: UITableViewStyle) {
-        self.dataSource = DefaultAsyncMessagesCollectionViewDataSource()
-        self.delegate = DefaultAsyncMessagesCollectionViewDelegate()
-        let layout = UICollectionViewFlowLayout()
-        asyncCollectionNode = ASCollectionNode(collectionViewLayout: layout)
-        super.init(tableViewStyle: style)
+    override init?(tableViewStyle style: UITableViewStyle) {
+        fatalError("init(tableViewStyle:) has not been implemented")
     }
 
     open override func viewWillLayoutSubviews() {
         let insets = UIEdgeInsetsMake(topLayoutGuide.length, 0, 5, 0)
         asyncCollectionNode.contentInset = insets
-        collectionView?.scrollIndicatorInsets = insets
+        collectionView.scrollIndicatorInsets = insets
 
         super.viewWillLayoutSubviews()
     }

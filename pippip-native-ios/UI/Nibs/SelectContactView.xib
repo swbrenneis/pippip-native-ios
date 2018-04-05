@@ -24,13 +24,13 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rex-dU-AsJ">
-                    <rect key="frame" x="15" y="24.5" width="23.5" height="21"/>
+                    <rect key="frame" x="15" y="39.5" width="23.5" height="21"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Nickname or Public ID" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="6tl-3g-NH5">
-                    <rect key="frame" x="52" y="24.5" width="173.5" height="19"/>
+                    <rect key="frame" x="52" y="39.5" width="173.5" height="19"/>
                     <nil key="textColor"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits"/>
@@ -39,11 +39,11 @@
                     </connections>
                 </textField>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ld4-zI-Bwk">
-                    <rect key="frame" x="15" y="60.5" width="345" height="591.5"/>
+                    <rect key="frame" x="15" y="75.5" width="345" height="576.5"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </tableView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fdw-Be-As0">
-                    <rect key="frame" x="250.5" y="20" width="44" height="30"/>
+                    <rect key="frame" x="316" y="35" width="44" height="30"/>
                     <state key="normal" title="Select"/>
                     <connections>
                         <action selector="selectContact:" destination="-1" eventType="touchUpInside" id="3n1-wD-ubV"/>
@@ -52,15 +52,15 @@
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="fdw-Be-As0" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="4oh-By-T4o"/>
+                <constraint firstItem="fdw-Be-As0" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="15" id="4oh-By-T4o"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="ld4-zI-Bwk" secondAttribute="bottom" constant="15" id="9Pp-tr-XkY"/>
-                <constraint firstItem="fdw-Be-As0" firstAttribute="leading" secondItem="6tl-3g-NH5" secondAttribute="trailing" constant="25" id="JQ3-f8-tIL"/>
                 <constraint firstItem="ld4-zI-Bwk" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="15" id="Ksg-nb-HnM"/>
                 <constraint firstItem="6tl-3g-NH5" firstAttribute="leading" secondItem="Rex-dU-AsJ" secondAttribute="trailing" constant="13" id="RfY-ry-Tsx"/>
                 <constraint firstItem="fdw-Be-As0" firstAttribute="centerY" secondItem="Rex-dU-AsJ" secondAttribute="centerY" id="X0Y-L9-xsK"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="ld4-zI-Bwk" secondAttribute="trailing" constant="15" id="Xoa-la-f6r"/>
                 <constraint firstItem="ld4-zI-Bwk" firstAttribute="top" secondItem="Rex-dU-AsJ" secondAttribute="bottom" constant="15" id="Yuc-FW-GLv"/>
                 <constraint firstItem="6tl-3g-NH5" firstAttribute="centerY" secondItem="Rex-dU-AsJ" secondAttribute="centerY" constant="-1" id="cl9-OC-ych"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="fdw-Be-As0" secondAttribute="trailing" constant="15" id="jLf-OR-dbW"/>
                 <constraint firstItem="Rex-dU-AsJ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="15" id="lKB-Vn-rlN"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>

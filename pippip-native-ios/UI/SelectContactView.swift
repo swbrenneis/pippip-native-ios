@@ -37,10 +37,13 @@ class SelectContactView: UIView {
         addSubview(contentView)
         contentView.frame = self.bounds
         contentView.autoresizingMask = [ .flexibleWidth, .flexibleHeight ]
+        contentView.layer.cornerRadius = 10
+        contentView.layer.masksToBounds = true
         searchText.becomeFirstResponder()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(ContactTableViewCell.self, forCellReuseIdentifier: "ContactTableViewCell")
+        selectButton.isEnabled = false
 
     }
 
@@ -64,9 +67,9 @@ class SelectContactView: UIView {
 
     }
 
-    @IBOutlet weak var selectContact: UIButton!
     @IBAction func searchChanged(_ sender: Any) {
 
+        selectButton.isEnabled = false
         let partial = searchText.text!
         let fragment = partial.uppercased()
         let newLength = partial.utf8.count
@@ -128,7 +131,16 @@ extension SelectContactView: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+
+        selected = contactList[indexPath.item]
+        selectButton.isEnabled = true
+        if let nickname = selected?.nickname {
+            searchText.text = nickname
+        }
+        else {
+            searchText.text = selected?.publicId
+        }
+
     }
 
 }

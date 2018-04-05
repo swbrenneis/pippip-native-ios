@@ -11,7 +11,7 @@ import UIKit
 class ContactTableViewCell: UITableViewCell {
 
     var cellView: ContactCellView?
-    
+
     public override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         commonInit()
@@ -21,12 +21,15 @@ class ContactTableViewCell: UITableViewCell {
         super.init(coder: aDecoder)
         commonInit()
     }
-    
+
     func commonInit() {
-        
+
         cellView = ContactCellView(frame: self.bounds)
+        cellView?.backgroundColor = UIColor.clear
         self.addSubview(cellView!)
+        self.backgroundColor = UIColor.clear
+        self.selectionStyle = .none
         
     }
-    
+
 }
