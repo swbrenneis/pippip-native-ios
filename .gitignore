@@ -1,7 +1,5 @@
-pippip-native-ios.xcodeproj/xcuserdata
-pippip-native-ios.xcodeproj/project.xcworkspace/xcuserdata
 pippip-native-ios/*framework
 pippip-native-ios/libgmp.a
 Podfile.lock
 .DS_Store
-UserInterfaceState.xcuserstate
+*xcuserdatad
