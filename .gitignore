@@ -4,4 +4,4 @@ pippip-native-ios/*framework
 pippip-native-ios/libgmp.a
 Podfile.lock
 .DS_Store
-
+UserInterfaceState.xcuserstate

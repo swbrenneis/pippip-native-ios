@@ -40,6 +40,8 @@ import LocalAuthentication
         NotificationCenter.default.addObserver(self, selector: #selector(updateProgress(_:)),
                                                name: Notifications.UpdateProgress, object: nil) */
  
+        //let backgroundColor = UIColor.init(gradientStyle: .topToBottom, withFrame: self.view.bounds,
+        //                                   andColors: [UIColor.flatPink, UIColor.flatRed])
         let backgroundColor = UIColor.flatPink
         self.view.backgroundColor = backgroundColor
         authButton.titleLabel?.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
@@ -116,6 +118,7 @@ import LocalAuthentication
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
+            textField?.becomeFirstResponder()
             //textField?.returnKeyType = .go
             //textField?.delegate = self
         })

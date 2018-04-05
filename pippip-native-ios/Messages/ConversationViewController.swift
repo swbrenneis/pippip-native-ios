@@ -47,9 +47,13 @@ class ConversationViewController: AsyncMessagesViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        NotificationCenter.default.addObserver(self, selector: #selector(contactSelected(_:)),
+                                               name: Notifications.ContactsSelected, object: nil)
+
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
 
         if contact == nil {
             let frame = self.view.bounds
@@ -58,7 +62,7 @@ class ConversationViewController: AsyncMessagesViewController {
             selectView!.contentView.backgroundColor = UIColor.init(gradientStyle: .topToBottom, withFrame: viewRect, andColors: [UIColor.flatPowderBlue, UIColor.flatSkyBlue])
             selectView!.contentView.alpha = 0.8
             selectView!.center = self.view.center
-            self.view.addSubview(selectView!)
+            self.view.addSubview(self.selectView!)
         }
 
     }
@@ -68,6 +72,19 @@ class ConversationViewController: AsyncMessagesViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    @objc func contactSelected(_ notification: Notification) {
+
+        contact = notification.object as? Contact
+        DispatchQueue.main.async {
+            if let nickname = self.contact?.nickname {
+                self.navigationItem.title = nickname
+            }
+            else {
+                let fragment = String(describing: self.contact?.publicId.prefix(10)) + "..."
+            }
+        }
+
+    }
 
     /*
     // MARK: - Navigation

@@ -30,6 +30,8 @@ class ContactCellView: UIView {
         addSubview(contentView)
         contentView.frame = self.bounds
         contentView.autoresizingMask = [ .flexibleWidth, .flexibleHeight ]
+        contentView.backgroundColor = UIColor.clear
+        self.backgroundColor = UIColor.clear
 
     }
 

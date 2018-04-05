@@ -62,6 +62,22 @@ class TextMessage {
 
     }
 
+    init(dbMessage: DatabaseMessage) {
+
+        contactId = dbMessage.contactId
+        messageId = Int64(dbMessage.messageId)
+        messageType = dbMessage.messageType
+        ciphertext = dbMessage.message
+        cleartext = dbMessage.cleartext
+        keyIndex = dbMessage.keyIndex
+        sequence = Int64(dbMessage.sequence)
+        timestamp = Int64(dbMessage.timestamp)
+        read = dbMessage.read
+        acknowledged = dbMessage.acknowledged
+        originating = dbMessage.sent
+
+    }
+
     func encode(_ contact: Contact) -> [AnyHashable: Any] {
 
         var encoded = [AnyHashable: Any]()

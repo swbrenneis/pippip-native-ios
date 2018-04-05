@@ -90,6 +90,7 @@ import UIKit
         }
         
         alertAction.addTarget(self, action: #selector(PMAlertController.dismissAlertController(_:)), for: .touchUpInside)
+        
     }
     
     @objc fileprivate func dismissAlertController(_ sender: PMAlertAction){
