@@ -39,7 +39,7 @@ class ConversationViewController: AsyncMessagesViewController {
         conversationDataSource = ConversationDataSource()
         conversationDelegate = ConversationCollectionDelegate()
         
-        super.init(tableViewStyle: style)
+        super.init(dataSource: conversationDataSource, delegate: conversationDelegate)
         
     }
 
@@ -48,7 +48,9 @@ class ConversationViewController: AsyncMessagesViewController {
 
         // Do any additional setup after loading the view.
         NotificationCenter.default.addObserver(self, selector: #selector(contactSelected(_:)),
-                                               name: Notifications.ContactsSelected, object: nil)
+                                               name: Notifications.ContactSelected, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(messagesLoaded(_:)),
+                                               name: Notifications.MessagesLoaded, object: nil)
 
     }
 
@@ -64,6 +66,9 @@ class ConversationViewController: AsyncMessagesViewController {
             selectView!.center = self.view.center
             self.view.addSubview(self.selectView!)
         }
+        else {
+            conversationDataSource.loadMessages(contact: contact!, asyncCollectionNode: self.asyncCollectionNode)
+        }
 
     }
 
@@ -71,21 +76,34 @@ class ConversationViewController: AsyncMessagesViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
+    override func didPressRightButton(_ sender: Any?) {
+        super.didPressRightButton(sender)
+    }
+
     @objc func contactSelected(_ notification: Notification) {
 
         contact = notification.object as? Contact
+        conversationDataSource.loadMessages(contact: contact!, asyncCollectionNode: asyncCollectionNode)
         DispatchQueue.main.async {
             if let nickname = self.contact?.nickname {
                 self.navigationItem.title = nickname
             }
             else {
-                let fragment = String(describing: self.contact?.publicId.prefix(10)) + "..."
+                let fragment = String(describing: self.contact!.publicId.prefix(10)) + "..."
+                self.navigationItem.title = fragment
             }
         }
 
     }
 
+    @objc func messagesLoaded(_ notification: Notification) {
+
+        DispatchQueue.main.async {
+            self.scrollCollectionViewToBottom()
+        }
+
+    }
     /*
     // MARK: - Navigation
 

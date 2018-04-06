@@ -61,7 +61,7 @@ class SelectContactView: UIView {
     @IBAction func selectContact(_ sender: Any) {
 
         if selected != nil {
-            NotificationCenter.default.post(name: Notifications.ContactsSelected, object: selected)
+            AsyncNotifier.notify(name: Notifications.ContactSelected, object: selected)
             self.removeFromSuperview()
         }
 

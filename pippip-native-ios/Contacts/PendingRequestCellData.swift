@@ -83,7 +83,7 @@ class PendingRequestSelector: ExpandingTableSelectorProtocol {
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestAcknowledged, object: nil)
 
         DispatchQueue.main.async {
-            self.viewController!.contactsModel.clear(0)
+            self.viewController!.contactsModel.clear(0, tableView: self.viewController!.tableView)
             if let requests = notification.object as? [ [AnyHashable: Any] ] {
                 var cells = [CellDataProtocol]()
                 for request in requests {
@@ -93,7 +93,7 @@ class PendingRequestSelector: ExpandingTableSelectorProtocol {
                 self.viewController!.tableView.insertRows(at: self.viewController!.contactsModel.insertPaths, with: .bottom)
             }
  
-            self.viewController!.contactsModel.clear(1)
+            self.viewController!.contactsModel.clear(1, tableView: self.viewController!.tableView)
             var paths = self.viewController!.contactsModel.deletePaths
             self.viewController!.tableView.deleteRows(at: paths, with: .top)
             let contactList = self.contactManager.getContactList()

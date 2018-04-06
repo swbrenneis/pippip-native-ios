@@ -9,7 +9,7 @@
 #import "ObjcConversationViewController.h"
 #import "Conversation.h"
 #import "ApplicationSingleton.h"
-#import "MessageManager.h"
+//#import "MessageManager.h"
 #import "ContactManager.h"
 #import "AlertErrorDelegate.h"
 #import "Authenticator.h"
@@ -17,7 +17,7 @@
 
 @interface ObjcConversationViewController ()
 {
-    MessageManager *messageManager;
+//    MessageManager *messageManager;
 //    ConversationDataSource *dataSource;
     AuthViewController *authView;
     BOOL suspended;
@@ -47,8 +47,8 @@
     [_sendFailedLabel setHidden:YES];
     authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
 
-    messageManager = [[MessageManager alloc] init];
-    [messageManager setResponseConsumer:self];
+//    messageManager = [[MessageManager alloc] init];
+    //[messageManager setResponseConsumer:self];
     // Public ID is set in the messages table prepare for segue.
     _conversationCache = [ApplicationSingleton instance].conversationCache;
 
@@ -77,12 +77,14 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:@"ConversationLoaded" object:nil];
 
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
 /*
     NSInteger messageCount = [dataSource getMessageCount];
     if (messageCount > 0) {
@@ -109,6 +111,7 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
@@ -183,9 +186,9 @@
             NSNumber *sq = info[@"sequence"];
             NSNumber *ts = info[@"timestamp"];
             NSString *publicId = info[@"publicId"];
-            [messageManager messageSent:publicId
-                           withSequence:[sq integerValue]
-                          withTimestamp:[ts integerValue]];
+//            [messageManager messageSent:publicId
+//                           withSequence:[sq integerValue]
+//                          withTimestamp:[ts integerValue]];
 
             NSMutableDictionary *messageCount = [NSMutableDictionary dictionary];
             messageCount[@"count"] = [NSNumber numberWithUnsignedInteger:1];
@@ -220,7 +223,7 @@
     if (_messageText.text.length > 0) {
         [_sendFailedLabel setHidden:YES];
         NSString *messageText = _messageText.text;
-        [messageManager sendMessage:messageText withPublicId:_publicId];
+        // [messageManager sendMessage:messageText withPublicId:_publicId];
     }
 
 }

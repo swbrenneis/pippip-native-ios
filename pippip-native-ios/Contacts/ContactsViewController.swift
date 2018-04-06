@@ -23,7 +23,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     var nickname: String?
     var publicId = ""
     var debugDelete = false
-    var debugging = false
+    var debugging = true
     var suspended = false
 
     init() {
@@ -130,7 +130,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
 
         suspended = true
         DispatchQueue.main.async {
-            self.contactsModel.clear(1)
+            self.contactsModel.clear(1, tableView: self.tableView)
             self.tableView.deleteRows(at: self.contactsModel.deletePaths, with: .top)
         }
 
@@ -139,11 +139,9 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     @objc func contactsUpdated(_ notification: Notification) {
 
         DispatchQueue.main.async {
-            self.contactsModel.clear(0)
-            self.tableView.deleteRows(at: self.contactsModel.deletePaths, with: .top)
+            self.contactsModel.clear(1, tableView: self.tableView)
             let contactList = self.contactManager.getContactList()
             self.contactsModel.setContacts(contactList)
-            self.tableView.insertRows(at: self.contactsModel.insertPaths, with: .bottom)
         }
     
     }

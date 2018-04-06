@@ -14,7 +14,7 @@
 #import "ContactDatabase.h"
 #import "LoggingErrorDelegate.h"
 #import "ContactManager.h"
-#import "MessageManager.h"
+//#import "MessageManager.h"
 #import "Notifications.h"
 #import "Notifications.h"
 
@@ -24,7 +24,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 {
     UpdateType updateType;
     BOOL sessionActive;
-    MessageManager *messageManager;
+    //MessageManager *messageManager;
     ContactManager *contactManager;
     NSInteger newMessageCount;
     NSDate *suspendTime;
@@ -41,7 +41,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
     sessionActive = NO;
     contactManager = [[ContactManager alloc] init];
-    messageManager = [[MessageManager alloc] init];
+    //messageManager = [[MessageManager alloc] init];
     notificationComplete = YES;
     suspended = NO;
 
@@ -63,7 +63,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 }
 
 - (void)acknowledgeMessages {
-
+/*
     if (newMessageCount > 0) {
         updateType = ACK_MESSAGES;
         [messageManager acknowledgePendingMessages];
@@ -71,14 +71,15 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     else {
         updateType = NONE;
     }
-
+*/
 }
 
 - (void)contactsUpdated:(NSNotification*)notification {
-
+/*
 #if TARGET_OS_SIMULATOR
     [messageManager getNewMessages];
 #endif
+*/
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [contactManager updatePendingContacts];
     });
@@ -165,11 +166,11 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 }
 
 - (void)updateMessages {
-
+/*
     updateType = MESSAGES;
     newMessageCount = 0;
     [messageManager getNewMessages];
-
+*/
 }
 
 #pragma Mark - Notification center delegate

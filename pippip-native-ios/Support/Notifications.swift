@@ -27,6 +27,7 @@ import Foundation
     static let RequestAcknowledged = NSNotification.Name("RequestsAcknowledged")
     static let UpdateProgress = NSNotification.Name("UpdateProgress")
     static let ContactsUpdated = NSNotification.Name("ContactsUpdated")
-    static let ContactsSelected = NSNotification.Name("ContactSelected")
+    static let ContactSelected = NSNotification.Name("ContactSelected")
+    static let MessagesLoaded = NSNotification.Name("MessagesLoaded")
 
 }

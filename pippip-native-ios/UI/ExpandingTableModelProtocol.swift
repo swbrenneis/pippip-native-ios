@@ -34,7 +34,7 @@ protocol ExpandingTableModelProtocol {
     
     var deletePaths: [ IndexPath ] { get }
 
-    func clear(_ section: Int)
+    func clear(_ section: Int, tableView: UITableView)
 
     func appendCell(_ cell: CellDataProtocol, section: Int)
 

@@ -18,7 +18,7 @@
     NSURLSession *urlSession;
     NSMutableArray *processes;
     NSLock *postLock;
-    id<RequestProcess> currentProcess;
+    id<RequestProcessProtocol> currentProcess;
 }
 
 @end
@@ -109,7 +109,7 @@
     
 }
 
-- (void)queuePost:(id<RequestProcess>)process {
+- (void)queuePost:(id<RequestProcessProtocol>)process {
 
     [postLock lock];
     [processes addObject:process];
@@ -141,7 +141,7 @@
     
 }
 
-- (void)startSession:(id<RequestProcess>)process {
+- (void)startSession:(id<RequestProcessProtocol>)process {
 
     // Session completion block.
     void (^sessionCompletion)(NSData*, NSURLResponse*, NSError*) =

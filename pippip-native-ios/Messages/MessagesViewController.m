@@ -15,14 +15,14 @@
 #import "ConversationCache.h"
 #import "ObjcConversationViewController.h"
 #import "Authenticator.h"
-#import "MessageManager.h"
+//#import "MessageManager.h"
 #import "MBProgressHUD.h"
 
 @interface MessagesViewController ()
 {
     NSArray *mostRecent;
     AuthViewController *authView;
-    MessageManager *messageManager;
+    //MessageManager *messageManager;
     BOOL suspended;
     BOOL accountDeleted;
 }
@@ -40,7 +40,7 @@
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
-    messageManager = [[MessageManager alloc] init];
+    //messageManager = [[MessageManager alloc] init];
     mostRecent = [NSArray array];
     _tableView.dataSource = self;
     [_tableView setDelegate:self];
@@ -65,6 +65,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(MessagesUpdated:)
@@ -73,6 +74,7 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MESSAGES_UPDATED object:nil];
 
@@ -80,6 +82,7 @@
 
 
 - (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
 
     if (accountDeleted) {
         mostRecent = [NSArray array];

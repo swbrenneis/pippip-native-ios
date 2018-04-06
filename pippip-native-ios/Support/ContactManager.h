@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "RequestProcess.h"
 #import "RESTSession.h"
 #import "ContactDatabase.h"
 
@@ -15,7 +14,7 @@
 @class Contact;
 @protocol ResponseConsumer;
 
-@interface ContactManager : NSObject <RequestProcess>
+@interface ContactManager : NSObject <RequestProcessProtocol>
 
 - (void)acknowledgeRequest:(NSString*_Nonnull)response
                     withId:(NSString*_Nonnull)publicId

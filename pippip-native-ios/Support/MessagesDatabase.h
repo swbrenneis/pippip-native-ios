@@ -24,11 +24,11 @@
 
 //- (void)deleteMessage:(NSInteger)messageId;
 
-- (TextMessage*)loadTextMessage:(NSInteger)messageId;   // Returns a raw, encrypted message
+- (TextMessage*_Nonnull)loadTextMessage:(NSInteger)messageId withContactId:(NSInteger)contactId;   // Returns a raw, encrypted message
 
 //- (NSMutableDictionary*)loadMessage:(NSInteger)messageId withPublicId:(NSString*)publicId;
 
-- (NSArray*)loadMessageIds:(NSInteger)contactId;
+- (NSArray<NSNumber*>*_Nonnull)loadMessageIds:(NSInteger)contactId;
 
 //- (void)markMessageRead:(NSInteger)messageId;
 

@@ -41,7 +41,7 @@ class ContactsTableModel: ExpandingTableModelProtocol {
         
     }
     
-    func clear(_ section: Int) {
+    func clear(_ section: Int, tableView: UITableView) {
 
         deletePaths = [ IndexPath ]()
         if let cells = tableModel[section] {
@@ -49,6 +49,7 @@ class ContactsTableModel: ExpandingTableModelProtocol {
                 deletePaths.append(IndexPath(row: item, section: section))
             }
         }
+        tableView.deleteRows(at: deletePaths, with: .top)
         tableModel[section] = [ CellDataProtocol ]()
 
     }

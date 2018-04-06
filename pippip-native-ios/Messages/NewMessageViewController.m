@@ -10,7 +10,7 @@
 #import "ObjcConversationViewController.h"
 #import "NewMessageDataSource.h"
 #import "ApplicationSingleton.h"
-#import "MessageManager.h"
+//#import "MessageManager.h"
 #import "ConversationCache.h"
 #import "AlertErrorDelegate.h"
 #import "Authenticator.h"
@@ -19,7 +19,7 @@
 
 @interface NewMessageViewController ()
 {
-    MessageManager *messageManager;
+    //MessageManager *messageManager;
     NewMessageDataSource *dataSource;
     AuthViewController *authView;
     BOOL suspended;
@@ -47,8 +47,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    messageManager = [[MessageManager alloc] init];
-    [messageManager setResponseConsumer:self];
+    //messageManager = [[MessageManager alloc] init];
+    //[messageManager setResponseConsumer:self];
     _conversationCache = [ApplicationSingleton instance].conversationCache;
     //contactManager = [[ContactManager alloc] init];
     //searchSource = [[ContactSearchDataSource alloc] init];
@@ -71,6 +71,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
 
     [_searchTextField becomeFirstResponder];
 
@@ -94,6 +95,7 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
@@ -160,7 +162,7 @@
     });
 
 }
-
+/*
 - (IBAction)sendMessage:(UIButton *)sender {
 
     NSDictionary *contact = [dataSource getSelectedContact];
@@ -171,7 +173,7 @@
     }
 
 }
-
+*/
 - (void)keyboardWillShow:(NSNotification*)notify {
 
     // get height of visible keyboard
@@ -201,9 +203,9 @@
             NSNumber *sq = info[@"sequence"];
             NSNumber *ts = info[@"timestamp"];
             NSString *publicId = info[@"publicId"];
-            [messageManager messageSent:publicId
-                           withSequence:[sq integerValue]
-                          withTimestamp:[ts integerValue]];
+//            [messageManager messageSent:publicId
+//                           withSequence:[sq integerValue]
+//                          withTimestamp:[ts integerValue]];
             
             NSMutableDictionary *messageCount = [NSMutableDictionary dictionary];
             messageCount[@"count"] = [NSNumber numberWithUnsignedInteger:1];

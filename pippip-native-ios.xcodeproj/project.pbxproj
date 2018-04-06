@@ -13,7 +13,6 @@
 		5500D16D2074104A0016AC71 /* AccountDeleter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5500D16C2074104A0016AC71 /* AccountDeleter.m */; };
 		5500D172207455450016AC71 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500D171207455450016AC71 /* TextMessage.swift */; };
 		551050FF201F8840000A313E /* MessagesDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 551050FE201F8840000A313E /* MessagesDatabase.m */; };
-		55105102201F8880000A313E /* MessageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 55105101201F8880000A313E /* MessageManager.m */; };
 		551051082020BC36000A313E /* DatabaseMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 551051072020BC36000A313E /* DatabaseMessage.m */; };
 		551641F3205AC4AF00CFCEEF /* CleartextMessagesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 551641F2205AC4AF00CFCEEF /* CleartextMessagesCell.m */; };
 		551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183E1FA0FA030050C93C /* NewAccountFinish.m */; };
@@ -23,6 +22,9 @@
 		55206DA92075486000B0B246 /* SelectContactView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55206DA82075486000B0B246 /* SelectContactView.xib */; };
 		55206DAB20754A2500B0B246 /* SelectContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DAA20754A2500B0B246 /* SelectContactView.swift */; };
 		55206DAD20755E1500B0B246 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */; };
+		55206DAF20765F2D00B0B246 /* ConversationMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DAE20765F2D00B0B246 /* ConversationMessageData.swift */; };
+		55206DB12076A5EA00B0B246 /* MessageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DB02076A5EA00B0B246 /* MessageManager.swift */; };
+		55206DB32076AC2000B0B246 /* RequestProcessProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DB22076AC2000B0B246 /* RequestProcessProtocol.swift */; };
 		5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */; };
 		5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB01F8D4B1D00C40D05 /* NewAccountRequest.m */; };
 		5527BAB41F8D58D300C40D05 /* RESTSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB31F8D58D300C40D05 /* RESTSession.m */; };
@@ -216,8 +218,6 @@
 		5500D171207455450016AC71 /* TextMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessage.swift; sourceTree = "<group>"; };
 		551050FD201F8840000A313E /* MessagesDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessagesDatabase.h; sourceTree = "<group>"; };
 		551050FE201F8840000A313E /* MessagesDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessagesDatabase.m; sourceTree = "<group>"; };
-		55105100201F8880000A313E /* MessageManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageManager.h; sourceTree = "<group>"; };
-		55105101201F8880000A313E /* MessageManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessageManager.m; sourceTree = "<group>"; };
 		551051062020BC36000A313E /* DatabaseMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseMessage.h; sourceTree = "<group>"; };
 		551051072020BC36000A313E /* DatabaseMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseMessage.m; sourceTree = "<group>"; };
 		551641F1205AC4AF00CFCEEF /* CleartextMessagesCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CleartextMessagesCell.h; sourceTree = "<group>"; };
@@ -231,6 +231,9 @@
 		55206DA82075486000B0B246 /* SelectContactView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectContactView.xib; sourceTree = "<group>"; };
 		55206DAA20754A2500B0B246 /* SelectContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectContactView.swift; sourceTree = "<group>"; };
 		55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
+		55206DAE20765F2D00B0B246 /* ConversationMessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageData.swift; sourceTree = "<group>"; };
+		55206DB02076A5EA00B0B246 /* MessageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageManager.swift; sourceTree = "<group>"; };
+		55206DB22076AC2000B0B246 /* RequestProcessProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestProcessProtocol.swift; sourceTree = "<group>"; };
 		5527BAA11F8D0AE200C40D05 /* PostPacket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PostPacket.h; sourceTree = "<group>"; };
 		5527BAA31F8D0D1200C40D05 /* NewAccountCreator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountCreator.h; sourceTree = "<group>"; };
 		5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountCreator.m; sourceTree = "<group>"; };
@@ -625,8 +628,7 @@
 				55666648201B7C9000051ED2 /* LoggingErrorDelegate.m */,
 				551050FD201F8840000A313E /* MessagesDatabase.h */,
 				551050FE201F8840000A313E /* MessagesDatabase.m */,
-				55105100201F8880000A313E /* MessageManager.h */,
-				55105101201F8880000A313E /* MessageManager.m */,
+				55206DB02076A5EA00B0B246 /* MessageManager.swift */,
 				55D8097C20279299008940CB /* MultiCellItem.h */,
 				557CE57F203CD245008AF8CF /* MutableConversation.h */,
 				557CE580203CD245008AF8CF /* MutableConversation.m */,
@@ -671,6 +673,7 @@
 				55D8098A2028BCBA008940CB /* ContactSearchDataSource.m */,
 				55206DA620753D2F00B0B246 /* ConversationCollectionDelegate.swift */,
 				55206DA420753A5A00B0B246 /* ConversationDataSource.swift */,
+				55206DAE20765F2D00B0B246 /* ConversationMessageData.swift */,
 				557CE563203A4796008AF8CF /* ConversationTableViewCell.h */,
 				557CE564203A4796008AF8CF /* ConversationTableViewCell.m */,
 				55A2D38E20752544005CD1FB /* ConversationViewController.swift */,
@@ -746,6 +749,7 @@
 				5527BAB71F8DB81A00C40D05 /* NewAccountResponse.m */,
 				5527BAA11F8D0AE200C40D05 /* PostPacket.h */,
 				553332581F9AD83A00F441E4 /* RequestProcess.h */,
+				55206DB22076AC2000B0B246 /* RequestProcessProtocol.swift */,
 				5579D45B1FE8491C007BCFE4 /* ResponseConsumer.h */,
 				5527BAB51F8D5B9500C40D05 /* SessionDelegate.h */,
 				5527BAA61F8D36BA00C40D05 /* RESTResponse.h */,
@@ -1374,6 +1378,7 @@
 				555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */,
 				55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */,
 				55AA55541FA14D7100A7026B /* SHA256.cc in Sources */,
+				55206DB32076AC2000B0B246 /* RequestProcessProtocol.swift in Sources */,
 				55AA54E31FA14B1E00A7026B /* Int16.cc in Sources */,
 				55AA555F1FA14D7100A7026B /* DERCodec.cc in Sources */,
 				55C88DD42071C9FA00D58BCA /* PendingRequestCellData.swift in Sources */,
@@ -1386,6 +1391,7 @@
 				55AA54DB1FA14B1E00A7026B /* ByteArrayOutputStream.cc in Sources */,
 				5533325B1F9AE2D700F441E4 /* AlertErrorDelegate.m in Sources */,
 				55B781AD1FE018FC00330B80 /* ContactManager.m in Sources */,
+				55206DAF20765F2D00B0B246 /* ConversationMessageData.swift in Sources */,
 				5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */,
 				55AA54E21FA14B1E00A7026B /* Int64.cc in Sources */,
 				55AA55591FA14D7100A7026B /* SHA1.cc in Sources */,
@@ -1439,6 +1445,7 @@
 				55AA54DD1FA14B1E00A7026B /* ByteArray.cc in Sources */,
 				5586B8922064A7AF00641514 /* ErrorDelegate.swift in Sources */,
 				55206DAD20755E1500B0B246 /* ContactTableViewCell.swift in Sources */,
+				55206DB12076A5EA00B0B246 /* MessageManager.swift in Sources */,
 				55AA55571FA14D7100A7026B /* DHKeyExchange.cc in Sources */,
 				554C56042075C09F00FE9C92 /* MessageBubbleNodeFactory.swift in Sources */,
 				55AA54FB1FA14C1300A7026B /* CKRSAPublicKey.m in Sources */,
@@ -1446,7 +1453,6 @@
 				55B0DBB12045EC8400F6B29B /* MessagesViewController.m in Sources */,
 				55FA87391FD059AF00FB96C0 /* UserVault.m in Sources */,
 				55AA55021FA14C1300A7026B /* CKRSAKeyPairGenerator.mm in Sources */,
-				55105102201F8880000A313E /* MessageManager.m in Sources */,
 				554C55FA2075C02E00FE9C92 /* MessageTimestampFormatter.swift in Sources */,
 				55666646201A68AF00051ED2 /* AccountSession.m in Sources */,
 				55AA55501FA14D7100A7026B /* PSSmgf1.cc in Sources */,

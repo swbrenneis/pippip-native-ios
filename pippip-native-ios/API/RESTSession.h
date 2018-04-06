@@ -7,12 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "RequestProcess.h"
+
+@protocol RequestProcessProtocol;
 
 @interface RESTSession : NSObject <NSURLConnectionDelegate>
 
-- (void)queuePost:(id<RequestProcess>)process;
+- (void)queuePost:(id<RequestProcessProtocol>)process;
 
-- (void)startSession:(id<RequestProcess>)process;
+- (void)startSession:(id<RequestProcessProtocol>)process;
 
 @end

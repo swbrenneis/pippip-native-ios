@@ -73,6 +73,7 @@ static const NSInteger EDIT_INDEX = 4;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
 
     [cellItems addObject:[PublicIdCell cellItem]];
     MoreCellItem *nicknameItem = [NicknameCell cellItem];
@@ -103,6 +104,7 @@ static const NSInteger EDIT_INDEX = 4;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:PRESENT_ALERT object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:nicknameCell name:NEW_SESSION object:nil];
