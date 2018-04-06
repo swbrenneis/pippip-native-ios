@@ -59,8 +59,40 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         // Dispose of any resources that can be recreated.
     }
 
+    func checkSelfAdd(nickname: String?, publicId: String?) -> Bool {
+        
+        let alertColor = UIColor.flatSand
+        if let nick = nickname {
+            let myNick = ApplicationSingleton.instance().config.getNickname()
+            if myNick == nick {
+                RKDropdownAlert.title("Add Friend Error", message: "You can't add yourself",
+                                      backgroundColor: alertColor,
+                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                      time: 2, delegate: nil)
+                return true
+            }
+        }
+        if let puid = publicId {
+            let myId = ApplicationSingleton.instance().accountSession.sessionState.publicId
+            if myId == puid {
+                RKDropdownAlert.title("Add Friend Error", message: "You can't add yourself",
+                                      backgroundColor: alertColor,
+                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                      time: 2, delegate: nil)
+                return true
+            }
+        }
+        return false
+        
+    }
+    
     @IBAction func addFriend(_ sender: Any) {
 
+        NotificationCenter.default.addObserver(self, selector: #selector(friendAdded(_:)),
+                                               name: Notifications.FriendAdded, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(nicknameMatched(_:)),
+                                               name: Notifications.NicknameMatched, object: nil)
+        
         let alert = PMAlertController(title: "Add A New Friend",
                                       description: "Enter a nickname or public ID",
                                       image: nil,
@@ -79,16 +111,24 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
                                       style: .default, action: { () in
                                         self.nickname = alert.textFields[0].text ?? ""
                                         self.publicId = alert.textFields[1].text ?? ""
-                                        if self.nickname.utf8.count > 0 {
-                                            self.contactManager.matchNickname(self.nickname, withPublicId: nil)
-                                        }
-                                        else if self.publicId.utf8.count > 0 {
-                                            self.contactManager.addFriend(self.publicId)
+                                        if !self.checkSelfAdd(nickname: self.nickname, publicId: self.publicId) {
+                                            if self.nickname.utf8.count > 0 {
+                                                self.contactManager.matchNickname(self.nickname, withPublicId: nil)
+                                            }
+                                            else if self.publicId.utf8.count > 0 {
+                                                if !self.contactManager.addFriend(self.publicId) {
+                                                    let alertColor = UIColor.flatSand
+                                                    RKDropdownAlert.title("Add Friend Error", message: "You already added that friend",
+                                                                          backgroundColor: alertColor,
+                                                                          textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                                                          time: 2, delegate: nil)
+                                                }
+                                            }
                                         }
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true, completion: nil)
-
+        
     }
     
     @objc func presentAlert(_ notification: Notification) {

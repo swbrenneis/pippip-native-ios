@@ -198,7 +198,8 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
                 [_contactDatabase addContact:translated];
                 [self loadContactList];
             }
-            NSArray *pending = response[@"pending"];
+//            NSArray *pending = response[@"pending"];
+            NSArray *pending = [NSArray array];
             [AsyncNotifier notifyWithName:REQUEST_ACKNOWLEDGED object:pending userInfo:nil];
         }
             break;

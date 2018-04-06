@@ -50,7 +50,6 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
 
         // Do any additional setup after loading the view.
         tableView.expandingModel = contactsModel
-        contactsModel.viewController = self
         let headerFrame = CGRect(x: 0.0, y:0.0, width: self.view.frame.size.width, height:40.0)
         contactsModel.headerViews[1] = ContactsHeaderView(headerFrame)
 
@@ -79,7 +78,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(nicknameMatched(_:)),
                                                name: Notifications.NicknameMatched, object: nil)
 
-        contactsModel.setContacts(contactManager.getContactList())
+        contactsModel.setContacts(contactManager.getContactList(), viewController: self)
         contactManager.getRequests()
 
     }

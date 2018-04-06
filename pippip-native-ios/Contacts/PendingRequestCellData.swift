@@ -83,22 +83,36 @@ class PendingRequestSelector: ExpandingTableSelectorProtocol {
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestAcknowledged, object: nil)
 
         DispatchQueue.main.async {
-            self.viewController!.contactsModel.clear(0, tableView: self.viewController!.tableView)
             if let requests = notification.object as? [ [AnyHashable: Any] ] {
-                var cells = [CellDataProtocol]()
-                for request in requests {
-                    cells.append(PendingRequestCellData(request, viewController: self.viewController!))
+                if requests.count == 0 {
+                    self.viewController!.contactsModel.clear(0, tableView: self.viewController!.tableView)
                 }
-                self.viewController!.contactsModel.insertCells(cells, section: 0, at: 1)
-                self.viewController!.tableView.insertRows(at: self.viewController!.contactsModel.insertPaths, with: .bottom)
+                else {
+                    let cells = self.viewController!.contactsModel.getCells(section: 0, row: 1, count: 0)
+                    var item = 1
+                    for cell in cells {
+                        let requestCellData = cell as!PendingRequestCellData
+                        let requestCell = requestCellData.cell as! PendingRequestCell
+                        var found = false
+                        for request in requests {
+                            if request["publicId"] as? String == requestCell.publicIdLabel.text {
+                                found = true
+                            }
+                        }
+                        if !found {
+                            let _ = self.viewController!.contactsModel.removeCell(section: 0, row: item)
+                            self.viewController!.tableView.deleteRows(at: self.viewController!.contactsModel.deletePaths,
+                                                                      with: .top)
+                        }
+                        item += 1
+                    }
+                }
             }
  
             self.viewController!.contactsModel.clear(1, tableView: self.viewController!.tableView)
-            var paths = self.viewController!.contactsModel.deletePaths
-            self.viewController!.tableView.deleteRows(at: paths, with: .top)
             let contactList = self.contactManager.getContactList()
-            self.viewController!.contactsModel.setContacts(contactList)
-            paths = self.viewController!.contactsModel.insertPaths
+            self.viewController!.contactsModel.setContacts(contactList, viewController: self.viewController!)
+            let paths = self.viewController!.contactsModel.insertPaths
             self.viewController!.tableView.insertRows(at: paths, with: .bottom)
         }
 

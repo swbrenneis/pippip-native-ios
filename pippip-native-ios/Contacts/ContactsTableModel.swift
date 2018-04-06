@@ -21,153 +21,20 @@ class ContactsHeaderView: ViewDataProtocol {
     
 }
 
-class ContactsTableModel: ExpandingTableModelProtocol {
+class ContactsTableModel: BaseExpandingTableModel {
 
-    var tableModel: [Int : [CellDataProtocol]]
-    var headerViews: [Int : ViewDataProtocol]
-    var insertPaths: [IndexPath]
-    var deletePaths: [IndexPath]
-    weak var viewController: ContactsViewController?
-    
-    init() {
+    override init() {
 
-
-        tableModel = [0 : [CellDataProtocol]()]
+        super.init()
         tableModel[1] = [CellDataProtocol]()
-        headerViews = [ Int: ViewDataProtocol ]()
-//        headerViews = [ 2: ContactsHeaderView(headerFrame) ]
-        insertPaths = [ IndexPath ]()
-        deletePaths = [ IndexPath ]()
-        
-    }
-    
-    func clear(_ section: Int, tableView: UITableView) {
-
-        deletePaths = [ IndexPath ]()
-        if let cells = tableModel[section] {
-            for item in 0..<cells.count {
-                deletePaths.append(IndexPath(row: item, section: section))
-            }
-        }
-        tableView.deleteRows(at: deletePaths, with: .top)
-        tableModel[section] = [ CellDataProtocol ]()
-
-    }
-
-    func appendCell(_ cell: CellDataProtocol, section: Int) {
-        
-        if tableModel[section] == nil {
-            tableModel[section] = [ cell ]
-        }
-        else {
-            tableModel[section]?.append(cell)
-        }
-        insertPaths = [ IndexPath(row: tableModel[section]!.count-1, section: section)]
-        
-    }
-    
-    func insertCell(_ cell: CellDataProtocol, section: Int, row: Int) {
-        
-        if tableModel[section] == nil {
-            tableModel[section] = [ cell ]
-        }
-        else if row >= tableModel[section]!.count {
-            tableModel[section]!.append(cell)
-        }
-        else {
-            var newCells = [ CellDataProtocol ]()
-            for i in 0..<tableModel[section]!.count {
-                if i != row {
-                    newCells.append(tableModel[section]![i])
-                }
-                else {
-                    newCells.append(cell)
-                }
-            }
-            tableModel[section] = newCells
-        }
-        insertPaths = [ IndexPath(row: row, section: section) ]
-        
-    }
-    
-    func insertCells(_ cells: [CellDataProtocol], section: Int, at: Int) {
-        
-        if tableModel[section] == nil {
-            tableModel[section] = cells
-        }
-        else if (at >= tableModel[section]!.count) {
-            tableModel[section]?.append(contentsOf: cells)
-        }
-        else {
-            var newCells = [ CellDataProtocol ]()
-            for i in 0..<tableModel[section]!.count {
-                if i == at {
-                    newCells.append(contentsOf: cells)
-                }
-                newCells.append(tableModel[section]![i])
-            }
-            tableModel[section] = newCells
-        }
-        insertPaths = [ IndexPath ]()
-        for i in 0..<cells.count {
-            insertPaths.append(IndexPath(row: at+i, section: section))
-        }
-        
-    }
-    
-    func removeCell(section: Int, row: Int) -> CellDataProtocol? {
-        
-        if tableModel[section] == nil {
-            return nil
-        }
-        else {
-            var deleted: CellDataProtocol?
-            var newCells = [ CellDataProtocol ]()
-            for i in 0..<tableModel[section]!.count {
-                if i != row {
-                    newCells.append(tableModel[section]![i])
-                }
-                else {
-                    deleted = tableModel[section]![i]
-                }
-            }
-            tableModel[section] = newCells
-            deletePaths = [ IndexPath(row: row, section: section) ]
-            return deleted
-        }
-        
-    }
-    
-    func removeCells(section: Int, row: Int, count: Int) -> [CellDataProtocol]? {
-        
-        if tableModel[section] == nil {
-            return nil
-        }
-        else {
-            deletePaths = [ IndexPath ]()
-            var deleted = [ CellDataProtocol ]()
-            var newCells = [ CellDataProtocol ]()
-            let end = row + count
-            for i in 0..<tableModel[section]!.count {
-                if i < row || i >= end {
-                    newCells.append(tableModel[section]![i])
-                }
-                else {
-                    deleted.append(tableModel[section]![i])
-                    deletePaths.append(IndexPath(row: i, section: section))
-                }
-            }
-            tableModel[section] = newCells
-            return deleted
-        }
         
     }
 
-    func setContacts(_ contactList: [ Contact ]) {
+    func setContacts(_ contactList: [ Contact ], viewController: ContactsViewController) {
 
         var cells = [ CellDataProtocol ]()
         for contact in contactList {
-            let tableView = viewController!.tableView!
+            let tableView = viewController.tableView!
             let contactCell = tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
             if let nickname = contact.nickname {
                 contactCell.identLabel.text = nickname
@@ -178,7 +45,7 @@ class ContactsTableModel: ExpandingTableModelProtocol {
             }
             contactCell.statusImageView.image = UIImage(named: contact.status)
             let cellData = ContactCellData(contactCell: contactCell,
-                                           contact: contact, viewController: viewController!)
+                                           contact: contact, viewController: viewController)
             cells.append(cellData)
         }
         if cells.count > 0 {

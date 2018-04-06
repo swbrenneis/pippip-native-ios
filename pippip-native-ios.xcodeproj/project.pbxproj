@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		344BAD4BA2839C4607732E00 /* Pods_pippip_native_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EAF080C88C70EE3FD9244478 /* Pods_pippip_native_ios.framework */; };
+		550007B62077A80200103882 /* BaseExpandingTableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550007B52077A80200103882 /* BaseExpandingTableModel.swift */; };
 		5500D168207404A10016AC71 /* TableViewCellWithController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500D167207404A10016AC71 /* TableViewCellWithController.swift */; };
 		5500D16A207405190016AC71 /* DeleteAccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500D169207405190016AC71 /* DeleteAccountCell.swift */; };
 		5500D16D2074104A0016AC71 /* AccountDeleter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5500D16C2074104A0016AC71 /* AccountDeleter.m */; };
@@ -211,6 +212,7 @@
 /* Begin PBXFileReference section */
 		192F741F7B0115DDA516D72E /* Pods-pippip-native-iosTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pippip-native-iosTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-pippip-native-iosTests/Pods-pippip-native-iosTests.release.xcconfig"; sourceTree = "<group>"; };
 		4FD6FDE140DF1C87A98B2C7C /* Pods-pippip-native-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pippip-native-ios.release.xcconfig"; path = "Pods/Target Support Files/Pods-pippip-native-ios/Pods-pippip-native-ios.release.xcconfig"; sourceTree = "<group>"; };
+		550007B52077A80200103882 /* BaseExpandingTableModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseExpandingTableModel.swift; sourceTree = "<group>"; };
 		5500D167207404A10016AC71 /* TableViewCellWithController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellWithController.swift; sourceTree = "<group>"; };
 		5500D169207405190016AC71 /* DeleteAccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountCell.swift; sourceTree = "<group>"; };
 		5500D16B2074104A0016AC71 /* AccountDeleter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountDeleter.h; sourceTree = "<group>"; };
@@ -568,6 +570,7 @@
 			children = (
 				55A734B6206ECEEB00D31AD6 /* Nibs */,
 				55A734B4206ECED200D31AD6 /* ContactCellView.swift */,
+				550007B52077A80200103882 /* BaseExpandingTableModel.swift */,
 				55A734AE206EC0FC00D31AD6 /* ExpandingTableModelProtocol.swift */,
 				55316C8F206B32F700EB1AF7 /* ExpandingTableView.swift */,
 				55316C93206B33A300EB1AF7 /* ExpandingTableViewCell.swift */,
@@ -1458,6 +1461,7 @@
 				55AA55501FA14D7100A7026B /* PSSmgf1.cc in Sources */,
 				557CE58720407D25008AF8CF /* ContactPolicyCell.m in Sources */,
 				55AA55531FA14D7100A7026B /* CCSecureRandom.cc in Sources */,
+				550007B62077A80200103882 /* BaseExpandingTableModel.swift in Sources */,
 				55FA87451FD5CA4F00FB96C0 /* AuthenticationResponse.m in Sources */,
 				55AA55601FA14D7100A7026B /* IosSecureRandom.cc in Sources */,
 				55B0DBBA2048962400F6B29B /* CopyableLabel.m in Sources */,

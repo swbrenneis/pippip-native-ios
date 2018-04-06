@@ -43,7 +43,34 @@ class AddFriendSelector: ExpandingTableSelectorProtocol {
         contactManager = ContactManager()
 
     }
-    
+
+    func checkSelfAdd(nickname: String?, publicId: String?) -> Bool {
+
+        let alertColor = UIColor.flatSand
+        if let nick = nickname {
+            let myNick = ApplicationSingleton.instance().config.getNickname()
+            if myNick == nick {
+                RKDropdownAlert.title("Add Friend Error", message: "You can't add yourself",
+                                      backgroundColor: alertColor,
+                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                      time: 2, delegate: nil)
+                return true
+            }
+        }
+        if let puid = publicId {
+            let myId = ApplicationSingleton.instance().accountSession.sessionState.publicId
+            if myId == puid {
+                RKDropdownAlert.title("Add Friend Error", message: "You can't add yourself",
+                                      backgroundColor: alertColor,
+                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                      time: 2, delegate: nil)
+                return true
+            }
+        }
+        return false
+
+    }
+
     func didSelect(_ indexPath: IndexPath) {
 
         NotificationCenter.default.addObserver(self, selector: #selector(friendAdded(_:)),
@@ -69,15 +96,24 @@ class AddFriendSelector: ExpandingTableSelectorProtocol {
                                       style: .default, action: { () in
                                         self.nickname = alert.textFields[0].text ?? ""
                                         self.publicId = alert.textFields[1].text ?? ""
-                                        if self.nickname.utf8.count > 0 {
-                                            self.contactManager.matchNickname(self.nickname, withPublicId: nil)
-                                        }
-                                        else if self.publicId.utf8.count > 0 {
-                                            self.contactManager.addFriend(self.publicId)
+                                        if !self.checkSelfAdd(nickname: self.nickname, publicId: self.publicId) {
+                                            if self.nickname.utf8.count > 0 {
+                                                self.contactManager.matchNickname(self.nickname, withPublicId: nil)
+                                            }
+                                            else if self.publicId.utf8.count > 0 {
+                                                if !self.contactManager.addFriend(self.publicId) {
+                                                    let alertColor = UIColor.flatSand
+                                                    RKDropdownAlert.title("Add Friend Error", message: "You already added that friend",
+                                                                          backgroundColor: alertColor,
+                                                                          textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                                                          time: 2, delegate: nil)
+                                                }
+                                            }
                                         }
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         viewController?.present(alert, animated: true, completion: nil)
+
     }
     
     @objc func friendAdded(_ : Notification) {
@@ -129,7 +165,7 @@ class AddFriendSelector: ExpandingTableSelectorProtocol {
                                       time: 2, delegate: nil)
             }
         }
-        
+
     }
 
 }
