@@ -47,10 +47,7 @@ import UIKit
     }
     
     @objc func tapped(_ sender: PMAlertAction) {
-        //Action need to be fired after alert dismiss
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-            self?.action?()
-        }
+        self.action?()
     }
     
     @objc fileprivate func addSeparator(){

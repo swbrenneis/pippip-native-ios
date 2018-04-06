@@ -66,12 +66,6 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         }
         self.navigationItem.rightBarButtonItems = items
 
-        NotificationCenter.default.addObserver(self, selector: #selector(contactsUpdated(_:)),
-                                               name: Notifications.ContactsUpdated, object: nil)
-/*
-        NotificationCenter.default.addObserver(self, selector: #selector(requestAcknowledged(_:)),
-                                               name: Notifications.RequestAcknowledged, object: nil)
-*/
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -136,16 +130,6 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
 
     }
     
-    @objc func contactsUpdated(_ notification: Notification) {
-
-        DispatchQueue.main.async {
-            self.contactsModel.clear(1, tableView: self.tableView)
-            let contactList = self.contactManager.getContactList()
-            self.contactsModel.setContacts(contactList)
-        }
-    
-    }
-
     @objc func contactRequested(_ notification: Notification) {
 
         DispatchQueue.main.async {

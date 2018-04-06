@@ -87,7 +87,7 @@ class NewContactSelector: ExpandingTableSelectorProtocol {
     @objc func contactRequested(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.FriendAdded, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.ContactRequested, object: nil)
         DispatchQueue.main.async {
             let contact = notification.object as! Contact
             let contactCell = self.tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
