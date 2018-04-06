@@ -40,7 +40,7 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 - (instancetype)init {
     self = [super init];
 
-    errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"New Account Error"];
+    errorDelegate = [[NotificationErrorDelegate alloc] init:@"New Account Error"];
     _session = [ApplicationSingleton instance].restSession;
 
     return self;

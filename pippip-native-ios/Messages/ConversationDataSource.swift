@@ -11,20 +11,37 @@ import AsyncDisplayKit
 
 class ConversationDataSource: DefaultAsyncMessagesCollectionViewDataSource {
 
-    var publicId = ""
     var messageManager = MessageManager()
-    var contact: Contact?
+    var contact: Contact
+    var asyncCollectionNode: ASCollectionNode
 
-    func loadMessages(contact: Contact, asyncCollectionNode: ASCollectionNode) {
+    init(collectionNode: ASCollectionNode, contact: Contact) {
 
+        self.asyncCollectionNode = collectionNode
         self.contact = contact
-        self.publicId = contact.publicId
-        
-//        let textMessages = getTextMessages()
+
+        super.init(currentUserID: contact.displayName, nodeMetadataFactory: ConversationCellNodeMetadataFactory())
+
+    }
+/*
+ public init(currentUserID: String? = nil,
+ nodeMetadataFactory: MessageCellNodeMetadataFactory = MessageCellNodeMetadataFactory(),
+ bubbleImageProvider: MessageBubbleImageProvider = MessageBubbleImageProvider(),
+ timestampFormatter: MessageTimestampFormatter = MessageTimestampFormatter(),
+ bubbleNodeFactories: [MessageDataContentType: MessageBubbleNodeFactory] = [
+ kAMMessageDataContentTypeText: MessageTextBubbleNodeFactory(),
+ kAMMessageDataContentTypeNetworkImage: MessageNetworkImageBubbleNodeFactory()
+ ]) {
+ */
+    func initialize() {
+    }
+
+    func loadMessages() {
+
         var messageData = [MessageData]()
         let textMessages = messageManager.getTextMessages(contact.contactId)
         for textMessage in textMessages {
-            messageData.append(ConversationMessageData(message: textMessage))
+            messageData.append(ConversationMessageData(textMessage))
         }
         if !messageData.isEmpty {
             self.collectionNode(collectionNode: asyncCollectionNode, insertMessages: messageData, completion: ({completion in
@@ -33,18 +50,12 @@ class ConversationDataSource: DefaultAsyncMessagesCollectionViewDataSource {
         }
 
     }
-/*
-    func getTextMessages() -> [TextMessage] {
 
-        var textMessages = [TextMessage]()
-        let messageIds = messageManager.getMessageIds(contact!.publicId)
-        for mid in messageIds {
-            let textMessage = messageManager.getTextMessage(mid.intValue, withContactId: contact!.contactId)
-            textMessages.append(textMessage)
-        }
-        
-        return textMessages
+    func appendMessage(_ textMessage: TextMessage) {
+    
+        self.collectionNode(collectionNode: asyncCollectionNode, insertMessages: [ConversationMessageData(textMessage)],
+                            completion: nil)
 
     }
-*/
+
 }

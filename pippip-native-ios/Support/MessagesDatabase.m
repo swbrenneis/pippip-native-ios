@@ -7,8 +7,8 @@
 //
 
 #import <Realm/Realm.h>
-#import "MessagesDatabase.h"
 #import "pippip_native_ios-Swift.h"
+#import "MessagesDatabase.h"
 #import "ApplicationSingleton.h"
 #import "DatabaseMessage.h"
 #import "ContactManager.h"
@@ -55,8 +55,8 @@ static const float CURRENT_VERSION = 1.0;
     }
 
 }
-
-- (NSInteger)addMessage:(NSDictionary*)message {
+*/
+- (NSInteger)addMessage:(TextMessage*)message {
     
     // Add the message to the database
     DatabaseMessage *dbMessage = [[DatabaseMessage alloc] init];
@@ -64,28 +64,32 @@ static const float CURRENT_VERSION = 1.0;
     dbMessage.version = CURRENT_VERSION;
     NSInteger messageId = [config newMessageId];
     dbMessage.messageId = messageId;
-    dbMessage.contactId = [config getContactId:message[@"publicId"]];
-    dbMessage.messageType = message[@"messageType"];
-    dbMessage.keyIndex = [message[@"keyIndex"] integerValue];
-    dbMessage.sequence = [message[@"sequence"] integerValue];
-    dbMessage.timestamp = [message[@"timestamp"] integerValue];
-    dbMessage.read = [message[@"read"] boolValue];
-    dbMessage.acknowledged = [message[@"acknowledged"] boolValue];
-    dbMessage.sent = [message[@"sent"] boolValue];
-    dbMessage.message = [[NSData alloc] initWithBase64EncodedString:message[@"body"] options:0];
-    if ([[ApplicationSingleton instance].config getCleartextMessages]) {
-        dbMessage.cleartext = [self decryptMessage:message];
+    message.messageId = messageId;
+    dbMessage.contactId = [config getContactId:message.publicId];
+    dbMessage.messageType = message.messageType;
+    dbMessage.keyIndex = message.keyIndex;
+    dbMessage.sequence = message.sequence;
+    dbMessage.timestamp = message.timestamp;
+    dbMessage.read = message.read;
+    dbMessage.acknowledged = message.acknowledged;
+    dbMessage.sent = message.originating;
+    if ([config getCleartextMessages]) {
+        dbMessage.cleartext = message.cleartext;
     }
     
-    RLMRealm *realm = [RLMRealm defaultRealm];
-    [realm beginWriteTransaction];
-    [realm addObject:dbMessage];
-    [realm commitWriteTransaction];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        Contact *contact = [contactManager getContact:message.publicId];
+        [message encrypt:contact];
+        RLMRealm *realm = [RLMRealm defaultRealm];
+        [realm beginWriteTransaction];
+        [realm addObject:dbMessage];
+        [realm commitWriteTransaction];
+    });
 
     return messageId;
 
 }
-*/
+/*
 - (void)addMessageSorted:(NSDictionary*)message withMessageList:(NSMutableArray*)messageList {
     
     if (messageList.count == 0) {
@@ -119,7 +123,7 @@ static const float CURRENT_VERSION = 1.0;
     }
     
 }
-/*
+
 - (NSMutableDictionary*)decodeMessage:(DatabaseMessage*)dbMessage withContact:(Contact*)contact {
 
     NSMutableDictionary *message = [NSMutableDictionary dictionary];

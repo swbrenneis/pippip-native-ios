@@ -13,6 +13,16 @@ import UIKit
     @objc var contactId: Int
     @objc var publicId: String
     @objc var nickname: String?
+    @objc var displayName: String {
+        get {
+            if nickname != nil {
+                return nickname!
+            }
+            else {
+                return publicId
+            }
+        }
+    }
     @objc var status: String
     @objc var timestamp: Int64
     @objc var currentIndex: Int

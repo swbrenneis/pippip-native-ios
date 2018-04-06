@@ -43,7 +43,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 - (instancetype)init {
     self = [super init];
     
-    errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"Authentication Error"];
+    errorDelegate = [[NotificationErrorDelegate alloc] init:@"Authentication Error"];
     _session = [ApplicationSingleton instance].restSession;
 
     return self;

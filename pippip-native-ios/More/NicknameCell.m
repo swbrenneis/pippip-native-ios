@@ -56,7 +56,7 @@
     _changeNicknameButton.alpha = 0.0;
     [_changeNicknameButton setEnabled:NO];
 
-    errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"Nickname Error"];
+    errorDelegate = [[NotificationErrorDelegate alloc] init:@"Nickname Error"];
 
 }
 

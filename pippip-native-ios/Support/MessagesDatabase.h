@@ -14,7 +14,7 @@
 
 // - (void)acknowledgeMessage:(NSInteger)messageId;
 
-//- (NSInteger)addMessage:(NSDictionary*)message;
+- (NSInteger)addMessage:(TextMessage*_Nonnull)message;
 
 - (void)decryptAll;
 
@@ -39,5 +39,7 @@
 - (void)scrubCleartext;
 
 //- (NSArray*)unreadMessageIds:(NSString*)publicId;
+
+- (void)updateTimestamp:(NSInteger)messagId withTimestamp:(NSInteger)timestamp;
 
 @end

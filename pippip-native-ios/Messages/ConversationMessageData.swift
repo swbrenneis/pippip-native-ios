@@ -12,7 +12,7 @@ class ConversationMessageData: MessageData {
 
     var message: TextMessage
     
-    init(message: TextMessage) {
+    init(_ message: TextMessage) {
         self.message = message
     }
 
@@ -55,7 +55,8 @@ class ConversationMessageData: MessageData {
     
     func senderAvatarURL() -> URL {
 
-        return Bundle.main.url(forResource: "user", withExtension: nil)!
+        let path = Bundle.main.path(forResource: "user", ofType: "png")
+        return URL(fileURLWithPath: path!)
 
     }
     

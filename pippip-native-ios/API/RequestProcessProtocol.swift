@@ -13,9 +13,9 @@ import Foundation
     var postPacket: PostPacket? { get }
     var errorDelegate: ErrorDelegate { get }
 
-    func sessionComplete(_ response:[AnyHashable: Any])
+    func sessionComplete(_ response:[AnyHashable: Any]?)
 
-    func postComplete(_ response:[AnyHashable: Any])
+    func postComplete(_ response:[AnyHashable: Any]?)
 
 }
 

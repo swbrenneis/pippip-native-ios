@@ -47,7 +47,7 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
     _contactDatabase = [ApplicationSingleton instance].contactDatabase;
     contactMap = [NSMutableDictionary dictionary];
     contactRequest = NONE;
-    errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"Contact Error"];
+    errorDelegate = [[NotificationErrorDelegate alloc] init:@"Contact Error"];
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(contactsUpdated:)

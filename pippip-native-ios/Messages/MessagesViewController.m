@@ -13,7 +13,6 @@
 #import "MessagesHeadingCell.h"
 #import "ApplicationSingleton.h"
 #import "ConversationCache.h"
-#import "ObjcConversationViewController.h"
 #import "Authenticator.h"
 //#import "MessageManager.h"
 #import "MBProgressHUD.h"
@@ -263,18 +262,12 @@
 }
 
 #pragma mark - Navigation
-
+/*
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
-    UIViewController * view = [segue destinationViewController];
-    if ([segue.identifier isEqualToString:@"ConversationSegue"]) {
-        ObjcConversationViewController *conversationView = (ObjcConversationViewController*)view;
-        NSDictionary *message = mostRecent[self.tableView.indexPathForSelectedRow.item];
-        conversationView.publicId = message[@"publicId"];
-    }
 
 }
-
+*/
 @end

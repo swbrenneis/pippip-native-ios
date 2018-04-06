@@ -8,21 +8,25 @@
 
 import UIKit
 
-class TextMessage {
+class TextMessage: NSObject {
 
-    var messageId: Int64 = 0
-    var contactId: Int = 0
-    var ciphertext: Data?
-    var cleartext: String?
-    var publicId = ""
-    var nickname: String?
-    var messageType = "user"
-    var read = false
-    var acknowledged = false
-    var originating = true
-    var keyIndex: Int = 0
-    var sequence: Int64 = 0
-    var timestamp: Int64 = 0
+    @objc var messageId: Int64 = 0
+    @objc var contactId: Int = 0
+    @objc var ciphertext: Data?
+    @objc var cleartext: String?
+    @objc var publicId = ""
+    @objc var nickname: String?
+    @objc var messageType = "user"
+    @objc var read = false
+    @objc var acknowledged = false
+    @objc var originating = true
+    @objc var keyIndex: Int = 0
+    @objc var sequence: Int64 = 0
+    @objc var timestamp: Int64 = 0
+
+    override init() {
+        cleartext = ""
+    }
 
     init(serverMessage: [AnyHashable: Any]) {
 
@@ -38,27 +42,25 @@ class TextMessage {
         ciphertext = Data(base64Encoded: b64)
         let config = ApplicationSingleton.instance().config!
         contactId = config.getContactId(publicId)
-        messageId = Int64(config.newMessageId())
         originating = false
         
     }
 
-    init(text: String, publicId: String) {
+    init(text: String, contact: Contact) {
 
         cleartext = text
-        self.publicId = publicId
+        self.publicId = contact.publicId
         let config = ApplicationSingleton.instance().config!
-        messageId = Int64(config.newMessageId())
         contactId = config.getContactId(publicId)
-        let contactManager = ContactManager()
-        let contact = contactManager.getContact(publicId)!
         nickname = contact.nickname
         keyIndex = contact.currentIndex + 1
         contact.currentIndex = keyIndex
         sequence = contact.currentSequence
         contact.currentSequence = sequence + 1
-        contactManager.update(contact)
         timestamp = Int64(Date().timeIntervalSince1970 + 1000.0)
+
+        let contactManager = ContactManager()
+        contactManager.update(contact)
 
     }
 
@@ -78,7 +80,7 @@ class TextMessage {
 
     }
 
-    func encode(_ contact: Contact) -> [AnyHashable: Any] {
+    func encodeForServer(_ contact: Contact) -> [AnyHashable: Any] {
 
         var encoded = [AnyHashable: Any]()
         encoded["toId"] = publicId
@@ -92,7 +94,7 @@ class TextMessage {
 
     }
 
-    func encrypt(_ contact: Contact) {
+    @objc func encrypt(_ contact: Contact) {
 
         let ivGen = CKIVGenerator()
         let iv = ivGen.generate(Int(sequence), withNonce: contact.nonce)

@@ -11,24 +11,26 @@ import ChameleonFramework
 
 class ConversationViewController: AsyncMessagesViewController {
 
-    var conversationDataSource: ConversationDataSource
+    var conversationDataSource: ConversationDataSource?
     var conversationDelegate: ConversationCollectionDelegate
+    var deferredDataSource: DeferredDataSource
     var contact: Contact?
     var selectView: SelectContactView?
+    var messageManager = MessageManager()
 
     init?() {
 
-        conversationDataSource = ConversationDataSource()
         conversationDelegate = ConversationCollectionDelegate()
+        deferredDataSource = DeferredDataSource()
         
-        super.init(dataSource: conversationDataSource, delegate: conversationDelegate)
+        super.init(dataSource: deferredDataSource,delegate: conversationDelegate)
 
     }
     
     required init(coder aDecoder: NSCoder) {
 
-        conversationDataSource = ConversationDataSource()
         conversationDelegate = ConversationCollectionDelegate()
+        deferredDataSource = DeferredDataSource()
 
         super.init(coder: aDecoder)
 
@@ -36,10 +38,10 @@ class ConversationViewController: AsyncMessagesViewController {
 
     override init?(tableViewStyle style: UITableViewStyle) {
 
-        conversationDataSource = ConversationDataSource()
         conversationDelegate = ConversationCollectionDelegate()
+        deferredDataSource = DeferredDataSource()
         
-        super.init(dataSource: conversationDataSource, delegate: conversationDelegate)
+        super.init(dataSource: deferredDataSource,delegate: conversationDelegate)
         
     }
 
@@ -52,6 +54,7 @@ class ConversationViewController: AsyncMessagesViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(messagesLoaded(_:)),
                                                name: Notifications.MessagesLoaded, object: nil)
 
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -67,7 +70,9 @@ class ConversationViewController: AsyncMessagesViewController {
             self.view.addSubview(self.selectView!)
         }
         else {
-            conversationDataSource.loadMessages(contact: contact!, asyncCollectionNode: self.asyncCollectionNode)
+            conversationDataSource = ConversationDataSource.init(collectionNode: asyncCollectionNode, contact: contact!)
+            deferredDataSource.conversationDataSource = conversationDataSource!
+            conversationDataSource!.loadMessages()
         }
 
     }
@@ -78,13 +83,21 @@ class ConversationViewController: AsyncMessagesViewController {
     }
 
     override func didPressRightButton(_ sender: Any?) {
+    
+        let text = textView.text
+        let textMessage = TextMessage(text: text!, contact: contact!)
+        messageManager.sendMessage(textMessage, retry: false)
+
         super.didPressRightButton(sender)
+
     }
 
     @objc func contactSelected(_ notification: Notification) {
 
         contact = notification.object as? Contact
-        conversationDataSource.loadMessages(contact: contact!, asyncCollectionNode: asyncCollectionNode)
+        conversationDataSource = ConversationDataSource.init(collectionNode: asyncCollectionNode, contact: contact!)
+        deferredDataSource.conversationDataSource = conversationDataSource!
+        conversationDataSource!.loadMessages()
         DispatchQueue.main.async {
             if let nickname = self.contact?.nickname {
                 self.navigationItem.title = nickname
@@ -93,6 +106,14 @@ class ConversationViewController: AsyncMessagesViewController {
                 let fragment = String(describing: self.contact!.publicId.prefix(10)) + "..."
                 self.navigationItem.title = fragment
             }
+        }
+
+    }
+
+    @objc func messageSent(_ notification: Notification) {
+
+        if let message = notification.object as? TextMessage {
+            conversationDataSource!.appendMessage(message)
         }
 
     }

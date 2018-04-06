@@ -24,4 +24,6 @@
 #import "AccountDeleter.h"
 #import "DatabaseMessage.h"
 #import "PostPacket.h"
+#import "EnclaveRequest.h"
+#import "EnclaveResponse.h"
 
