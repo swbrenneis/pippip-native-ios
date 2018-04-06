@@ -23,7 +23,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     var nickname: String?
     var publicId = ""
     var debugDelete = false
-    var debugging = true
+    var debugging = false
     var suspended = false
 
     init() {
@@ -79,7 +79,6 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
                                                name: Notifications.NicknameMatched, object: nil)
 
         contactsModel.setContacts(contactManager.getContactList(), viewController: self)
-        contactManager.getRequests()
 
     }
 
@@ -207,10 +206,9 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     
     @objc func requestsUpdated(_ notification: Notification) {
 
-        // Notification only happens for non-zero request count
         if let requests = notification.object as? [[AnyHashable: Any]] {
-            let count = tableView.expandingModel!.tableModel[0]!.count
-            if count == 0 {
+            let count = requests.count
+            if count > 0 && tableView.expandingModel!.tableModel[0]!.count == 0 {
                 DispatchQueue.main.async {
                     let cellData = PendingRequestsCellData(requests, viewController: self)
                     self.tableView.expandingModel!.insertCell(cellData, section: 0, row: 0)
@@ -218,9 +216,6 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
                 }
             }
         }
-        let _ = DispatchQueue.global().asyncAfter(deadline: .now() + 15.0, execute: {
-            self.contactManager.getRequests()
-            })
 
     }
 

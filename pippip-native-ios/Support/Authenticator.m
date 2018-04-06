@@ -6,8 +6,9 @@
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
-#import "Authenticator.h"
 #import "pippip_native_ios-Swift.h"
+
+#import "Authenticator.h"
 #import "ApplicationSingleton.h"
 #import "AccountSession.h"
 #import "UserVault.h"
@@ -129,7 +130,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     step = LOGOUT;
     postPacket = [[Logout alloc] initWithState:sessionState];
     [_session queuePost:self];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"SessionEnded" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_ENDED object:nil];
 
 }
 

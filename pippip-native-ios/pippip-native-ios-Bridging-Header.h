@@ -20,7 +20,6 @@
 #import "MBProgressHUD.h"
 #import "Authenticator.h"
 #import "NewAccountCreator.h"
-//#import "MessageManager.h"
 #import "MessagesDatabase.h"
 #import "AccountDeleter.h"
 #import "DatabaseMessage.h"

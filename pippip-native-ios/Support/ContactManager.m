@@ -176,9 +176,7 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
         case GET_REQUESTS:
         {
             NSArray *requests = response[@"requests"];
-            if (requests.count > 0) {
-                [AsyncNotifier notifyWithName:REQUESTS_UPDATED object:requests userInfo:nil];
-            }
+            [AsyncNotifier notifyWithName:REQUESTS_UPDATED object:requests userInfo:nil];
         }
             break;
         case SYNC_CONTACTS:
@@ -206,9 +204,14 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
         case UPDATE_PENDING_CONTACTS:
         {
             NSArray *contacts = response[@"contacts"];
-            if (contacts != nil && contacts.count > 0)
-            [self updateContacts:contacts];
-            [AsyncNotifier notifyWithName:CONTACTS_UPDATED object:nil userInfo:nil];
+            if (contacts != nil && contacts.count > 0) {
+                [self updateContacts:contacts];
+                NSArray<Contact*> *updated = [_contactDatabase getContactList];
+                [AsyncNotifier notifyWithName:PENDING_CONTACTS_UPDATED object:updated userInfo:nil];
+            }
+            else if (contacts == nil) {
+                NSLog(@"Invalid server response on update pending contacts");
+            }
         }
             break;
         case NONE:
@@ -268,6 +271,7 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
 
 - (void)getRequests {
 
+    NSLog(@"%@", @"Getting contact requests");
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
     request[@"method"] = @"GetPendingRequests";
     [self sendRequest:request with:GET_REQUESTS];
@@ -455,6 +459,13 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
 
 }
 
+- (void)updateContact:(Contact *)contact {
+
+    NSArray *contacts = [NSArray arrayWithObject:contact];
+    [_contactDatabase updateContacts:contacts];
+    
+}
+
 - (void)updateContacts:(NSArray<NSDictionary*>*)serverContacts {
     
     NSMutableArray *updates = [NSMutableArray array];
@@ -511,13 +522,13 @@ typedef enum REQUEST { MATCH_NICKNAME, ADD_FRIEND, DELETE_FRIEND, REQUEST_CONTAC
 
 - (NSUInteger)updatePendingContacts {
 
+    NSLog(@"%@", @"Updating pending contacts");
     NSMutableArray *pending = [NSMutableArray array];
     NSArray *filtered = [self getContacts:@"pending"];
     for (Contact *entity in filtered) {
         [pending addObject:entity.publicId];
     }
     if (pending.count > 0) {
-        NSLog(@"%@", @"Updating pending contacts");
         NSMutableDictionary *request = [NSMutableDictionary dictionary];
         request[@"method"] = @"UpdatePendingContacts";
         request[@"pending"] = pending;

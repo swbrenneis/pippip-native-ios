@@ -6,30 +6,26 @@
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
-#import "AccountSession.h"
 #import "pippip_native_ios-Swift.h"
+
+#import "AccountSession.h"
 #import "ApplicationSingleton.h"
 #import "EnclaveRequest.h"
 #import "EnclaveResponse.h"
 #import "ContactDatabase.h"
 #import "LoggingErrorDelegate.h"
 #import "ContactManager.h"
-//#import "MessageManager.h"
 #import "Notifications.h"
 #import "Notifications.h"
-
-typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
 
 @interface AccountSession ()
 {
-    UpdateType updateType;
     BOOL sessionActive;
-    //MessageManager *messageManager;
-    ContactManager *contactManager;
-    NSInteger newMessageCount;
-    NSDate *suspendTime;
-    BOOL notificationComplete;
     BOOL suspended;
+    BOOL notificationComplete;
+    ContactManager *contactManager;
+    MessageManager *messageManager;
+    NSDate *suspendTime;
 }
 
 @end
@@ -40,53 +36,26 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     self = [super init];
 
     sessionActive = NO;
-    contactManager = [[ContactManager alloc] init];
-    //messageManager = [[MessageManager alloc] init];
-    notificationComplete = YES;
     suspended = NO;
+    notificationComplete = YES;
+    contactManager = [[ContactManager alloc] init];
+    messageManager = [[MessageManager alloc] init];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(newSession:)
-                                                 name:@"NewSession"
+                                                 name:NEW_SESSION
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(sessionEnded:)
-                                                 name:@"SessionEnded"
+                                                 name:SESSION_ENDED
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(contactsUpdated:)
-                                                 name: CONTACTS_UPDATED
+                                             selector:@selector(requestsUpdated:)
+                                                 name:REQUESTS_UPDATED
                                                object:nil];
 
     return self;
 
-}
-
-- (void)acknowledgeMessages {
-/*
-    if (newMessageCount > 0) {
-        updateType = ACK_MESSAGES;
-        [messageManager acknowledgePendingMessages];
-    }
-    else {
-        updateType = NONE;
-    }
-*/
-}
-
-- (void)contactsUpdated:(NSNotification*)notification {
-/*
-#if TARGET_OS_SIMULATOR
-    [messageManager getNewMessages];
-#endif
-*/
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        [contactManager updatePendingContacts];
-    });
-
-}
-
-- (void)messagesUpdated:(NSNotification*)notification {
 }
 
 - (void)newSession:(NSNotification*)notification {
@@ -94,40 +63,21 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     sessionActive = YES;
     dispatch_async(dispatch_get_main_queue(), ^{
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            [contactManager updatePendingContacts];
+            [contactManager getRequests];
         });
     });
     
 }
 
-- (void)resume {
+- (void)requestsUpdated:(NSNotification*)notification {
 
-    if (suspended) {
-        suspended = NO;
-        NSDate *resumeTime = [NSDate date];
-        NSInteger suspendedTime = [resumeTime timeIntervalSinceDate:suspendTime];
-        if (suspendedTime > 0 && suspendedTime < 180) {     // 30 minutes
-            sessionActive = YES;
-            NSInteger count = [UIApplication sharedApplication].applicationIconBadgeNumber;
-            if (count > 0) {
-                [self updateMessages];
-            }
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                [self updateContacts];
+    if (sessionActive) {
+        [contactManager updatePendingContacts];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                [contactManager getRequests];
             });
-        }
-        NSMutableDictionary *info = [NSMutableDictionary dictionary];
-        info[@"suspendedTime"] = [NSNumber numberWithInteger:suspendedTime];
-        [AsyncNotifier notifyWithName:@"AppResumed" object:nil userInfo:info];
-    }
-
-}
-
-- (void)runSession {
-
-    while (sessionActive) {
-        [NSThread sleepForTimeInterval:2.0];
-        [self updateContacts];
+        });
     }
 
 }
@@ -138,39 +88,32 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
     
 }
 
+- (void)resume {
+
+    if (suspended) {
+        suspended = NO;
+        sessionActive = YES;
+        NSDate *resumeTime = [NSDate date];
+        NSInteger suspendedTime = [resumeTime timeIntervalSinceDate:suspendTime];
+        if (suspendedTime > 0 && suspendedTime < 180) {     // 30 minutes
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                [contactManager getRequests];
+            });
+        }
+        NSMutableDictionary *info = [NSMutableDictionary dictionary];
+        info[@"suspendedTime"] = [NSNumber numberWithInteger:suspendedTime];
+        [AsyncNotifier notifyWithName:APP_RESUMED object:nil userInfo:info];
+    }
+
+}
+
 - (void)suspend {
 
     sessionActive = NO;
     suspended = YES;
     suspendTime = [NSDate date];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"AppSuspended" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:APP_SUSPENDED object:nil];
 
-}
-
-- (void)updateContacts {
-
-    updateType = CONTACTS;
-    if (sessionActive) {
-        if ([contactManager updatePendingContacts] == 0) {
-#if TARGET_OS_SIMULATOR
-            [self updateMessages];
-#else
-            NSLog(@"No pending contacts, scheduling next update");
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                [self updateContacts];
-            });
-#endif
-        }
-    }
-
-}
-
-- (void)updateMessages {
-/*
-    updateType = MESSAGES;
-    newMessageCount = 0;
-    [messageManager getNewMessages];
-*/
 }
 
 #pragma Mark - Notification center delegate
@@ -181,7 +124,7 @@ typedef enum UPDATE { MESSAGES, CONTACTS, ACK_MESSAGES , NONE } UpdateType;
         NSInteger messageCount = [notification.request.content.badge integerValue];
         if (messageCount > 0) {
             notificationComplete = NO;
-            [self updateMessages];
+            [messageManager getNewMessages];
         }
     }
     completionHandler(UNNotificationPresentationOptionBadge);

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MessageManager: RequestProcessProtocol {
+@objc class MessageManager: NSObject, RequestProcessProtocol {
 
     var postPacket: PostPacket?
     var errorDelegate: ErrorDelegate = NotificationErrorDelegate(title: "Message Error")
@@ -32,6 +32,10 @@ class MessageManager: RequestProcessProtocol {
         }
         return messageIds
 
+    }
+
+    @objc func getNewMessages() {
+        
     }
 
     func getTextMessages(_ contactId: Int) -> [TextMessage] {
