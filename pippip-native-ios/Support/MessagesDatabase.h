@@ -13,11 +13,13 @@
 
 @interface MessagesDatabase : NSObject
 
-- (NSArray<NSNumber*>*_Nonnull)allMessageIds;
-
 - (void)addTextMessage:(TextMessage*_Nonnull)message;
 
 - (void)addTextMessages:(NSArray<TextMessage*>*_Nonnull)messages;
+
+- (NSArray<NSNumber*>*_Nonnull)allMessageIds;
+
+- (NSArray<TextMessage*>*_Nonnull)allTextMessages;
 
 - (void)deleteAllMessages:(NSInteger)contactId;
 

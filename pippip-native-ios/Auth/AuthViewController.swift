@@ -17,7 +17,7 @@ import LocalAuthentication
     @IBOutlet weak var authButton: UIButton!
 
     @objc var suspended = false
-    var accountName = ""
+    var accountName: String?
     var sessionState = SessionState()
     var accountManager = AccountManager()
 
@@ -31,9 +31,11 @@ import LocalAuthentication
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        
-        accountName = accountManager.loadAccount()
-        if (accountName.utf8.count > 0) {
+
+        if accountName == nil {
+            accountName = accountManager.loadAccount()
+        }
+        if (accountName!.utf8.count > 0) {
             authButton.setTitle("Sign In", for: .normal)
         }
         else {
@@ -81,7 +83,7 @@ import LocalAuthentication
 
     @IBAction func authClicked(_ sender: Any) {
 
-        if accountName.utf8.count > 0 {
+        if accountName!.utf8.count > 0 {
             doAuthenticateAlerts()
         }
         else {
@@ -91,7 +93,7 @@ import LocalAuthentication
 
     func doAuthenticateAlerts() {
 
-        let alert = PMAlertController(title: accountName,
+        let alert = PMAlertController(title: accountName!,
                                       description: "Enter your passphrase",
                                       image: nil,
                                       style: PMAlertControllerStyle.alert)
@@ -140,7 +142,7 @@ import LocalAuthentication
                                       style: .default, action: { () in
                                         self.accountName = alert.textFields[0].text ?? ""
                                         let passphrase = alert.textFields[1].text ?? ""
-                                        if self.accountName.utf8.count == 0 {
+                                        if self.accountName!.utf8.count == 0 {
                                             let alertColor = UIColor.flatSand
                                             RKDropdownAlert.title("Invalid Account Name",
                                                                   message: "Empty account names are not permitted", backgroundColor: alertColor,

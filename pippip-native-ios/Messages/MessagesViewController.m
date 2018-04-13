@@ -65,6 +65,11 @@
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(presentAlert:)
                                                name:PRESENT_ALERT object:nil];
+    
+    if (messageManager != nil) {
+        mostRecent = [messageManager mostRecentMessages];
+        [_tableView reloadData];
+    }
 
 }
 

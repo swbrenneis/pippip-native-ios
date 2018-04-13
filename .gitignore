@@ -3,3 +3,5 @@ pippip-native-ios/libgmp.a
 Podfile.lock
 .DS_Store
 *xcuserdatad
+librealmcore-ios.a
+Manifest.lock

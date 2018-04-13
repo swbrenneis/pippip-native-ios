@@ -66,8 +66,8 @@
     messageManager = [[MessageManager alloc] init];
 
     sessionActive = YES;
-    MessagesDatabase *messageDatabase = [[MessagesDatabase alloc] init];
-    [messageDatabase deleteAllMessages];
+    //MessagesDatabase *messageDatabase = [[MessagesDatabase alloc] init];
+    //[messageDatabase deleteAllMessages];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self->messageManager getNewMessages];
     });

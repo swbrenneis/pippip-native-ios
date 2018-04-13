@@ -69,6 +69,10 @@ import UIKit
         
     }
 
+    @objc func allMessages() -> [TextMessage] {
+        return messageDatabase.allTextMessages()
+    }
+
     func decryptAll() {
 
         let messageIds = messageDatabase.allMessageIds();
