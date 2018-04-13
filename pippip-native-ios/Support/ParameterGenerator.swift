@@ -8,11 +8,11 @@
 
 import Foundation
 
-@objc class ParameterGenerator: SessionState {
+@objc class ParameterGenerator: SessionStateActual {
 
     @objc func generateParameters(_ accountName: String) {
 
-        self.currentAccount = accountName
+        self.accountName = accountName
         
         let rnd: CKSecureRandom = CKSecureRandom()
         

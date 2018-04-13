@@ -18,7 +18,6 @@
 		5500D172207455450016AC71 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500D171207455450016AC71 /* TextMessage.swift */; };
 		551050FF201F8840000A313E /* MessagesDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 551050FE201F8840000A313E /* MessagesDatabase.m */; };
 		551051082020BC36000A313E /* DatabaseMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 551051072020BC36000A313E /* DatabaseMessage.m */; };
-		551641F3205AC4AF00CFCEEF /* CleartextMessagesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 551641F2205AC4AF00CFCEEF /* CleartextMessagesCell.m */; };
 		551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183E1FA0FA030050C93C /* NewAccountFinish.m */; };
 		551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A18411FA0FA740050C93C /* NewAccountFinal.m */; };
 		55206DA520753A5A00B0B246 /* ConversationDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DA420753A5A00B0B246 /* ConversationDataSource.swift */; };
@@ -36,7 +35,6 @@
 		55316C8B206AD21800EB1AF7 /* PendingRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55316C8A206AD21800EB1AF7 /* PendingRequestCell.swift */; };
 		55316C90206B32F700EB1AF7 /* ExpandingTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55316C8F206B32F700EB1AF7 /* ExpandingTableView.swift */; };
 		55316C94206B33A300EB1AF7 /* ExpandingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55316C93206B33A300EB1AF7 /* ExpandingTableViewCell.swift */; };
-		5533325B1F9AE2D700F441E4 /* AlertErrorDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */; };
 		5536A6832067559400B7E6D8 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A6822067559400B7E6D8 /* Notifications.swift */; };
 		5536A68B206831B400B7E6D8 /* SwiftConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A68A206831B400B7E6D8 /* SwiftConfigurator.swift */; };
 		5536A68D206897D200B7E6D8 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A68C206897D200B7E6D8 /* ContactsViewController.swift */; };
@@ -61,26 +59,28 @@
 		554C56062075C09F00FE9C92 /* MessageCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554C56012075C09F00FE9C92 /* MessageCellNode.swift */; };
 		554C56072075C09F00FE9C92 /* MessageNetworkImageBubbleNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554C56022075C09F00FE9C92 /* MessageNetworkImageBubbleNode.swift */; };
 		554C56082075C09F00FE9C92 /* UIImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554C56032075C09F00FE9C92 /* UIImageExtensions.swift */; };
+		554D01C2207BE35400C19373 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C1207BE35400C19373 /* SessionState.swift */; };
+		554D01C4207C0CEC00C19373 /* UserVault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C3207C0CEC00C19373 /* UserVault.swift */; };
+		554D01C6207C54A900C19373 /* LocalPasswordCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C5207C54A900C19373 /* LocalPasswordCell.swift */; };
+		554D01C8207D0E2500C19373 /* ContactManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C7207D0E2500C19373 /* ContactManager.swift */; };
+		554D01CA207D5BB000C19373 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C9207D5BB000C19373 /* Conversation.swift */; };
+		554D01CC207D9C2300C19373 /* ContactPolicyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01CB207D9C2300C19373 /* ContactPolicyCell.swift */; };
+		554D01CE207DA4C000C19373 /* CleartextMessagesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01CD207DA4C000C19373 /* CleartextMessagesCell.swift */; };
+		554D01D020803BB200C19373 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01CF20803BB200C19373 /* Message.swift */; };
 		55579E512024C21F00131A54 /* DatabaseContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 55579E502024C21F00131A54 /* DatabaseContact.m */; };
 		555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 555B0D40204C887B00D99807 /* MBProgressHUD.m */; };
 		555B0D45204CD80000D99807 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 555B0D44204CD80000D99807 /* UserNotifications.framework */; };
 		55666646201A68AF00051ED2 /* AccountSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 55666645201A68AF00051ED2 /* AccountSession.m */; };
 		55666649201B7C9000051ED2 /* LoggingErrorDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 55666648201B7C9000051ED2 /* LoggingErrorDelegate.m */; };
 		557238AA1F8C43F600A13A14 /* AccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 557238A91F8C43F600A13A14 /* AccountManager.m */; };
-		5575D3C2206153D100593AF7 /* LocalPasswordCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5575D3C1206153D100593AF7 /* LocalPasswordCell.m */; };
 		5575D3C420618FD200593AF7 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5575D3C320618FD200593AF7 /* LocalAuthentication.framework */; };
 		5575D3D02062E96400593AF7 /* MoreCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5575D3CF2062E96400593AF7 /* MoreCellItem.m */; };
-		557CE562203A1D76008AF8CF /* Conversation.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE561203A1D76008AF8CF /* Conversation.m */; };
 		557CE571203A61DB008AF8CF /* ApplicationSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE570203A61DB008AF8CF /* ApplicationSingleton.m */; };
 		557CE57B203B8598008AF8CF /* PreviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE579203B8598008AF8CF /* PreviewCell.m */; };
-		557CE57E203CC7A1008AF8CF /* ConversationCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE57D203CC7A1008AF8CF /* ConversationCache.m */; };
-		557CE581203CD245008AF8CF /* MutableConversation.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE580203CD245008AF8CF /* MutableConversation.m */; };
-		557CE584203F746D008AF8CF /* ConversationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE583203F746D008AF8CF /* ConversationDelegate.m */; };
-		557CE58720407D25008AF8CF /* ContactPolicyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE58620407D25008AF8CF /* ContactPolicyCell.m */; };
 		557CE58A2040A41F008AF8CF /* NicknameCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE5892040A41F008AF8CF /* NicknameCell.m */; };
 		5586B882206428A400641514 /* PublicIdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B881206428A400641514 /* PublicIdCell.swift */; };
 		5586B8852064826000641514 /* EditWhitelistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B8842064826000641514 /* EditWhitelistCell.swift */; };
-		5586B8872064882B00641514 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B8862064882B00641514 /* SessionState.swift */; };
+		5586B8872064882B00641514 /* SessionStateActual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B8862064882B00641514 /* SessionStateActual.swift */; };
 		5586B88C206493D000641514 /* HexCodec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5586B88B206493D000641514 /* HexCodec.m */; };
 		5586B88E2064951000641514 /* ParameterGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B88D2064951000641514 /* ParameterGenerator.swift */; };
 		5586B8922064A7AF00641514 /* ErrorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B8912064A7AF00641514 /* ErrorDelegate.swift */; };
@@ -156,7 +156,6 @@
 		55B3911C1FE17339004DAFF7 /* EnclaveRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B3911B1FE17339004DAFF7 /* EnclaveRequest.m */; };
 		55B3911F1FE17383004DAFF7 /* EnclaveResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B3911E1FE17383004DAFF7 /* EnclaveResponse.m */; };
 		55B781AA1FDE161E00330B80 /* Logout.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B781A91FDE161E00330B80 /* Logout.m */; };
-		55B781AD1FE018FC00330B80 /* ContactManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B781AC1FE018FC00330B80 /* ContactManager.m */; };
 		55C88DC1206FAEA000D58BCA /* NewContactCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C88DC0206FAEA000D58BCA /* NewContactCellData.swift */; };
 		55C88DC3206FB1A000D58BCA /* LastSeenCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C88DC2206FB1A000D58BCA /* LastSeenCellData.swift */; };
 		55C88DC5206FB72E00D58BCA /* ContactPublicIdData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C88DC4206FB72E00D58BCA /* ContactPublicIdData.swift */; };
@@ -166,11 +165,9 @@
 		55C88DD22071B1FB00D58BCA /* PendingRequestsCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C88DD12071B1FB00D58BCA /* PendingRequestsCellData.swift */; };
 		55C88DD42071C9FA00D58BCA /* PendingRequestCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C88DD32071C9FA00D58BCA /* PendingRequestCellData.swift */; };
 		55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */; };
-		55D8098B2028BCBA008940CB /* ContactSearchDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 55D8098A2028BCBA008940CB /* ContactSearchDataSource.m */; };
 		55DB7F451FD8692C00B4D262 /* ServerAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */; };
 		55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */; };
 		55E7593E20674DAE009BAA1C /* WhitelistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E7593D20674DAE009BAA1C /* WhitelistViewController.swift */; };
-		55FA87391FD059AF00FB96C0 /* UserVault.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87381FD059AF00FB96C0 /* UserVault.m */; };
 		55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */; };
 		55FA873F1FD187CD00FB96C0 /* Authenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873E1FD187CD00FB96C0 /* Authenticator.m */; };
 		55FA87421FD1AE5800FB96C0 /* AuthenticationRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87411FD1AE5800FB96C0 /* AuthenticationRequest.m */; };
@@ -223,8 +220,6 @@
 		551050FE201F8840000A313E /* MessagesDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessagesDatabase.m; sourceTree = "<group>"; };
 		551051062020BC36000A313E /* DatabaseMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseMessage.h; sourceTree = "<group>"; };
 		551051072020BC36000A313E /* DatabaseMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseMessage.m; sourceTree = "<group>"; };
-		551641F1205AC4AF00CFCEEF /* CleartextMessagesCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CleartextMessagesCell.h; sourceTree = "<group>"; };
-		551641F2205AC4AF00CFCEEF /* CleartextMessagesCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CleartextMessagesCell.m; sourceTree = "<group>"; };
 		551A183D1FA0FA030050C93C /* NewAccountFinish.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinish.h; sourceTree = "<group>"; };
 		551A183E1FA0FA030050C93C /* NewAccountFinish.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountFinish.m; sourceTree = "<group>"; };
 		551A18401FA0FA740050C93C /* NewAccountFinal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinal.h; sourceTree = "<group>"; };
@@ -251,8 +246,6 @@
 		55316C8A206AD21800EB1AF7 /* PendingRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingRequestCell.swift; sourceTree = "<group>"; };
 		55316C8F206B32F700EB1AF7 /* ExpandingTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandingTableView.swift; sourceTree = "<group>"; };
 		55316C93206B33A300EB1AF7 /* ExpandingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandingTableViewCell.swift; sourceTree = "<group>"; };
-		553332591F9AE2D700F441E4 /* AlertErrorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertErrorDelegate.h; sourceTree = "<group>"; };
-		5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertErrorDelegate.m; sourceTree = "<group>"; };
 		5536A6822067559400B7E6D8 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		5536A68A206831B400B7E6D8 /* SwiftConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftConfigurator.swift; sourceTree = "<group>"; };
 		5536A68C206897D200B7E6D8 /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
@@ -278,6 +271,14 @@
 		554C56012075C09F00FE9C92 /* MessageCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MessageCellNode.swift; path = AsyncMessagesViewController/Source/Views/MessageCellNode.swift; sourceTree = SOURCE_ROOT; };
 		554C56022075C09F00FE9C92 /* MessageNetworkImageBubbleNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MessageNetworkImageBubbleNode.swift; path = AsyncMessagesViewController/Source/Views/MessageNetworkImageBubbleNode.swift; sourceTree = SOURCE_ROOT; };
 		554C56032075C09F00FE9C92 /* UIImageExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIImageExtensions.swift; path = AsyncMessagesViewController/Source/Views/UIImageExtensions.swift; sourceTree = SOURCE_ROOT; };
+		554D01C1207BE35400C19373 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
+		554D01C3207C0CEC00C19373 /* UserVault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserVault.swift; sourceTree = "<group>"; };
+		554D01C5207C54A900C19373 /* LocalPasswordCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPasswordCell.swift; sourceTree = "<group>"; };
+		554D01C7207D0E2500C19373 /* ContactManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactManager.swift; sourceTree = "<group>"; };
+		554D01C9207D5BB000C19373 /* Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
+		554D01CB207D9C2300C19373 /* ContactPolicyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactPolicyCell.swift; sourceTree = "<group>"; };
+		554D01CD207DA4C000C19373 /* CleartextMessagesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleartextMessagesCell.swift; sourceTree = "<group>"; };
+		554D01CF20803BB200C19373 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		55579E4F2024C21F00131A54 /* DatabaseContact.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseContact.h; sourceTree = "<group>"; };
 		55579E502024C21F00131A54 /* DatabaseContact.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseContact.m; sourceTree = "<group>"; };
 		555B0D40204C887B00D99807 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
@@ -290,32 +291,20 @@
 		55666648201B7C9000051ED2 /* LoggingErrorDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoggingErrorDelegate.m; sourceTree = "<group>"; };
 		557238A81F8C43F600A13A14 /* AccountManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountManager.h; sourceTree = "<group>"; };
 		557238A91F8C43F600A13A14 /* AccountManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountManager.m; sourceTree = "<group>"; };
-		5575D3C0206153D100593AF7 /* LocalPasswordCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalPasswordCell.h; sourceTree = "<group>"; };
-		5575D3C1206153D100593AF7 /* LocalPasswordCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocalPasswordCell.m; sourceTree = "<group>"; };
 		5575D3C320618FD200593AF7 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		5575D3CE2062E96400593AF7 /* MoreCellItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoreCellItem.h; sourceTree = "<group>"; };
 		5575D3CF2062E96400593AF7 /* MoreCellItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MoreCellItem.m; sourceTree = "<group>"; };
 		5579D45B1FE8491C007BCFE4 /* ResponseConsumer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ResponseConsumer.h; sourceTree = "<group>"; };
-		557CE560203A1D76008AF8CF /* Conversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Conversation.h; sourceTree = "<group>"; };
-		557CE561203A1D76008AF8CF /* Conversation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Conversation.m; sourceTree = "<group>"; };
 		557CE56F203A61DB008AF8CF /* ApplicationSingleton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplicationSingleton.h; sourceTree = "<group>"; };
 		557CE570203A61DB008AF8CF /* ApplicationSingleton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApplicationSingleton.m; sourceTree = "<group>"; };
 		557CE579203B8598008AF8CF /* PreviewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewCell.m; sourceTree = "<group>"; };
 		557CE57A203B8598008AF8CF /* PreviewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewCell.h; sourceTree = "<group>"; };
-		557CE57C203CC7A1008AF8CF /* ConversationCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConversationCache.h; sourceTree = "<group>"; };
-		557CE57D203CC7A1008AF8CF /* ConversationCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConversationCache.m; sourceTree = "<group>"; };
-		557CE57F203CD245008AF8CF /* MutableConversation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MutableConversation.h; sourceTree = "<group>"; };
-		557CE580203CD245008AF8CF /* MutableConversation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MutableConversation.m; sourceTree = "<group>"; };
-		557CE582203F746D008AF8CF /* ConversationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConversationDelegate.h; sourceTree = "<group>"; };
-		557CE583203F746D008AF8CF /* ConversationDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConversationDelegate.m; sourceTree = "<group>"; };
-		557CE58520407D25008AF8CF /* ContactPolicyCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactPolicyCell.h; sourceTree = "<group>"; };
-		557CE58620407D25008AF8CF /* ContactPolicyCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactPolicyCell.m; sourceTree = "<group>"; };
 		557CE5882040A41F008AF8CF /* NicknameCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NicknameCell.h; sourceTree = "<group>"; };
 		557CE5892040A41F008AF8CF /* NicknameCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NicknameCell.m; sourceTree = "<group>"; };
 		5586B880206428A400641514 /* pippip-native-ios-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pippip-native-ios-Bridging-Header.h"; sourceTree = "<group>"; };
 		5586B881206428A400641514 /* PublicIdCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicIdCell.swift; sourceTree = "<group>"; };
 		5586B8842064826000641514 /* EditWhitelistCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditWhitelistCell.swift; sourceTree = "<group>"; };
-		5586B8862064882B00641514 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
+		5586B8862064882B00641514 /* SessionStateActual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStateActual.swift; sourceTree = "<group>"; };
 		5586B88A206493D000641514 /* HexCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HexCodec.h; sourceTree = "<group>"; };
 		5586B88B206493D000641514 /* HexCodec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HexCodec.m; sourceTree = "<group>"; };
 		5586B88D2064951000641514 /* ParameterGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterGenerator.swift; sourceTree = "<group>"; };
@@ -474,8 +463,6 @@
 		55B3911E1FE17383004DAFF7 /* EnclaveResponse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EnclaveResponse.m; sourceTree = "<group>"; };
 		55B781A81FDE161E00330B80 /* Logout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logout.h; sourceTree = "<group>"; };
 		55B781A91FDE161E00330B80 /* Logout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Logout.m; sourceTree = "<group>"; };
-		55B781AB1FE018FC00330B80 /* ContactManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactManager.h; sourceTree = "<group>"; };
-		55B781AC1FE018FC00330B80 /* ContactManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactManager.m; sourceTree = "<group>"; };
 		55C88DC0206FAEA000D58BCA /* NewContactCellData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContactCellData.swift; sourceTree = "<group>"; };
 		55C88DC2206FB1A000D58BCA /* LastSeenCellData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastSeenCellData.swift; sourceTree = "<group>"; };
 		55C88DC4206FB72E00D58BCA /* ContactPublicIdData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactPublicIdData.swift; sourceTree = "<group>"; };
@@ -487,15 +474,11 @@
 		55CBAE5E1FD62E8D00C73A2B /* CKSignature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKSignature.h; sourceTree = "<group>"; };
 		55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKSignature.mm; sourceTree = "<group>"; };
 		55D8097C20279299008940CB /* MultiCellItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiCellItem.h; sourceTree = "<group>"; };
-		55D809892028BCBA008940CB /* ContactSearchDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactSearchDataSource.h; sourceTree = "<group>"; };
-		55D8098A2028BCBA008940CB /* ContactSearchDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactSearchDataSource.m; sourceTree = "<group>"; };
 		55DB7F431FD8692C00B4D262 /* ServerAuthorized.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServerAuthorized.h; sourceTree = "<group>"; };
 		55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ServerAuthorized.m; sourceTree = "<group>"; };
 		55DB7F461FD86AF800B4D262 /* ClientAuthorized.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClientAuthorized.h; sourceTree = "<group>"; };
 		55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClientAuthorized.m; sourceTree = "<group>"; };
 		55E7593D20674DAE009BAA1C /* WhitelistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhitelistViewController.swift; sourceTree = "<group>"; };
-		55FA87371FD059AF00FB96C0 /* UserVault.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserVault.h; sourceTree = "<group>"; };
-		55FA87381FD059AF00FB96C0 /* UserVault.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserVault.m; sourceTree = "<group>"; };
 		55FA873A1FD05E9800FB96C0 /* CKGCMCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKGCMCodec.h; sourceTree = "<group>"; };
 		55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKGCMCodec.mm; sourceTree = "<group>"; };
 		55FA873D1FD187CD00FB96C0 /* Authenticator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Authenticator.h; sourceTree = "<group>"; };
@@ -592,8 +575,6 @@
 				557238A91F8C43F600A13A14 /* AccountManager.m */,
 				55666644201A68AF00051ED2 /* AccountSession.h */,
 				55666645201A68AF00051ED2 /* AccountSession.m */,
-				553332591F9AE2D700F441E4 /* AlertErrorDelegate.h */,
-				5533325A1F9AE2D700F441E4 /* AlertErrorDelegate.m */,
 				557CE56F203A61DB008AF8CF /* ApplicationSingleton.h */,
 				557CE570203A61DB008AF8CF /* ApplicationSingleton.m */,
 				5592334920667094008AEEAE /* AsyncNotifier.swift */,
@@ -602,17 +583,9 @@
 				5536A68A206831B400B7E6D8 /* SwiftConfigurator.swift */,
 				55FB2F67203245E1005E3730 /* Configurator.h */,
 				55FB2F68203245E1005E3730 /* Configurator.m */,
-				55C88DCE20707F6B00D58BCA /* Contact.swift */,
 				553789962002C2B20043BCF4 /* ContactDatabase.h */,
 				553789972002C2B20043BCF4 /* ContactDatabase.m */,
-				55B781AB1FE018FC00330B80 /* ContactManager.h */,
-				55B781AC1FE018FC00330B80 /* ContactManager.m */,
-				557CE560203A1D76008AF8CF /* Conversation.h */,
-				557CE561203A1D76008AF8CF /* Conversation.m */,
-				557CE57C203CC7A1008AF8CF /* ConversationCache.h */,
-				557CE57D203CC7A1008AF8CF /* ConversationCache.m */,
-				557CE582203F746D008AF8CF /* ConversationDelegate.h */,
-				557CE583203F746D008AF8CF /* ConversationDelegate.m */,
+				554D01C7207D0E2500C19373 /* ContactManager.swift */,
 				55579E4F2024C21F00131A54 /* DatabaseContact.h */,
 				55579E502024C21F00131A54 /* DatabaseContact.m */,
 				551051062020BC36000A313E /* DatabaseMessage.h */,
@@ -625,18 +598,15 @@
 				551050FE201F8840000A313E /* MessagesDatabase.m */,
 				55206DB02076A5EA00B0B246 /* MessageManager.swift */,
 				55D8097C20279299008940CB /* MultiCellItem.h */,
-				557CE57F203CD245008AF8CF /* MutableConversation.h */,
-				557CE580203CD245008AF8CF /* MutableConversation.m */,
 				5527BAA31F8D0D1200C40D05 /* NewAccountCreator.h */,
 				5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */,
 				5586B8932065190B00641514 /* NotificationErrorDelegate.swift */,
 				5592334B2066C29E008AEEAE /* Notifications.h */,
 				5536A6822067559400B7E6D8 /* Notifications.swift */,
 				5586B88D2064951000641514 /* ParameterGenerator.swift */,
-				5586B8862064882B00641514 /* SessionState.swift */,
-				5500D171207455450016AC71 /* TextMessage.swift */,
-				55FA87371FD059AF00FB96C0 /* UserVault.h */,
-				55FA87381FD059AF00FB96C0 /* UserVault.m */,
+				554D01C1207BE35400C19373 /* SessionState.swift */,
+				5586B8862064882B00641514 /* SessionStateActual.swift */,
+				554D01C3207C0CEC00C19373 /* UserVault.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -644,6 +614,7 @@
 		55579E5A202763F700131A54 /* Contacts */ = {
 			isa = PBXGroup;
 			children = (
+				55C88DCE20707F6B00D58BCA /* Contact.swift */,
 				5536A68E20689CBB00B7E6D8 /* ContactCell.swift */,
 				55A734C1206FA54200D31AD6 /* ContactCellData.swift */,
 				5536A692206936E500B7E6D8 /* ContactPublicIdCell.swift */,
@@ -664,20 +635,21 @@
 		55579E5B2027643A00131A54 /* Messages */ = {
 			isa = PBXGroup;
 			children = (
-				55D809892028BCBA008940CB /* ContactSearchDataSource.h */,
-				55D8098A2028BCBA008940CB /* ContactSearchDataSource.m */,
+				554D01C9207D5BB000C19373 /* Conversation.swift */,
 				550007B92078129400103882 /* ConversationCellNodeMetadataFactory.swift */,
 				55206DA620753D2F00B0B246 /* ConversationCollectionDelegate.swift */,
 				55206DA420753A5A00B0B246 /* ConversationDataSource.swift */,
 				55206DAE20765F2D00B0B246 /* ConversationMessageData.swift */,
 				55A2D38E20752544005CD1FB /* ConversationViewController.swift */,
 				550007B72077FDD800103882 /* DeferredDataSource.swift */,
+				554D01CF20803BB200C19373 /* Message.swift */,
 				55B0DBB22045F2C500F6B29B /* MessagesHeadingCell.h */,
 				55B0DBB32045F2C500F6B29B /* MessagesHeadingCell.m */,
 				55B0DBAF2045EC8400F6B29B /* MessagesViewController.h */,
 				55B0DBB02045EC8400F6B29B /* MessagesViewController.m */,
 				557CE57A203B8598008AF8CF /* PreviewCell.h */,
 				557CE579203B8598008AF8CF /* PreviewCell.m */,
+				5500D171207455450016AC71 /* TextMessage.swift */,
 			);
 			path = Messages;
 			sourceTree = "<group>";
@@ -685,18 +657,15 @@
 		55579E5C2027646200131A54 /* More */ = {
 			isa = PBXGroup;
 			children = (
-				551641F1205AC4AF00CFCEEF /* CleartextMessagesCell.h */,
-				551641F2205AC4AF00CFCEEF /* CleartextMessagesCell.m */,
-				557CE58520407D25008AF8CF /* ContactPolicyCell.h */,
-				557CE58620407D25008AF8CF /* ContactPolicyCell.m */,
+				554D01CD207DA4C000C19373 /* CleartextMessagesCell.swift */,
+				554D01CB207D9C2300C19373 /* ContactPolicyCell.swift */,
 				55B0DBB82048962400F6B29B /* CopyableLabel.h */,
 				55B0DBB92048962400F6B29B /* CopyableLabel.m */,
 				5500D169207405190016AC71 /* DeleteAccountCell.swift */,
 				55A734BB206F319900D31AD6 /* DeleteFriendCellData.swift */,
 				5586B8842064826000641514 /* EditWhitelistCell.swift */,
 				55A734BD206F31DB00D31AD6 /* FriendCellData.swift */,
-				5575D3C0206153D100593AF7 /* LocalPasswordCell.h */,
-				5575D3C1206153D100593AF7 /* LocalPasswordCell.m */,
+				554D01C5207C54A900C19373 /* LocalPasswordCell.swift */,
 				5575D3CE2062E96400593AF7 /* MoreCellItem.h */,
 				5575D3CF2062E96400593AF7 /* MoreCellItem.m */,
 				554C17351FDD5990009434F5 /* MoreTableViewController.h */,
@@ -1114,7 +1083,7 @@
 		5592A57C1F8BBB4400F08BF5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = seComm;
 				TargetAttributes = {
 					5592A5831F8BBB4400F08BF5 = {
@@ -1311,6 +1280,7 @@
 				5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */,
 				55A2D38F20752544005CD1FB /* ConversationViewController.swift in Sources */,
 				557CE57B203B8598008AF8CF /* PreviewCell.m in Sources */,
+				554D01CA207D5BB000C19373 /* Conversation.swift in Sources */,
 				55AA555B1FA14D7100A7026B /* GCMCodec.cc in Sources */,
 				5500D16A207405190016AC71 /* DeleteAccountCell.swift in Sources */,
 				55FB2F62202A6D7B005E3730 /* CKIVGenerator.mm in Sources */,
@@ -1328,6 +1298,7 @@
 				551050FF201F8840000A313E /* MessagesDatabase.m in Sources */,
 				554C56072075C09F00FE9C92 /* MessageNetworkImageBubbleNode.swift in Sources */,
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
+				554D01CE207DA4C000C19373 /* CleartextMessagesCell.swift in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
 				55316C90206B32F700EB1AF7 /* ExpandingTableView.swift in Sources */,
 				55666649201B7C9000051ED2 /* LoggingErrorDelegate.m in Sources */,
@@ -1335,15 +1306,15 @@
 				55AA55581FA14D7100A7026B /* HMAC.cc in Sources */,
 				55AA54DE1FA14B1E00A7026B /* ByteStreamCodec.cc in Sources */,
 				55AA55001FA14C1300A7026B /* CKSHA1.mm in Sources */,
-				551641F3205AC4AF00CFCEEF /* CleartextMessagesCell.m in Sources */,
 				55AA54E11FA14B1E00A7026B /* Unsigned64.cc in Sources */,
-				5586B8872064882B00641514 /* SessionState.swift in Sources */,
+				5586B8872064882B00641514 /* SessionStateActual.swift in Sources */,
 				55316C8B206AD21800EB1AF7 /* PendingRequestCell.swift in Sources */,
 				5592334A20667094008AEEAE /* AsyncNotifier.swift in Sources */,
 				5500D16D2074104A0016AC71 /* AccountDeleter.m in Sources */,
 				55A734C0206FA11B00D31AD6 /* ContactsTableModel.swift in Sources */,
 				55AA54E01FA14B1E00A7026B /* Unsigned32.cc in Sources */,
 				550007BC2078203B00103882 /* EnclaveTask.swift in Sources */,
+				554D01C6207C54A900C19373 /* LocalPasswordCell.swift in Sources */,
 				55AA54FE1FA14C1300A7026B /* CKSecureRandom.mm in Sources */,
 				55FA874E1FD5F10500FB96C0 /* CKHMAC.mm in Sources */,
 				55206DA720753D2F00B0B246 /* ConversationCollectionDelegate.swift in Sources */,
@@ -1355,13 +1326,12 @@
 				554C56082075C09F00FE9C92 /* UIImageExtensions.swift in Sources */,
 				5536A68B206831B400B7E6D8 /* SwiftConfigurator.swift in Sources */,
 				55206DAB20754A2500B0B246 /* SelectContactView.swift in Sources */,
-				557CE562203A1D76008AF8CF /* Conversation.m in Sources */,
-				557CE57E203CC7A1008AF8CF /* ConversationCache.m in Sources */,
 				553789982002C2B20043BCF4 /* ContactDatabase.m in Sources */,
 				55AA555E1FA14D7100A7026B /* SHA384.cc in Sources */,
 				55B781AA1FDE161E00330B80 /* Logout.m in Sources */,
 				555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */,
 				55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */,
+				554D01C8207D0E2500C19373 /* ContactManager.swift in Sources */,
 				55AA55541FA14D7100A7026B /* SHA256.cc in Sources */,
 				55206DB32076AC2000B0B246 /* RequestProcessProtocol.swift in Sources */,
 				55AA54E31FA14B1E00A7026B /* Int16.cc in Sources */,
@@ -1375,10 +1345,10 @@
 				55AA555C1FA14D7100A7026B /* AES.cc in Sources */,
 				550007BA2078129400103882 /* ConversationCellNodeMetadataFactory.swift in Sources */,
 				55AA54DB1FA14B1E00A7026B /* ByteArrayOutputStream.cc in Sources */,
-				5533325B1F9AE2D700F441E4 /* AlertErrorDelegate.m in Sources */,
-				55B781AD1FE018FC00330B80 /* ContactManager.m in Sources */,
+				554D01CC207D9C2300C19373 /* ContactPolicyCell.swift in Sources */,
 				55206DAF20765F2D00B0B246 /* ConversationMessageData.swift in Sources */,
 				5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */,
+				554D01D020803BB200C19373 /* Message.swift in Sources */,
 				55AA54E21FA14B1E00A7026B /* Int64.cc in Sources */,
 				55AA55591FA14D7100A7026B /* SHA1.cc in Sources */,
 				554C55F72075C02E00FE9C92 /* AsyncMessagesViewController.swift in Sources */,
@@ -1387,8 +1357,6 @@
 				55AA55641FA14D7100A7026B /* RSACodec.cc in Sources */,
 				55C88DC5206FB72E00D58BCA /* ContactPublicIdData.swift in Sources */,
 				5527BAB81F8DB81B00C40D05 /* NewAccountResponse.m in Sources */,
-				557CE584203F746D008AF8CF /* ConversationDelegate.m in Sources */,
-				55D8098B2028BCBA008940CB /* ContactSearchDataSource.m in Sources */,
 				5586B8852064826000641514 /* EditWhitelistCell.swift in Sources */,
 				5536A6832067559400B7E6D8 /* Notifications.swift in Sources */,
 				557CE58A2040A41F008AF8CF /* NicknameCell.m in Sources */,
@@ -1396,6 +1364,7 @@
 				55AA55661FA14D7100A7026B /* Base64.cc in Sources */,
 				55AA54FF1FA14C1300A7026B /* CKRSAPrivateKey.m in Sources */,
 				55AA54DF1FA14B1E00A7026B /* Int32.cc in Sources */,
+				554D01C4207C0CEC00C19373 /* UserVault.swift in Sources */,
 				55AA554E1FA14D7100A7026B /* GCM.cc in Sources */,
 				55C88DC1206FAEA000D58BCA /* NewContactCellData.swift in Sources */,
 				5586B882206428A400641514 /* PublicIdCell.swift in Sources */,
@@ -1424,8 +1393,6 @@
 				55AA55621FA14D7100A7026B /* RSAKeyPairGenerator.cc in Sources */,
 				55AA55631FA14D7100A7026B /* RSAPrivateCrtKey.cc in Sources */,
 				55C88DC9206FFEC600D58BCA /* AuthViewController.swift in Sources */,
-				5575D3C2206153D100593AF7 /* LocalPasswordCell.m in Sources */,
-				557CE581203CD245008AF8CF /* MutableConversation.m in Sources */,
 				55AA54DD1FA14B1E00A7026B /* ByteArray.cc in Sources */,
 				5586B8922064A7AF00641514 /* ErrorDelegate.swift in Sources */,
 				55206DAD20755E1500B0B246 /* ContactTableViewCell.swift in Sources */,
@@ -1436,12 +1403,11 @@
 				55AA54FB1FA14C1300A7026B /* CKRSAPublicKey.m in Sources */,
 				5536A6912069279D00B7E6D8 /* LastSeenCell.swift in Sources */,
 				55B0DBB12045EC8400F6B29B /* MessagesViewController.m in Sources */,
-				55FA87391FD059AF00FB96C0 /* UserVault.m in Sources */,
+				554D01C2207BE35400C19373 /* SessionState.swift in Sources */,
 				55AA55021FA14C1300A7026B /* CKRSAKeyPairGenerator.mm in Sources */,
 				554C55FA2075C02E00FE9C92 /* MessageTimestampFormatter.swift in Sources */,
 				55666646201A68AF00051ED2 /* AccountSession.m in Sources */,
 				55AA55501FA14D7100A7026B /* PSSmgf1.cc in Sources */,
-				557CE58720407D25008AF8CF /* ContactPolicyCell.m in Sources */,
 				55AA55531FA14D7100A7026B /* CCSecureRandom.cc in Sources */,
 				550007B62077A80200103882 /* BaseExpandingTableModel.swift in Sources */,
 				55FA87451FD5CA4F00FB96C0 /* AuthenticationResponse.m in Sources */,
@@ -1543,6 +1509,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -1550,6 +1517,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -1600,6 +1568,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -1607,6 +1576,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;

@@ -9,10 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "RESTResponse.h"
 
-@class SessionState;
-
 @interface ClientAuthorized : NSObject<RESTResponse>
-
-- (instancetype)initWithState:(SessionState*)state;
 
 @end

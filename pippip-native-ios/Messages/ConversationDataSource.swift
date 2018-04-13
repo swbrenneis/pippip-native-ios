@@ -22,39 +22,30 @@ class ConversationDataSource: DefaultAsyncMessagesCollectionViewDataSource {
 
         super.init(currentUserID: contact.displayName, nodeMetadataFactory: ConversationCellNodeMetadataFactory())
 
-    }
-/*
- public init(currentUserID: String? = nil,
- nodeMetadataFactory: MessageCellNodeMetadataFactory = MessageCellNodeMetadataFactory(),
- bubbleImageProvider: MessageBubbleImageProvider = MessageBubbleImageProvider(),
- timestampFormatter: MessageTimestampFormatter = MessageTimestampFormatter(),
- bubbleNodeFactories: [MessageDataContentType: MessageBubbleNodeFactory] = [
- kAMMessageDataContentTypeText: MessageTextBubbleNodeFactory(),
- kAMMessageDataContentTypeNetworkImage: MessageNetworkImageBubbleNodeFactory()
- ]) {
- */
-    func initialize() {
-    }
-
-    func loadMessages() {
-
-        var messageData = [MessageData]()
-        let textMessages = messageManager.getTextMessages(contact.contactId)
-        for textMessage in textMessages {
-            messageData.append(ConversationMessageData(textMessage))
-        }
-        if !messageData.isEmpty {
-            self.collectionNode(collectionNode: asyncCollectionNode, insertMessages: messageData, completion: ({completion in
-                NotificationCenter.default.post(name: Notifications.MessagesLoaded, object: nil)
-            }))
-        }
+        NotificationCenter.default.addObserver(self, selector: #selector(cleartextAvailable(_:)),
+                                               name: Notifications.CleartextAvailable, object: nil)
 
     }
 
+    // Should be cleartext. Called from send button event
     func appendMessage(_ textMessage: TextMessage) {
     
-        self.collectionNode(collectionNode: asyncCollectionNode, insertMessages: [ConversationMessageData(textMessage)],
+        self.collectionNode(collectionNode: asyncCollectionNode,
+                            insertMessages: [ConversationMessageData(textMessage, contact: contact)],
                             completion: nil)
+
+    }
+
+    // Notified by message decryption
+    @objc func cleartextAvailable(_ notification: Notification) {
+
+        if let textMessage = notification.object as? TextMessage {
+            let messageData = ConversationMessageData(textMessage, contact: contact)
+            DispatchQueue.main.async {
+                self.collectionNode(collectionNode: self.asyncCollectionNode,
+                                    insertMessages: [messageData], completion:nil)
+            }
+        }
 
     }
 

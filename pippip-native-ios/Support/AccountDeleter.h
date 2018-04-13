@@ -10,8 +10,6 @@
 
 @interface AccountDeleter : NSObject
 
-- (BOOL)validatePassphrase:(NSString*)passphrase;
-
 - (BOOL)deleteAccount:(NSString*)accountName;
 
 @end

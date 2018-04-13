@@ -34,6 +34,11 @@
             NSLog(@"Failed to authorize notifications - %@", error);
         }
     }];
+    // Clear any notifications we didn't get
+    if (application.applicationIconBadgeNumber == 0) {
+        [application setApplicationIconBadgeNumber:1];
+        [application setApplicationIconBadgeNumber:0];
+    }
 #endif
     [ApplicationSingleton bootstrap];
     return YES;

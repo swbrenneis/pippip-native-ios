@@ -9,8 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "PostPacket.h"
 
-@class SessionState;
-
 @interface EnclaveRequest : NSObject<PostPacket>
 
 - (void)setRequest:(NSDictionary*)request;

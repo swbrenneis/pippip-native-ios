@@ -16,32 +16,14 @@ import LocalAuthentication
 
     @IBOutlet weak var authButton: UIButton!
 
-    @objc var suspended: Bool
-    var accountName: String
-
-    init() {
-        suspended = false
-        accountName = ""
-        super.init(nibName:"AuthViewController", bundle: nil)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        suspended = false
-        accountName = ""
-        super.init(coder: aDecoder)
-    }
+    @objc var suspended = false
+    var accountName = ""
+    var sessionState = SessionState()
+    var accountManager = AccountManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
-/*        NotificationCenter.default.addObserver(self, selector: #selector(authenticated(_:)),
-                                               name: Notifications.Authenticated, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(updateProgress(_:)),
-                                               name: Notifications.UpdateProgress, object: nil) */
- 
-        //let backgroundColor = UIColor.init(gradientStyle: .topToBottom, withFrame: self.view.bounds,
-        //                                   andColors: [UIColor.flatPink, UIColor.flatRed])
         let backgroundColor = UIColor.flatPink
         self.view.backgroundColor = backgroundColor
         authButton.titleLabel?.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
@@ -50,7 +32,7 @@ import LocalAuthentication
 
     override func viewWillAppear(_ animated: Bool) {
         
-        accountName = ApplicationSingleton.instance().accountManager.loadAccount()
+        accountName = accountManager.loadAccount()
         if (accountName.utf8.count > 0) {
             authButton.setTitle("Sign In", for: .normal)
         }
@@ -72,8 +54,8 @@ import LocalAuthentication
         
         if (suspended) {
             let laContext = LAContext()
-            let authError: NSErrorPointer = nil
-            if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: authError)) {
+            var authError: NSError? = nil
+            if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)) {
                 laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
                                          localizedReason: "Please provide your thumbprint to open Pippip", reply: { (success : Bool, error : Error? ) -> Void in
                                             if (success) {
@@ -226,12 +208,10 @@ import LocalAuthentication
 
         NotificationCenter.default.removeObserver(self, name: Notifications.Authenticated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.UpdateProgress, object: nil)
-        let sessionState = notification.object as! SessionState
-        sessionState.authenticated(true)
         DispatchQueue.main.async {
             MBProgressHUD.hide(for: self.view, animated: true)
             if (!self.suspended) {
-                NotificationCenter.default.post(name: Notifications.NewSession, object: sessionState)
+                NotificationCenter.default.post(name: Notifications.NewSession, object: nil)
             }
             self.dismiss(animated: true, completion: nil)
         }

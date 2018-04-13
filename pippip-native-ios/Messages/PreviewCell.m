@@ -6,12 +6,18 @@
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
+#import "pippip_native_ios-Swift.h"
 #import "PreviewCell.h"
+#import "Notifications.h"
 
 static const NSInteger SEC_PER_HOUR = 3600;
 static const NSInteger ONE_DAY = SEC_PER_HOUR * 24;
 
 @interface PreviewCell ()
+{
+    TextMessage *textMessage;
+    ContactManager *contactManager;
+}
 
 @property (weak, nonatomic) IBOutlet UIImageView *messageReadImage;
 @property (weak, nonatomic) IBOutlet UILabel *senderLabel;
@@ -25,34 +31,35 @@ static const NSInteger ONE_DAY = SEC_PER_HOUR * 24;
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code
+    contactManager = [[ContactManager alloc] init];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(cleartextAvailable:)
+                                                 name:CLEARTEXT_AVAILABLE
+                                               object:nil];
+
 }
 
-- (void)configure:(NSDictionary*)message {
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+    
+    // Configure the view for the selected state
+}
 
-    NSNumber *read = message[@"read"];
-    [_messageReadImage setHidden:[read boolValue]];
-    NSString *contact = message[@"nickname"];
-    if (contact == nil) {
-        contact = message[@"publicId"];
-    }
-    if (contact.length > 14) {
-        NSString *shortened = [contact substringWithRange:NSMakeRange(0, 14)];
-        _senderLabel.text = [shortened stringByAppendingString:@"..."];
-    }
-    else {
-        _senderLabel.text = contact;
-    }
-    NSNumber *ts = message[@"timestamp"];
-    NSString *dt = [self convertTimestamp:[ts integerValue]];
+- (void)dealloc {
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:CLEARTEXT_AVAILABLE object:nil];
+
+}
+
+- (void)configure:(TextMessage*)message {
+
+    textMessage = message;
+    [_messageReadImage setHidden:message.read];
+    Contact *contact = [contactManager getContactById:message.contactId];
+    _senderLabel.text = contact.displayName;
+    NSString *dt = [self convertTimestamp:message.timestamp];
     _dateTimeLabel.text = [dt stringByAppendingString:@" >"];
-    NSString *msgText = message[@"cleartext"];
-    if (msgText.length > 33) {
-        NSString *preview = [msgText substringWithRange:NSMakeRange(0, 33)];
-        _previewLabel.text = [preview stringByAppendingString:@"..."];
-    }
-    else {
-        _previewLabel.text = msgText;
-    }
+    [message decrypt:false];    // noNotify = false
 
 }
 
@@ -80,10 +87,31 @@ static const NSInteger ONE_DAY = SEC_PER_HOUR * 24;
 
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
+- (TextMessage*)getTextMessage {
+    return textMessage;
 }
 
+- (void)setMessageText:(NSString*)msgText {
+
+    if (msgText.length > 33) {
+        NSString *preview = [msgText substringWithRange:NSMakeRange(0, 33)];
+        _previewLabel.text = [preview stringByAppendingString:@"..."];
+    }
+    else {
+        _previewLabel.text = msgText;
+    }
+
+}
+
+- (void)cleartextAvailable:(NSNotification*)notification {
+
+    TextMessage *message = (TextMessage*)notification.object;
+    if (message.messageId == textMessage.messageId) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setMessageText:self->textMessage.cleartext];
+        });
+    }
+
+}
+     
 @end

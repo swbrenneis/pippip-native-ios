@@ -24,7 +24,7 @@ class DeferredDataSource: NSObject, AsyncMessagesCollectionViewDataSource {
     }
     
     func collectionNode(collectionNode: ASCollectionNode, messageForItemAtIndexPath indexPath: IndexPath) -> MessageData {
-        guard let _ = conversationDataSource else { return ConversationMessageData(TextMessage()) }
+        guard let _ = conversationDataSource else { return ConversationMessageData() }
         return conversationDataSource!.collectionNode(collectionNode: collectionNode, messageForItemAtIndexPath: indexPath)
     }
     

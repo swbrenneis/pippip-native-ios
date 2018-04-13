@@ -14,4 +14,6 @@
 
 - (void)loadConfig:(NSString*)accountName;
 
+- (void)setDefaultConfig:(NSString*)accountName;
+
 @end

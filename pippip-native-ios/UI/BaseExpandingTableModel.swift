@@ -46,19 +46,20 @@ class BaseExpandingTableModel: ExpandingTableModelProtocol {
         insertPaths = [ IndexPath(row: tableModel[section]!.count-1, section: section)]
         
     }
-    
+
+    /*
+     * Get cells from row to row + count, inclusive. If count = 0
+     * get cells from row to end of section, inclusive
+     */
     func getCells(section: Int, row: Int, count: Int) -> [CellDataProtocol] {
         
         var cells = [CellDataProtocol]()
         var rowCount = count
-        if rowCount == 0 {
+        if count == 0 || row + count > tableModel[section]!.count {
             rowCount = tableModel[section]!.count - row
         }
-        if row + rowCount > tableModel[section]!.count {
-            rowCount = tableModel[section]!.count - row
-        }
-        for index in row..<count {
-            cells.append(tableModel[section]![index])
+        for index in 0..<rowCount {
+            cells.append(tableModel[section]![row + index])
         }
         return cells
         

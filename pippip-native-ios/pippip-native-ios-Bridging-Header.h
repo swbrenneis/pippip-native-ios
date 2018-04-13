@@ -15,7 +15,7 @@
 #import "HexCodec.h"
 #import "MoreCellItem.h"
 #import "ApplicationSingleton.h"
-#import "ContactManager.h"
+#import "ContactDatabase.h"
 #import "Configurator.h"
 #import "MBProgressHUD.h"
 #import "Authenticator.h"
@@ -26,4 +26,5 @@
 #import "PostPacket.h"
 #import "EnclaveRequest.h"
 #import "EnclaveResponse.h"
+#import "AccountManager.h"
 

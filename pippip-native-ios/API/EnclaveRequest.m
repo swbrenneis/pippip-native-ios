@@ -14,9 +14,8 @@
 @interface EnclaveRequest ()
 {
     NSMutableDictionary *packet;
+    SessionState *sessionState;
 }
-
-@property (weak, nonatomic) SessionState *sessionState;
 
 @end
 
@@ -24,8 +23,8 @@
 
 - (instancetype)init {
     self = [super init];
-    
-    _sessionState = [ApplicationSingleton instance].accountSession.sessionState;
+
+    sessionState = [[SessionState alloc] init];
     packet = [[NSMutableDictionary alloc] init];
     return self;
 
@@ -33,9 +32,9 @@
 
 - (NSDictionary*)restPacket {
     
-    [packet setObject:[NSString stringWithFormat:@"%d", _sessionState.sessionId]
+    [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
                forKey:@"sessionId"];
-    [packet setObject:[NSString stringWithFormat:@"%lld", _sessionState.authToken]
+    [packet setObject:[NSString stringWithFormat:@"%lld", sessionState.authToken]
                forKey:@"authToken"];
 
     return packet;
@@ -60,7 +59,7 @@
     CKGCMCodec *codec = [[CKGCMCodec alloc] init];
     [codec putString:json];
     NSError *error = nil;
-    NSData *encoded = [codec encrypt:_sessionState.enclaveKey withAuthData:_sessionState.authData withError:&error];
+    NSData *encoded = [codec encrypt:sessionState.enclaveKey withAuthData:sessionState.authData withError:&error];
     if (error != nil) {
         NSLog(@"Error while encrypting enclave request: %@", error.localizedDescription);
     }

@@ -8,13 +8,14 @@
 
 import UIKit
 import ChameleonFramework
+import RKDropdownAlert
 
-class ConversationViewController: AsyncMessagesViewController {
+class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDelegate {
 
     var conversationDataSource: ConversationDataSource?
     var conversationDelegate: ConversationCollectionDelegate
     var deferredDataSource: DeferredDataSource
-    var contact: Contact?
+    @objc var contact: Contact?
     var selectView: SelectContactView?
     var messageManager = MessageManager()
 
@@ -72,8 +73,19 @@ class ConversationViewController: AsyncMessagesViewController {
         else {
             conversationDataSource = ConversationDataSource.init(collectionNode: asyncCollectionNode, contact: contact!)
             deferredDataSource.conversationDataSource = conversationDataSource!
-            conversationDataSource!.loadMessages()
+            self.navigationItem.title = self.contact!.displayName
+            self.contact!.conversation!.isVisible = true
         }
+
+        NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
+                                               name: Notifications.PresentAlert, object: nil)
+
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+
+        NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
+        contact?.conversation!.isVisible = false
 
     }
 
@@ -86,7 +98,19 @@ class ConversationViewController: AsyncMessagesViewController {
     
         let text = textView.text
         let textMessage = TextMessage(text: text!, contact: contact!)
-        messageManager.sendMessage(textMessage, retry: false)
+        conversationDataSource!.appendMessage(textMessage)
+
+        DispatchQueue.global().async {
+            do {
+                try self.contact!.conversation!.sendMessage(textMessage)
+            }
+            catch {
+                let alertColor = UIColor.flatSand
+                RKDropdownAlert.title("Message Error", message: "Failed to send message", backgroundColor: alertColor,
+                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                      time: 2, delegate: self)
+            }
+        }
 
         super.didPressRightButton(sender)
 
@@ -97,23 +121,9 @@ class ConversationViewController: AsyncMessagesViewController {
         contact = notification.object as? Contact
         conversationDataSource = ConversationDataSource.init(collectionNode: asyncCollectionNode, contact: contact!)
         deferredDataSource.conversationDataSource = conversationDataSource!
-        conversationDataSource!.loadMessages()
         DispatchQueue.main.async {
-            if let nickname = self.contact?.nickname {
-                self.navigationItem.title = nickname
-            }
-            else {
-                let fragment = String(describing: self.contact!.publicId.prefix(10)) + "..."
-                self.navigationItem.title = fragment
-            }
-        }
-
-    }
-
-    @objc func messageSent(_ notification: Notification) {
-
-        if let message = notification.object as? TextMessage {
-            conversationDataSource!.appendMessage(message)
+            self.navigationItem.title = self.contact!.displayName
+            self.contact!.conversation!.isVisible = true
         }
 
     }
@@ -125,6 +135,21 @@ class ConversationViewController: AsyncMessagesViewController {
         }
 
     }
+
+    @objc func presentAlert(_ notification: Notification) {
+        
+        let userInfo = notification.userInfo!
+        let title = userInfo["title"] as? String
+        let message = userInfo["message"] as? String
+        DispatchQueue.main.async {
+            let alertColor = UIColor.flatSand
+            RKDropdownAlert.title(title, message: message, backgroundColor: alertColor,
+                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                  time: 2, delegate: self)
+        }
+        
+    }
+    
     /*
     // MARK: - Navigation
 
@@ -135,4 +160,12 @@ class ConversationViewController: AsyncMessagesViewController {
     }
     */
 
+    func dropdownAlertWasTapped(_ alert: RKDropdownAlert!) -> Bool {
+        return true
+    }
+    
+    func dropdownAlertWasDismissed() -> Bool {
+        return true
+    }
+    
 }

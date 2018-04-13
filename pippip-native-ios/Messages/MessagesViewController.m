@@ -6,30 +6,28 @@
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
-#import "MessagesViewController.h"
 #import "pippip_native_ios-Swift.h"
+#import "MessagesViewController.h"
 #import "Notifications.h"
 #import "PreviewCell.h"
 #import "MessagesHeadingCell.h"
 #import "ApplicationSingleton.h"
-#import "ConversationCache.h"
 #import "Authenticator.h"
-//#import "MessageManager.h"
 #import "MBProgressHUD.h"
+#import "Chameleon.h"
 
 @interface MessagesViewController ()
 {
-    NSArray *mostRecent;
+    NSArray<TextMessage*> *mostRecent;
     AuthViewController *authView;
-    //MessageManager *messageManager;
+    MessageManager *messageManager;
+    ContactManager *contactManager;
     BOOL suspended;
     BOOL accountDeleted;
+    SessionState *sessionState;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) SessionState *sessionState;
-
-@property (weak, nonatomic) ConversationCache *conversationCache;
 
 @end
 
@@ -39,11 +37,9 @@
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
-    //messageManager = [[MessageManager alloc] init];
     mostRecent = [NSArray array];
     _tableView.dataSource = self;
     [_tableView setDelegate:self];
-    _conversationCache = [ApplicationSingleton instance].conversationCache;
     authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
     suspended = YES;
     accountDeleted = NO;
@@ -57,9 +53,6 @@
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(newSession:)
                                                name:NEW_SESSION object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(conversationLoaded:)
-                                               name:CONVERSATION_LOADED object:nil];
 
 }
 
@@ -67,15 +60,19 @@
     [super viewWillAppear:animated];
 
     [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(MessagesUpdated:)
-                                               name:MESSAGES_UPDATED object:nil];
+                                           selector:@selector(newMessages:)
+                                               name:NEW_MESSAGES object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(presentAlert:)
+                                               name:PRESENT_ALERT object:nil];
 
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:MESSAGES_UPDATED object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NEW_MESSAGES object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:PRESENT_ALERT object:nil];
 
 }
 
@@ -88,7 +85,7 @@
         [self presentViewController:authView animated:YES completion:nil];
         accountDeleted = NO;
     }
-    else if (![[ApplicationSingleton instance].accountSession.sessionState authenticated]) {
+    else if (!sessionState.authenticated) {
         [self presentViewController:authView animated:YES completion:nil];
     }
 
@@ -116,12 +113,12 @@
             [authView setSuspended:YES];
         }
         else {
-            Authenticator *auth = [[Authenticator alloc] init];
+            Authenticator *auth = [[Authenticator alloc] initForLogout];
             [auth logout];
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             if (self.view.window != nil) {
-                [self presentViewController:authView animated:YES completion:nil];
+                [self presentViewController:self->authView animated:YES completion:nil];
             }
         });
     }
@@ -133,32 +130,39 @@
     suspended = YES;
     mostRecent = [NSArray array];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_tableView reloadData];
+        [self->_tableView reloadData];
     });
 
 }
 
 - (void)newSession:(NSNotification*)notification {
     
-    _sessionState = (SessionState*)notification.object;
-    mostRecent = [_conversationCache mostRecentMessages];
+    messageManager = [[MessageManager alloc] init];
+    contactManager = [[ContactManager alloc] init];
+    sessionState = [[SessionState alloc] init];
+    mostRecent = [messageManager mostRecentMessages];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_tableView reloadData];
+        [self->_tableView reloadData];
     });
     
 }
 
-- (void)conversationLoaded:(NSNotification*)notification {
+- (void)presentAlert:(NSNotification*)notification {
 
-    if (![[ApplicationSingleton instance].config getCleartextMessages]) {
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
-    }
-
+    NSDictionary *info = notification.userInfo;
+    NSString *title = info[@"title"];
+    NSString *message = info[@"message"];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIColor *alertColor = UIColor.flatSandColor;
+        [RKDropdownAlert title:title message: message backgroundColor:alertColor
+                     textColor:ContrastColor(alertColor, true) time:2 delegate:nil];
+    });
+    
 }
 
 - (IBAction)signoutClicked:(UIBarButtonItem *)sender {
 
-    Authenticator *auth = [[Authenticator alloc] init];
+    Authenticator *auth = [[Authenticator alloc] initForLogout];
     [auth logout];
     [authView setSuspended:NO];
     [self presentViewController:authView animated:YES completion:nil];
@@ -178,11 +182,11 @@
 
 #pragma mark - Message handling
 
-- (void)MessagesUpdated:(NSNotification*)notification {
+- (void)newMessages:(NSNotification*)notification {
 
-    mostRecent = [_conversationCache mostRecentMessages];
+    mostRecent = [messageManager mostRecentMessages];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_tableView reloadData];
+        [self->_tableView reloadData];
     });
 
 }
@@ -220,7 +224,7 @@
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PreviewCell" forIndexPath:indexPath];
         // Configure the cell...
         PreviewCell *previewCell = (PreviewCell*)cell;
-        NSDictionary *message = mostRecent[indexPath.item];
+        TextMessage *message = mostRecent[indexPath.item];
         [previewCell configure:message];
         return cell;
     }
@@ -241,22 +245,10 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
     if (indexPath.section == 1) {
-/*        if (![[ApplicationSingleton instance].config getCleartextMessages]) {
-            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            hud.mode = MBProgressHUDModeIndeterminate;
-            hud.label.text = @"Decrypting messages";
-        }*/
-//        ChattoConversationViewController *conversationView = [[ChattoConversationViewController alloc] init];
-//        NSDictionary *message = mostRecent[self.tableView.indexPathForSelectedRow.item];
- //       conversationView.publicId = message[@"publicId"];
- //       [self.navigationController pushViewController:conversationView animated:YES];
-        /*
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self performSegueWithIdentifier:@"ConversationSegue" sender:self];
-            });
-        });
-         */
+        NSInteger contactId = mostRecent[indexPath.item].contactId;
+        ConversationViewController *viewController = [[ConversationViewController alloc] init];
+        viewController.contact = [contactManager getContactById:contactId];
+        [self.navigationController pushViewController:viewController animated:YES];
     }
 
 }

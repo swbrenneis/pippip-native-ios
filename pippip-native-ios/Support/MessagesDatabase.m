@@ -6,22 +6,19 @@
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
-#import <Realm/Realm.h>
 #import "pippip_native_ios-Swift.h"
 #import "MessagesDatabase.h"
 #import "ApplicationSingleton.h"
 #import "DatabaseMessage.h"
-#import "ContactManager.h"
 #import "Configurator.h"
 #import "CKIVGenerator.h"
 #import "CKGCMCodec.h"
-
-static const float CURRENT_VERSION = 1.0;
+#import <Realm/Realm.h>
 
 @interface MessagesDatabase ()
 {
-    NSInteger messageId;
     ContactManager *contactManager;
+    Configurator *config;
 }
 
 @property (weak, nonatomic) SessionState *sessionState;
@@ -34,6 +31,7 @@ static const float CURRENT_VERSION = 1.0;
     self = [super init];
 
     contactManager = [[ContactManager alloc] init];
+    config = [[Configurator alloc] init];
 
     return self;
 
@@ -55,40 +53,28 @@ static const float CURRENT_VERSION = 1.0;
     }
 
 }
-*/
-- (NSInteger)addMessage:(TextMessage*)message {
-    
-    // Add the message to the database
-    DatabaseMessage *dbMessage = [[DatabaseMessage alloc] init];
-    Configurator *config = [ApplicationSingleton instance].config;
-    dbMessage.version = CURRENT_VERSION;
-    NSInteger messageId = [config newMessageId];
-    dbMessage.messageId = messageId;
-    message.messageId = messageId;
-    dbMessage.contactId = [config getContactId:message.publicId];
-    dbMessage.messageType = message.messageType;
-    dbMessage.keyIndex = message.keyIndex;
-    dbMessage.sequence = message.sequence;
-    dbMessage.timestamp = message.timestamp;
-    dbMessage.read = message.read;
-    dbMessage.acknowledged = message.acknowledged;
-    dbMessage.sent = message.originating;
-    if ([config getCleartextMessages]) {
-        dbMessage.cleartext = message.cleartext;
-    }
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        Contact *contact = [contactManager getContact:message.publicId];
-        [message encrypt:contact];
-        RLMRealm *realm = [RLMRealm defaultRealm];
-        [realm beginWriteTransaction];
-        [realm addObject:dbMessage];
-        [realm commitWriteTransaction];
-    });
 
-    return messageId;
+- (void)addMessage:(TextMessage*)textMessage {
+
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    [realm beginWriteTransaction];
+    [realm addObject:[textMessage encodeForDatabase]];
+    [realm commitWriteTransaction];
 
 }
+
+- (void)addPendingMessages:(NSArray<TextMessage *>*)messages {
+
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    for (TextMessage *message in messages) {
+        message.acknowledged = NO;
+        [realm beginWriteTransaction];
+        [realm addObject:[message encodeForDatabase]];
+        [realm commitWriteTransaction];
+    }
+
+}
+
 /*
 - (void)addMessageSorted:(NSDictionary*)message withMessageList:(NSMutableArray*)messageList {
     
@@ -149,9 +135,9 @@ static const float CURRENT_VERSION = 1.0;
     return message;
 
 }
-*/
+
 - (void)decryptAll {
-/*
+
     RLMRealm *realm = [RLMRealm defaultRealm];
     RLMResults<DatabaseMessage*> *messages = [DatabaseMessage allObjects];
     for (DatabaseMessage *dbMessage in messages) {
@@ -160,7 +146,7 @@ static const float CURRENT_VERSION = 1.0;
         dbMessage.cleartext = [self decryptMessage:dbMessage withContact:contact];
         [realm commitWriteTransaction];
     }
- */
+
 }
 
 - (NSString*)decryptMessage:(NSDictionary *)message {
@@ -208,7 +194,6 @@ static const float CURRENT_VERSION = 1.0;
 - (void)deleteAllMessages:(NSString*)publicId {
 
     RLMRealm *realm = [RLMRealm defaultRealm];
-    Configurator *config = [ApplicationSingleton instance].config;
     NSInteger contactId = [config getContactId:publicId];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
     RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
@@ -219,7 +204,19 @@ static const float CURRENT_VERSION = 1.0;
     }
 
 }
-/*
+
+- (void)deleteAllMessages {
+
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage allObjects];
+    for (DatabaseMessage *message in messages) {
+        [realm beginWriteTransaction];
+        [realm deleteObject:message];
+        [realm commitWriteTransaction];
+    }
+
+}
+
 - (void)deleteMessage:(NSInteger)messageId {
 
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageId = %ld", messageId];
@@ -235,7 +232,6 @@ static const float CURRENT_VERSION = 1.0;
     }
 
 }
-*/
 
 - (TextMessage*)loadTextMessage:(NSInteger)messageId withContactId:(NSInteger)contactId {
     
@@ -253,7 +249,7 @@ static const float CURRENT_VERSION = 1.0;
             return nil;
         }
         else {
-            return nil;
+            return [[TextMessage alloc] initWithDbMessage:dbMessage];
         }
     }
     else {
@@ -262,7 +258,7 @@ static const float CURRENT_VERSION = 1.0;
     }
 
 }
-/*
+
 - (NSMutableDictionary*)loadMessage:(NSInteger)messageId withPublicId:(NSString*)publicId {
 
     Contact *contact = [contactManager getContact:publicId];
@@ -290,7 +286,7 @@ static const float CURRENT_VERSION = 1.0;
     }
 
 }
-*/
+
 - (NSArray*)loadMessageIds:(NSInteger)contactId {
 
     NSMutableArray *messageIds = [NSMutableArray array];
@@ -323,27 +319,24 @@ static const float CURRENT_VERSION = 1.0;
 
 }
 
-- (NSDictionary*)mostRecentMessage:(NSInteger)contactId {
-/*
+- (TextMessage*)mostRecentMessage:(NSInteger)contactId {
+
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
     RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
                                               sortedResultsUsingKeyPath:@"timestamp" ascending:NO];
     if (messages.count > 0) {
-        Contact *contact = [contactManager getContactById:contactId];
-        NSDictionary *message = [self decodeMessage:[messages firstObject] withContact:contact];
-        return message;
+        return [[TextMessage alloc] initWithDbMessage:[messages firstObject]];
     }
     else {
         NSLog(@"No messages found for contact %ld", contactId);
-*/        return nil;
-  //  }
+        return nil;
+    }
 
 }
 
 - (NSArray*)pendingMessageInfo {
 
     NSMutableArray *pending = [NSMutableArray array];
-    Configurator *config = [ApplicationSingleton instance].config;
     NSArray *contactIds = [config allContactIds];
     for (NSNumber *cid in contactIds) {
         NSInteger contactId = [cid integerValue];
@@ -377,18 +370,19 @@ static const float CURRENT_VERSION = 1.0;
     }
 
 }
-/*
-- (NSArray*)unreadMessageIds:(NSString *)publicId {
 
-    NSMutableArray *unread = [NSMutableArray array];
-    NSInteger contactId = [[ApplicationSingleton instance].config getContactId:publicId];
+- (void)updateTimestamp:(NSInteger)messageId withTimestamp:(NSInteger)timestamp {
+
+    RLMRealm *realm = [RLMRealm defaultRealm];
     NSPredicate *predicate =
-        [NSPredicate predicateWithFormat:@"contactId = %ld && read == %@", contactId, @NO];
+    [NSPredicate predicateWithFormat:@"messageId = %ld", messageId];
     RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
-    for (DatabaseMessage *dbMessage in messages) {
-        [unread addObject:[NSNumber numberWithInteger:dbMessage.messageId]];
+    if (messages.count > 0) {
+        DatabaseMessage *dbMessage = [messages firstObject];
+        [realm beginWriteTransaction];
+        dbMessage.timestamp = timestamp;
+        [realm commitWriteTransaction];
     }
-    return unread;
 
 }
 */

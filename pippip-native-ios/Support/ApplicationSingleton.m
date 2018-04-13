@@ -6,8 +6,8 @@
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
-#import "ApplicationSingleton.h"
 #import "pippip_native_ios-Swift.h"
+#import "ApplicationSingleton.h"
 
 static ApplicationSingleton *theInstance = nil;
 
@@ -17,13 +17,8 @@ static ApplicationSingleton *theInstance = nil;
 
     theInstance = [[ApplicationSingleton alloc] init];
     // Order is important!
-    theInstance.accountManager = [[AccountManager alloc] init];
     theInstance.restSession = [[RESTSession alloc] init];
-    theInstance.contactDatabase = [[ContactDatabase alloc] init];
-    theInstance.conversationCache = [[ConversationCache alloc] init];
-    theInstance.config = [[Configurator alloc] init];
     theInstance.accountSession = [[AccountSession alloc] init];
-    theInstance.accountSession.sessionState = [[SessionState alloc] init];
 
 }
 

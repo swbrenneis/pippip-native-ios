@@ -10,13 +10,8 @@
 
 #import "AccountSession.h"
 #import "ApplicationSingleton.h"
-#import "EnclaveRequest.h"
-#import "EnclaveResponse.h"
-#import "ContactDatabase.h"
-#import "LoggingErrorDelegate.h"
-#import "ContactManager.h"
 #import "Notifications.h"
-#import "Notifications.h"
+#import "MessagesDatabase.h"
 
 @interface AccountSession ()
 {
@@ -38,8 +33,11 @@
     sessionActive = NO;
     suspended = NO;
     notificationComplete = YES;
-    contactManager = [[ContactManager alloc] init];
-    messageManager = [[MessageManager alloc] init];
+    // We need to create a dummy session for statup before authentication.
+    SessionStateActual *actual = [[SessionStateActual alloc] init];
+    actual.authenticated = NO;
+    SessionState *sessionState = [[SessionState alloc] init];
+    [sessionState setState:actual];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(newSession:)
@@ -53,32 +51,61 @@
                                              selector:@selector(requestsUpdated:)
                                                  name:REQUESTS_UPDATED
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(newMessages:)
+                                                 name:NEW_MESSAGES
+                                               object:nil];
 
     return self;
 
 }
 
 - (void)newSession:(NSNotification*)notification {
-    
+
+    contactManager = [[ContactManager alloc] init];
+    messageManager = [[MessageManager alloc] init];
+
     sessionActive = YES;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            [contactManager getRequests];
-        });
+    MessagesDatabase *messageDatabase = [[MessagesDatabase alloc] init];
+    [messageDatabase deleteAllMessages];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self->messageManager getNewMessages];
     });
-    
+    [messageManager getNewMessages];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [self->contactManager getPendingRequests];
+    });
+
+}
+
+- (void)newMessages:(NSNotification*)notification {
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray *messages = (NSArray*)notification.object;
+        NSInteger badgeNumber = [UIApplication sharedApplication].applicationIconBadgeNumber;
+        if (messages.count > badgeNumber) {
+            badgeNumber = 0;
+        }
+        else {
+            badgeNumber = badgeNumber - messages.count;
+        }
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
+    });
+
 }
 
 - (void)requestsUpdated:(NSNotification*)notification {
 
     if (sessionActive) {
         [contactManager updatePendingContacts];
-        dispatch_async(dispatch_get_main_queue(), ^{
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                [contactManager getRequests];
+                if (self->sessionActive) {
+                    [self->contactManager getPendingRequests];
+                }
             });
         });
-    }
 
 }
 
@@ -97,7 +124,7 @@
         NSInteger suspendedTime = [resumeTime timeIntervalSinceDate:suspendTime];
         if (suspendedTime > 0 && suspendedTime < 180) {     // 30 minutes
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                [contactManager getRequests];
+                [self->contactManager getPendingRequests];
             });
         }
         NSMutableDictionary *info = [NSMutableDictionary dictionary];
@@ -120,14 +147,20 @@
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
 
-    if (sessionActive && notificationComplete) {
-        NSInteger messageCount = [notification.request.content.badge integerValue];
-        if (messageCount > 0) {
-            notificationComplete = NO;
+    if (sessionActive) {
+        NSInteger badgeNumber = [notification.request.content.badge integerValue];
+        if (badgeNumber > 0) {
             [messageManager getNewMessages];
         }
     }
     completionHandler(UNNotificationPresentationOptionBadge);
+
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler {
+
+    [messageManager getNewMessages];
+    completionHandler();
 
 }
 

@@ -16,7 +16,7 @@ class ConversationCellNodeMetadataFactory: MessageCellNodeMetadataFactory {
 
         for messageData in messages {
             if let textData = messageData as? ConversationMessageData {
-                let meta = MessageCellNodeMetadata(isOutgoing: textData.message.originating,
+                let meta = MessageCellNodeMetadata(isOutgoing: textData.message!.originating,
                                                    showsSenderName: false,
                                                    showsSenderAvatar: false,
                                                    showsTailForBubbleImage: true,

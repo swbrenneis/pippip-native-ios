@@ -9,19 +9,13 @@
 #import <Foundation/Foundation.h>
 #import <UserNotifications/UserNotifications.h>
 
-@class SessionState;
-
 @interface AccountSession : NSObject <UNUserNotificationCenterDelegate>
 
-@property (nonatomic) SessionState *sessionState;
 @property (nonatomic) NSData *deviceToken;
-
-//- (void)endSession;
+@property (nonatomic) NSInteger badgeNumber;
 
 - (void)resume;
 
 - (void)suspend;
-
-//- (void)startSession:(SessionState*)state;
 
 @end

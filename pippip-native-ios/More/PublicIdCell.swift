@@ -12,6 +12,8 @@ import UIKit
 
     @IBOutlet weak var publicIdLabel: UILabel!
 
+    var sessionState = SessionState()
+
     override public var canBecomeFirstResponder: Bool {
         get {
             return true
@@ -30,7 +32,7 @@ import UIKit
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        publicIdLabel.text = ApplicationSingleton.instance().accountSession.sessionState.publicId
+        publicIdLabel.text = sessionState.publicId
         attachTapHandler()
 
     }

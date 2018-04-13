@@ -14,6 +14,7 @@ import ChameleonFramework
 class DeleteAccountCell: TableViewCellWithController, RKDropdownAlertDelegate {
 
     var accountDeleter = AccountDeleter()
+    var sessionState = SessionState()
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -59,7 +60,7 @@ class DeleteAccountCell: TableViewCellWithController, RKDropdownAlertDelegate {
 
     func checkPassphrase() {
 
-        let accountName = ApplicationSingleton.instance().accountSession.sessionState.currentAccount!
+        let accountName = sessionState.accountName
         let alert = PMAlertController(title: "Delete Account",
                                       description: "Enter your passphrase",
                                       image: nil,
@@ -73,21 +74,26 @@ class DeleteAccountCell: TableViewCellWithController, RKDropdownAlertDelegate {
         alert.addAction(PMAlertAction(title: "OK",
                                       style: .default, action: { () in
                                         let passphrase = alert.textFields[0].text ?? ""
-                                        if self.accountDeleter.validatePassphrase(passphrase)
-                                            && self.accountDeleter.deleteAccount(accountName) {
-                                            var info = [AnyHashable: Any]()
-                                            info["title"] = "Account Deleted"
-                                            info["message"] = "This account has been deleted and will now be logged out"
-                                            NotificationCenter.default.post(name: Notifications.PresentAlert,
-                                                                            object: nil, userInfo: info)
-                                            NotificationCenter.default.post(name: Notifications.AccountDeleted, object: nil)
+                                        do {
+                                            if try UserVault.validatePassphrase(passphrase)
+                                                && self.accountDeleter.deleteAccount(accountName) {
+                                                var info = [AnyHashable: Any]()
+                                                info["title"] = "Account Deleted"
+                                                info["message"] = "This account has been deleted and will now be logged out"
+                                                NotificationCenter.default.post(name: Notifications.PresentAlert,
+                                                                                object: nil, userInfo: info)
+                                                NotificationCenter.default.post(name: Notifications.AccountDeleted, object: nil)
+                                            }
+                                            else {
+                                                var info = [AnyHashable: Any]()
+                                                info["title"] = "Invalid Passphrase"
+                                                info["message"] = "Invalid passphrase\nAccount not deleted"
+                                                NotificationCenter.default.post(name: Notifications.PresentAlert,
+                                                                                object: nil, userInfo: info)
+                                            }
                                         }
-                                        else {
-                                            var info = [AnyHashable: Any]()
-                                            info["title"] = "Invalid Passphrase"
-                                            info["message"] = "Invalid passphrase\nAccount not deleted"
-                                            NotificationCenter.default.post(name: Notifications.PresentAlert,
-                                                                            object: nil, userInfo: info)
+                                        catch {
+                                            print(error)
                                         }
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))

@@ -6,8 +6,8 @@
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
-#import "NewAccountRequest.h"
 #import "pippip_native_ios-Swift.h"
+#import "NewAccountRequest.h"
 
 
 @interface NewAccountRequest ()
@@ -18,10 +18,10 @@
 
 @implementation NewAccountRequest
 
-- (instancetype)initWithState:(SessionState*)state {
+- (instancetype)init {
     self = [super init];
 
-    sessionState = state;
+    sessionState = [[SessionState alloc] init];
     return self;
 }
 

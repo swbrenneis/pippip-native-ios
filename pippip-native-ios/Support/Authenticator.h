@@ -10,10 +10,12 @@
 
 @interface Authenticator : NSObject <RequestProcessProtocol>
 
+- (instancetype)initForLogout;
+
+- (void)logout;
+
 - (void)authenticate:(NSString*)accountName withPassphrase:(NSString*)passphrase;
 
 - (void)localAuthenticate:(NSString*)accountName withPassphrase:(NSString*)passphrase;
-
-- (void)logout;
 
 @end

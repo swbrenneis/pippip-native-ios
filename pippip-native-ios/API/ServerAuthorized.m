@@ -22,10 +22,10 @@
 
 @implementation ServerAuthorized
 
-- (instancetype)initWithState:(SessionState *)state {
+- (instancetype)init {
     self = [super init];
     
-    sessionState = state;
+    sessionState = [[SessionState alloc] init];
     return self;
     
 }

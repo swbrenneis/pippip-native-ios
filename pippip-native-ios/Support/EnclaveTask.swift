@@ -13,10 +13,15 @@ class EnclaveTask: NSObject, RequestProcessProtocol {
     var postPacket: PostPacket?
     var errorDelegate: ErrorDelegate
     var completion: ([AnyHashable: Any]) -> Void
+    var errorTitle : String? {
+        didSet {
+            errorDelegate = NotificationErrorDelegate(errorTitle!)
+        }
+    }
 
     init(_ completion: @escaping ([AnyHashable: Any]) -> Void) {
 
-        errorDelegate = NotificationErrorDelegate("Message Error")
+        errorDelegate = NotificationErrorDelegate("Unknown")
         self.completion = completion
 
         super.init()

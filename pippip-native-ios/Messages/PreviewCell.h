@@ -8,8 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@class TextMessage;
+
 @interface PreviewCell : UITableViewCell
 
-- (void)configure:(NSDictionary*)message;
+- (void)configure:(TextMessage*_Nonnull)message;
+
+- (TextMessage*_Nonnull)getTextMessage;
 
 @end

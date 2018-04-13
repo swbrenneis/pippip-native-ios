@@ -13,33 +13,31 @@
 
 @interface NewAccountFinish ()
 {
-
+    SessionState *sessionState;
 }
-
-@property (weak, nonatomic) SessionState *sessionState;
 
 @end
 
 @implementation NewAccountFinish
 
-- (instancetype)initWithState:(SessionState*)state {
+- (instancetype)init {
     self = [super init];
     
-    _sessionState = state;
+    sessionState = [[SessionState alloc] init];
     return self;
 }
 
 - (NSDictionary*)restPacket {
 
     NSMutableDictionary *packet = [[NSMutableDictionary alloc] init];
-    [packet setObject:[NSString stringWithFormat:@"%d", _sessionState.sessionId]
+    [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
                forKey:@"sessionId"];
 
     CKRSACodec *codec = [[CKRSACodec alloc] init];
-    [codec putBlock:_sessionState.genpass];
-    [codec putBlock:_sessionState.enclaveKey];
-    [codec putBlock:_sessionState.svpswSalt];
-    NSData *data = [codec encrypt:_sessionState.serverPublicKey];
+    [codec putBlock:sessionState.genpass];
+    [codec putBlock:sessionState.enclaveKey];
+    [codec putBlock:sessionState.svpswSalt];
+    NSData *data = [codec encrypt:sessionState.serverPublicKey];
     packet[@"data"] = [data base64EncodedStringWithOptions:0];
 #if TARGET_OS_SIMULATOR
     packet[@"deviceToken"] = @"c2ltdWxhdG9y";      // "simulator"

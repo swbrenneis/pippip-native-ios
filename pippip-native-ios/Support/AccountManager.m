@@ -8,17 +8,12 @@
 
 #import "AccountManager.h"
 #import "AccountConfig.h"
-//#import "ParameterGenerator.h"
-//#import "NSData+HexEncode.h"
-//#import "CKSHA1.h"
 #import <Realm/Realm.h>
 
 static const float CURRENT_VERSION = 1.0;
 
 @interface AccountManager ()
 {
-    NSMutableArray *accountNames;
-    NSMutableArray *whitelist;
 }
 
 @end
@@ -32,12 +27,16 @@ static const float CURRENT_VERSION = 1.0;
     NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
     NSArray *vaultNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:vaultsPath
                                                                               error:nil];
-    accountNames = [vaultNames mutableCopy];
+    NSMutableArray *accountNames = [vaultNames mutableCopy];
+#if TARGET_OS_SIMULATOR
     if (accountNames.count > 0) {
         [accountNames removeObject:@".DS_Store"];
     }
+#endif
     if (accountNames.count > 0) {
-        return [accountNames firstObject];
+        NSString *accountName = [accountNames firstObject];
+        [self loadConfig:accountName];
+        return accountName;
     }
     else {
         return @"";
@@ -50,10 +49,8 @@ static const float CURRENT_VERSION = 1.0;
     [self setRealmConfiguration:accountName];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"accountName = %@", accountName];
     RLMResults<AccountConfig*> *configList = [AccountConfig objectsWithPredicate:predicate];
-    if (configList.count == 0) {
-        [self setDefaultConfig:accountName];
-    }
-    else {  // This is where we do version migrations
+    if (configList.count > 0) {
+        // This is where we do version migrations
         AccountConfig *config = [configList firstObject];
         if (config.version < 1.0) {
             RLMRealm *realm = [RLMRealm defaultRealm];
@@ -68,6 +65,7 @@ static const float CURRENT_VERSION = 1.0;
 
 - (void)setDefaultConfig:(NSString*)accountName {
 
+    [self setRealmConfiguration:accountName];
     AccountConfig *config = [[AccountConfig alloc] init];
     config.version = 1.0;
     config.accountName = accountName;

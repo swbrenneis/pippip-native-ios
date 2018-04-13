@@ -74,10 +74,10 @@ class NewContactSelector: ExpandingTableSelectorProtocol {
                                         self.nickname = alert.textFields[0].text ?? ""
                                         self.publicId = alert.textFields[1].text ?? ""
                                         if self.nickname.utf8.count > 0 {
-                                            self.contactManager.matchNickname(self.nickname, withPublicId: nil)
+                                            self.contactManager.matchNickname(nickname: self.nickname, publicId: nil)
                                         }
                                         else if self.publicId.utf8.count > 0 {
-                                            self.contactManager.requestContact(self.publicId, withNickname: nil)
+                                            self.contactManager.requestContact(publicId: self.publicId, nickname: nil)
                                         }
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
@@ -120,7 +120,7 @@ class NewContactSelector: ExpandingTableSelectorProtocol {
         if let puid = info["publicId"] as? String {
             publicId = puid
             nickname = info["nickname"] as? String ?? ""
-            contactManager.requestContact(publicId, withNickname: nickname)
+            contactManager.requestContact(publicId: publicId, nickname: nickname)
         }
         else {
             DispatchQueue.main.async {

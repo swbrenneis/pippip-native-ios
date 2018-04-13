@@ -31,6 +31,8 @@
     sessionConfig = [NSURLSessionConfiguration ephemeralSessionConfiguration];
     urlSession = [NSURLSession sessionWithConfiguration:sessionConfig];
     processes = [NSMutableArray array];
+    postLock = [[NSLock alloc] init];
+
     return self;
 
 }
@@ -63,7 +65,7 @@
                     [self postFailed:message];
                 }
                 else {
-                    [currentProcess postComplete:responseJson];
+                    [self->currentProcess postComplete:responseJson];
                 }
             }
         }

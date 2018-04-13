@@ -32,7 +32,6 @@ class SelectContactView: UIView {
     
     func commonInit() {
 
-        contactManager.loadContactList()
         Bundle.main.loadNibNamed("SelectContactView", owner: self, options: nil)
         addSubview(contentView)
         contentView.frame = self.bounds
@@ -50,18 +49,12 @@ class SelectContactView: UIView {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        //searchText.becomeFirstResponder()
-        //tableView.delegate = self
-        //tableView.dataSource = self
-        //tableView.register(ContactTableViewCell.self, forCellReuseIdentifier: "ContactTableViewCell")
-        ///selectButton.isEnabled = false
-
     }
 
     @IBAction func selectContact(_ sender: Any) {
 
         if selected != nil {
-            AsyncNotifier.notify(name: Notifications.ContactSelected, object: selected)
+            AsyncNotifier.notify(name: Notifications.ContactSelected, object: selected!)
             self.removeFromSuperview()
         }
 
@@ -73,14 +66,15 @@ class SelectContactView: UIView {
         let partial = searchText.text!
         let fragment = partial.uppercased()
         let newLength = partial.utf8.count
+
+        var newList = [Contact]()
         if partial.utf8.count == 0 {
             contactList.removeAll()
         }
         else if newLength == 1 || newLength < lastPartialLength {
-            contactList = contactManager.searchContacts(fragment)
+            newList.append(contentsOf: contactManager.searchContacts(fragment))
         }
         else {
-            var newList = [Contact]()
             for contact in contactList {
                 let publicId = contact.publicId.uppercased()
                 if publicId.contains(fragment) {
@@ -92,7 +86,12 @@ class SelectContactView: UIView {
                     }
                 }
             }
-            contactList = newList
+        }
+        contactList.removeAll()
+        for contact in newList {
+            if contact.status == "accepted" {
+                contactList.append(contact)
+            }
         }
         lastPartialLength = newLength
         tableView.reloadData()

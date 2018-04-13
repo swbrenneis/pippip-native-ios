@@ -9,10 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "RESTResponse.h"
 
-@class SessionState;
-
 @interface ServerAuthChallenge : NSObject<RESTResponse>
-
-- (instancetype)initWithState:(SessionState*)state;
 
 @end

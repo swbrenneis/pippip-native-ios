@@ -11,28 +11,26 @@
 
 @interface Logout ()
 {
-    
+    SessionState *sessionState;
 }
-
-@property (weak, nonatomic) SessionState *sessionState;
 
 @end
 
 @implementation Logout
 
-- (instancetype)initWithState:(SessionState*)state {
+- (instancetype)init {
     self = [super init];
     
-    _sessionState = state;
+    sessionState = [[SessionState alloc] init];
     return self;
 }
 
 - (NSDictionary*)restPacket {
     
     NSMutableDictionary *packet = [[NSMutableDictionary alloc] init];
-    [packet setObject:[NSString stringWithFormat:@"%d", _sessionState.sessionId]
+    [packet setObject:[NSString stringWithFormat:@"%d", sessionState.sessionId]
                forKey:@"sessionId"];
-    [packet setObject:[NSString stringWithFormat:@"%lld", _sessionState.authToken]
+    [packet setObject:[NSString stringWithFormat:@"%lld", sessionState.authToken]
                forKey:@"authToken"];
 
     return packet;

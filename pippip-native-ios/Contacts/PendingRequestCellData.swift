@@ -63,15 +63,15 @@ class PendingRequestSelector: ExpandingTableSelectorProtocol {
                                       style: PMAlertControllerStyle.alert)
         alert.addAction(PMAlertAction(title: "Accept",
                                       style: .default, action: { () in
-                                        self.contactManager.acknowledgeRequest("accept", withId: self.publicId, withNickname: self.nickname)
+                                        self.contactManager.acknowledgeRequest(response: "accept", publicId: self.publicId, nickname: self.nickname)
         }))
         alert.addAction(PMAlertAction(title: "Reject",
                                       style: .default, action: { () in
-                                        self.contactManager.acknowledgeRequest("reject", withId: self.publicId, withNickname: self.nickname)
+                                        self.contactManager.acknowledgeRequest(response: "reject", publicId: self.publicId, nickname: self.nickname)
         }))
         alert.addAction(PMAlertAction(title: "Delete",
                                       style: .default, action: { () in
-                                        self.contactManager.acknowledgeRequest("ignore", withId: self.publicId, withNickname: self.nickname)
+                                        self.contactManager.acknowledgeRequest(response: "ignore", publicId: self.publicId, nickname: self.nickname)
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         viewController?.present(alert, animated: true, completion: nil)
@@ -88,7 +88,8 @@ class PendingRequestSelector: ExpandingTableSelectorProtocol {
                     self.viewController!.contactsModel.clear(0, tableView: self.viewController!.tableView)
                 }
                 else {
-                    let cells = self.viewController!.contactsModel.getCells(section: 0, row: 1, count: 0)
+                    // count = 0 means return all cells from row to end of second
+                    let cells = self.viewController!.contactsModel.getCells(section: 0, row: 0, count: 0)
                     var item = 1
                     for cell in cells {
                         let requestCellData = cell as!PendingRequestCellData
@@ -108,12 +109,17 @@ class PendingRequestSelector: ExpandingTableSelectorProtocol {
                     }
                 }
             }
- 
-            self.viewController!.contactsModel.clear(1, tableView: self.viewController!.tableView)
+
+            let contactCell =
+                self.viewController!.tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
             let contactList = self.contactManager.getContactList()
-            self.viewController!.contactsModel.setContacts(contactList, viewController: self.viewController!)
-            let paths = self.viewController!.contactsModel.insertPaths
-            self.viewController!.tableView.insertRows(at: paths, with: .bottom)
+            let contact = contactList.last!
+            contactCell.identLabel.text = contact.displayName
+            let cellData = ContactCellData(contactCell: contactCell, contact: contact,
+                                           viewController: self.viewController!)
+            self.viewController!.contactsModel.appendCell(cellData, section: 1)
+            self.viewController!.tableView.insertRows(at: self.viewController!.contactsModel.insertPaths,
+                                                      with: .bottom)
         }
 
     }

@@ -10,10 +10,23 @@ import UIKit
 
 class ConversationMessageData: MessageData {
 
-    var message: TextMessage
-    
-    init(_ message: TextMessage) {
+    var message: TextMessage?
+    var publicId: String
+    var displayName: String
+
+    init() {
+
+        publicId = ""
+        displayName = ""
+
+    }
+
+    init(_ message: TextMessage, contact: Contact) {
+
         self.message = message
+        publicId = contact.publicId
+        displayName = contact.displayName
+
     }
 
     func contentType() -> MessageDataContentType {
@@ -22,7 +35,7 @@ class ConversationMessageData: MessageData {
     
     func content() -> String {
 
-        if let cleartext = message.cleartext {
+        if let cleartext = message?.cleartext {
             return cleartext
         }
         else {
@@ -33,28 +46,27 @@ class ConversationMessageData: MessageData {
     
     func date() -> Date {
 
-        let tsDouble = Double(message.timestamp)
-        return Date(timeIntervalSince1970: tsDouble / 1000)
+        if let timestamp = message?.timestamp {
+            return Date(timeIntervalSince1970: Double(timestamp) / 1000.0)
+        }
+        else {
+            return Date()
+        }
 
     }
     
     func senderID() -> String {
-        return message.publicId
+        return publicId
     }
     
     func senderDisplayName() -> String {
 
-        if let nickname = message.nickname {
-            return nickname
-        }
-        else {
-            return message.publicId
-        }
+        return displayName
 
     }
     
     func senderAvatarURL() -> URL {
-
+        // This doesn't work
         let path = Bundle.main.path(forResource: "user", ofType: "png")
         return URL(fileURLWithPath: path!)
 
