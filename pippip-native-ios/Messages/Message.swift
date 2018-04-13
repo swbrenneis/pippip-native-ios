@@ -57,7 +57,7 @@ import UIKit
 
     }
 
-    init(dbMessage: DatabaseMessage) {
+    @objc init(dbMessage: DatabaseMessage) {
 
         acknowledged = dbMessage.acknowledged
         ciphertext = dbMessage.message
