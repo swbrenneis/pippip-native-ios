@@ -12,6 +12,7 @@
 static NSString *APP_SUSPENDED = @"AppSuspended";
 static NSString *APP_RESUMED = @"AppResumed";
 static NSString *NEW_SESSION = @"NewSession";
+static NSString *SESSION_ENDED = @"SessionEnded";
 static NSString *AUTHENTICATED = @"Authenticated";
 static NSString *UPDATE_PROGRESS = @"UpdateProgress";
 static NSString *NICKNAME_MATCHED = @"NicknameMatched";
@@ -20,14 +21,17 @@ static NSString *FRIEND_ADDED = @"FriendAdded";
 static NSString *FRIEND_DELETED = @"FriendDeleted";
 static NSString *CONVERSATION_LOADED = @"ConversationLoaded";
 static NSString *MESSAGES_UPDATED = @"MessagesUpdated";
-static NSString *CONTACTS_UPDATED = @"ContactsUpdated";
+static NSString *PENDING_CONTACTS_UPDATED = @"PendingContactsUpdated";
 static NSString *PRESENT_ALERT = @"PresentAlert";
 static NSString *POLICY_UPDATED = @"PolicyUpdated";
 static NSString *POLICY_CHANGED = @"PolicyChanged";
 static NSString *CONTACT_DELETED = @"ContactDeleted";
+static NSString *ACCOUNT_DELETED = @"AccountDeleted";
 static NSString *CONTACT_REQUESTED = @"ContactRequested";
 static NSString *CONTACTS_SYNCRHONIZED = @"ContactsSynchronized";
 static NSString *REQUESTS_UPDATED = @"RequestsUpdated";
 static NSString *REQUEST_ACKNOWLEDGED = @"RequestsAcknowledged";
+static NSString *CLEARTEXT_AVAILABLE = @"CleartextAvailable";
+static NSString *NEW_MESSAGES = @"NewMessages";
 
 #endif /* Notifications_h */

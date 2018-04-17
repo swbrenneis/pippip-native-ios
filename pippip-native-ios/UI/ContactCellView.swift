@@ -13,7 +13,7 @@ class ContactCellView: UIView {
     @IBOutlet var contentView: ContactCellView!
     @IBOutlet weak var nicknameLabel: UILabel!
     @IBOutlet weak var publicIdLabel: UILabel!
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
@@ -30,6 +30,8 @@ class ContactCellView: UIView {
         addSubview(contentView)
         contentView.frame = self.bounds
         contentView.autoresizingMask = [ .flexibleWidth, .flexibleHeight ]
+        contentView.backgroundColor = UIColor.clear
+        self.backgroundColor = UIColor.clear
 
     }
 

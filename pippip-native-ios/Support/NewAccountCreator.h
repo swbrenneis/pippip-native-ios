@@ -7,9 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "RequestProcess.h"
 
-@interface NewAccountCreator : NSObject <RequestProcess>
+@interface NewAccountCreator : NSObject <RequestProcessProtocol>
 
 - (void) createAccount:(NSString*)accountName withPassphrase:(NSString*)passphrase;
 

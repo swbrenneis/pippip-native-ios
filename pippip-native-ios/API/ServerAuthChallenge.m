@@ -6,8 +6,8 @@
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
-#import "ServerAuthChallenge.h"
 #import "pippip_native_ios-Swift.h"
+#import "ServerAuthChallenge.h"
 #import "CKHMAC.h"
 #import "CKSignature.h"
 #import "CKSHA256.h"
@@ -23,10 +23,10 @@
 
 @implementation ServerAuthChallenge
 
-- (instancetype)initWithState:(SessionState *)state {
+- (instancetype)init {
     self = [super init];
     
-    sessionState = state;
+    sessionState = [[SessionState alloc] init];
     return self;
     
 }

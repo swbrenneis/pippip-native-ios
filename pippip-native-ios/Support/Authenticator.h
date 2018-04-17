@@ -6,16 +6,16 @@
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "RequestProcess.h"
-#import "RESTSession.h"
+#import <Foundation/Foundation.h>
 
-@interface Authenticator : NSObject <RequestProcess>
+@interface Authenticator : NSObject <RequestProcessProtocol>
+
+- (instancetype)initForLogout;
+
+- (void)logout;
 
 - (void)authenticate:(NSString*)accountName withPassphrase:(NSString*)passphrase;
 
 - (void)localAuthenticate:(NSString*)accountName withPassphrase:(NSString*)passphrase;
-
-- (void)logout;
 
 @end

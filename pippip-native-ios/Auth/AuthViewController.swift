@@ -16,30 +16,14 @@ import LocalAuthentication
 
     @IBOutlet weak var authButton: UIButton!
 
-    @objc var suspended: Bool
-    var accountName: String
-
-    init() {
-        suspended = false
-        accountName = ""
-        super.init(nibName:"AuthViewController", bundle: nil)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        suspended = false
-        accountName = ""
-        super.init(coder: aDecoder)
-    }
+    @objc var suspended = false
+    var accountName: String?
+    var sessionState = SessionState()
+    var accountManager = AccountManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
-/*        NotificationCenter.default.addObserver(self, selector: #selector(authenticated(_:)),
-                                               name: Notifications.Authenticated, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(updateProgress(_:)),
-                                               name: Notifications.UpdateProgress, object: nil) */
- 
         let backgroundColor = UIColor.flatPink
         self.view.backgroundColor = backgroundColor
         authButton.titleLabel?.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
@@ -47,9 +31,11 @@ import LocalAuthentication
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        
-        accountName = ApplicationSingleton.instance().accountManager.loadAccount()
-        if (accountName.utf8.count > 0) {
+
+        if accountName == nil {
+            accountName = accountManager.loadAccount()
+        }
+        if (accountName!.utf8.count > 0) {
             authButton.setTitle("Sign In", for: .normal)
         }
         else {
@@ -70,8 +56,8 @@ import LocalAuthentication
         
         if (suspended) {
             let laContext = LAContext()
-            let authError: NSErrorPointer = nil
-            if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: authError)) {
+            var authError: NSError? = nil
+            if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)) {
                 laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
                                          localizedReason: "Please provide your thumbprint to open Pippip", reply: { (success : Bool, error : Error? ) -> Void in
                                             if (success) {
@@ -97,7 +83,7 @@ import LocalAuthentication
 
     @IBAction func authClicked(_ sender: Any) {
 
-        if accountName.utf8.count > 0 {
+        if accountName!.utf8.count > 0 {
             doAuthenticateAlerts()
         }
         else {
@@ -107,7 +93,7 @@ import LocalAuthentication
 
     func doAuthenticateAlerts() {
 
-        let alert = PMAlertController(title: accountName,
+        let alert = PMAlertController(title: accountName!,
                                       description: "Enter your passphrase",
                                       image: nil,
                                       style: PMAlertControllerStyle.alert)
@@ -116,8 +102,9 @@ import LocalAuthentication
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
-            textField?.returnKeyType = .go
-            textField?.delegate = self
+            textField?.becomeFirstResponder()
+            //textField?.returnKeyType = .go
+            //textField?.delegate = self
         })
         alert.addAction(PMAlertAction(title: "Sign In",
                                       style: .default, action: { () in
@@ -140,22 +127,22 @@ import LocalAuthentication
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
-            textField?.returnKeyType = .go
-            textField?.delegate = self
+            //textField?.returnKeyType = .go
+            //textField?.delegate = self
         })
         alert.addTextField({ (textField) in
             textField?.placeholder = "Passphrase"
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
-            textField?.returnKeyType = .go
-            textField?.delegate = self
+            //textField?.returnKeyType = .go
+            //textField?.delegate = self
         })
         alert.addAction(PMAlertAction(title: "Create Account",
                                       style: .default, action: { () in
                                         self.accountName = alert.textFields[0].text ?? ""
                                         let passphrase = alert.textFields[1].text ?? ""
-                                        if self.accountName.utf8.count == 0 {
+                                        if self.accountName!.utf8.count == 0 {
                                             let alertColor = UIColor.flatSand
                                             RKDropdownAlert.title("Invalid Account Name",
                                                                   message: "Empty account names are not permitted", backgroundColor: alertColor,
@@ -223,12 +210,10 @@ import LocalAuthentication
 
         NotificationCenter.default.removeObserver(self, name: Notifications.Authenticated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.UpdateProgress, object: nil)
-        let sessionState = notification.object as! SessionState
-        sessionState.authenticated(true)
         DispatchQueue.main.async {
             MBProgressHUD.hide(for: self.view, animated: true)
             if (!self.suspended) {
-                NotificationCenter.default.post(name: Notifications.NewSession, object: sessionState)
+                NotificationCenter.default.post(name: Notifications.NewSession, object: nil)
             }
             self.dismiss(animated: true, completion: nil)
         }
@@ -259,7 +244,7 @@ import LocalAuthentication
         }
 
     }
-
+/*
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 
         if (accountName.utf8.count > 0) {
@@ -271,7 +256,7 @@ import LocalAuthentication
         return true
 
     }
-
+*/
     func dropdownAlertWasTapped(_ alert: RKDropdownAlert!) -> Bool {
         return true
     }

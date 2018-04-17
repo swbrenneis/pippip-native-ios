@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2A81CACAEDA4B94D7B57B83AAAB41649"
+               BlueprintIdentifier = "B83F7FE1048C24BDF04D818D4404E4FC"
                BuildableName = "Pods_pippip_native_ios.framework"
                BlueprintName = "Pods-pippip-native-ios"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -26,7 +26,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
@@ -37,7 +36,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -47,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "2A81CACAEDA4B94D7B57B83AAAB41649"
+            BlueprintIdentifier = "B83F7FE1048C24BDF04D818D4404E4FC"
             BuildableName = "Pods_pippip_native_ios.framework"
             BlueprintName = "Pods-pippip-native-ios"
             ReferencedContainer = "container:Pods.xcodeproj">

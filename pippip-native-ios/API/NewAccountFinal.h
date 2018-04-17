@@ -9,10 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "RESTResponse.h"
 
-@class SessionState;
-
 @interface NewAccountFinal : NSObject <RESTResponse>
-
-- (instancetype)initWithState:(SessionState*)state;
 
 @end

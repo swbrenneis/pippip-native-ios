@@ -12,7 +12,7 @@ import UIKit
 
     private var info: [AnyHashable: Any]
 
-    @objc init(title: String) {
+    @objc init(_ title: String) {
 
         info = [ "title" : title ]
 

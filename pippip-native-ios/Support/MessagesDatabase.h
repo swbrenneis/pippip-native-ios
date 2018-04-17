@@ -9,35 +9,36 @@
 #import <Foundation/Foundation.h>
 
 @class TextMessage;
+@class Message;
 
 @interface MessagesDatabase : NSObject
 
-// - (void)acknowledgeMessage:(NSInteger)messageId;
+- (void)addTextMessage:(TextMessage*_Nonnull)message;
 
-//- (NSInteger)addMessage:(NSDictionary*)message;
+- (void)addTextMessages:(NSArray<TextMessage*>*_Nonnull)messages;
 
-- (void)decryptAll;
+- (NSArray<NSNumber*>*_Nonnull)allMessageIds;
 
-//- (NSString*)decryptMessage:(NSDictionary*)message;
+- (NSArray<TextMessage*>*_Nonnull)allTextMessages;
 
-//- (void)deleteAllMessages:(NSString*)publicId;
+- (void)deleteAllMessages:(NSInteger)contactId;
 
-//- (void)deleteMessage:(NSInteger)messageId;
+- (void)deleteAllMessages;
 
-- (TextMessage*)loadMessage:(NSInteger)messageId;   // Returns a raw, encrypted message
+- (void)deleteMessage:(NSInteger)messageId;
 
-//- (NSMutableDictionary*)loadMessage:(NSInteger)messageId withPublicId:(NSString*)publicId;
+// Returns a raw, encrypted, generic message. Do not downcast.
+- (Message*_Nonnull)getMessage:(NSInteger)messageId;
 
-- (NSArray*)loadMessageIds:(NSInteger)contactId;
+   // Returns a raw, encrypted text message
+- (TextMessage*_Nonnull)getTextMessage:(NSInteger)messageId;
 
-//- (void)markMessageRead:(NSInteger)messageId;
+- (NSArray<TextMessage*>*_Nonnull)getTextMessages:(NSInteger)contactId;
 
-- (TextMessage*)mostRecentMessage:(NSInteger)contactId;
+- (TextMessage*_Nullable)mostRecentTextMessage:(NSInteger)contactId;
 
-- (NSArray*)pendingMessageInfo;
+- (void)updateMessage:(Message*_Nonnull)message;
 
-- (void)scrubCleartext;
-
-//- (NSArray*)unreadMessageIds:(NSString*)publicId;
+- (void)updateTextMessage:(TextMessage*_Nonnull)message;
 
 @end

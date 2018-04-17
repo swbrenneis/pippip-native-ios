@@ -8,17 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-@class SessionState;
-
 @interface Configurator : NSObject
 
 @property (nonatomic) NSArray<NSDictionary*> *whitelist;
 
-- (void)addContactId:(NSInteger)contactId withPublicId:(NSString*)publicId;
-
 - (BOOL)addWhitelistEntry:(NSDictionary*)entity;
 
-- (NSArray*)allContactIds;
+- (NSArray<NSNumber*>*)allContactIds;
 
 - (void)deleteContactId:(NSString*)publicId;
 
@@ -30,13 +26,11 @@
 
 - (NSString*)getContactPolicy;
 
-- (NSInteger)getNextMessageSequence;
-
 - (NSString*)getNickname;
 
 - (void)loadWhitelist;
 
-- (NSInteger)newContactId;
+- (NSInteger)newContactId:(NSString*)publicId;
 
 - (NSInteger)newMessageId;
 

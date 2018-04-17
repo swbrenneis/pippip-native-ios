@@ -6,16 +6,14 @@
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
-#import "MoreTableViewController.h"
 #import "pippip_native_ios-Swift.h"
+#import "MoreTableViewController.h"
 #import "ApplicationSingleton.h"
-#import "ContactPolicyCell.h"
-#import "CleartextMessagesCell.h"
 #import "NicknameCell.h"
-#import "LocalPasswordCell.h"
 #import "Authenticator.h"
 #import "Notifications.h"
 #import "MoreCellItem.h"
+#import "Configurator.h"
 #import "RKDropdownAlert.h"
 #import "Chameleon.h"
 
@@ -29,9 +27,8 @@ static const NSInteger EDIT_INDEX = 4;
     MoreCellItem *deleteItem;
     UIView *headingView;
     NicknameCell *nicknameCell;
+    Configurator *config;
 }
-
-@property (weak, nonatomic) SessionState *sessionState;
 
 @end
 
@@ -40,18 +37,15 @@ static const NSInteger EDIT_INDEX = 4;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    _sessionState = [ApplicationSingleton instance].accountSession.sessionState;
     authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
     suspended = NO;
     cellItems = [NSMutableArray array];
     deleteItem = [DeleteAccountCell cellItem];
     nicknameCell = [self.tableView dequeueReusableCellWithIdentifier:@"NicknameCell"];
+    config = [[Configurator alloc] init];
 
     headingView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width, 40.0)];
     headingView.backgroundColor = [UIColor colorNamed:@"Pale Gray"];
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(newSession:)
-                                               name:NEW_SESSION object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(appResumed:)
                                                name:APP_RESUMED object:nil];
@@ -63,7 +57,7 @@ static const NSInteger EDIT_INDEX = 4;
                                                name:POLICY_CHANGED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(accountDeleted:)
-                                               name:@"AccountDeleted" object:nil];
+                                               name:ACCOUNT_DELETED object:nil];
 
 }
 
@@ -73,6 +67,7 @@ static const NSInteger EDIT_INDEX = 4;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
 
     [cellItems addObject:[PublicIdCell cellItem]];
     MoreCellItem *nicknameItem = [NicknameCell cellItem];
@@ -82,7 +77,7 @@ static const NSInteger EDIT_INDEX = 4;
     [cellItems addObject:[CleartextMessagesCell cellItem]];
     [cellItems addObject:[ContactPolicyCell cellItem]];
     
-    NSString *policy = [[ApplicationSingleton instance].config getContactPolicy];
+    NSString *policy = [config getContactPolicy];
     if ([policy isEqualToString:@"whitelist"]) {
         [cellItems addObject:[EditWhitelistCell cellItem]];
     }
@@ -90,9 +85,6 @@ static const NSInteger EDIT_INDEX = 4;
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(presentAlert:)
                                                name:PRESENT_ALERT object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:nicknameCell
-                                           selector:@selector(newSession:)
-                                               name:NEW_SESSION object:nil];
     [NSNotificationCenter.defaultCenter addObserver:nicknameCell
                                            selector:@selector(nicknameUpdated:)
                                                name:NICKNAME_UPDATED object:nil];
@@ -103,9 +95,9 @@ static const NSInteger EDIT_INDEX = 4;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:PRESENT_ALERT object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:nicknameCell name:NEW_SESSION object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:nicknameCell name:NICKNAME_MATCHED object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:nicknameCell name:NICKNAME_UPDATED object:nil];
 
@@ -129,12 +121,12 @@ static const NSInteger EDIT_INDEX = 4;
             authView.suspended = YES;
         }
         else {
-            Authenticator *auth = [[Authenticator alloc] init];
+            Authenticator *auth = [[Authenticator alloc] initForLogout];
             [auth logout];
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             if (self.view.window != nil) {
-                [self presentViewController:authView animated:YES completion:nil];
+                [self presentViewController:self->authView animated:YES completion:nil];
             }
         });
     }
@@ -180,12 +172,6 @@ static const NSInteger EDIT_INDEX = 4;
         [RKDropdownAlert title:title message: message backgroundColor:alertColor
                      textColor:ContrastColor(alertColor, true) time:2 delegate:nil];
     });
-
-}
-
-- (void)newSession:(NSNotification*)notification {
-
-    _sessionState = (SessionState*)notification.object;
 
 }
 

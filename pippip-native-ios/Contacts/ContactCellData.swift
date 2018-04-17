@@ -14,17 +14,45 @@ class ContactCellData: CellDataProtocol {
     var cellHeight: CGFloat
     var selector: ExpandingTableSelectorProtocol
     var userData: [String : Any]?
+    var contact: Contact
     
     init(contactCell: ContactCell, contact: Contact, viewController: ContactsViewController) {
-        
+
+        self.contact = contact
         cell = contactCell
         cellHeight = ContactCell.cellHeight
         let contactSelector = ContactCellSelector(contact, viewController: viewController)
         contactSelector.contactCell = contactCell
         selector = contactSelector
-        
+
+        NotificationCenter.default.addObserver(self, selector: #selector(pendingContactsUpdated(_:)),
+                                               name: Notifications.PendingContactsUpdated, object: nil)
+
     }
-    
+
+    deinit {
+
+        NotificationCenter.default.removeObserver(self, name: Notifications.PendingContactsUpdated,
+                                                  object: nil)
+
+    }
+
+    @objc func pendingContactsUpdated(_ notification: Notification) {
+
+        if let contacts = notification.object as? [Contact] {
+            let contactCell = cell as! ContactCell
+            for updated in contacts {
+                if updated.publicId == contact.publicId {
+                    DispatchQueue.main.async {
+                        contactCell.statusImageView.image = UIImage.init(named: updated.status)
+                    }
+                    contact = updated
+                }
+            }
+        }
+
+    }
+
 }
 
 class ContactCellSelector: ExpandingTableSelectorProtocol {

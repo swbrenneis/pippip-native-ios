@@ -20,9 +20,8 @@ static NSLock *idLock = nil;
     NSMutableArray *privateWhitelist;
     NSMutableDictionary<NSString*, NSNumber*> *idMap;
     NSMutableDictionary *keyIndexes;
+    SessionState *sessionState;
 }
-
-@property (weak, nonatomic) SessionState *sessionState;
 
 @end
 
@@ -35,20 +34,9 @@ static NSLock *idLock = nil;
     _whitelist = privateWhitelist;
     idMap = [NSMutableDictionary dictionary];
     keyIndexes = [NSMutableDictionary dictionary];
+    sessionState = [[SessionState alloc] init];
 
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(newSession:) name:@"NewSession" object:nil];
-    
     return self;
-
-}
-
-- (void)addContactId:(NSInteger)contactId withPublicId:(NSString *)publicId {
-
-    NSInteger cid = [self getContactId:publicId];
-    if (cid == NSNotFound) {
-        idMap[publicId] = [NSNumber numberWithInteger:contactId];
-        [self encodeIdMap:[self getConfig]];
-    }
 
 }
 
@@ -71,7 +59,7 @@ static NSLock *idLock = nil;
 
 }
 
-- (NSArray*)allContactIds {
+- (NSArray<NSNumber*>*)allContactIds {
 
     if (idMap.count == 0) {
         [self decodeIdMap:[self getConfig]];
@@ -82,10 +70,12 @@ static NSLock *idLock = nil;
 
 - (void)decodeIdMap:(AccountConfig*)config {
 
+//    idMap[@"b555352bdb5721a9aba9b078dbf709fd857ca34b"]= [NSNumber numberWithInteger:14];
+//    [self encodeIdMap:config];
     if (config.idMap != nil) {
         CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:config.idMap];
         NSError *error = nil;
-        [codec decrypt:_sessionState.contactsKey withAuthData:_sessionState.authData withError:&error];
+        [codec decrypt:sessionState.contactsKey withAuthData:sessionState.authData withError:&error];
         if (error == nil) {
             NSInteger count = [codec getInt];
             while (idMap.count < count) {
@@ -105,7 +95,7 @@ static NSLock *idLock = nil;
     if (config.whitelist != nil) {
         CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:config.whitelist];
         NSError *error = nil;
-        [codec decrypt:_sessionState.contactsKey withAuthData:_sessionState.authData withError:&error];
+        [codec decrypt:sessionState.contactsKey withAuthData:sessionState.authData withError:&error];
         if (error == nil) {
             NSInteger count = [codec getInt];
             while (privateWhitelist.count < count) {
@@ -162,8 +152,8 @@ static NSLock *idLock = nil;
             [codec putInt:[cid integerValue]];
         }
         NSError *error = nil;
-        NSData *encoded = [codec encrypt:_sessionState.contactsKey
-                            withAuthData:_sessionState.authData
+        NSData *encoded = [codec encrypt:sessionState.contactsKey
+                            withAuthData:sessionState.authData
                                withError:&error];
         if (error == nil) {
             [realm beginWriteTransaction];
@@ -198,8 +188,8 @@ static NSLock *idLock = nil;
             [codec putString:publicId];
         }
         NSError *error = nil;
-        NSData *encoded = [codec encrypt:_sessionState.contactsKey
-                            withAuthData:_sessionState.authData
+        NSData *encoded = [codec encrypt:sessionState.contactsKey
+                            withAuthData:sessionState.authData
                                withError:&error];
         if (error == nil) {
             [realm beginWriteTransaction];
@@ -225,7 +215,7 @@ static NSLock *idLock = nil;
 
 - (AccountConfig*)getConfig {
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"accountName = %@", _sessionState.currentAccount];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"accountName = %@", sessionState.accountName];
     RLMResults<AccountConfig*> *configResults = [AccountConfig objectsWithPredicate:predicate];
     // NSLog(@"Config results count = %ld", configResults.count);
     return [configResults firstObject];
@@ -235,7 +225,8 @@ static NSLock *idLock = nil;
 - (NSInteger)getContactId:(NSString *)publicId {
 
     if (idMap.count == 0) {
-        [self decodeIdMap:[self getConfig]];
+        AccountConfig *config = [self getConfig];
+        [self decodeIdMap:config];
     }
     NSNumber *cid = idMap[publicId];
     if (cid != nil) {
@@ -285,20 +276,24 @@ static NSLock *idLock = nil;
 
 }
 
-- (NSInteger)newContactId {
+- (NSInteger)newContactId:(NSString*)publicId {
 
     AccountConfig *config = [self getConfig];
     [idLock lock];
     NSInteger contactId = config.contactId;
-    
+
     RLMRealm *realm = [RLMRealm defaultRealm];
     [realm beginWriteTransaction];
     config.contactId = contactId + 1;
     [realm commitWriteTransaction];
+
+    idMap[publicId] = [NSNumber numberWithInteger:contactId];
+    [self encodeIdMap:config];
+
     [idLock unlock];
-    
+
     return contactId;
-    
+
 }
 
 - (NSInteger)newMessageId {
@@ -314,14 +309,6 @@ static NSLock *idLock = nil;
     [idLock unlock];
 
     return messageId;
-    
-}
-
-- (void)newSession:(NSNotification*)notification {
-    
-    _sessionState = (SessionState*)notification.object;
-    [idMap removeAllObjects];
-    [privateWhitelist removeAllObjects];
     
 }
 

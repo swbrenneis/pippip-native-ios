@@ -16,11 +16,12 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
     @IBOutlet weak var tableView: ExpandingTableView!
     @IBOutlet weak var tableBottom: NSLayoutConstraint!
     
-    var config: Configurator = ApplicationSingleton.instance().config
+    var config = Configurator()
     var tableModel: WhitelistTableModel?
     var nickname = ""
     var publicId = ""
     var contactManager = ContactManager()
+    var sessionState = SessionState()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,18 +40,12 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         tableModel!.setFriends(whitelist: config.whitelist, tableView: tableView)
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
                                                name: Notifications.PresentAlert, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(nicknameMatched(_:)),
-                                               name: Notifications.NicknameMatched, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(friendAdded(_:)),
-                                               name: Notifications.FriendAdded, object: nil)
 
     }
 
     override func viewWillDisappear(_ animated: Bool) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.FriendAdded, object: nil)
 
     }
 
@@ -59,8 +54,40 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         // Dispose of any resources that can be recreated.
     }
 
+    func checkSelfAdd(nickname: String?, publicId: String?) -> Bool {
+        
+        let alertColor = UIColor.flatSand
+        if let nick = nickname {
+            let myNick = config.getNickname()
+            if myNick == nick {
+                RKDropdownAlert.title("Add Friend Error", message: "You can't add yourself",
+                                      backgroundColor: alertColor,
+                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                      time: 2, delegate: nil)
+                return true
+            }
+        }
+        if let puid = publicId {
+            let myId = sessionState.publicId
+            if myId == puid {
+                RKDropdownAlert.title("Add Friend Error", message: "You can't add yourself",
+                                      backgroundColor: alertColor,
+                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                      time: 2, delegate: nil)
+                return true
+            }
+        }
+        return false
+        
+    }
+    
     @IBAction func addFriend(_ sender: Any) {
 
+        NotificationCenter.default.addObserver(self, selector: #selector(friendAdded(_:)),
+                                               name: Notifications.FriendAdded, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(nicknameMatched(_:)),
+                                               name: Notifications.NicknameMatched, object: nil)
+        
         let alert = PMAlertController(title: "Add A New Friend",
                                       description: "Enter a nickname or public ID",
                                       image: nil,
@@ -79,16 +106,24 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
                                       style: .default, action: { () in
                                         self.nickname = alert.textFields[0].text ?? ""
                                         self.publicId = alert.textFields[1].text ?? ""
-                                        if self.nickname.utf8.count > 0 {
-                                            self.contactManager.matchNickname(self.nickname, withPublicId: nil)
-                                        }
-                                        else if self.publicId.utf8.count > 0 {
-                                            self.contactManager.addFriend(self.publicId)
+                                        if !self.checkSelfAdd(nickname: self.nickname, publicId: self.publicId) {
+                                            if self.nickname.utf8.count > 0 {
+                                                self.contactManager.matchNickname(nickname: self.nickname, publicId: nil)
+                                            }
+                                            else if self.publicId.utf8.count > 0 {
+                                                if !self.contactManager.addFriend(self.publicId) {
+                                                    let alertColor = UIColor.flatSand
+                                                    RKDropdownAlert.title("Add Friend Error", message: "You already added that friend",
+                                                                          backgroundColor: alertColor,
+                                                                          textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                                                          time: 2, delegate: nil)
+                                                }
+                                            }
                                         }
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true, completion: nil)
-
+        
     }
     
     @objc func presentAlert(_ notification: Notification) {
@@ -107,11 +142,13 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
 
     @objc func friendAdded(_ : Notification) {
 
+        NotificationCenter.default.removeObserver(self, name: Notifications.FriendAdded, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
+
         var entity = [ AnyHashable("publicId"): publicId ]
         if (nickname.utf8.count > 0) {
             entity[AnyHashable("nickname")] = nickname
         }
-        let config = ApplicationSingleton.instance().config!
         config.addWhitelistEntry(entity)
         DispatchQueue.main.async {
             let alertColor = UIColor.flatLime
@@ -127,10 +164,13 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
             model.appendCell(cellData, section: 0)
             self.tableView.insertRows(at: model.insertPaths, with: .left)
         }
+
     }
     
     @objc func nicknameMatched(_ notification: Notification) {
         
+        NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
+
         let info = notification.userInfo!
         let alertColor = UIColor.flatSand
         if let puid = info["publicId"] as? String {
@@ -152,7 +192,7 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
                                       time: 2, delegate: nil)
             }
         }
-        
+
     }
     
     func dropdownAlertWasTapped(_ alert: RKDropdownAlert!) -> Bool {

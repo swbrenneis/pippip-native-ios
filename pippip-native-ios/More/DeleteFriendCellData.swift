@@ -16,7 +16,7 @@ class DeleteFriendCellData: CellDataProtocol {
     var cellHeight: CGFloat
     var selector: ExpandingTableSelectorProtocol
     var userData: [String : Any]?
-    
+
     init(publicId: String, tableView: ExpandingTableView) {
         cell = tableView.dequeueReusableCell(withIdentifier: "DeleteFriendCell")!
         cellHeight = 50.0
@@ -27,7 +27,8 @@ class DeleteFriendCellData: CellDataProtocol {
 
 class DeleteFriendSelector: ExpandingTableSelectorProtocol {
 
-    var contactManager: ContactManager
+    var contactManager = ContactManager()
+    var config = Configurator()
     var publicId: String
     var tableView: ExpandingTableView
     var friendPath: IndexPath?
@@ -35,7 +36,6 @@ class DeleteFriendSelector: ExpandingTableSelectorProtocol {
     init(_ publicId: String, tableView: ExpandingTableView) {
 
         self.publicId = publicId
-        contactManager = ContactManager()
         self.tableView = tableView
 
     }
@@ -52,7 +52,7 @@ class DeleteFriendSelector: ExpandingTableSelectorProtocol {
     @objc func friendDeleted(_ : Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.FriendDeleted, object: nil)
-        ApplicationSingleton.instance().config.deleteWhitelistEntry(publicId)
+        config.deleteWhitelistEntry(publicId)
         DispatchQueue.main.async {
             let alertColor = UIColor.flatLime
             RKDropdownAlert.title("Friend Deleted", message: "This friend has been removed from your friends list",

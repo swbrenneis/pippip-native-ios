@@ -9,10 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "PostPacket.h"
 
-@class SessionState;
-
 @interface AuthenticationRequest : NSObject <PostPacket>
-
-- (instancetype)initWithState:(SessionState*)state;
 
 @end

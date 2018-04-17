@@ -6,11 +6,12 @@
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
-#import "Authenticator.h"
 #import "pippip_native_ios-Swift.h"
+
+#import "Authenticator.h"
 #import "ApplicationSingleton.h"
 #import "AccountSession.h"
-#import "UserVault.h"
+#import "AccountManager.h"
 #import "AuthenticationRequest.h"
 #import "AuthenticationResponse.h"
 #import "ClientAuthChallenge.h"
@@ -27,6 +28,8 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 {
     ProcessStep step;
     SessionState *sessionState;
+    SessionStateActual *sessionStateActual;
+
 }
 
 @property (weak, nonatomic) AuthViewController *viewController;
@@ -42,9 +45,22 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 - (instancetype)init {
     self = [super init];
     
-    errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"Authentication Error"];
+    errorDelegate = [[NotificationErrorDelegate alloc] init:@"Authentication Error"];
     _session = [ApplicationSingleton instance].restSession;
+    sessionState = [[SessionState alloc] init];
+    sessionStateActual = [[SessionStateActual alloc] init];
+    [sessionState setState:sessionStateActual];
 
+    return self;
+    
+}
+
+- (instancetype)initForLogout {
+    self = [super init];
+    
+    errorDelegate = [[NotificationErrorDelegate alloc] init:@"Authentication Error"];
+    _session = [ApplicationSingleton instance].restSession;
+    sessionState = [[SessionState alloc] init];
     return self;
     
 }
@@ -69,17 +85,16 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 - (void)authenticated {
 
-    [ApplicationSingleton instance].accountSession.sessionState = sessionState;
-    [[ApplicationSingleton instance].accountManager loadConfig:sessionState.currentAccount];
+    sessionStateActual.authenticated = true;
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:AUTHENTICATED object:sessionState];
+    [[NSNotificationCenter defaultCenter] postNotificationName:AUTHENTICATED object:nil];
 
 }
 
 - (void)doAuthorized {
 
     step = AUTHORIZED;
-    postPacket = [[ServerAuthorized alloc] initWithState:sessionState];
+    postPacket = [[ServerAuthorized alloc] init];
     [_session queuePost:self];
     
 }
@@ -87,23 +102,22 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 - (void)doChallenge {
 
     step = CHALLENGE;
-    postPacket = [[ClientAuthChallenge alloc] initWithState:sessionState];
+    postPacket = [[ClientAuthChallenge alloc] init];
     [_session queuePost:self];
 
 }
 
 - (void)loadSessionState:(NSString*)accountName withPassphrase:(NSString*)passphrase withError:(NSError**)error {
-    
+
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docPath = [paths objectAtIndex:0];
     NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
     NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:accountName];
     NSData *vaultData = [NSData dataWithContentsOfFile:vaultPath];
-    
-    sessionState = [[SessionState alloc] init];
-    UserVault *vault = [[UserVault alloc] initWithState:sessionState];
-    [vault decode:vaultData withPassword:passphrase withError:error];
-    sessionState.currentAccount = accountName;
+
+    UserVault *vault = [[UserVault alloc] initWith:sessionStateActual];
+    [vault decode:vaultData passphrase:passphrase error:error];
+    sessionStateActual.accountName = accountName;
     
 }
 
@@ -123,13 +137,12 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 /*
  * This is invoked from the main thread.
  */
-- (void) logout {
+- (void)logout {
 
-    sessionState = [ApplicationSingleton instance].accountSession.sessionState;
     step = LOGOUT;
-    postPacket = [[Logout alloc] initWithState:sessionState];
+    postPacket = [[Logout alloc] init];
     [_session queuePost:self];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"SessionEnded" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_ENDED object:nil];
 
 }
 
@@ -189,8 +202,9 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
             CKPEMCodec *pem = [[CKPEMCodec alloc] init];
             sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
             step = REQUEST;
-            postPacket = [[AuthenticationRequest alloc] initWithState:sessionState];
-            [_session queuePost:self];    NSMutableDictionary *info = [NSMutableDictionary dictionary];
+            postPacket = [[AuthenticationRequest alloc] init];
+            [_session queuePost:self];
+            NSMutableDictionary *info = [NSMutableDictionary dictionary];
             info[@"progress"] = [NSNumber numberWithFloat:0.4];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateProgress" object:nil userInfo:info];
 
@@ -201,7 +215,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 - (BOOL) validateAuth:(NSDictionary*)response {
     
-    ClientAuthorized *authorized = [[ClientAuthorized alloc] initWithState:sessionState];
+    ClientAuthorized *authorized = [[ClientAuthorized alloc] init];
     return [authorized processResponse:response
                             errorDelegate:errorDelegate];
     
@@ -209,7 +223,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 - (BOOL) validateChallenge:(NSDictionary*)response {
     
-    ServerAuthChallenge *authChallenge = [[ServerAuthChallenge alloc] initWithState:sessionState];
+    ServerAuthChallenge *authChallenge = [[ServerAuthChallenge alloc] init];
     return [authChallenge processResponse:response
                             errorDelegate:errorDelegate];
     
@@ -217,7 +231,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 - (BOOL) validateResponse:(NSDictionary*)response {
     
-    AuthenticationResponse *authResponse = [[AuthenticationResponse alloc] initWithState:sessionState];
+    AuthenticationResponse *authResponse = [[AuthenticationResponse alloc] init];
     return [authResponse processResponse:response
                            errorDelegate:errorDelegate];
     

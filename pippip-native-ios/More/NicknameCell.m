@@ -9,7 +9,6 @@
 #import "NicknameCell.h"
 #import "pippip_native_ios-Swift.h"
 #import "Configurator.h"
-#import "ContactManager.h"
 #import "ApplicationSingleton.h"
 #import "Notifications.h"
 
@@ -42,7 +41,7 @@
     [super awakeFromNib];
     // Initialization code
 
-    config = [ApplicationSingleton instance].config;
+    config = [[Configurator alloc] init];
     contactManager = [[ContactManager alloc] init];
     
     currentNickname = [config getNickname];
@@ -56,7 +55,7 @@
     _changeNicknameButton.alpha = 0.0;
     [_changeNicknameButton setEnabled:NO];
 
-    errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"Nickname Error"];
+    errorDelegate = [[NotificationErrorDelegate alloc] init:@"Nickname Error"];
 
 }
 
@@ -69,15 +68,15 @@
 - (void)newSession:(NSNotification*)notification {
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        currentNickname = [config getNickname];
-        if (currentNickname != nil) {
-            _nicknameTextField.text = currentNickname;
+        self->currentNickname = [self->config getNickname];
+        if (self->currentNickname != nil) {
+            self->_nicknameTextField.text = self->currentNickname;
         }
         else {
-            _nicknameTextField.text = @"";
+            self->_nicknameTextField.text = @"";
         }
-        _changeNicknameButton.alpha = 0.0;
-        [_changeNicknameButton setEnabled:NO];
+        self->_changeNicknameButton.alpha = 0.0;
+        [self->_changeNicknameButton setEnabled:NO];
     });
     
 }
@@ -87,12 +86,12 @@
     NSDictionary *info = notification.userInfo;
     NSString *result = info[@"result"];
     if ([result isEqualToString:@"not found"]) {
-        [contactManager updateNickname:pendingNickname withOldNickname:currentNickname];
+        [contactManager updateNicknameWithNewNickname:pendingNickname oldNickname:currentNickname];
     }
     else if ([result isEqualToString:@"found"]) {
         [errorDelegate responseError:@"This nickname is in use, please choose another."];
         dispatch_async(dispatch_get_main_queue(), ^{
-            _nicknameTextField.text = currentNickname;
+            self->_nicknameTextField.text = self->currentNickname;
         });
     }
 
@@ -106,8 +105,8 @@
     currentNickname = pendingNickname;
     pendingNickname = nil;
     dispatch_async(dispatch_get_main_queue(), ^{
-        _changeNicknameButton.alpha = 0.0;
-        [_changeNicknameButton setEnabled:NO];
+        self->_changeNicknameButton.alpha = 0.0;
+        [self->_changeNicknameButton setEnabled:NO];
     });
 
 }
@@ -134,11 +133,11 @@
     if (![currentNickname isEqualToString:_nicknameTextField.text]) {
         if (_nicknameTextField.text != nil && _nicknameTextField.text.length > 0) {
             pendingNickname = _nicknameTextField.text;
-            [contactManager matchNickname:_nicknameTextField.text withPublicId:nil];
+            [contactManager matchNicknameWithNickname:_nicknameTextField.text publicId:nil];
         }
         else {
             pendingNickname = nil;
-            [contactManager updateNickname:nil withOldNickname:currentNickname];
+            [contactManager updateNicknameWithNewNickname:nil oldNickname:currentNickname];
         }
     }
 

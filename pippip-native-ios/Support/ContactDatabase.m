@@ -6,19 +6,20 @@
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
-#import "ContactDatabase.h"
 #import "pippip_native_ios-Swift.h"
+#import "ContactDatabase.h"
 #import "CKGCMCodec.h"
 #import "DatabaseContact.h"
 #import "ApplicationSingleton.h"
+#import "Configurator.h"
 #import "Notifications.h"
 #import <Realm/Realm.h>
 
 @interface ContactDatabase ()
 {
+    SessionState *sessionState;
+    Configurator *config;
 }
-
-@property (weak, nonatomic) SessionState *sessionState;
 
 @end
 
@@ -27,39 +28,28 @@
 - (instancetype)init {
     self = [super init];
 
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(newSession:)
-                                               name:NEW_SESSION object:nil];
+    sessionState = [[SessionState alloc] init];
+    config = [[Configurator alloc] init];
 
     return self;
 
 }
 
-- (void)dealloc {
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NEW_SESSION object:nil];
-    
-}
-
 - (NSInteger)addContact:(Contact*)contact {
 
-    Configurator *config = [ApplicationSingleton instance].config;
-    NSInteger contactId = [config newContactId];
-    [config addContactId:contactId withPublicId:contact.publicId];
-
+    NSInteger contactId = [config newContactId:contact.publicId];
+    contact.contactId = contactId;
     NSData *encoded = [self encodeContact:contact];
-    
+
     // Add the contact to the database.
     DatabaseContact *dbContact = [[DatabaseContact alloc] init];
     dbContact.contactId = contactId;
     dbContact.encoded = encoded;
     RLMRealm *realm = [RLMRealm defaultRealm];
-    if (realm != nil) {
-        [realm beginWriteTransaction];
-        [realm addObject:dbContact];
-        [realm commitWriteTransaction];
-    }
-    [[NSNotificationCenter defaultCenter] postNotificationName:CONTACTS_UPDATED object:nil];
+    [realm beginWriteTransaction];
+    [realm addObject:dbContact];
+    [realm commitWriteTransaction];
+
     return contactId;
 
 }
@@ -68,7 +58,7 @@
 
     CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:encoded];
     NSError *error = nil;
-    [codec decrypt:_sessionState.contactsKey withAuthData:_sessionState.authData withError:&error];
+    [codec decrypt:sessionState.contactsKey withAuthData:sessionState.authData withError:&error];
     if (error != nil) {
         NSLog(@"Contact encoding error: %@", [error localizedDescription]);
         return nil;
@@ -118,7 +108,6 @@
 
 - (void)deleteContacts:(NSArray<NSString*>*)contacts {
 
-    Configurator *config = [ApplicationSingleton instance].config;
     for (NSString *publicId in contacts) {
         NSInteger contactId = [config getContactId:publicId];
         if (contactId == NSNotFound) {
@@ -140,7 +129,6 @@
             }
         }
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:CONTACTS_UPDATED object:nil];
 
 }
 
@@ -173,7 +161,7 @@
     }
 
     NSError *error = nil;
-    NSData *encoded = [codec encrypt:_sessionState.contactsKey withAuthData:_sessionState.authData withError:&error];
+    NSData *encoded = [codec encrypt:sessionState.contactsKey withAuthData:sessionState.authData withError:&error];
     if (error != nil) {
         NSLog(@"Error while encrypting contact: %@", error.localizedDescription);
     }
@@ -184,7 +172,6 @@
 - (Contact*)getContact:(NSString *)publicId {
     
     Contact *contact = nil;
-    Configurator *config = [ApplicationSingleton instance].config;
     NSInteger contactId = [config getContactId:publicId];
     if (contactId != NSNotFound) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
@@ -230,12 +217,6 @@
 
 }
 
-- (void)newSession:(NSNotification*)notification {
-
-    _sessionState = notification.object;
-
-}
-
 - (void)updateDatabaseContact:(Contact*)contact withContactId:(NSInteger)contactId{
 
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
@@ -244,11 +225,9 @@
         DatabaseContact *dbContact = [contacts firstObject];
         NSData *encoded = [self encodeContact:contact];
         RLMRealm *realm = [RLMRealm defaultRealm];
-        if (realm != nil) {
-            [realm beginWriteTransaction];
-            dbContact.encoded = encoded;
-            [realm commitWriteTransaction];
-        }
+        [realm beginWriteTransaction];
+        dbContact.encoded = encoded;
+        [realm commitWriteTransaction];
     }
 
 }
@@ -259,15 +238,13 @@
         Contact *entity = [self getContact:contact.publicId];
         if (entity == nil) {
             // Not in the database.
-            NSLog(@"Update contact, contact %@ not found", contact.publicId);
+            NSLog(@"Update contact, contact %@ not found in database", contact.publicId);
         }
         else {
-            Configurator *config = [ApplicationSingleton instance].config;
             NSInteger contactId = [config getContactId:contact.publicId];
             [self updateDatabaseContact:contact withContactId:contactId];
         }
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:CONTACTS_UPDATED object:nil];
 
 }
 

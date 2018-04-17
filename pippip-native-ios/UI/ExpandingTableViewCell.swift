@@ -10,8 +10,8 @@ import UIKit
 
 class ExpandingTableViewCell: UITableViewCell {
 
-    private var isOpen = false
-    open var openCloseImage: UIImageView!
+    var isOpen = false
+    var openCloseImage: UIImageView!
 
     public override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -44,10 +44,12 @@ class ExpandingTableViewCell: UITableViewCell {
         let height = self.bounds.height
         
         openCloseImage.frame = CGRect(x: width - 40, y: (height - 12)/2, width: 12, height: 12)
+
     }
     
     func initialize() {
 
+        isOpen = false
         openCloseImage  = UIImageView()
         openCloseImage.image = UIImage(named: "to-expand")
         self.contentView.addSubview(openCloseImage)

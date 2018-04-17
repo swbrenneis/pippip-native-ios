@@ -36,6 +36,8 @@ class NewContactSelector: ExpandingTableSelectorProtocol {
     weak var cell: UITableViewCell?
     var contactManager: ContactManager
     var tableView: ExpandingTableView
+    var sessionState = SessionState()
+    var config = Configurator()
     var nickname = ""
     var publicId = ""
     
@@ -73,11 +75,20 @@ class NewContactSelector: ExpandingTableSelectorProtocol {
                                       style: .default, action: { () in
                                         self.nickname = alert.textFields[0].text ?? ""
                                         self.publicId = alert.textFields[1].text ?? ""
-                                        if self.nickname.utf8.count > 0 {
-                                            self.contactManager.matchNickname(self.nickname, withPublicId: nil)
+                                        if self.nickname == self.config.getNickname()
+                                            || self.publicId == self.sessionState.publicId {
+                                            let alertColor = UIColor.flatSand
+                                            RKDropdownAlert.title("Add Contact Error",
+                                                                  message: "Adding yourself is not allowed",
+                                                                  backgroundColor: alertColor,
+                                                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                                                  time: 2, delegate: nil)
+                                        }
+                                        else if self.nickname.utf8.count > 0 {
+                                            self.contactManager.matchNickname(nickname: self.nickname, publicId: nil)
                                         }
                                         else if self.publicId.utf8.count > 0 {
-                                            self.contactManager.requestContact(self.publicId, withNickname: nil)
+                                            self.contactManager.requestContact(publicId: self.publicId, nickname: nil)
                                         }
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
@@ -87,7 +98,7 @@ class NewContactSelector: ExpandingTableSelectorProtocol {
     @objc func contactRequested(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.FriendAdded, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.ContactRequested, object: nil)
         DispatchQueue.main.async {
             let contact = notification.object as! Contact
             let contactCell = self.tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
@@ -120,7 +131,7 @@ class NewContactSelector: ExpandingTableSelectorProtocol {
         if let puid = info["publicId"] as? String {
             publicId = puid
             nickname = info["nickname"] as? String ?? ""
-            contactManager.requestContact(publicId, withNickname: nickname)
+            contactManager.requestContact(publicId: publicId, nickname: nickname)
         }
         else {
             DispatchQueue.main.async {
