@@ -25,7 +25,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     var nickname: String?
     var publicId = ""
     var debugDelete = false
-    var debugging = true
+    var debugging = false
     var suspended = false
 
     init() {
@@ -66,6 +66,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
             items.append(deleteItem)
         }
         self.navigationItem.rightBarButtonItems = items
+        self.navigationItem.title = "Contacts"
 
     }
 

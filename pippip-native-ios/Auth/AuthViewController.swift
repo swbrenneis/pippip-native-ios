@@ -39,7 +39,7 @@ import LocalAuthentication
             authButton.setTitle("Sign In", for: .normal)
         }
         else {
-            authButton.setTitle("Create Account", for: .normal)
+            authButton.setTitle("Create New Account", for: .normal)
         }
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
                                                name: Notifications.PresentAlert, object: nil)
@@ -119,7 +119,7 @@ import LocalAuthentication
     func doNewAccountAlerts() {
 
         let alert = PMAlertController(title: "Create A New Account",
-                                      description: "Enter a nickname or public ID",
+                                      description: "Enter a nickname and passphrase",
                                       image: nil,
                                       style: PMAlertControllerStyle.alert)
         alert.addTextField({ (textField) in

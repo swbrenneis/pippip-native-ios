@@ -58,6 +58,8 @@ static const NSInteger EDIT_INDEX = 4;
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(accountDeleted:)
                                                name:ACCOUNT_DELETED object:nil];
+    
+    self.navigationItem.title = @"Configuration";
 
 }
 
