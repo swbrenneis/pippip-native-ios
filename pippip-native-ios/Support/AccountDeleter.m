@@ -8,13 +8,19 @@
 
 #import "pippip_native_ios-Swift.h"
 #import "AccountDeleter.h"
-#import "ApplicationSingleton.h"
+#import "Configurator.h"
+#import "Authenticator.h"
 #import <Realm/Realm.h>
 
 @implementation AccountDeleter
 
 - (BOOL)deleteAccount:(NSString *)accountName {
-    
+
+    [self deleteNickname];
+
+    Authenticator *auth = [[Authenticator alloc] init];
+    [auth logout];
+
     NSFileManager *manager = [NSFileManager defaultManager];
     RLMRealmConfiguration *config = [RLMRealmConfiguration defaultConfiguration];
     NSArray<NSURL *> *realmFileURLs = @[
@@ -37,6 +43,17 @@
     NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:accountName];
     return [manager removeItemAtPath:vaultPath error:nil];
     
+}
+
+- (void)deleteNickname {
+
+    Configurator *config = [[Configurator alloc] init];
+    NSString *nickname = [config getNickname];
+    if (nickname != nil) {
+        ContactManager *contactManager = [[ContactManager alloc] init];
+        [contactManager updateNicknameWithNewNickname:nil oldNickname:nickname];
+    }
+
 }
 
 @end

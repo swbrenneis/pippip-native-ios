@@ -70,6 +70,8 @@ static NSLock *idLock = nil;
 
 - (void)decodeIdMap:(AccountConfig*)config {
 
+//    idMap[@"b555352bdb5721a9aba9b078dbf709fd857ca34b"]= [NSNumber numberWithInteger:14];
+//    [self encodeIdMap:config];
     if (config.idMap != nil) {
         CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:config.idMap];
         NSError *error = nil;
@@ -223,7 +225,8 @@ static NSLock *idLock = nil;
 - (NSInteger)getContactId:(NSString *)publicId {
 
     if (idMap.count == 0) {
-        [self decodeIdMap:[self getConfig]];
+        AccountConfig *config = [self getConfig];
+        [self decodeIdMap:config];
     }
     NSNumber *cid = idMap[publicId];
     if (cid != nil) {

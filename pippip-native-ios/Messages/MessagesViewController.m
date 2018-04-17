@@ -41,6 +41,7 @@
     _tableView.dataSource = self;
     [_tableView setDelegate:self];
     authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
+    sessionState = [[SessionState alloc] init];
     suspended = YES;
     accountDeleted = NO;
 
@@ -144,7 +145,6 @@
     
     messageManager = [[MessageManager alloc] init];
     contactManager = [[ContactManager alloc] init];
-    sessionState = [[SessionState alloc] init];
     mostRecent = [messageManager mostRecentMessages];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self->_tableView reloadData];

@@ -31,7 +31,7 @@ import Foundation
     static let PendingContactsUpdated = NSNotification.Name("PendingContactsUpdated")
     static let ContactSelected = NSNotification.Name("ContactSelected")
     static let NewMessages = NSNotification.Name("NewMessages")
-    static let MessagesLoaded = NSNotification.Name("MessagesLoaded")
+    static let MessageAdded = NSNotification.Name("MessageAdded")
     static let MessageSent = NSNotification.Name("MessageSent")
     static let MessagesUpdated = NSNotification.Name("MessagesUpdated")
     static let CleartextAvailable = NSNotification.Name("CleartextAvailable")

@@ -60,37 +60,44 @@
 
 }
 
+#if TARGET_OS_SIMULATOR
+
+- (void)getNewMessages {
+
+    [messageManager getNewMessages];
+    if (sessionActive) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [self getNewMessages];
+        });
+    }
+
+}
+
+#endif
+- (void)newMessages:(NSNotification*)notification {
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    });
+    
+}
+
 - (void)newSession:(NSNotification*)notification {
 
     contactManager = [[ContactManager alloc] init];
     messageManager = [[MessageManager alloc] init];
 
     sessionActive = YES;
-    //MessagesDatabase *messageDatabase = [[MessagesDatabase alloc] init];
-    //[messageDatabase deleteAllMessages];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [self->messageManager getNewMessages];
-    });
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
     [messageManager getNewMessages];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self->contactManager getPendingRequests];
     });
-
-}
-
-- (void)newMessages:(NSNotification*)notification {
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSArray *messages = (NSArray*)notification.object;
-        NSInteger badgeNumber = [UIApplication sharedApplication].applicationIconBadgeNumber;
-        if (messages.count > badgeNumber) {
-            badgeNumber = 0;
-        }
-        else {
-            badgeNumber = badgeNumber - messages.count;
-        }
-        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
+#if TARGET_OS_SIMULATOR
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [self getNewMessages];
     });
+#endif
 
 }
 
@@ -126,6 +133,11 @@
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
                 [self->contactManager getPendingRequests];
             });
+        }
+
+        NSInteger badgeNumber = [UIApplication sharedApplication].applicationIconBadgeNumber;
+        if (badgeNumber > 0) {
+            [messageManager getNewMessages];
         }
         NSMutableDictionary *info = [NSMutableDictionary dictionary];
         info[@"suspendedTime"] = [NSNumber numberWithInteger:suspendedTime];

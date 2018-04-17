@@ -10,8 +10,8 @@ import UIKit
 
 class ExpandingTableViewCell: UITableViewCell {
 
-    private var isOpen = false
-    open var openCloseImage: UIImageView!
+    var isOpen = false
+    var openCloseImage: UIImageView!
 
     public override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

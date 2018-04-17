@@ -52,10 +52,14 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
         // Do any additional setup after loading the view.
         NotificationCenter.default.addObserver(self, selector: #selector(contactSelected(_:)),
                                                name: Notifications.ContactSelected, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(messagesLoaded(_:)),
-                                               name: Notifications.MessagesLoaded, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(messageAdded(_:)),
+                                               name: Notifications.MessageAdded, object: nil)
 
-        
+        var items = [UIBarButtonItem]()
+        let editItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editMessages(_:)))
+        items.append(editItem)
+        self.navigationItem.rightBarButtonItems = items
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -74,17 +78,21 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
             conversationDataSource = ConversationDataSource.init(collectionNode: asyncCollectionNode, contact: contact!)
             deferredDataSource.conversationDataSource = conversationDataSource!
             self.navigationItem.title = self.contact!.displayName
+            self.contact!.conversation!.markMessagesRead()
             self.contact!.conversation!.isVisible = true
         }
 
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
                                                name: Notifications.PresentAlert, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow(_:)),
+                                               name: .UIKeyboardWillShow, object: nil)
 
     }
 
     override func viewWillDisappear(_ animated: Bool) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
         contact?.conversation!.isVisible = false
 
     }
@@ -98,6 +106,7 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
     
         let text = textView.text
         let textMessage = TextMessage(text: text!, contact: contact!)
+        textMessage.timestamp = contact!.conversation!.getTimestamp()
         conversationDataSource!.appendMessage(textMessage)
 
         DispatchQueue.global().async {
@@ -116,6 +125,35 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
 
     }
 
+    @objc func clearMessages(_ item: Any) {
+
+
+        conversationDataSource!.clearMessages()
+        contact!.conversation!.clearMessages()
+
+        var items = [UIBarButtonItem]()
+        let editItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editMessages(_:)))
+        items.append(editItem)
+        self.navigationItem.rightBarButtonItems = items
+        
+    }
+    
+    @objc func editMessages(_ item: Any) {
+
+        var items = [UIBarButtonItem]()
+        let clearItem = UIBarButtonItem(title: "Clear", style: .plain,
+                                        target: self, action: #selector(clearMessages(_:)))
+        items.append(clearItem)
+        self.navigationItem.rightBarButtonItems = items
+
+    }
+
+    @objc func keyboardDidShow(_ notification: Notification) {
+
+        self.scrollCollectionViewToBottom()
+
+    }
+
     @objc func contactSelected(_ notification: Notification) {
 
         contact = notification.object as? Contact
@@ -128,7 +166,7 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
 
     }
 
-    @objc func messagesLoaded(_ notification: Notification) {
+    @objc func messageAdded(_ notification: Notification) {
 
         DispatchQueue.main.async {
             self.scrollCollectionViewToBottom()

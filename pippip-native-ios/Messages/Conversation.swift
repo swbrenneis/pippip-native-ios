@@ -15,7 +15,7 @@ class Conversation: NSObject {
     var isVisible = false {
         didSet {
             if isVisible {
-                messageManager.decryptAll()
+                loadMessages()
             }
         }
     }
@@ -64,6 +64,15 @@ class Conversation: NSObject {
 
     }
 
+    func clearMessages() {
+
+        messageList.removeAll()
+        messageMap.removeAll()
+        timestampSet.removeAll()
+        messageManager.deleteMessages(contact.contactId)
+
+    }
+
     func deleteMessage(_ messageId: Int64) {
 
         if let message = messageMap.removeValue(forKey: messageId) {
@@ -75,21 +84,39 @@ class Conversation: NSObject {
         }
 
     }
-/*
-    func getMessage(_ messageId: Int64) -> TextMessage? {
-        return messageMap[messageId]
+
+    /*
+     * Returns a temporary timestamp for sorting purposes
+     */
+    func getTimestamp() -> Int64 {
+
+        var timestamp = Int64(Date().timeIntervalSince1970 * 1000)
+        while timestampSet.contains(timestamp) {
+            timestamp += 1
+        }
+        return timestamp
+
     }
 
-    func getMessageList() -> [TextMessage] {
-        return messageList
+    func markMessagesRead() {
+
+        for message in messageList {
+            if !message.read {
+                message.read = true
+                messageManager.markMessageRead(message.messageId)
+            }
+        }
+    
     }
 
     func loadMessages() {
 
-        messageList = messageManager.getTextMessages(contact.contactId)
-        for message in messageList {
-            timestampSet.insert(message.timestamp)
-            messageMap[message.messageId] = message
+        if messageList.isEmpty {
+            messageList = messageManager.getTextMessages(contact.contactId)
+            for message in messageList {
+                timestampSet.insert(message.timestamp)
+                messageMap[message.messageId] = message
+            }
         }
 
         DispatchQueue.global().async {
@@ -99,15 +126,9 @@ class Conversation: NSObject {
         }
 
     }
-*/
+
     func sendMessage(_ textMessage: TextMessage) throws {
 
-        // Placeholder timestamp
-        var timestamp = Int64(Date().timeIntervalSince1970 * 1000)
-        while timestampSet.contains(timestamp) {
-            timestamp += 1
-        }
-        textMessage.timestamp = timestamp
         let messageId = try messageManager.sendMessage(textMessage, retry: false)
         messageList.append(textMessage)
         messageMap[messageId] = textMessage

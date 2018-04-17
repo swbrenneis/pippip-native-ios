@@ -1625,12 +1625,6 @@
 					"$(USER_LIBRARY_DIR)/Frameworks",
 					"$(PROJECT_DIR)",
 				);
-				"FRAMEWORK_SEARCH_PATHS[arch=*]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/pippip-native-ios",
-					"$(USER_LIBRARY_DIR)/Frameworks",
-					"$(PROJECT_DIR)",
-				);
 				INFOPLIST_FILE = "pippip-native-ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

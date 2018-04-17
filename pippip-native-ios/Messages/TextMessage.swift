@@ -30,6 +30,7 @@ class TextMessage: Message {
         super.init(text: text, contact: contact)
 
         messageType = "user text"
+        read = true
 
     }
 

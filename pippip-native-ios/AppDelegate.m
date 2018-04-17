@@ -20,6 +20,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
 
+    [ApplicationSingleton bootstrap];
 #if !TARGET_OS_SIMULATOR
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     center.delegate = [ApplicationSingleton instance].accountSession;
@@ -40,7 +41,6 @@
         [application setApplicationIconBadgeNumber:0];
     }
 #endif
-    [ApplicationSingleton bootstrap];
     return YES;
 
 }
@@ -92,6 +92,12 @@
         didFailToRegisterForRemoteNotificationsWithError:(nonnull NSError *)error {
     
     NSLog(@"Failed to register for remote notifications: %@", error);
+
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+
+    completionHandler(UIBackgroundFetchResultNewData);
 
 }
 

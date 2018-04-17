@@ -86,24 +86,24 @@
     RLMRealm *realm = [RLMRealm defaultRealm];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
     RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+    [realm beginWriteTransaction];
     for (DatabaseMessage *message in messages) {
-        [realm beginWriteTransaction];
         [realm deleteObject:message];
-        [realm commitWriteTransaction];
     }
-    
+    [realm commitWriteTransaction];
+
 }
 
 - (void)deleteAllMessages {
     
     RLMRealm *realm = [RLMRealm defaultRealm];
     RLMResults<DatabaseMessage*> *messages = [DatabaseMessage allObjects];
+    [realm beginWriteTransaction];
     for (DatabaseMessage *message in messages) {
-        [realm beginWriteTransaction];
         [realm deleteObject:message];
-        [realm commitWriteTransaction];
     }
-    
+    [realm commitWriteTransaction];
+
 }
 
 - (void)deleteMessage:(NSInteger)messageId {
@@ -148,9 +148,9 @@
     
 }
 
-- (NSArray<TextMessage*>*) getTextMessages:(NSInteger)messageId {
+- (NSArray<TextMessage*>*) getTextMessages:(NSInteger)contactId {
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageId = %lld", messageId];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %lld", contactId];
     RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
     NSMutableArray *textMessages = [NSMutableArray array];
     for (DatabaseMessage *dbMessage in messages) {
@@ -161,8 +161,7 @@
 }
 
 - (TextMessage*)mostRecentTextMessage:(NSInteger)contactId {
-    
-    RLMRealm *realm = [RLMRealm defaultRealm];
+
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %lld", contactId];
     RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
                                               sortedResultsUsingKeyPath:@"timestamp" ascending:NO];

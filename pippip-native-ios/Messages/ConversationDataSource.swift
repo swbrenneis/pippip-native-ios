@@ -33,6 +33,18 @@ class ConversationDataSource: DefaultAsyncMessagesCollectionViewDataSource {
         self.collectionNode(collectionNode: asyncCollectionNode,
                             insertMessages: [ConversationMessageData(textMessage, contact: contact)],
                             completion: nil)
+        NotificationCenter.default.post(name: Notifications.MessageAdded, object: nil)
+
+    }
+
+    func clearMessages() {
+
+        let rows = asyncCollectionNode.numberOfItems(inSection: 0)
+        var paths = [IndexPath]()
+        for item in 0..<rows {
+            paths.append(IndexPath(row: item, section: 0))
+        }
+        self.collectionNode(collectionNode: asyncCollectionNode, deleteMessagesAtIndexPaths: paths, completion: nil)
 
     }
 
@@ -44,6 +56,7 @@ class ConversationDataSource: DefaultAsyncMessagesCollectionViewDataSource {
             DispatchQueue.main.async {
                 self.collectionNode(collectionNode: self.asyncCollectionNode,
                                     insertMessages: [messageData], completion:nil)
+                NotificationCenter.default.post(name: Notifications.MessageAdded, object: nil)
             }
         }
 

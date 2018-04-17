@@ -18,12 +18,15 @@ import UIKit
 
         var serverMessages = [[AnyHashable: Any]]()
         for textMessage in textMessages {
-            var tuple = [String: Any]()
-            let contact = contactManager.getContactById(textMessage.contactId)!
-            tuple["publicId"] = contact.publicId
-            tuple["sequence"] = textMessage.sequence
-            tuple["timestamp"] = textMessage.timestamp
-            serverMessages.append(tuple)
+            if (textMessage.contactId != NSNotFound) {
+                let contact = contactManager.getContactById(textMessage.contactId)!
+                var tuple = [String: Any]()
+                tuple["publicId"] = contact.publicId
+                tuple["sequence"] = textMessage.sequence
+                tuple["timestamp"] = textMessage.timestamp
+                serverMessages.append(tuple)
+            }
+            print("Contact for ID \(textMessage.contactId) not found")
         }
         var request = [AnyHashable: Any]()
         request["method"] = "AcknowledgeMessages"
@@ -33,11 +36,14 @@ import UIKit
                 print("Messages acknowledged, \(exceptions.count) exceptions")
             }
             for textMessage in textMessages {
-                let contact = self.contactManager.getContactById(textMessage.contactId)!
-                contact.conversation!.acknowledgeMessage(textMessage)
-                let message = self.messageDatabase.getMessage(Int(textMessage.messageId))
-                message.acknowledged = true
+                if (textMessage.contactId != NSNotFound) {
+                    let contact = self.contactManager.getContactById(textMessage.contactId)!
+                    contact.conversation!.acknowledgeMessage(textMessage)
+                    let message = self.messageDatabase.getMessage(Int(textMessage.messageId))
+                    message.acknowledged = true
+                }
             }
+            NotificationCenter.default.post(name: Notifications.NewMessages, object: nil)
         })
         messageTask.errorTitle = "Message Error"
         messageTask.sendRequest(request)
@@ -84,6 +90,12 @@ import UIKit
 
     }
 
+    func deleteMessages(_ contactId: Int) {
+
+        messageDatabase.deleteAllMessages(contactId)
+
+    }
+
     func deleteMessage(_ messageId: Int64) {
         
         messageDatabase.deleteMessage(Int(messageId))
@@ -96,32 +108,37 @@ import UIKit
         request["method"] = "GetMessages"
         let messageTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
             if let messages = response["messages"] as? [[AnyHashable: Any]] {
+                print("\(messages.count) new messages returned")
                 var textMessages = [TextMessage]()
                 for message in messages {
                     let textMessage = TextMessage(serverMessage: message)
                     textMessages.append(textMessage)
                 }
-                self.addTextMessages(textMessages)
-                self.acknowledgeMessages(textMessages)
+                if !textMessages.isEmpty {
+                    self.addTextMessages(textMessages)
+                    self.acknowledgeMessages(textMessages)
+                }
             }
         })
         messageTask.errorTitle = "Message Error"
         messageTask.sendRequest(request)
 
     }
-/*
+
     func getTextMessages(_ contactId: Int) -> [TextMessage] {
 
-        let messageIds = getMessageIds(contactId)
-        var messages = [TextMessage]()
-        for messageId in messageIds {
-            let message = messageDatabase.loadTextMessage(Int(messageId), withContactId: contactId)
-            messages.append(message)
-        }
-        return messages
+        return messageDatabase.getTextMessages(contactId)
 
     }
-*/
+
+    func markMessageRead(_ messageId: Int64) {
+
+        let message = messageDatabase.getMessage(Int(messageId))
+        message.read = true
+        messageDatabase.update(message)
+
+    }
+
     @objc func mostRecentMessages() -> [TextMessage] {
 
         var messages = [TextMessage]()

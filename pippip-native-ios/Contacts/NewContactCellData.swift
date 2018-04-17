@@ -36,6 +36,8 @@ class NewContactSelector: ExpandingTableSelectorProtocol {
     weak var cell: UITableViewCell?
     var contactManager: ContactManager
     var tableView: ExpandingTableView
+    var sessionState = SessionState()
+    var config = Configurator()
     var nickname = ""
     var publicId = ""
     
@@ -73,7 +75,16 @@ class NewContactSelector: ExpandingTableSelectorProtocol {
                                       style: .default, action: { () in
                                         self.nickname = alert.textFields[0].text ?? ""
                                         self.publicId = alert.textFields[1].text ?? ""
-                                        if self.nickname.utf8.count > 0 {
+                                        if self.nickname == self.config.getNickname()
+                                            || self.publicId == self.sessionState.publicId {
+                                            let alertColor = UIColor.flatSand
+                                            RKDropdownAlert.title("Add Contact Error",
+                                                                  message: "Adding yourself is not allowed",
+                                                                  backgroundColor: alertColor,
+                                                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                                                  time: 2, delegate: nil)
+                                        }
+                                        else if self.nickname.utf8.count > 0 {
                                             self.contactManager.matchNickname(nickname: self.nickname, publicId: nil)
                                         }
                                         else if self.publicId.utf8.count > 0 {

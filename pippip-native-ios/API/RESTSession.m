@@ -8,7 +8,7 @@
 
 #import "RESTSession.h"
 #import "pippip_native_ios-Swift.h"
-//#import "ErrorDelegate.h"
+#import "Notifications.h"
 #import "PostPacket.h"
 #import "stdio.h"
 
@@ -19,6 +19,7 @@
     NSMutableArray *processes;
     NSLock *postLock;
     id<RequestProcessProtocol> currentProcess;
+    BOOL sessionActive;
 }
 
 @end
@@ -32,6 +33,10 @@
     urlSession = [NSURLSession sessionWithConfiguration:sessionConfig];
     processes = [NSMutableArray array];
     postLock = [[NSLock alloc] init];
+    sessionActive = NO;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionEnded:)
+                                                 name:SESSION_ENDED object:nil];
 
     return self;
 
@@ -113,13 +118,15 @@
 
 - (void)queuePost:(id<RequestProcessProtocol>)process {
 
-    [postLock lock];
-    [processes addObject:process];
-    if (processes.count == 1) {
-        currentProcess = processes[0];
-        [self doPost];
+    if (sessionActive) {
+        [postLock lock];
+        [processes addObject:process];
+        if (processes.count == 1) {
+            currentProcess = processes[0];
+            [self doPost];
+        }
+        [postLock unlock];
     }
-    [postLock unlock];
 
 }
 
@@ -173,6 +180,7 @@
             }
         };
 
+    sessionActive = YES;
     currentProcess = process;
     // Perform the session request. The task defaults to "GET" method.
     NSURL *sessionURL = [NSURL URLWithString:@"https://pippip.secomm.cc/authenticator/session-request"];
@@ -180,6 +188,12 @@
                                                   completionHandler:sessionCompletion];
     [sessionTask resume];
 
+}
+
+// Notifications
+
+- (void)sessionEnded:(NSNotification*)notification {
+    sessionActive = NO;
 }
 
 @end
