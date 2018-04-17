@@ -14,7 +14,7 @@
 
 - (NSInteger)addContact:(Contact*)contact;
 
-- (BOOL)deleteContact:(NSString*)publicId;
+- (BOOL)deleteContact:(NSInteger)contactId;
 
 - (NSArray<Contact*>*)getContactList;
 

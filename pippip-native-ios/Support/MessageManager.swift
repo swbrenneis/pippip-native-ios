@@ -59,16 +59,16 @@ import UIKit
             textMessage.messageId = Int64(config.newMessageId())
         }
         messageDatabase.add(textMessages)
-        let ids = config.allContactIds()
-        for contactId in ids! {
+        let ids = contactManager.allContactIds()
+        for contactId in ids {
             var newMessages = [TextMessage]()
             for textMessage in textMessages {
-                if textMessage.contactId == contactId.int32Value {
+                if textMessage.contactId == contactId {
                     newMessages.append(textMessage)
                 }
             }
             if !newMessages.isEmpty {
-                let contact = contactManager.getContactById(contactId.intValue)!
+                let contact = contactManager.getContactById(contactId)!
                 contact.conversation!.addTextMessages(newMessages)
             }
         }
@@ -142,7 +142,7 @@ import UIKit
     @objc func mostRecentMessages() -> [TextMessage] {
 
         var messages = [TextMessage]()
-        let contactIds = config.allContactIds() as! [Int]
+        let contactIds = contactManager.allContactIds() as! [Int]
         for contactId in contactIds {
             if let message = messageDatabase.mostRecentTextMessage(contactId) {
                 messages.append(message)

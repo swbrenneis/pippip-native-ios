@@ -29,7 +29,7 @@ import UIKit
         let b64 = serverMessage["body"] as! String
         ciphertext = Data(base64Encoded: b64)
         let publicId = serverMessage["fromId"] as! String
-        contactId = config.getContactId(publicId)
+        contactId = contactManager.getContactId(publicId)
         let ki = serverMessage["keyIndex"] as! NSNumber
         keyIndex = ki.intValue
         messageType = serverMessage["messageType"] as! String

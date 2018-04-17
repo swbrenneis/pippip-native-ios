@@ -12,6 +12,7 @@ class ContactManager: NSObject {
 
     static private var contactList = [Contact]()
     static private var contactMap = [String: Contact]()
+    static private var contactIdMap = [Int: Contact]()
     static private var initialized = false
 
     var contactDatabase: ContactDatabase
@@ -29,14 +30,6 @@ class ContactManager: NSObject {
             mapContacts()
         }
         
-    }
-
-    func addContact(_ contact: Contact) {
-
-        contactDatabase.add(contact)
-        ContactManager.contactMap[contact.publicId] = contact
-        ContactManager.contactList.append(contact)
-
     }
 
     func acknowledgeRequest(response: String, publicId: String, nickname: String?) {
@@ -73,6 +66,14 @@ class ContactManager: NSObject {
 
     }
 
+    func addContact(_ contact: Contact) {
+        
+        contactDatabase.add(contact)
+        ContactManager.contactMap[contact.publicId] = contact
+        ContactManager.contactList.append(contact)
+        
+    }
+    
     func addFriend(_ publicId:String) -> Bool {
 
         let found = config.whitelistIndex(of: publicId)
@@ -94,6 +95,16 @@ class ContactManager: NSObject {
 
     }
 
+    func allContactIds() -> [Int] {
+
+        var allIds = [Int]()
+        for contact in ContactManager.contactList {
+            allIds.append(contact.contactId)
+        }
+        return allIds
+
+    }
+
     func deleteContact(_ publicId: String) {
         
         var request = [AnyHashable: Any]()
@@ -101,9 +112,8 @@ class ContactManager: NSObject {
         request["publicId"] = publicId
         let deleteTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
             if let publicId = response["publicId"] as? String {
-                self.contactDatabase.deleteContact(publicId)
-                let contactId = self.config.getContactId(publicId)
-                self.config.deleteContactId(publicId)
+                let contactId = ContactManager.contactMap[publicId]!.contactId
+                self.contactDatabase.deleteContact(contactId)
                 ContactManager.contactMap.removeValue(forKey: publicId)
                 let messageDatabase = MessagesDatabase()
                 messageDatabase.deleteAllMessages(contactId)
@@ -145,12 +155,18 @@ class ContactManager: NSObject {
 
     @objc func getContactById(_ contactId: Int) -> Contact? {
 
-        for contact in ContactManager.contactList {
-            if contact.contactId == contactId {
-                return contact
-            }
+        return ContactManager.contactIdMap[contactId]
+
+    }
+
+    func getContactId(_ publicId: String) -> Int {
+
+        if let contact = ContactManager.contactMap[publicId] {
+            return contact.contactId
         }
-        return nil
+        else {
+            return NSNotFound
+        }
 
     }
 
@@ -184,6 +200,7 @@ class ContactManager: NSObject {
         ContactManager.contactMap.removeAll()
         for contact in ContactManager.contactList {
             ContactManager.contactMap[contact.publicId] = contact
+            ContactManager.contactIdMap[contact.contactId] = contact
         }
         
     }
@@ -228,11 +245,13 @@ class ContactManager: NSObject {
 
         var result = [Contact]()
         for contact in ContactManager.contactList {
-            if (contact.publicId.contains(fragment)) {
+            let pCompare = contact.publicId.uppercased()
+            if (pCompare.contains(fragment)) {
                 result.append(contact)
             }
             else if let nickname = contact.nickname {
-                if (nickname.contains(fragment)) {
+                let nCompare = nickname.uppercased()
+                if (nCompare.contains(fragment)) {
                     result.append(contact)
                 }
             }

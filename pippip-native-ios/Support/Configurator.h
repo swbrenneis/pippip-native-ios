@@ -14,15 +14,15 @@
 
 - (BOOL)addWhitelistEntry:(NSDictionary*)entity;
 
-- (NSArray<NSNumber*>*)allContactIds;
+//- (NSArray<NSNumber*>*)allContactIds;
 
-- (void)deleteContactId:(NSString*)publicId;
+//- (void)deleteContactId:(NSString*)publicId;
 
 - (BOOL)deleteWhitelistEntry:(NSString*)publicId;
 
 - (BOOL)getCleartextMessages;
 
-- (NSInteger)getContactId:(NSString*)publicId;
+//- (NSInteger)getContactId:(NSString*)publicId;
 
 - (NSString*)getContactPolicy;
 
@@ -30,7 +30,7 @@
 
 - (void)loadWhitelist;
 
-- (NSInteger)newContactId:(NSString*)publicId;
+- (NSInteger)newContactId;
 
 - (NSInteger)newMessageId;
 
