@@ -82,6 +82,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
                                                name: Notifications.AppSuspended, object: nil)
 
         contactsModel.setContacts(contactManager.getContactList(), viewController: self)
+        tableView.reloadData()
 
     }
 
@@ -126,7 +127,6 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         suspended = true
         DispatchQueue.main.async {
             self.contactsModel.clear(1, tableView: self.tableView)
-            self.tableView.deleteRows(at: self.contactsModel.deletePaths, with: .top)
         }
 
     }

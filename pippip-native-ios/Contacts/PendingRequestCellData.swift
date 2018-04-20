@@ -110,16 +110,19 @@ class PendingRequestSelector: ExpandingTableSelectorProtocol {
                 }
             }
 
-            let contactCell =
-                self.viewController!.tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
             let contactList = self.contactManager.getContactList()
             let contact = contactList.last!
-            contactCell.identLabel.text = contact.displayName
-            let cellData = ContactCellData(contactCell: contactCell, contact: contact,
-                                           viewController: self.viewController!)
-            self.viewController!.contactsModel.appendCell(cellData, section: 1)
-            self.viewController!.tableView.insertRows(at: self.viewController!.contactsModel.insertPaths,
-                                                      with: .bottom)
+            if contact.status == "accepted" || contact.status == "rejected" {
+                let contactCell =
+                    self.viewController!.tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
+                contactCell.identLabel.text = contact.displayName
+                contactCell.statusImageView.image = UIImage(named: contact.status)
+                let cellData = ContactCellData(contactCell: contactCell, contact: contact,
+                                               viewController: self.viewController!)
+                self.viewController!.contactsModel.appendCell(cellData, section: 1)
+                self.viewController!.tableView.insertRows(at: self.viewController!.contactsModel.insertPaths,
+                                                          with: .bottom)
+            }
         }
 
     }

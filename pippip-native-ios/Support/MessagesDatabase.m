@@ -38,12 +38,18 @@
 }
 
 - (void)addTextMessage:(TextMessage*)textMessage {
-    
-    RLMRealm *realm = [RLMRealm defaultRealm];
-    DatabaseMessage *dbMessage = [textMessage encodeForDatabase];
-    [realm beginWriteTransaction];
-    [realm addObject:dbMessage];
-    [realm commitWriteTransaction];
+
+    NSInteger messageId = [self messageExists:textMessage];
+    if (messageId == NSNotFound) {
+        messageId = [config newMessageId];
+        RLMRealm *realm = [RLMRealm defaultRealm];
+        DatabaseMessage *dbMessage = [textMessage encodeForDatabase];
+        dbMessage.messageId = messageId;
+        [realm beginWriteTransaction];
+        [realm addObject:dbMessage];
+        [realm commitWriteTransaction];
+    }
+    textMessage.messageId = messageId;
     
 }
 
@@ -51,10 +57,16 @@
     
     RLMRealm *realm = [RLMRealm defaultRealm];
     for (TextMessage *textMessage in messages) {
-        DatabaseMessage *dbMessage = [textMessage encodeForDatabase];
-        [realm beginWriteTransaction];
-        [realm addObject:dbMessage];
-        [realm commitWriteTransaction];
+        NSInteger messageId = [self messageExists:textMessage];
+        if (messageId == NSNotFound) {
+            messageId = [config newMessageId];
+            DatabaseMessage *dbMessage = [textMessage encodeForDatabase];
+            dbMessage.messageId = messageId;
+            [realm beginWriteTransaction];
+            [realm addObject:dbMessage];
+            [realm commitWriteTransaction];
+        }
+        textMessage.messageId = messageId;
     }
     
 }
@@ -157,7 +169,23 @@
         [textMessages addObject:[[TextMessage alloc] initWithDbMessage:dbMessage]];
     }
     return textMessages;
-    
+}
+
+- (NSInteger)messageExists:(TextMessage*)message {
+
+    NSInteger contactId = message.contactId;
+    NSInteger sequence = message.sequence;
+    NSInteger timestamp = message.timestamp;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %lld && sequence = %lld && timestamp = %lld", contactId, sequence, timestamp];
+    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+    if (messages.count > 0) {
+        DatabaseMessage *dbMessage = [messages firstObject];
+        return dbMessage.messageId;
+    }
+    else {
+        return NSNotFound;
+    }
+
 }
 
 - (TextMessage*)mostRecentTextMessage:(NSInteger)contactId {

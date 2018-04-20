@@ -48,7 +48,7 @@ class ContactManager: NSObject {
             else {
                 var info = [AnyHashable: Any]()
                 info["title"] = "Contact Error"
-                info["title"] = "Invalid response to acknowledgement"
+                info["message"] = "Invalid response to acknowledgement"
                 NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
             }
             if let pending = response["pending"] as? [[AnyHashable: Any]] {

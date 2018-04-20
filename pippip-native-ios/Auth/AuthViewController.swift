@@ -119,7 +119,7 @@ import LocalAuthentication
     func doNewAccountAlerts() {
 
         let alert = PMAlertController(title: "Create A New Account",
-                                      description: "Enter a nickname and passphrase",
+                                      description: "Enter an account name and passphrase",
                                       image: nil,
                                       style: PMAlertControllerStyle.alert)
         alert.addTextField({ (textField) in

@@ -55,9 +55,6 @@ import UIKit
      */
     private func addTextMessages(_ textMessages: [TextMessage]) {
 
-        for textMessage in textMessages {
-            textMessage.messageId = Int64(config.newMessageId())
-        }
         messageDatabase.add(textMessages)
         let ids = contactManager.allContactIds()
         for contactId in ids {
@@ -169,9 +166,8 @@ import UIKit
             try textMessage.encrypt()
         }
         let contact = contactManager.getContactById(textMessage.contactId)!
-        let messageId = Int64(config.newMessageId())
-        textMessage.messageId = messageId
         messageDatabase.add(textMessage)
+        let messageId = textMessage.messageId
 
         let enclaveTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
             if let ts = response["timestamp"] as? NSNumber {

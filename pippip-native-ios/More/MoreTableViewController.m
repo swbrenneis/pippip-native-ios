@@ -24,6 +24,7 @@ static const NSInteger EDIT_INDEX = 4;
     AuthViewController *authView;
     BOOL suspended;
     NSMutableArray<MoreCellItem*> *cellItems;
+    NSMutableArray<MoreCellItem*> *suspendItems;
     MoreCellItem *deleteItem;
     UIView *headingView;
     NicknameCell *nicknameCell;
@@ -39,19 +40,28 @@ static const NSInteger EDIT_INDEX = 4;
 
     authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
     suspended = NO;
-    cellItems = [NSMutableArray array];
     deleteItem = [DeleteAccountCell cellItem];
     nicknameCell = [self.tableView dequeueReusableCellWithIdentifier:@"NicknameCell"];
     config = [[Configurator alloc] init];
 
     headingView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width, 40.0)];
     headingView.backgroundColor = [UIColor colorNamed:@"Pale Gray"];
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(appResumed:)
-                                               name:APP_RESUMED object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(appSuspended:)
-                                               name:APP_SUSPENDED object:nil];
+
+    cellItems = [NSMutableArray array];
+    [cellItems addObject:[PublicIdCell cellItem]];
+    MoreCellItem *nicknameItem = [NicknameCell cellItem];
+    nicknameItem.currentCell = nicknameCell;
+    [cellItems addObject:nicknameItem];
+    [cellItems addObject:[LocalPasswordCell cellItem]];
+    [cellItems addObject:[CleartextMessagesCell cellItem]];
+    [cellItems addObject:[ContactPolicyCell cellItem]];
+    suspendItems = [NSMutableArray array];
+
+    NSString *policy = [config getContactPolicy];
+    if ([policy isEqualToString:@"whitelist"]) {
+        [cellItems addObject:[EditWhitelistCell cellItem]];
+    }
+    
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(policyChanged:)
                                                name:POLICY_CHANGED object:nil];
@@ -71,19 +81,12 @@ static const NSInteger EDIT_INDEX = 4;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    [cellItems addObject:[PublicIdCell cellItem]];
-    MoreCellItem *nicknameItem = [NicknameCell cellItem];
-    nicknameItem.currentCell = nicknameCell;
-    [cellItems addObject:nicknameItem];
-    [cellItems addObject:[LocalPasswordCell cellItem]];
-    [cellItems addObject:[CleartextMessagesCell cellItem]];
-    [cellItems addObject:[ContactPolicyCell cellItem]];
-    
-    NSString *policy = [config getContactPolicy];
-    if ([policy isEqualToString:@"whitelist"]) {
-        [cellItems addObject:[EditWhitelistCell cellItem]];
-    }
-
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(appResumed:)
+                                               name:APP_RESUMED object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(appSuspended:)
+                                               name:APP_SUSPENDED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(presentAlert:)
                                                name:PRESENT_ALERT object:nil];
@@ -99,6 +102,8 @@ static const NSInteger EDIT_INDEX = 4;
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:APP_RESUMED object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:APP_SUSPENDED object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:PRESENT_ALERT object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:nicknameCell name:NICKNAME_MATCHED object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:nicknameCell name:NICKNAME_UPDATED object:nil];
@@ -117,6 +122,8 @@ static const NSInteger EDIT_INDEX = 4;
 
     if (suspended) {
         suspended = NO;
+        [cellItems addObjectsFromArray:suspendItems];
+        [suspendItems removeAllObjects];
         NSDictionary *info = notification.userInfo;
         NSInteger suspendedTime = [info[@"suspendedTime"] integerValue];
         if (suspendedTime > 0 && suspendedTime < 180) {
@@ -130,14 +137,20 @@ static const NSInteger EDIT_INDEX = 4;
             if (self.view.window != nil) {
                 [self presentViewController:self->authView animated:YES completion:nil];
             }
+            [self.tableView reloadData];
         });
     }
     
 }
 
 - (void)appSuspended:(NSNotification*)notification {
-    
+
     suspended = YES;
+    [suspendItems addObjectsFromArray:cellItems];
+    [cellItems removeAllObjects];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
     
 }
 

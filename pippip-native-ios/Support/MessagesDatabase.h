@@ -35,6 +35,8 @@
 
 - (NSArray<TextMessage*>*_Nonnull)getTextMessages:(NSInteger)contactId;
 
+- (NSInteger)messageExists:(TextMessage*)message;
+
 - (TextMessage*_Nullable)mostRecentTextMessage:(NSInteger)contactId;
 
 - (void)updateMessage:(Message*_Nonnull)message;

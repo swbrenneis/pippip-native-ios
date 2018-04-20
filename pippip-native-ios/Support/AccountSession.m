@@ -64,11 +64,13 @@
 
 - (void)getNewMessages {
 
-    [messageManager getNewMessages];
     if (sessionActive) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            [self getNewMessages];
-        });
+        [messageManager getNewMessages];
+        if (sessionActive) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                [self getNewMessages];
+            });
+        }
     }
 
 }

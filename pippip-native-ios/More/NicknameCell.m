@@ -63,7 +63,9 @@
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
-    [_nicknameTextField becomeFirstResponder];
+    if (selected) {
+        [_nicknameTextField becomeFirstResponder];
+    }
 
 }
 
