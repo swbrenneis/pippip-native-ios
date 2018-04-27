@@ -39,7 +39,7 @@ class ConversationMessageData: MessageData {
             return cleartext
         }
         else {
-            return ""
+            return "Processing..."
         }
 
     }
@@ -54,7 +54,13 @@ class ConversationMessageData: MessageData {
         }
 
     }
-    
+
+    func messageId() -> Int64 {
+
+        return message!.messageId
+
+    }
+
     func senderID() -> String {
         return publicId
     }

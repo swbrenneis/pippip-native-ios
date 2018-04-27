@@ -167,6 +167,7 @@
 		55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */; };
 		55DB7F451FD8692C00B4D262 /* ServerAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */; };
 		55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */; };
+		55E029302092B7600074B97F /* MutableTextBubbleNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E0292F2092B7600074B97F /* MutableTextBubbleNode.swift */; };
 		55E7593E20674DAE009BAA1C /* WhitelistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E7593D20674DAE009BAA1C /* WhitelistViewController.swift */; };
 		55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */; };
 		55FA873F1FD187CD00FB96C0 /* Authenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873E1FD187CD00FB96C0 /* Authenticator.m */; };
@@ -478,6 +479,7 @@
 		55DB7F441FD8692C00B4D262 /* ServerAuthorized.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ServerAuthorized.m; sourceTree = "<group>"; };
 		55DB7F461FD86AF800B4D262 /* ClientAuthorized.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClientAuthorized.h; sourceTree = "<group>"; };
 		55DB7F471FD86AF800B4D262 /* ClientAuthorized.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClientAuthorized.m; sourceTree = "<group>"; };
+		55E0292F2092B7600074B97F /* MutableTextBubbleNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutableTextBubbleNode.swift; sourceTree = "<group>"; };
 		55E7593D20674DAE009BAA1C /* WhitelistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhitelistViewController.swift; sourceTree = "<group>"; };
 		55FA873A1FD05E9800FB96C0 /* CKGCMCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKGCMCodec.h; sourceTree = "<group>"; };
 		55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKGCMCodec.mm; sourceTree = "<group>"; };
@@ -646,6 +648,7 @@
 				55B0DBB32045F2C500F6B29B /* MessagesHeadingCell.m */,
 				55B0DBAF2045EC8400F6B29B /* MessagesViewController.h */,
 				55B0DBB02045EC8400F6B29B /* MessagesViewController.m */,
+				55E0292F2092B7600074B97F /* MutableTextBubbleNode.swift */,
 				557CE57A203B8598008AF8CF /* PreviewCell.h */,
 				557CE579203B8598008AF8CF /* PreviewCell.m */,
 				55206DAA20754A2500B0B246 /* SelectContactView.swift */,
@@ -1332,6 +1335,7 @@
 				55AA555E1FA14D7100A7026B /* SHA384.cc in Sources */,
 				55B781AA1FDE161E00330B80 /* Logout.m in Sources */,
 				555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */,
+				55E029302092B7600074B97F /* MutableTextBubbleNode.swift in Sources */,
 				55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */,
 				554D01C8207D0E2500C19373 /* ContactManager.swift in Sources */,
 				55AA55541FA14D7100A7026B /* SHA256.cc in Sources */,

@@ -134,10 +134,15 @@ class Conversation: NSObject {
 
         if !messagesLoaded {
             messagesLoaded = true
-            messageList = messageManager.getTextMessages(contact.contactId)
-            for message in messageList {
-                timestampSet.insert(message.timestamp)
+            let messages = messageManager.getTextMessages(contact.contactId)
+            for message in messages {
+                // Eliminate duplicates. These should only exist when debugging
+                while timestampSet.contains(message.timestamp) {
+                    message.timestamp += 1
+                }
                 messageMap[message.messageId] = message
+                messageList.append(message)
+                timestampSet.insert(message.timestamp)
                 if mostRecent == nil {
                     mostRecent = message
                 }
@@ -146,12 +151,8 @@ class Conversation: NSObject {
                 }
             }
         }
+        NotificationCenter.default.post(name: Notifications.MessagesReady, object: messageList)
 
-        DispatchQueue.global().async {
-            for message in self.messageList {
-                message.decrypt()
-            }
-        }
 
     }
 
