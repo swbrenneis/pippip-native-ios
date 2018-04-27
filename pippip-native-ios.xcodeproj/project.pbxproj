@@ -549,7 +549,6 @@
 				55316C8F206B32F700EB1AF7 /* ExpandingTableView.swift */,
 				55316C93206B33A300EB1AF7 /* ExpandingTableViewCell.swift */,
 				55A734B0206EC54B00D31AD6 /* ExpandingTableSelectorProtocol.swift */,
-				55206DAA20754A2500B0B246 /* SelectContactView.swift */,
 				5500D167207404A10016AC71 /* TableViewCellWithController.swift */,
 				55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */,
 			);
@@ -649,6 +648,7 @@
 				55B0DBB02045EC8400F6B29B /* MessagesViewController.m */,
 				557CE57A203B8598008AF8CF /* PreviewCell.h */,
 				557CE579203B8598008AF8CF /* PreviewCell.m */,
+				55206DAA20754A2500B0B246 /* SelectContactView.swift */,
 				5500D171207455450016AC71 /* TextMessage.swift */,
 			);
 			path = Messages;
@@ -1206,6 +1206,7 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-pippip-native-ios/Pods-pippip-native-ios-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
+				"${BUILT_PRODUCTS_DIR}/DataCompression/DataCompression.framework",
 				"${BUILT_PRODUCTS_DIR}/PINCache/PINCache.framework",
 				"${BUILT_PRODUCTS_DIR}/PINOperation/PINOperation.framework",
 				"${BUILT_PRODUCTS_DIR}/PINRemoteImage/PINRemoteImage.framework",
@@ -1218,6 +1219,7 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChameleonFramework.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DataCompression.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PINCache.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PINOperation.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PINRemoteImage.framework",

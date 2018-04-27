@@ -17,6 +17,7 @@ static const NSInteger ONE_DAY = SEC_PER_HOUR * 24;
 {
     TextMessage *textMessage;
     ContactManager *contactManager;
+    BOOL configured;
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *messageReadImage;
@@ -43,6 +44,8 @@ static const NSInteger ONE_DAY = SEC_PER_HOUR * 24;
     [super setSelected:selected animated:animated];
     
     // Configure the view for the selected state
+    configured = NO;
+
 }
 
 - (void)dealloc {
@@ -53,13 +56,18 @@ static const NSInteger ONE_DAY = SEC_PER_HOUR * 24;
 
 - (void)configure:(TextMessage*)message {
 
-    textMessage = message;
     [_messageReadImage setHidden:message.read];
-    Contact *contact = [contactManager getContactById:message.contactId];
-    _senderLabel.text = contact.displayName;
-    NSString *dt = [self convertTimestamp:message.timestamp];
-    _dateTimeLabel.text = [dt stringByAppendingString:@" >"];
-    [message decrypt:false];    // noNotify = false
+    if (!configured) {
+        configured = YES;
+        textMessage = message;
+        Contact *contact = [contactManager getContactById:message.contactId];
+        _senderLabel.text = contact.displayName;
+        NSString *dt = [self convertTimestamp:message.timestamp];
+        _dateTimeLabel.text = [dt stringByAppendingString:@" >"];
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
+            [message decrypt:false];    // noNotify = false
+        });
+    }
 
 }
 

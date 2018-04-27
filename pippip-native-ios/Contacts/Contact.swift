@@ -30,7 +30,7 @@ import UIKit
     @objc var authData: Data?
     @objc var nonce: Data?
     @objc var messageKeys: [ Data ]?
-    var conversation: Conversation?
+    @objc var conversation: Conversation?
 
     @objc override init() {
 
@@ -50,8 +50,8 @@ import UIKit
 
         guard let puid = serverContact["publicId"] as? String else { return nil }
         publicId = puid
-        let config = Configurator()
-        contactId = config.getContactId(publicId)
+        let contactManager = ContactManager()
+        contactId = contactManager.getContactId(publicId)
         guard let stat = serverContact["status"] as? String else { return nil }
         status = stat
         currentIndex = 0

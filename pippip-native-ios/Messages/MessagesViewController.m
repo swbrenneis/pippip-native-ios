@@ -18,9 +18,10 @@
 
 @interface MessagesViewController ()
 {
-    NSArray<TextMessage*> *mostRecent;
+    NSMutableArray<TextMessage*> *mostRecent;
     AuthViewController *authView;
-    MessageManager *messageManager;
+//    TouchAuth *touchAuth;
+//    MessageManager *messageManager;
     ContactManager *contactManager;
     BOOL suspended;
     BOOL accountDeleted;
@@ -37,12 +38,13 @@
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
-    mostRecent = [NSArray array];
+    mostRecent = [NSMutableArray array];
     _tableView.dataSource = self;
     [_tableView setDelegate:self];
     authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
+//    touchAuth = [[TouchAuth alloc] init:self.tableView];
     sessionState = [[SessionState alloc] init];
-    suspended = YES;
+    suspended = NO;
     accountDeleted = NO;
 
     [NSNotificationCenter.defaultCenter addObserver:self
@@ -66,9 +68,12 @@
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(presentAlert:)
                                                name:PRESENT_ALERT object:nil];
-    
-    if (messageManager != nil) {
-        mostRecent = [messageManager mostRecentMessages];
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(thumbprintComplete:)
+                                               name:THUMBPRINT_COMPLETE object:nil];
+
+    if (sessionState.authenticated && !suspended) {
+        [self getMostRecentMessages];
         [_tableView reloadData];
     }
 
@@ -79,6 +84,7 @@
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NEW_MESSAGES object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:PRESENT_ALERT object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:THUMBPRINT_COMPLETE object:nil];
 
 }
 
@@ -87,7 +93,7 @@
     [super viewDidAppear:animated];
 
     if (accountDeleted) {
-        mostRecent = [NSArray array];
+        [mostRecent removeAllObjects];
         [self presentViewController:authView animated:YES completion:nil];
         accountDeleted = NO;
     }
@@ -97,6 +103,11 @@
 
 }
 
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
 - (IBAction)composeMessage:(id)sender {
 
     ConversationViewController *controller = [[ConversationViewController alloc] init];
@@ -104,9 +115,17 @@
 
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)getMostRecentMessages {
+
+    [mostRecent removeAllObjects];
+    NSArray *contactList = [contactManager getContactList];
+    for (Contact *contact in contactList) {
+        TextMessage *textMessage = [contact.conversation mostRecentMessage];
+        if (textMessage != nil) {
+            [mostRecent addObject:textMessage];
+        }
+    }
+
 }
 
 - (void)appResumed:(NSNotification*)notification {
@@ -115,26 +134,27 @@
         suspended = NO;
         NSDictionary *info = notification.userInfo;
         NSInteger suspendedTime = [info[@"suspendedTime"] integerValue];
-        if (suspendedTime > 0 && suspendedTime < 180) {
-            [authView setSuspended:YES];
+        if (suspendedTime > 0 && suspendedTime < 1800) {
+            authView.suspended = true;
         }
         else {
+            authView.suspended = false;
             Authenticator *auth = [[Authenticator alloc] initForLogout];
             [auth logout];
         }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (self.view.window != nil) {
-                [self presentViewController:self->authView animated:YES completion:nil];
-            }
-        });
     }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.view.window != nil) {
+            [self presentViewController:self->authView animated:YES completion:nil];
+        }
+    });
 
 }
 
 - (void)appSuspended:(NSNotification*)notification {
 
     suspended = YES;
-    mostRecent = [NSArray array];
+    [mostRecent removeAllObjects];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self->_tableView reloadData];
     });
@@ -143,9 +163,11 @@
 
 - (void)newSession:(NSNotification*)notification {
     
-    messageManager = [[MessageManager alloc] init];
+//    messageManager = [[MessageManager alloc] init];
+    // This has to be done here because the default Realm hasn't been set
+    // until the user is authenticated
     contactManager = [[ContactManager alloc] init];
-    mostRecent = [messageManager mostRecentMessages];
+    [self getMostRecentMessages];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self->_tableView reloadData];
     });
@@ -163,6 +185,15 @@
                      textColor:ContrastColor(alertColor, true) time:2 delegate:nil];
     });
     
+}
+
+- (void)thumbprintComplete:(NSNotification*)notification {
+
+    [self getMostRecentMessages];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self->_tableView reloadData];
+    });
+
 }
 
 - (IBAction)signoutClicked:(UIBarButtonItem *)sender {
@@ -189,7 +220,7 @@
 
 - (void)newMessages:(NSNotification*)notification {
 
-    mostRecent = [messageManager mostRecentMessages];
+    [self getMostRecentMessages];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self->_tableView reloadData];
     });

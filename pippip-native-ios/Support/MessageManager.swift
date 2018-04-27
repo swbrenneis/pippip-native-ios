@@ -55,20 +55,17 @@ import UIKit
      */
     private func addTextMessages(_ textMessages: [TextMessage]) {
 
-        for textMessage in textMessages {
-            textMessage.messageId = Int64(config.newMessageId())
-        }
         messageDatabase.add(textMessages)
-        let ids = config.allContactIds()
-        for contactId in ids! {
+        let ids = contactManager.allContactIds()
+        for contactId in ids {
             var newMessages = [TextMessage]()
             for textMessage in textMessages {
-                if textMessage.contactId == contactId.int32Value {
+                if textMessage.contactId == contactId {
                     newMessages.append(textMessage)
                 }
             }
             if !newMessages.isEmpty {
-                let contact = contactManager.getContactById(contactId.intValue)!
+                let contact = contactManager.getContactById(contactId)!
                 contact.conversation!.addTextMessages(newMessages)
             }
         }
@@ -139,10 +136,16 @@ import UIKit
 
     }
 
+    func mostRecentMessage(_ contactId: Int) -> TextMessage? {
+
+        return messageDatabase.mostRecentTextMessage(contactId);
+
+    }
+/*
     @objc func mostRecentMessages() -> [TextMessage] {
 
         var messages = [TextMessage]()
-        let contactIds = config.allContactIds() as! [Int]
+        let contactIds = contactManager.allContactIds()
         for contactId in contactIds {
             if let message = messageDatabase.mostRecentTextMessage(contactId) {
                 messages.append(message)
@@ -151,7 +154,7 @@ import UIKit
         return messages
 
     }
-
+*/
     func scrubCleartext() {
         
         let messageIds = messageDatabase.allMessageIds();
@@ -169,9 +172,8 @@ import UIKit
             try textMessage.encrypt()
         }
         let contact = contactManager.getContactById(textMessage.contactId)!
-        let messageId = Int64(config.newMessageId())
-        textMessage.messageId = messageId
         messageDatabase.add(textMessage)
+        let messageId = textMessage.messageId
 
         let enclaveTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
             if let ts = response["timestamp"] as? NSNumber {

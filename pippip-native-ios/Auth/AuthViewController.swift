@@ -24,9 +24,9 @@ import LocalAuthentication
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let backgroundColor = UIColor.flatPink
-        self.view.backgroundColor = backgroundColor
-        authButton.titleLabel?.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
+        //let backgroundColor = UIColor(red: 79/255, green: 209/255, blue: 204/255, alpha: 1.0)
+        //self.view.backgroundColor = backgroundColor
+        //authButton.titleLabel?.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
         
     }
 
@@ -39,7 +39,7 @@ import LocalAuthentication
             authButton.setTitle("Sign In", for: .normal)
         }
         else {
-            authButton.setTitle("Create Account", for: .normal)
+            authButton.setTitle("Create New Account", for: .normal)
         }
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
                                                name: Notifications.PresentAlert, object: nil)
@@ -119,7 +119,7 @@ import LocalAuthentication
     func doNewAccountAlerts() {
 
         let alert = PMAlertController(title: "Create A New Account",
-                                      description: "Enter a nickname or public ID",
+                                      description: "Enter an account name and passphrase",
                                       image: nil,
                                       style: PMAlertControllerStyle.alert)
         alert.addTextField({ (textField) in

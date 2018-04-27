@@ -22,6 +22,8 @@ class Conversation: NSObject {
     private var messageList = [TextMessage]()
     private var messageMap = [Int64: TextMessage]()
     private var timestampSet = Set<Int64>()
+    private var mostRecent: TextMessage?
+    private var messagesLoaded = false
 
     init(_ contact: Contact) {
 
@@ -51,6 +53,12 @@ class Conversation: NSObject {
                     textMessage.timestamp += 1
                 }
                 timestampSet.insert(textMessage.timestamp)
+                if mostRecent == nil {
+                    mostRecent = textMessage
+                }
+                else if textMessage.timestamp > mostRecent!.timestamp {
+                    mostRecent = textMessage
+                }
                 if isVisible {
                     DispatchQueue.global().async {
                         textMessage.decrypt()
@@ -69,6 +77,7 @@ class Conversation: NSObject {
         messageList.removeAll()
         messageMap.removeAll()
         timestampSet.removeAll()
+        mostRecent = nil
         messageManager.deleteMessages(contact.contactId)
 
     }
@@ -79,6 +88,9 @@ class Conversation: NSObject {
             timestampSet.remove(message.timestamp)
             if let index = messageList.index(of: message) {
                 messageList.remove(at: index)
+            }
+            if message.messageId == mostRecent?.messageId {
+                mostRecent = nil
             }
             messageManager.deleteMessage(messageId)
         }
@@ -109,13 +121,29 @@ class Conversation: NSObject {
     
     }
 
+    @objc func mostRecentMessage() -> TextMessage? {
+
+        if mostRecent == nil {
+            mostRecent = messageManager.mostRecentMessage(contact.contactId)
+        }
+        return mostRecent
+
+    }
+
     func loadMessages() {
 
-        if messageList.isEmpty {
+        if !messagesLoaded {
+            messagesLoaded = true
             messageList = messageManager.getTextMessages(contact.contactId)
             for message in messageList {
                 timestampSet.insert(message.timestamp)
                 messageMap[message.messageId] = message
+                if mostRecent == nil {
+                    mostRecent = message
+                }
+                else if message.timestamp > mostRecent!.timestamp {
+                    mostRecent = message
+                }
             }
         }
 
@@ -132,6 +160,12 @@ class Conversation: NSObject {
         let messageId = try messageManager.sendMessage(textMessage, retry: false)
         messageList.append(textMessage)
         messageMap[messageId] = textMessage
+        if mostRecent == nil {
+            mostRecent = textMessage
+        }
+        else if textMessage.timestamp > mostRecent!.timestamp {
+            mostRecent = textMessage
+        }
 
     }
 

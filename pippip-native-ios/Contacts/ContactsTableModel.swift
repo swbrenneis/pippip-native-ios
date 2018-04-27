@@ -33,20 +33,16 @@ class ContactsTableModel: BaseExpandingTableModel {
     func setContacts(_ contactList: [ Contact ], viewController: ContactsViewController) {
 
         var cells = [ CellDataProtocol ]()
+        let tableView = viewController.tableView!
         for contact in contactList {
-            let tableView = viewController.tableView!
-            let contactCell = tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
-            if let nickname = contact.nickname {
-                contactCell.identLabel.text = nickname
+            if contact.status == "accepted" || contact.status == "rejected" {
+                let contactCell = tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
+                contactCell.identLabel.text = contact.displayName
+                contactCell.statusImageView.image = UIImage(named: contact.status)
+                let cellData = ContactCellData(contactCell: contactCell,
+                                               contact: contact, viewController: viewController)
+                cells.append(cellData)
             }
-            else {
-                let fragment = contact.publicId.prefix(10)
-                contactCell.identLabel.text = String(fragment) + " ..."
-            }
-            contactCell.statusImageView.image = UIImage(named: contact.status)
-            let cellData = ContactCellData(contactCell: contactCell,
-                                           contact: contact, viewController: viewController)
-            cells.append(cellData)
         }
         if cells.count > 0 {
             insertCells(cells, section: 1, at: 0)

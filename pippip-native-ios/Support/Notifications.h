@@ -33,5 +33,6 @@ static NSString *REQUESTS_UPDATED = @"RequestsUpdated";
 static NSString *REQUEST_ACKNOWLEDGED = @"RequestsAcknowledged";
 static NSString *CLEARTEXT_AVAILABLE = @"CleartextAvailable";
 static NSString *NEW_MESSAGES = @"NewMessages";
+static NSString *THUMBPRINT_COMPLETE = @"ThumbprintComplete";
 
 #endif /* Notifications_h */

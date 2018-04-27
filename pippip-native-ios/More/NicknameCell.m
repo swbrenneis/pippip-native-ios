@@ -63,6 +63,10 @@
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
+    if (selected) {
+        [_nicknameTextField becomeFirstResponder];
+    }
+
 }
 
 - (void)newSession:(NSNotification*)notification {

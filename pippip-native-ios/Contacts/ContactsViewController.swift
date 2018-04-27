@@ -25,7 +25,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     var nickname: String?
     var publicId = ""
     var debugDelete = false
-    var debugging = true
+    var debugging = false
     var suspended = false
 
     init() {
@@ -66,6 +66,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
             items.append(deleteItem)
         }
         self.navigationItem.rightBarButtonItems = items
+        self.navigationItem.title = "Contacts"
 
     }
 
@@ -81,6 +82,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
                                                name: Notifications.AppSuspended, object: nil)
 
         contactsModel.setContacts(contactManager.getContactList(), viewController: self)
+        tableView.reloadData()
 
     }
 
@@ -104,10 +106,11 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
             suspended = false
             let info = notification.userInfo
             if let suspendedTime = info?[AnyHashable("suspendedTime")] as? NSNumber {
-                if (suspendedTime.intValue > 0 && suspendedTime.intValue < 180) {
+                if (suspendedTime.intValue > 0 && suspendedTime.intValue < 1800) {
                     authView!.suspended = true
                 }
                 else {
+                    authView?.suspended = false
                     let auth = Authenticator(forLogout: ())
                     auth?.logout()
                 }
@@ -125,7 +128,6 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         suspended = true
         DispatchQueue.main.async {
             self.contactsModel.clear(1, tableView: self.tableView)
-            self.tableView.deleteRows(at: self.contactsModel.deletePaths, with: .top)
         }
 
     }

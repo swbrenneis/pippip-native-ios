@@ -22,6 +22,8 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
     var publicId = ""
     var contactManager = ContactManager()
     var sessionState = SessionState()
+    var authView: AuthViewController?
+    var suspended = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,11 +35,19 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
 
         tableView.register(FriendCell.self, forCellReuseIdentifier: "FriendCell")
 
+        authView =
+            self.storyboard?.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
 
         tableModel!.setFriends(whitelist: config.whitelist, tableView: tableView)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
+                                               name: Notifications.AppResumed, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
+                                               name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
                                                name: Notifications.PresentAlert, object: nil)
 
@@ -140,6 +150,35 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
 
     }
 
+    @objc func appResumed(_ notification: Notification) {
+        
+        if suspended {
+            suspended = false
+            if let info = notification.userInfo {
+                let suspendedTime = info["suspendedTime"] as! NSNumber
+                if suspendedTime.intValue > 0 && suspendedTime.intValue < 1800 {
+                    authView!.suspended = true
+                }
+            }
+            else {
+                authView?.suspended = false
+                let auth = Authenticator()
+                auth.logout()
+            }
+            DispatchQueue.main.async {
+                self.present(self.authView!, animated: true, completion: nil)
+            }
+            
+        }
+        
+    }
+    
+    @objc func appSuspended(_ notification: Notification) {
+        
+        suspended = true
+        
+    }
+    
     @objc func friendAdded(_ : Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.FriendAdded, object: nil)

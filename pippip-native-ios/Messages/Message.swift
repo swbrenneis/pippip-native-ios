@@ -10,6 +10,9 @@ import UIKit
 
 @objc class Message: NSObject {
 
+    static let currentVersion: Float = 2.0
+
+    @objc var version: Float = 0
     @objc var acknowledged = false
     @objc var ciphertext: Data?
     @objc var contactId: Int = 0
@@ -20,6 +23,7 @@ import UIKit
     @objc var read = false
     @objc var sequence: Int64 = 0
     @objc var timestamp: Int64 = 0
+    @objc var compressed = false
 
     var config = Configurator()
     var contactManager = ContactManager()
@@ -29,7 +33,7 @@ import UIKit
         let b64 = serverMessage["body"] as! String
         ciphertext = Data(base64Encoded: b64)
         let publicId = serverMessage["fromId"] as! String
-        contactId = config.getContactId(publicId)
+        contactId = contactManager.getContactId(publicId)
         let ki = serverMessage["keyIndex"] as! NSNumber
         keyIndex = ki.intValue
         messageType = serverMessage["messageType"] as! String
@@ -38,10 +42,17 @@ import UIKit
         sequence = sq.int64Value
         let ts = serverMessage["timestamp"] as! NSNumber
         timestamp = ts.int64Value
+        if let comp = serverMessage["compressed"] as? NSNumber {
+            compressed = comp.boolValue
+        }
+        else {
+            compressed = false
+        }
+        version = Message.currentVersion
 
     }
 
-    init(text: String, contact: Contact) {
+    init(contact: Contact) {
 
         contactId = contact.contactId
         keyIndex = contact.currentIndex + 1
@@ -69,6 +80,8 @@ import UIKit
         read = dbMessage.read
         sequence = Int64(dbMessage.sequence)
         timestamp = Int64(dbMessage.timestamp)
+        compressed = dbMessage.compressed
+        version = dbMessage.version
 
     }
 
@@ -79,6 +92,7 @@ import UIKit
         serverMessage["sequence"] = sequence
         serverMessage["keyIndex"] = keyIndex
         serverMessage["messageType"] = messageType
+        serverMessage["compressed"] = compressed
         serverMessage["body"] = ciphertext?.base64EncodedString()
         return serverMessage
 
@@ -97,6 +111,8 @@ import UIKit
         dbMessage.sequence = Int(sequence)
         dbMessage.keyIndex = keyIndex
         dbMessage.timestamp = Int(timestamp)
+        dbMessage.compressed = compressed
+        dbMessage.version = version
 
         return dbMessage
 

@@ -18,6 +18,9 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
     @objc var contact: Contact?
     var selectView: SelectContactView?
     var messageManager = MessageManager()
+    var suspended = false
+    var returnFromSuspend = false
+    var authView: AuthViewController?
 
     init?() {
 
@@ -43,13 +46,17 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
         deferredDataSource = DeferredDataSource()
         
         super.init(dataSource: deferredDataSource,delegate: conversationDelegate)
-        
+
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        authView =
+            storyboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController
+        
         NotificationCenter.default.addObserver(self, selector: #selector(contactSelected(_:)),
                                                name: Notifications.ContactSelected, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(messageAdded(_:)),
@@ -65,34 +72,39 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if contact == nil {
-            let frame = self.view.bounds
-            let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.7)
-            selectView = SelectContactView(frame: viewRect)
-            selectView!.contentView.backgroundColor = UIColor.init(gradientStyle: .topToBottom, withFrame: viewRect, andColors: [UIColor.flatPowderBlue, UIColor.flatSkyBlue])
-            selectView!.contentView.alpha = 0.8
-            selectView!.center = self.view.center
-            self.view.addSubview(self.selectView!)
-        }
-        else {
-            conversationDataSource = ConversationDataSource.init(collectionNode: asyncCollectionNode, contact: contact!)
-            deferredDataSource.conversationDataSource = conversationDataSource!
-            self.navigationItem.title = self.contact!.displayName
-            self.contact!.conversation!.markMessagesRead()
-            self.contact!.conversation!.isVisible = true
+        if !returnFromSuspend {
+            if contact == nil {
+                let frame = self.view.bounds
+                let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.7)
+                selectView = SelectContactView(frame: viewRect)
+                selectView!.contentView.backgroundColor = UIColor.init(gradientStyle: .topToBottom, withFrame: viewRect, andColors: [UIColor.flatPowderBlue, UIColor.flatSkyBlue])
+                selectView!.contentView.alpha = 0.8
+                selectView!.center = self.view.center
+                self.view.addSubview(self.selectView!)
+            }
+            else {
+                conversationDataSource = ConversationDataSource.init(collectionNode: asyncCollectionNode, contact: contact!)
+                deferredDataSource.conversationDataSource = conversationDataSource!
+                self.navigationItem.title = self.contact!.displayName
+                self.contact!.conversation!.markMessagesRead()
+                self.contact!.conversation!.isVisible = true
+            }
         }
 
+        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
+                                               name: Notifications.AppResumed, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
+                                               name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
                                                name: Notifications.PresentAlert, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow(_:)),
-                                               name: .UIKeyboardWillShow, object: nil)
 
     }
 
     override func viewWillDisappear(_ animated: Bool) {
 
+        NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
         contact?.conversation!.isVisible = false
 
     }
@@ -125,8 +137,16 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
 
     }
 
-    @objc func clearMessages(_ item: Any) {
+    @objc func cancelEdit(_ item: Any) {
+        
+        var items = [UIBarButtonItem]()
+        let editItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editMessages(_:)))
+        items.append(editItem)
+        self.navigationItem.rightBarButtonItems = items
+        
+    }
 
+    @objc func clearMessages(_ item: Any) {
 
         conversationDataSource!.clearMessages()
         contact!.conversation!.clearMessages()
@@ -141,6 +161,9 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
     @objc func editMessages(_ item: Any) {
 
         var items = [UIBarButtonItem]()
+        let cancelItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self,
+                                         action: #selector(cancelEdit(_:)))
+        items.append(cancelItem)
         let clearItem = UIBarButtonItem(title: "Clear", style: .plain,
                                         target: self, action: #selector(clearMessages(_:)))
         items.append(clearItem)
@@ -148,9 +171,33 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
 
     }
 
-    @objc func keyboardDidShow(_ notification: Notification) {
+    @objc func appResumed(_ notification: Notification) {
 
-        self.scrollCollectionViewToBottom()
+        if suspended {
+            suspended = false
+            returnFromSuspend = true
+            if let info = notification.userInfo {
+                let suspendedTime = info["suspendedTime"] as! NSNumber
+                if suspendedTime.intValue > 0 && suspendedTime.intValue < 1800 {
+                    authView?.suspended = true
+                }
+            }
+            else {
+                authView?.suspended = false
+                let auth = Authenticator()
+                auth.logout()
+            }
+            DispatchQueue.main.async {
+                self.present(self.authView!, animated: true, completion: nil)
+            }
+
+        }
+
+    }
+    
+    @objc func appSuspended(_ notification: Notification) {
+
+        suspended = true
 
     }
 
@@ -187,7 +234,7 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
         }
         
     }
-    
+
     /*
     // MARK: - Navigation
 
