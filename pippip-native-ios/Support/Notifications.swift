@@ -36,5 +36,6 @@ import Foundation
     static let MessagesUpdated = NSNotification.Name("MessagesUpdated")
     static let CleartextAvailable = NSNotification.Name("CleartextAvailable")
     static let ThumbprintComplete = NSNotification.Name("ThumbprintComplete")
+    static let MessagesReady = NSNotification.Name("MessagesReady")
 
 }
