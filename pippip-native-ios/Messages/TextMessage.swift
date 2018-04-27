@@ -7,39 +7,52 @@
 //
 
 import UIKit
+import DataCompression
 
 class TextMessage: Message {
 
-    static let currentVersion: Float = 1.0
-    @objc var version: Float = 0
     @objc var cleartext: String?
 
-    override init(serverMessage: [AnyHashable: Any]) {
+    init(text: String, contact: Contact) {
 
-        version = TextMessage.currentVersion
-
-        super.init(serverMessage: serverMessage)
-
-    }
-
-    override init(text: String, contact: Contact) {
-
-        version = TextMessage.currentVersion
         cleartext = text
 
-        super.init(text: text, contact: contact)
+        super.init(contact: contact)
 
         messageType = "user text"
         read = true
+        version = Message.currentVersion
 
     }
 
     @objc override init(dbMessage: DatabaseMessage) {
         
-        version = dbMessage.version
         cleartext = dbMessage.cleartext
         
         super.init(dbMessage: dbMessage)
+
+    }
+    
+    override init(serverMessage: [AnyHashable : Any]) {
+
+        super.init(serverMessage: serverMessage)
+
+    }
+
+    func compress(_ text: String) -> Data? {
+
+        let decompressed = text.data(using: .utf8)
+        let compressed = decompressed?.compress(withAlgorithm: .LZMA)
+        print("Uncompressed size \(text.utf8.count)")
+        print("Compressed size \(compressed?.count ?? 0)")
+        return compressed
+
+    }
+
+    func decompress(_ compressed: Data) -> String? {
+
+        let decompressed = compressed.decompress(withAlgorithm: .LZMA)
+        return String(data: decompressed!, encoding: .utf8)
 
     }
 
@@ -59,6 +72,9 @@ class TextMessage: Message {
                 let message = error?.debugDescription ?? "Unknown"
                 print("Error decrypting message - \(message)")
             }
+            else if compressed {
+                self.cleartext = decompress(codec.getBlock())
+            }
             else {
                 self.cleartext = codec.getString()
             }
@@ -72,7 +88,6 @@ class TextMessage: Message {
     @objc override func encodeForDatabase() -> DatabaseMessage {
 
         let dbMessage = super.encodeForDatabase()
-        dbMessage.version = version
         if config.getCleartextMessages() {
             dbMessage.cleartext = cleartext
         }
@@ -87,7 +102,14 @@ class TextMessage: Message {
         let iv = ivGen.generate(Int(sequence), withNonce: contact.nonce)
         let codec = CKGCMCodec()
         codec.setIV(iv)
-        codec.put(cleartext)
+        if cleartext!.count > 100 {
+            codec.putBlock(compress(cleartext!))
+            compressed = true
+        }
+        else {
+            codec.put(cleartext)
+            compressed = false
+        }
         try ciphertext = codec.encrypt(contact.messageKeys![keyIndex], withAuthData: contact.authData)
         
     }

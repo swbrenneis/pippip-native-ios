@@ -156,17 +156,17 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
             suspended = false
             if let info = notification.userInfo {
                 let suspendedTime = info["suspendedTime"] as! NSNumber
-                if suspendedTime.intValue > 0 && suspendedTime.intValue < 180 {
+                if suspendedTime.intValue > 0 && suspendedTime.intValue < 1800 {
                     authView!.suspended = true
                 }
             }
             else {
+                authView?.suspended = false
                 let auth = Authenticator()
                 auth.logout()
             }
             DispatchQueue.main.async {
                 self.present(self.authView!, animated: true, completion: nil)
-                self.view.alpha = 1.0
             }
             
         }
@@ -176,9 +176,6 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
     @objc func appSuspended(_ notification: Notification) {
         
         suspended = true
-        DispatchQueue.main.async {
-            self.view.alpha = 0.2
-        }
         
     }
     

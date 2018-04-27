@@ -91,7 +91,7 @@
 
     sessionActive = YES;
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-    [messageManager getNewMessages];
+//    [messageManager getNewMessages];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self->contactManager getPendingRequests];
     });
@@ -121,6 +121,7 @@
 - (void)sessionEnded:(NSNotification*)notification {
     
     sessionActive = NO;
+    [contactManager clearContacts];
     
 }
 

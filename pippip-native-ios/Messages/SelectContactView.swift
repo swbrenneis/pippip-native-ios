@@ -43,6 +43,7 @@ class SelectContactView: UIView {
         tableView.dataSource = self
         tableView.register(ContactTableViewCell.self, forCellReuseIdentifier: "ContactTableViewCell")
         selectButton.isEnabled = false
+        selectButton.isHidden = true
 
     }
 
@@ -133,6 +134,7 @@ extension SelectContactView: UITableViewDelegate, UITableViewDataSource {
 
         selected = contactList[indexPath.item]
         selectButton.isEnabled = true
+        selectButton.isHidden = false
         if let nickname = selected?.nickname {
             searchText.text = nickname
         }

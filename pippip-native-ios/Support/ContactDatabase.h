@@ -12,7 +12,7 @@
 
 @interface ContactDatabase : NSObject
 
-- (NSInteger)addContact:(Contact*)contact;
+- (void)addContact:(Contact*)contact;
 
 - (BOOL)deleteContact:(NSInteger)contactId;
 

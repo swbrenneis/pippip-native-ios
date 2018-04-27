@@ -52,11 +52,13 @@ class ConversationDataSource: DefaultAsyncMessagesCollectionViewDataSource {
     @objc func cleartextAvailable(_ notification: Notification) {
 
         if let textMessage = notification.object as? TextMessage {
-            let messageData = ConversationMessageData(textMessage, contact: contact)
-            DispatchQueue.main.async {
-                self.collectionNode(collectionNode: self.asyncCollectionNode,
-                                    insertMessages: [messageData], completion:nil)
-                NotificationCenter.default.post(name: Notifications.MessageAdded, object: nil)
+            if textMessage.contactId == contact.contactId {
+                let messageData = ConversationMessageData(textMessage, contact: contact)
+                DispatchQueue.main.async {
+                    self.collectionNode(collectionNode: self.asyncCollectionNode,
+                                        insertMessages: [messageData], completion:nil)
+                    NotificationCenter.default.post(name: Notifications.MessageAdded, object: nil)
+                }
             }
         }
 

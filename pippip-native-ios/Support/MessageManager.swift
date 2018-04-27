@@ -136,10 +136,16 @@ import UIKit
 
     }
 
+    func mostRecentMessage(_ contactId: Int) -> TextMessage? {
+
+        return messageDatabase.mostRecentTextMessage(contactId);
+
+    }
+/*
     @objc func mostRecentMessages() -> [TextMessage] {
 
         var messages = [TextMessage]()
-        let contactIds = contactManager.allContactIds() as! [Int]
+        let contactIds = contactManager.allContactIds()
         for contactId in contactIds {
             if let message = messageDatabase.mostRecentTextMessage(contactId) {
                 messages.append(message)
@@ -148,7 +154,7 @@ import UIKit
         return messages
 
     }
-
+*/
     func scrubCleartext() {
         
         let messageIds = messageDatabase.allMessageIds();

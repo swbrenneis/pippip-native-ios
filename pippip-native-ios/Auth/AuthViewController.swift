@@ -24,9 +24,9 @@ import LocalAuthentication
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let backgroundColor = UIColor.flatPink
-        self.view.backgroundColor = backgroundColor
-        authButton.titleLabel?.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
+        //let backgroundColor = UIColor(red: 79/255, green: 209/255, blue: 204/255, alpha: 1.0)
+        //self.view.backgroundColor = backgroundColor
+        //authButton.titleLabel?.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
         
     }
 

@@ -126,10 +126,11 @@ static const NSInteger EDIT_INDEX = 4;
         [suspendItems removeAllObjects];
         NSDictionary *info = notification.userInfo;
         NSInteger suspendedTime = [info[@"suspendedTime"] integerValue];
-        if (suspendedTime > 0 && suspendedTime < 180) {
+        if (suspendedTime > 0 && suspendedTime < 1800) {
             authView.suspended = YES;
         }
         else {
+            authView.suspended = NO;
             Authenticator *auth = [[Authenticator alloc] initForLogout];
             [auth logout];
         }
@@ -146,11 +147,11 @@ static const NSInteger EDIT_INDEX = 4;
 - (void)appSuspended:(NSNotification*)notification {
 
     suspended = YES;
-    [suspendItems addObjectsFromArray:cellItems];
-    [cellItems removeAllObjects];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableView reloadData];
-    });
+//    [suspendItems addObjectsFromArray:cellItems];
+//    [cellItems removeAllObjects];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [self.tableView reloadData];
+//    });
     
 }
 

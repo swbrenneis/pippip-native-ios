@@ -106,10 +106,11 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
             suspended = false
             let info = notification.userInfo
             if let suspendedTime = info?[AnyHashable("suspendedTime")] as? NSNumber {
-                if (suspendedTime.intValue > 0 && suspendedTime.intValue < 180) {
+                if (suspendedTime.intValue > 0 && suspendedTime.intValue < 1800) {
                     authView!.suspended = true
                 }
                 else {
+                    authView?.suspended = false
                     let auth = Authenticator(forLogout: ())
                     auth?.logout()
                 }

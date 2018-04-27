@@ -35,22 +35,18 @@
 
 }
 
-- (NSInteger)addContact:(Contact*)contact {
+- (void)addContact:(Contact*)contact {
 
-    NSInteger contactId = [config newContactId];
-    contact.contactId = contactId;
     NSData *encoded = [self encodeContact:contact];
 
     // Add the contact to the database.
     DatabaseContact *dbContact = [[DatabaseContact alloc] init];
-    dbContact.contactId = contactId;
+    dbContact.contactId = contact.contactId;
     dbContact.encoded = encoded;
     RLMRealm *realm = [RLMRealm defaultRealm];
     [realm beginWriteTransaction];
     [realm addObject:dbContact];
     [realm commitWriteTransaction];
-
-    return contactId;
 
 }
 

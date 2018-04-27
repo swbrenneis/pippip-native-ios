@@ -67,7 +67,8 @@ class ContactManager: NSObject {
     }
 
     func addContact(_ contact: Contact) {
-        
+
+        contact.contactId = config.newContactId()
         contactDatabase.add(contact)
         ContactManager.contactMap[contact.publicId] = contact
         ContactManager.contactList.append(contact)
@@ -102,6 +103,15 @@ class ContactManager: NSObject {
             allIds.append(contact.contactId)
         }
         return allIds
+
+    }
+
+    @objc func clearContacts() {
+
+        ContactManager.contactList.removeAll()
+        ContactManager.contactMap.removeAll()
+        ContactManager.contactIdMap.removeAll()
+        ContactManager.initialized = false;
 
     }
 
@@ -170,7 +180,7 @@ class ContactManager: NSObject {
 
     }
 
-    func getContactList() -> [Contact] {
+    @objc func getContactList() -> [Contact] {
         return ContactManager.contactList
     }
 
@@ -186,7 +196,7 @@ class ContactManager: NSObject {
             else {
                 var info = [AnyHashable: Any]()
                 info["title"] = "Contact Error"
-                info["title"] = "Invalid response to get requests"
+                info["message"] = "Invalid response to get requests"
                 NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
             }
         })

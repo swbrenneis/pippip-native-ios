@@ -22,5 +22,6 @@
 @property BOOL read;
 @property BOOL acknowledged;
 @property BOOL sent;
+@property BOOL compressed;
 
 @end

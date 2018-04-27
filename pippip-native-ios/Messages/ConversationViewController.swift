@@ -97,8 +97,6 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
                                                name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
                                                name: Notifications.PresentAlert, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow(_:)),
-                                               name: .UIKeyboardWillShow, object: nil)
 
     }
 
@@ -107,7 +105,6 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
         NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
         contact?.conversation!.isVisible = false
 
     }
@@ -181,17 +178,17 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
             returnFromSuspend = true
             if let info = notification.userInfo {
                 let suspendedTime = info["suspendedTime"] as! NSNumber
-                if suspendedTime.intValue > 0 && suspendedTime.intValue < 180 {
-                    authView!.suspended = true
+                if suspendedTime.intValue > 0 && suspendedTime.intValue < 1800 {
+                    authView?.suspended = true
                 }
             }
             else {
+                authView?.suspended = false
                 let auth = Authenticator()
                 auth.logout()
             }
             DispatchQueue.main.async {
                 self.present(self.authView!, animated: true, completion: nil)
-                self.view.alpha = 1.0
             }
 
         }
@@ -201,15 +198,6 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
     @objc func appSuspended(_ notification: Notification) {
 
         suspended = true
-        DispatchQueue.main.async {
-            self.view.alpha = 0.2
-        }
-
-    }
-    
-    @objc func keyboardDidShow(_ notification: Notification) {
-
-        self.scrollCollectionViewToBottom()
 
     }
 
@@ -246,7 +234,7 @@ class ConversationViewController: AsyncMessagesViewController, RKDropdownAlertDe
         }
         
     }
-    
+
     /*
     // MARK: - Navigation
 

@@ -30,7 +30,7 @@ import UIKit
     @objc var authData: Data?
     @objc var nonce: Data?
     @objc var messageKeys: [ Data ]?
-    var conversation: Conversation?
+    @objc var conversation: Conversation?
 
     @objc override init() {
 
