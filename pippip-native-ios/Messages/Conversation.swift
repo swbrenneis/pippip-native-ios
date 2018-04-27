@@ -163,7 +163,37 @@ class Conversation: NSObject {
         return mostRecent
 
     }
+/*
+<<<<<<< HEAD
+=======
+    func loadMessages() {
 
+        if !messagesLoaded {
+            messagesLoaded = true
+            let messages = messageManager.getTextMessages(contact.contactId)
+            for message in messages {
+                // Eliminate duplicates. These should only exist when debugging
+                while timestampSet.contains(message.timestamp) {
+                    message.timestamp += 1
+                }
+                messageMap[message.messageId] = message
+                messageList.append(message)
+                timestampSet.insert(message.timestamp)
+                if mostRecent == nil {
+                    mostRecent = message
+                }
+                else if message.timestamp > mostRecent!.timestamp {
+                    mostRecent = message
+                }
+            }
+        }
+        NotificationCenter.default.post(name: Notifications.MessagesReady, object: messageList)
+
+
+    }
+
+>>>>>>> Attempting mutable text bubbles.
+ */
     func sendMessage(_ textMessage: TextMessage) throws {
 
         let messageId = try messageManager.sendMessage(textMessage, retry: false)
