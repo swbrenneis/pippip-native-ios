@@ -35,14 +35,12 @@ class ContactsTableModel: BaseExpandingTableModel {
         var cells = [ CellDataProtocol ]()
         let tableView = viewController.tableView!
         for contact in contactList {
-            if contact.status == "accepted" || contact.status == "rejected" {
-                let contactCell = tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
-                contactCell.identLabel.text = contact.displayName
-                contactCell.statusImageView.image = UIImage(named: contact.status)
-                let cellData = ContactCellData(contactCell: contactCell,
-                                               contact: contact, viewController: viewController)
-                cells.append(cellData)
-            }
+            let contactCell = tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
+            contactCell.identLabel.text = contact.displayName
+            contactCell.statusImageView.image = UIImage(named: contact.status)
+            let cellData = ContactCellData(contactCell: contactCell,
+                                           contact: contact, viewController: viewController)
+            cells.append(cellData)
         }
         if cells.count > 0 {
             insertCells(cells, section: 1, at: 0)
