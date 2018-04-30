@@ -163,6 +163,7 @@ class Conversation: NSObject {
         return mostRecent
 
     }
+
 /*
 <<<<<<< HEAD
 =======
