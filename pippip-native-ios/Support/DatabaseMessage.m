@@ -10,4 +10,8 @@
 
 @implementation DatabaseMessage
 
++ (NSString*)primaryKey {
+    return @"messageId";
+}
+
 @end
