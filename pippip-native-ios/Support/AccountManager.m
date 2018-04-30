@@ -90,9 +90,9 @@ static const float CURRENT_VERSION = 1.0;
     config.fileURL = [[[config.fileURL URLByDeletingLastPathComponent]
                        URLByAppendingPathComponent:name]
                       URLByAppendingPathExtension:@"realm"];
-    config.schemaVersion = 7;
+    config.schemaVersion = 8;
     config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
-        if (oldSchemaVersion < 7) {
+        if (oldSchemaVersion < 8) {
             // No migration necessary
         }
     };

@@ -147,6 +147,14 @@
     
 }
 
+- (NSInteger)getMessageCount:(NSInteger)contactId {
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %lld", contactId];
+    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+    return messages.count;
+
+}
+
 - (TextMessage*) getTextMessage:(NSInteger)messageId {
     
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageId = %lld", messageId];
@@ -160,15 +168,23 @@
     
 }
 
-- (NSArray<TextMessage*>*) getTextMessages:(NSInteger)contactId {
-    
+- (NSArray<TextMessage*>*) getTextMessages:(NSInteger)contactId
+                              withPosition:(NSInteger)pos
+                                 withCount:(NSInteger)count {
+
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %lld", contactId];
-    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+    RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
+                                              sortedResultsUsingKeyPath:@"timestamp" ascending:NO];
     NSMutableArray *textMessages = [NSMutableArray array];
-    for (DatabaseMessage *dbMessage in messages) {
-        [textMessages addObject:[[TextMessage alloc] initWithDbMessage:dbMessage]];
+    NSUInteger actual = pos + count;
+    if (actual > messages.count) {
+        actual = messages.count;
+    }
+    for (NSUInteger index = pos; index < actual; ++index) {
+        [textMessages addObject:[[TextMessage alloc] initWithDbMessage:messages[index]]];
     }
     return textMessages;
+
 }
 
 - (NSInteger)messageExists:(TextMessage*)message {
