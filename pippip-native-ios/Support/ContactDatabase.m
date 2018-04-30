@@ -50,7 +50,7 @@
 
 }
 
-- (Contact*)decodeContact:(NSData*)encoded {
+- (Contact*)decodeContact:(NSData*)encoded withContactId:(NSInteger)contactId {
 
     CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:encoded];
     NSError *error = nil;
@@ -97,30 +97,11 @@
         [realm commitWriteTransaction];
         return YES;
     }
-    NSLog(@"Contact with ID %lld not found for delete", contactId);
+    NSLog(@"Contact with ID %ld not found for delete", (long)contactId);
     return NO;
 
 }
-/*
-- (void)deleteContacts:(NSArray<NSNumber*>*)contacts {
 
-    for (NSNumber *cid in contacts) {
-        NSInteger contactId = [cid integerValue];
-        // Delete from the realm
-        RLMRealm *realm = [RLMRealm defaultRealm];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
-        RLMResults<DatabaseContact*> *contacts = [DatabaseContact objectsWithPredicate:predicate];
-        if (contacts.count > 0) {
-            if (realm != nil) {
-                [realm beginWriteTransaction];
-                [realm deleteObject:[contacts firstObject]];
-                [realm commitWriteTransaction];
-            }
-        }
-    }
-
-}
-*/
 - (NSData*)encodeContact:(Contact*)contact {
 
     CKGCMCodec *codec = [[CKGCMCodec alloc] init];
@@ -166,7 +147,7 @@
         RLMResults<DatabaseContact*> *contacts = [DatabaseContact objectsWithPredicate:predicate];
         if (contacts.count > 0) {
             DatabaseContact *dbContact = [contacts firstObject];
-            contact = [self decodeContact:dbContact.encoded];
+            contact = [self decodeContact:dbContact.encoded withContactId:contactId];
         }
     }
     return contact;
@@ -194,7 +175,7 @@
         // There might be a contact with ID = 0. This is a bug and can be ignored.
         NSInteger contactId = dbContact.contactId;
         if (dbContact.contactId > 0) {
-            Contact *contact = [self decodeContact:dbContact.encoded];
+            Contact *contact = [self decodeContact:dbContact.encoded withContactId:contactId];
             contact.contactId = contactId;
             if (contact != nil) {
                 [indexed addObject:contact];

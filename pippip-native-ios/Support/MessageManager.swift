@@ -37,8 +37,8 @@ import UIKit
             }
             for textMessage in textMessages {
                 if (textMessage.contactId != NSNotFound) {
-                    let contact = self.contactManager.getContactById(textMessage.contactId)!
-                    contact.conversation!.acknowledgeMessage(textMessage)
+                    let conversation = ConversationCache.getConversation(textMessage.contactId)
+                    conversation.acknowledgeMessage(textMessage)
                     let message = self.messageDatabase.getMessage(Int(textMessage.messageId))
                     message.acknowledged = true
                 }
@@ -65,8 +65,7 @@ import UIKit
                 }
             }
             if !newMessages.isEmpty {
-                let contact = contactManager.getContactById(contactId)!
-                contact.conversation!.addTextMessages(newMessages)
+                ConversationCache.getConversation(contactId).addTextMessages(newMessages)
             }
         }
         
@@ -99,6 +98,12 @@ import UIKit
         
     }
 
+    func getMessageCount(_ contactId: Int) -> Int {
+
+        return messageDatabase.getMessageCount(contactId)
+
+    }
+
     @objc func getNewMessages() {
 
         var request = [AnyHashable: Any]()
@@ -122,9 +127,9 @@ import UIKit
 
     }
 
-    func getTextMessages(_ contactId: Int) -> [TextMessage] {
+    func getTextMessages(contactId: Int, pos: Int, count: Int) -> [TextMessage] {
 
-        return messageDatabase.getTextMessages(contactId)
+        return messageDatabase.getTextMessages(contactId, withPosition:pos, withCount:count)
 
     }
 
@@ -165,27 +170,29 @@ import UIKit
         }
         
     }
-    
+
+    @discardableResult
     func sendMessage(_ textMessage: TextMessage, retry: Bool) throws -> Int64 {
 
         if (!retry) {
             try textMessage.encrypt()
+            messageDatabase.add(textMessage)
         }
-        let contact = contactManager.getContactById(textMessage.contactId)!
-        messageDatabase.add(textMessage)
         let messageId = textMessage.messageId
 
         let enclaveTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
             if let ts = response["timestamp"] as? NSNumber {
                 let timestamp = ts.int64Value
-                let actual = contact.conversation!.setTimestamp(textMessage.messageId, timestamp: timestamp)
+                let conversation = ConversationCache.getConversation(textMessage.contactId)
+                let actual = conversation.setMessageTimestamp(textMessage.messageId, timestamp: timestamp)
                 let message = self.messageDatabase.getMessage(Int(messageId))
                 message.acknowledged = true
                 message.timestamp = actual
                 self.messageDatabase.update(message)
             }
         })
-        var request = textMessage.encodeForServer(publicId: contact.publicId)
+        let contact = contactManager.getContactById(textMessage.contactId)
+        var request = textMessage.encodeForServer(publicId: contact!.publicId)
         request["method"] = "SendMessage"
         enclaveTask.errorTitle = "Message Error"
         enclaveTask.sendRequest(request)
