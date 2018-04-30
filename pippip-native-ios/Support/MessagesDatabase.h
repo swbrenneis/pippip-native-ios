@@ -30,12 +30,17 @@
 // Returns a raw, encrypted, generic message. Do not downcast.
 - (Message*_Nonnull)getMessage:(NSInteger)messageId;
 
+- (NSInteger)getMessageCount:(NSInteger)contactId;
+
    // Returns a raw, encrypted text message
 - (TextMessage*_Nonnull)getTextMessage:(NSInteger)messageId;
 
-- (NSArray<TextMessage*>*_Nonnull)getTextMessages:(NSInteger)contactId;
+// Returns a sorted array of text messages in a subrange. Will not overrun.
+- (NSArray<TextMessage*>*_Nonnull)getTextMessages:(NSInteger)contactId
+                                     withPosition:(NSInteger)pos
+                                        withCount:(NSInteger)count;
 
-- (NSInteger)messageExists:(TextMessage*)message;
+- (NSInteger)messageExists:(TextMessage*_Nonnull)message;
 
 - (TextMessage*_Nullable)mostRecentTextMessage:(NSInteger)contactId;
 

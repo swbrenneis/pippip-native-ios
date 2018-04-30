@@ -110,8 +110,8 @@
 
 - (IBAction)composeMessage:(id)sender {
 
-    ConversationViewController *controller = [[ConversationViewController alloc] init];
-    [self.navigationController pushViewController:controller animated:YES];
+//    ConversationViewController *controller = [[ConversationViewController alloc] init];
+//    [self.navigationController pushViewController:controller animated:YES];
 
 }
 
@@ -120,7 +120,8 @@
     [mostRecent removeAllObjects];
     NSArray *contactList = [contactManager getContactList];
     for (Contact *contact in contactList) {
-        TextMessage *textMessage = [contact.conversation mostRecentMessage];
+        Conversation *conversation = [ConversationCache getConversation:contact.contactId];
+        TextMessage *textMessage = [conversation mostRecentMessage];
         if (textMessage != nil) {
             [mostRecent addObject:textMessage];
         }
@@ -287,7 +288,7 @@
 
     if (indexPath.section == 1) {
         NSInteger contactId = mostRecent[indexPath.item].contactId;
-        ConversationViewController *viewController = [[ConversationViewController alloc] init];
+        ChattoViewController *viewController = [[ChattoViewController alloc] init];
         viewController.contact = [contactManager getContactById:contactId];
         [self.navigationController pushViewController:viewController animated:YES];
     }
