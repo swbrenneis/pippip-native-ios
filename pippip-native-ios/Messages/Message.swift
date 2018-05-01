@@ -8,7 +8,7 @@
 
 import UIKit
 
-@objc class Message: NSObject {
+@objc class Message: NSObject, Comparable {
 
     static let currentVersion: Float = 2.0
 
@@ -118,4 +118,12 @@ import UIKit
 
     }
 
+    static func < (lhs: Message, rhs: Message) -> Bool {
+        return lhs.timestamp < rhs.timestamp
+    }
+    
+    static func == (lhs: Message, rhs: Message) -> Bool {
+        return lhs.timestamp == rhs.timestamp
+    }
+    
 }

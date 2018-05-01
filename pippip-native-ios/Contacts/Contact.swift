@@ -31,7 +31,6 @@ import UIKit
     @objc var authData: Data?
     @objc var nonce: Data?
     @objc var messageKeys: [ Data ]?
-    @objc var conversation: Conversation?
 
     @objc override init() {
 
@@ -43,10 +42,22 @@ import UIKit
         currentSequence = 1
 
         super.init()
-        conversation = Conversation(self)
 
     }
+    
+    @objc init(contactId: Int) {
 
+        self.contactId = contactId
+        publicId = ""
+        status = ""
+        timestamp = 0
+        currentIndex = 0
+        currentSequence = 1
+        
+        super.init()
+
+    }
+    
     @objc init?(serverContact: [AnyHashable: Any]) {
 
         guard let puid = serverContact["publicId"] as? String else { return nil }
@@ -70,7 +81,6 @@ import UIKit
         }
         
         super.init()
-        conversation = Conversation(self)
 
     }
 
