@@ -47,7 +47,7 @@
     [realm beginWriteTransaction];
     [realm addObject:dbContact];
     [realm commitWriteTransaction];
-
+    
 }
 
 - (Contact*)decodeContact:(NSData*)encoded {
@@ -97,7 +97,7 @@
         [realm commitWriteTransaction];
         return YES;
     }
-    NSLog(@"Contact with ID %lld not found for delete", contactId);
+    NSLog(@"Contact with ID %d not found for delete", (int)contactId);
     return NO;
 
 }

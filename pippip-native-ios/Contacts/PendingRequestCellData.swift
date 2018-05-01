@@ -83,30 +83,29 @@ class PendingRequestSelector: ExpandingTableSelectorProtocol {
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestAcknowledged, object: nil)
 
         DispatchQueue.main.async {
-            if let requests = notification.object as? [ [AnyHashable: Any] ] {
-                if requests.count == 0 {
-                    self.viewController!.contactsModel.clear(0, tableView: self.viewController!.tableView)
-                }
-                else {
-                    // count = 0 means return all cells from row to end of second
-                    let cells = self.viewController!.contactsModel.getCells(section: 0, row: 0, count: 0)
-                    var item = 1
-                    for cell in cells {
-                        let requestCellData = cell as!PendingRequestCellData
-                        let requestCell = requestCellData.cell as! PendingRequestCell
-                        var found = false
-                        for request in requests {
-                            if request["publicId"] as? String == requestCell.publicIdLabel.text {
-                                found = true
-                            }
+            let requests = self.contactManager.getContactRequests()
+            if requests.count == 0 {
+                self.viewController!.contactsModel.clear(0, tableView: self.viewController!.tableView)
+            }
+            else {
+                // count = 0 means return all cells from row to end of section
+                let cells = self.viewController!.contactsModel.getCells(section: 0, row: 1, count: 0)
+                var item = 1
+                for cell in cells {
+                    let requestCellData = cell as!PendingRequestCellData
+                    let requestCell = requestCellData.cell as! PendingRequestCell
+                    var found = false
+                    for request in requests {
+                        if request["publicId"] as? String == requestCell.publicIdLabel.text {
+                            found = true
                         }
-                        if !found {
-                            let _ = self.viewController!.contactsModel.removeCell(section: 0, row: item)
-                            self.viewController!.tableView.deleteRows(at: self.viewController!.contactsModel.deletePaths,
-                                                                      with: .top)
-                        }
-                        item += 1
                     }
+                    if !found {
+                        let _ = self.viewController!.contactsModel.removeCell(section: 0, row: item)
+                        self.viewController!.tableView.deleteRows(at: self.viewController!.contactsModel.deletePaths,
+                                                                  with: .top)
+                    }
+                    item += 1
                 }
             }
 

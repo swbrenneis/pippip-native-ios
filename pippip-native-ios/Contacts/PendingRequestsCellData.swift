@@ -26,6 +26,13 @@ class PendingRequestsCellData: CellDataProtocol {
         
     }
 
+    func updateRequests(_ requests: [[AnyHashable: Any]]) {
+
+        let pendingSelector = selector as! PendingRequestsSelector
+        pendingSelector.updateRequests(requests)
+
+    }
+
 }
 
 class PendingRequestsSelector: ExpandingTableSelectorProtocol {
@@ -61,6 +68,29 @@ class PendingRequestsSelector: ExpandingTableSelectorProtocol {
             tableView.insertRows(at: tableView.expandingModel!.insertPaths, with: .bottom)
         }
 
+    }
+
+    func updateRequests(_ requests: [[AnyHashable: Any]]) {
+
+        let tableView = viewController!.tableView!
+        if cell!.isExpanded() {
+            DispatchQueue.main.async {
+                let _ = tableView.expandingModel!.removeCells(section: 0, row: 1, count: requests.count)
+                tableView.deleteRows(at: tableView.expandingModel!.deletePaths, with: .top)
+            }
+        }
+        self.requests = requests
+        if cell!.isExpanded() {
+            DispatchQueue.main.async {
+                var cells = [CellDataProtocol]()
+                for request in requests {
+                    cells.append(PendingRequestCellData(request, viewController: self.viewController))
+                }
+                tableView.expandingModel?.insertCells(cells, section: 0, at: 1)
+                tableView.insertRows(at: tableView.expandingModel!.insertPaths, with: .bottom)
+            }
+        }
+        
     }
 
 }

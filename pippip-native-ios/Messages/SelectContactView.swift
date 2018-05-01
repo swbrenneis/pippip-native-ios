@@ -135,12 +135,7 @@ extension SelectContactView: UITableViewDelegate, UITableViewDataSource {
         selected = contactList[indexPath.item]
         selectButton.isEnabled = true
         selectButton.isHidden = false
-        if let nickname = selected?.nickname {
-            searchText.text = nickname
-        }
-        else {
-            searchText.text = selected?.publicId
-        }
+        searchText.text = selected!.displayName
 
     }
 

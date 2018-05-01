@@ -27,6 +27,8 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     var debugDelete = false
     var debugging = false
     var suspended = false
+    var pendingRequests = [[AnyHashable: Any]]()
+    var pendingCellData: PendingRequestsCellData?
 
     init() {
 
@@ -83,6 +85,12 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
 
         contactsModel.setContacts(contactManager.getContactList(), viewController: self)
         tableView.reloadData()
+        pendingRequests = contactManager.getContactRequests()
+        if pendingRequests.count > 0 {
+            pendingCellData = PendingRequestsCellData(pendingRequests, viewController: self)
+            tableView.expandingModel!.insertCell(pendingCellData!, section: 0, row: 0)
+            tableView.insertRows(at: self.tableView.expandingModel!.insertPaths, with: .top)
+        }
 
     }
 
@@ -216,14 +224,18 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     
     @objc func requestsUpdated(_ notification: Notification) {
 
-        if let requests = notification.object as? [[AnyHashable: Any]] {
-            let count = requests.count
-            if count > 0 && tableView.expandingModel!.tableModel[0]!.count == 0 {
+        guard let newRequests = notification.object as? Bool else { return }
+        if newRequests {
+            pendingRequests = contactManager.getContactRequests()
+            if pendingCellData == nil {
                 DispatchQueue.main.async {
-                    let cellData = PendingRequestsCellData(requests, viewController: self)
-                    self.tableView.expandingModel!.insertCell(cellData, section: 0, row: 0)
+                    self.pendingCellData = PendingRequestsCellData(self.pendingRequests, viewController: self)
+                    self.tableView.expandingModel!.insertCell(self.pendingCellData!, section: 0, row: 0)
                     self.tableView.insertRows(at: self.tableView.expandingModel!.insertPaths, with: .top)
                 }
+            }
+            else {
+                pendingCellData?.updateRequests(pendingRequests)
             }
         }
 

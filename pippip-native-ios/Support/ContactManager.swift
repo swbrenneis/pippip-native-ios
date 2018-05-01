@@ -13,6 +13,7 @@ class ContactManager: NSObject {
     static private var contactList = [Contact]()
     static private var contactMap = [String: Contact]()
     static private var contactIdMap = [Int: Contact]()
+    static private var requestList = [[AnyHashable: Any]]()
     static private var initialized = false
 
     var contactDatabase: ContactDatabase
@@ -44,21 +45,25 @@ class ContactManager: NSObject {
                     contact.nickname = nickname
                     self.addContact(contact)
                 }
+                var newRequestList = [[AnyHashable: Any]]()
+                for request in ContactManager.requestList {
+                    let ackId = serverContact["publicId"] as! String
+                    let reqId = request["publicId"] as! String
+                    if ackId != reqId {
+                        newRequestList.append(request)
+                    }
+                }
+                ContactManager.requestList = newRequestList
+                DispatchQueue.global().async {
+                    NotificationCenter.default.post(name: Notifications.RequestAcknowledged,
+                                                    object: nil, userInfo: serverContact)
+                }
             }
             else {
                 var info = [AnyHashable: Any]()
                 info["title"] = "Contact Error"
                 info["message"] = "Invalid response to acknowledgement"
                 NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
-            }
-            if let pending = response["pending"] as? [[AnyHashable: Any]] {
-                NotificationCenter.default.post(name: Notifications.RequestAcknowledged,
-                                                object: pending, userInfo: nil)
-            }
-            else {
-                let pending = [[AnyHashable: Any]]()
-                NotificationCenter.default.post(name: Notifications.RequestAcknowledged,
-                                                object: pending, userInfo: nil)
             }
         })
         ackTask.errorTitle = "Contact Error"
@@ -68,10 +73,18 @@ class ContactManager: NSObject {
 
     func addContact(_ contact: Contact) {
 
-        contact.contactId = config.newContactId()
-        contactDatabase.add(contact)
-        ContactManager.contactMap[contact.publicId] = contact
-        ContactManager.contactList.append(contact)
+        if ContactManager.contactMap[contact.publicId] != nil {
+            var info = [AnyHashable:Any]()
+            info["title"] = "Contact Error"
+            info["message"] = "Attempted to add duplicate contact"
+            NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+        }
+        else {
+            contact.contactId = config.newContactId()
+            contactDatabase.add(contact)
+            ContactManager.contactMap[contact.publicId] = contact
+            ContactManager.contactList.append(contact)
+        }
         
     }
     
@@ -96,6 +109,29 @@ class ContactManager: NSObject {
 
     }
 
+    // Returns true if new requests were added
+    func addRequests(_ requests: [[AnyHashable: Any]]) -> Bool {
+
+        var newRequests = false
+        for request in requests {
+            var found = false
+            if let publicId = request["publicId"] as? String {
+                for existing in ContactManager.requestList {
+                    let existingId = existing["publicId"] as? String
+                    if existingId == publicId {
+                        found = true
+                    }
+                }
+                if !found {
+                    ContactManager.requestList.append(request)
+                    newRequests = true
+                }
+            }
+        }
+        return newRequests
+
+    }
+
     func allContactIds() -> [Int] {
 
         var allIds = [Int]()
@@ -111,7 +147,7 @@ class ContactManager: NSObject {
         ContactManager.contactList.removeAll()
         ContactManager.contactMap.removeAll()
         ContactManager.contactIdMap.removeAll()
-        ContactManager.initialized = false;
+        ContactManager.initialized = false
 
     }
 
@@ -122,20 +158,23 @@ class ContactManager: NSObject {
         request["publicId"] = publicId
         let deleteTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
             if let publicId = response["publicId"] as? String {
-                let contactId = ContactManager.contactMap[publicId]!.contactId
-                self.contactDatabase.deleteContact(contactId)
-                ContactManager.contactMap.removeValue(forKey: publicId)
-                let messageDatabase = MessagesDatabase()
-                messageDatabase.deleteAllMessages(contactId)
-                var newList = [Contact]()
-                for contact in ContactManager.contactList {
-                    if contact.publicId != publicId {
-                        newList.append(contact)
+                // If there are duplicates in the database, this will prevent crashes
+                // However, duplicates will require two separate deletes
+                if let contactId = ContactManager.contactMap[publicId]?.contactId {
+                    self.contactDatabase.deleteContact(contactId)
+                    ContactManager.contactMap.removeValue(forKey: publicId)
+                    let messageDatabase = MessagesDatabase()
+                    messageDatabase.deleteAllMessages(contactId)
+                    var newList = [Contact]()
+                    for contact in ContactManager.contactList {
+                        if contact.publicId != publicId {
+                            newList.append(contact)
+                        }
                     }
+                    ContactManager.contactList = newList
+                    NotificationCenter.default.post(name: Notifications.ContactDeleted, object: publicId, userInfo: nil)
+                    NotificationCenter.default.post(name: Notifications.MessagesUpdated, object: nil)
                 }
-                ContactManager.contactList = newList
-                NotificationCenter.default.post(name: Notifications.ContactDeleted, object: publicId, userInfo: nil)
-                NotificationCenter.default.post(name: Notifications.MessagesUpdated, object: nil)
             }
         })
         deleteTask.errorTitle = "Contact Error"
@@ -190,8 +229,11 @@ class ContactManager: NSObject {
         request["method"] = "GetPendingRequests"
         let getTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
             if let requests = response["requests"] as? [[AnyHashable: Any]] {
-                NotificationCenter.default.post(name: Notifications.RequestsUpdated, object: requests)
                 print("\(requests.count) pending requests returned")
+                let newRequests = self.addRequests(requests)
+                DispatchQueue.global().async {
+                    NotificationCenter.default.post(name: Notifications.RequestsUpdated, object: newRequests)
+                }
             }
             else {
                 var info = [AnyHashable: Any]()
@@ -203,6 +245,10 @@ class ContactManager: NSObject {
         getTask.errorTitle = "Contact Error"
         getTask.sendRequest(request)
         
+    }
+
+    func getContactRequests() -> [[AnyHashable: Any]] {
+        return ContactManager.requestList
     }
 
     func mapContacts() {
@@ -238,16 +284,24 @@ class ContactManager: NSObject {
         var request = [AnyHashable: Any]()
         request["method"] = "RequestContact"
         request["id"] = publicId
-        let reqTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
-            let contact = Contact()
-            contact.publicId = response["requestedContactId"] as! String
-            contact.nickname = nickname
-            contact.status = response["result"] as! String
-            self.addContact(contact)
-            NotificationCenter.default.post(name: Notifications.ContactRequested, object: contact)
-        })
-        reqTask.errorTitle = "Contact Error"
-        reqTask.sendRequest(request)
+        if let _ = ContactManager.contactMap[publicId] {
+            var info = [AnyHashable: Any]()
+            info["title"] = "Contact Error"
+            info["message"] = "This contact already exists in your contact list"
+            NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+        }
+        else {
+            let reqTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
+                let contact = Contact()
+                contact.publicId = response["requestedContactId"] as! String
+                contact.nickname = nickname
+                contact.status = response["result"] as! String
+                self.addContact(contact)
+                NotificationCenter.default.post(name: Notifications.ContactRequested, object: contact)
+            })
+            reqTask.errorTitle = "Contact Error"
+            reqTask.sendRequest(request)
+        }
         
     }
 

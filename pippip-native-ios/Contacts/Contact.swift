@@ -19,7 +19,8 @@ import UIKit
                 return nickname!
             }
             else {
-                return publicId
+                let shortened = publicId.prefix(10) + "..."
+                return String(shortened)
             }
         }
     }
