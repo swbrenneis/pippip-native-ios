@@ -165,8 +165,6 @@ class Conversation: NSObject {
     }
 
 /*
-<<<<<<< HEAD
-=======
     func loadMessages() {
 
         if !messagesLoaded {
@@ -193,7 +191,6 @@ class Conversation: NSObject {
 
     }
 
->>>>>>> Attempting mutable text bubbles.
  */
     func sendMessage(_ textMessage: TextMessage) throws {
 
