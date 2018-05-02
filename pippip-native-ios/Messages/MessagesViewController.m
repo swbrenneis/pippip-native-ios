@@ -260,8 +260,13 @@
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PreviewCell" forIndexPath:indexPath];
         // Configure the cell...
         PreviewCell *previewCell = (PreviewCell*)cell;
+        // This is code necessary to allow for a bug that stores a message before the contact
+        // has been accepted. It can be removed when general beta begins.
         TextMessage *message = mostRecent[indexPath.item];
-        [previewCell configure:message];
+        Contact *contact = [contactManager getContactById:message.contactId];
+        if (contact != nil && [contact.status isEqualToString:@"accepted"]) {
+            [previewCell configure:message];
+        }
         return cell;
     }
     

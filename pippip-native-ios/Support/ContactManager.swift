@@ -83,6 +83,7 @@ class ContactManager: NSObject {
             contact.contactId = config.newContactId()
             contactDatabase.add(contact)
             ContactManager.contactMap[contact.publicId] = contact
+            ContactManager.contactIdMap[contact.contactId] = contact
             ContactManager.contactList.append(contact)
         }
         

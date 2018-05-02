@@ -108,8 +108,14 @@ import UIKit
                 print("\(messages.count) new messages returned")
                 var textMessages = [TextMessage]()
                 for message in messages {
-                    let textMessage = TextMessage(serverMessage: message)
-                    textMessages.append(textMessage)
+                    if let publicId = message["fromId"] as? String {
+                        if let contact = self.contactManager.getContact(publicId) {
+                            if contact.status == "accepted" {
+                                let textMessage = TextMessage(serverMessage: message)
+                                textMessages.append(textMessage)
+                            }
+                        }
+                    }
                 }
                 if !textMessages.isEmpty {
                     self.addTextMessages(textMessages)
