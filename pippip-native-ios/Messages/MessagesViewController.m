@@ -9,8 +9,6 @@
 #import "pippip_native_ios-Swift.h"
 #import "MessagesViewController.h"
 #import "Notifications.h"
-#import "PreviewCell.h"
-#import "MessagesHeadingCell.h"
 #import "ApplicationSingleton.h"
 #import "Authenticator.h"
 #import "MBProgressHUD.h"
@@ -110,8 +108,8 @@
 
 - (IBAction)composeMessage:(id)sender {
 
-//    ConversationViewController *controller = [[ConversationViewController alloc] init];
-//    [self.navigationController pushViewController:controller animated:YES];
+    ChattoViewController *viewController = [[ChattoViewController alloc] init];
+    [self.navigationController pushViewController:viewController animated:YES];
 
 }
 

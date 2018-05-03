@@ -165,7 +165,7 @@ class ContactManager: NSObject {
                     self.contactDatabase.deleteContact(contactId)
                     ContactManager.contactMap.removeValue(forKey: publicId)
                     let messageDatabase = MessagesDatabase()
-                    messageDatabase.deleteAllMessages(contactId)
+                    messageDatabase.clearMessages(contactId)
                     var newList = [Contact]()
                     for contact in ContactManager.contactList {
                         if contact.publicId != publicId {

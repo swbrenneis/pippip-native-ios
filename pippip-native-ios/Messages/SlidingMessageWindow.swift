@@ -21,19 +21,21 @@ class SlidingMessageWindow: NSObject {
         self.conversation = conversation
         self.windowSize = windowSize
 
-        window = conversation.getMessages(pos: 0, count: windowSize).reversed()
+        window = conversation.getMessages(pos: 0, count: windowSize)
+        // Always move the window to the end of the list
         if (window.count < windowSize) {
             windowPos = 0
         }
         else {
             windowPos = conversation.messageCount - windowSize
         }
+        conversation.markMessagesRead(window)
 
     }
 
     func canSlideDown() -> Bool {
 
-        return windowPos < conversation.messageCount
+        return windowPos + windowSize < conversation.messageCount
 
     }
 
@@ -43,19 +45,40 @@ class SlidingMessageWindow: NSObject {
 
     }
 
+    func clearMessages() {
+
+        conversation.clearMessages()
+        windowPos = 0
+        window.removeAll()
+
+    }
+
     func insertMessage(_ textMessage: TextMessage) {
 
         conversation.addTextMessages([textMessage])
-        windowPos += 1
+        if window.count == windowSize {
+            windowPos = min(windowPos + 1, conversation.messageCount - 1)
+        }
         window = conversation.getMessages(pos: windowPos, count: windowSize)
+
+    }
+
+    func newMessages() {
+
+        if window.count == windowSize {
+            windowPos += conversation.newMessageCount()
+        }
+        window = conversation.getMessages(pos: windowPos, count: windowSize)
+        conversation.markMessagesRead(window)
 
     }
 
     func slideDown() {
 
         if canSlideDown() {
-            windowPos += windowSize / 2
+            windowPos = min(conversation.messageCount - 1, windowPos + (windowSize / 2))
             window = conversation.getMessages(pos: windowPos, count: windowSize)
+            conversation.markMessagesRead(window)
         }
 
     }
@@ -63,10 +86,7 @@ class SlidingMessageWindow: NSObject {
     func slideUp() {
 
         if canSlideUp() {
-            windowPos -= windowSize / 2
-            if windowPos < 0 {
-                windowPos = 0
-            }
+            windowPos -= max(0, windowSize - (windowSize / 2))
             window = conversation.getMessages(pos: windowPos, count: windowSize)
         }
 

@@ -16,6 +16,8 @@
 		5500D172207455450016AC71 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500D171207455450016AC71 /* TextMessage.swift */; };
 		551050FF201F8840000A313E /* MessagesDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 551050FE201F8840000A313E /* MessagesDatabase.m */; };
 		551051082020BC36000A313E /* DatabaseMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 551051072020BC36000A313E /* DatabaseMessage.m */; };
+		5516978F20994A01002BB4C1 /* MessagesHeadingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5516978E20994A01002BB4C1 /* MessagesHeadingCell.swift */; };
+		55169791209A4894002BB4C1 /* PreviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55169790209A4894002BB4C1 /* PreviewCell.swift */; };
 		551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183E1FA0FA030050C93C /* NewAccountFinish.m */; };
 		551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A18411FA0FA740050C93C /* NewAccountFinal.m */; };
 		55206DA92075486000B0B246 /* SelectContactView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55206DA82075486000B0B246 /* SelectContactView.xib */; };
@@ -69,7 +71,6 @@
 		557C2B742096A03D0069336D /* PippipMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B732096A03D0069336D /* PippipMessageViewModel.swift */; };
 		557C2B762096A3A10069336D /* TextChatItemFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B752096A3A00069336D /* TextChatItemFactory.swift */; };
 		557CE571203A61DB008AF8CF /* ApplicationSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE570203A61DB008AF8CF /* ApplicationSingleton.m */; };
-		557CE57B203B8598008AF8CF /* PreviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE579203B8598008AF8CF /* PreviewCell.m */; };
 		557CE58A2040A41F008AF8CF /* NicknameCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE5892040A41F008AF8CF /* NicknameCell.m */; };
 		5586B882206428A400641514 /* PublicIdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B881206428A400641514 /* PublicIdCell.swift */; };
 		5586B8852064826000641514 /* EditWhitelistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B8842064826000641514 /* EditWhitelistCell.swift */; };
@@ -143,7 +144,6 @@
 		55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55491FA14D7100A7026B /* RSAPrivateKey.cc */; };
 		55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA554A1FA14D7100A7026B /* BigInteger.cc */; };
 		55B0DBB12045EC8400F6B29B /* MessagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B0DBB02045EC8400F6B29B /* MessagesViewController.m */; };
-		55B0DBB42045F2C500F6B29B /* MessagesHeadingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B0DBB32045F2C500F6B29B /* MessagesHeadingCell.m */; };
 		55B0DBBA2048962400F6B29B /* CopyableLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B0DBB92048962400F6B29B /* CopyableLabel.m */; };
 		55B3911C1FE17339004DAFF7 /* EnclaveRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B3911B1FE17339004DAFF7 /* EnclaveRequest.m */; };
 		55B3911F1FE17383004DAFF7 /* EnclaveResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B3911E1FE17383004DAFF7 /* EnclaveResponse.m */; };
@@ -211,6 +211,8 @@
 		551050FE201F8840000A313E /* MessagesDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessagesDatabase.m; sourceTree = "<group>"; };
 		551051062020BC36000A313E /* DatabaseMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseMessage.h; sourceTree = "<group>"; };
 		551051072020BC36000A313E /* DatabaseMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseMessage.m; sourceTree = "<group>"; };
+		5516978E20994A01002BB4C1 /* MessagesHeadingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesHeadingCell.swift; sourceTree = "<group>"; };
+		55169790209A4894002BB4C1 /* PreviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewCell.swift; sourceTree = "<group>"; };
 		551A183D1FA0FA030050C93C /* NewAccountFinish.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinish.h; sourceTree = "<group>"; };
 		551A183E1FA0FA030050C93C /* NewAccountFinish.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountFinish.m; sourceTree = "<group>"; };
 		551A18401FA0FA740050C93C /* NewAccountFinal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinal.h; sourceTree = "<group>"; };
@@ -283,8 +285,6 @@
 		557C2B752096A3A00069336D /* TextChatItemFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextChatItemFactory.swift; sourceTree = "<group>"; };
 		557CE56F203A61DB008AF8CF /* ApplicationSingleton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplicationSingleton.h; sourceTree = "<group>"; };
 		557CE570203A61DB008AF8CF /* ApplicationSingleton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApplicationSingleton.m; sourceTree = "<group>"; };
-		557CE579203B8598008AF8CF /* PreviewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewCell.m; sourceTree = "<group>"; };
-		557CE57A203B8598008AF8CF /* PreviewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewCell.h; sourceTree = "<group>"; };
 		557CE5882040A41F008AF8CF /* NicknameCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NicknameCell.h; sourceTree = "<group>"; };
 		557CE5892040A41F008AF8CF /* NicknameCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NicknameCell.m; sourceTree = "<group>"; };
 		5586B880206428A400641514 /* pippip-native-ios-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pippip-native-ios-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -438,8 +438,6 @@
 		55AA556D1FA1527C00A7026B /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgmp.a; sourceTree = "<group>"; };
 		55B0DBAF2045EC8400F6B29B /* MessagesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessagesViewController.h; sourceTree = "<group>"; };
 		55B0DBB02045EC8400F6B29B /* MessagesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessagesViewController.m; sourceTree = "<group>"; };
-		55B0DBB22045F2C500F6B29B /* MessagesHeadingCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessagesHeadingCell.h; sourceTree = "<group>"; };
-		55B0DBB32045F2C500F6B29B /* MessagesHeadingCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessagesHeadingCell.m; sourceTree = "<group>"; };
 		55B0DBB82048962400F6B29B /* CopyableLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CopyableLabel.h; sourceTree = "<group>"; };
 		55B0DBB92048962400F6B29B /* CopyableLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CopyableLabel.m; sourceTree = "<group>"; };
 		55B3911A1FE17339004DAFF7 /* EnclaveRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnclaveRequest.h; sourceTree = "<group>"; };
@@ -625,8 +623,7 @@
 				554D01C9207D5BB000C19373 /* Conversation.swift */,
 				557C2B71209657FD0069336D /* ConversationCache.swift */,
 				554D01CF20803BB200C19373 /* Message.swift */,
-				55B0DBB22045F2C500F6B29B /* MessagesHeadingCell.h */,
-				55B0DBB32045F2C500F6B29B /* MessagesHeadingCell.m */,
+				5516978E20994A01002BB4C1 /* MessagesHeadingCell.swift */,
 				55B0DBAF2045EC8400F6B29B /* MessagesViewController.h */,
 				55B0DBB02045EC8400F6B29B /* MessagesViewController.m */,
 				557C2B5C2093C5080069336D /* PippipMessageModel.swift */,
@@ -635,8 +632,7 @@
 				557C2B582093B8360069336D /* PippipTextMessageModel.swift */,
 				557C2B5E2093C5530069336D /* PippipTextMessageViewModel.swift */,
 				557C2B5A2093BEB60069336D /* PippipTextMessageViewModelBuilder.swift */,
-				557CE57A203B8598008AF8CF /* PreviewCell.h */,
-				557CE579203B8598008AF8CF /* PreviewCell.m */,
+				55169790209A4894002BB4C1 /* PreviewCell.swift */,
 				55206DAA20754A2500B0B246 /* SelectContactView.swift */,
 				557C2B6F209635E00069336D /* SlidingMessageWindow.swift */,
 				557C2B752096A3A00069336D /* TextChatItemFactory.swift */,
@@ -1174,7 +1170,6 @@
 				55579E512024C21F00131A54 /* DatabaseContact.m in Sources */,
 				55FA874B1FD5E5AC00FB96C0 /* ServerAuthChallenge.m in Sources */,
 				5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */,
-				557CE57B203B8598008AF8CF /* PreviewCell.m in Sources */,
 				554D01CA207D5BB000C19373 /* Conversation.swift in Sources */,
 				55AA555B1FA14D7100A7026B /* GCMCodec.cc in Sources */,
 				5500D16A207405190016AC71 /* DeleteAccountCell.swift in Sources */,
@@ -1192,6 +1187,7 @@
 				554C17371FDD5990009434F5 /* MoreTableViewController.m in Sources */,
 				5586B88E2064951000641514 /* ParameterGenerator.swift in Sources */,
 				551050FF201F8840000A313E /* MessagesDatabase.m in Sources */,
+				5516978F20994A01002BB4C1 /* MessagesHeadingCell.swift in Sources */,
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
 				554D01CE207DA4C000C19373 /* CleartextMessagesCell.swift in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
@@ -1201,6 +1197,7 @@
 				55666649201B7C9000051ED2 /* LoggingErrorDelegate.m in Sources */,
 				55AA55581FA14D7100A7026B /* HMAC.cc in Sources */,
 				55AA54DE1FA14B1E00A7026B /* ByteStreamCodec.cc in Sources */,
+				55169791209A4894002BB4C1 /* PreviewCell.swift in Sources */,
 				55AA55001FA14C1300A7026B /* CKSHA1.mm in Sources */,
 				55AA54E11FA14B1E00A7026B /* Unsigned64.cc in Sources */,
 				5586B8872064882B00641514 /* SessionStateActual.swift in Sources */,
@@ -1275,7 +1272,6 @@
 				55A734AF206EC0FC00D31AD6 /* ExpandingTableModelProtocol.swift in Sources */,
 				55B3911C1FE17339004DAFF7 /* EnclaveRequest.m in Sources */,
 				55AA55651FA14D7100A7026B /* Random.cc in Sources */,
-				55B0DBB42045F2C500F6B29B /* MessagesHeadingCell.m in Sources */,
 				55FB2F662032375A005E3730 /* AccountConfig.m in Sources */,
 				55FA873F1FD187CD00FB96C0 /* Authenticator.m in Sources */,
 				55A734B8206ED94700D31AD6 /* WhitelistTableModel.swift in Sources */,

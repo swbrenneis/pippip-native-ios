@@ -21,7 +21,7 @@
 
 - (NSArray<TextMessage*>*_Nonnull)allTextMessages;
 
-- (void)deleteAllMessages:(NSInteger)contactId;
+- (void)clearMessages:(NSInteger)contactId;
 
 - (void)deleteAllMessages;
 

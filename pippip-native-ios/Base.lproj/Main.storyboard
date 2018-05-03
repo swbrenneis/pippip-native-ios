@@ -664,7 +664,7 @@
                                 <rect key="frame" x="0.0" y="108" width="375" height="559"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MessagesHeadingCell" rowHeight="112" id="noL-5c-BP3" customClass="MessagesHeadingCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MessagesHeadingCell" rowHeight="112" id="noL-5c-BP3" customClass="MessagesHeadingCell" customModule="pippip_native_ios" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="112"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="noL-5c-BP3" id="qTq-aa-hwQ">
@@ -693,10 +693,10 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="messageSearchTextField" destination="Tsu-Lr-DKH" id="HQR-dE-ov1"/>
+                                            <outlet property="messageSearchTextField" destination="Tsu-Lr-DKH" id="p2H-tf-nhp"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="PreviewCell" rowHeight="75" id="2b8-YL-5J3" customClass="PreviewCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="PreviewCell" rowHeight="75" id="2b8-YL-5J3" customClass="PreviewCell" customModule="pippip_native_ios" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="140" width="375" height="75"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2b8-YL-5J3" id="nye-m1-4Za">
@@ -750,10 +750,10 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="dateTimeLabel" destination="NyK-S4-JCD" id="ro7-kv-XUV"/>
-                                            <outlet property="messageReadImage" destination="S60-8L-u20" id="1tF-ik-dy4"/>
-                                            <outlet property="previewLabel" destination="bjm-UN-EJC" id="Mgg-Xv-JwI"/>
-                                            <outlet property="senderLabel" destination="ElL-p0-en0" id="Smn-nJ-MC6"/>
+                                            <outlet property="messageReadIndicator" destination="S60-8L-u20" id="tpJ-n6-pHO"/>
+                                            <outlet property="previewLabel" destination="bjm-UN-EJC" id="KBi-19-oeP"/>
+                                            <outlet property="senderLabel" destination="ElL-p0-en0" id="841-KW-7p1"/>
+                                            <outlet property="timestampLabel" destination="NyK-S4-JCD" id="4pO-LG-LnT"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>

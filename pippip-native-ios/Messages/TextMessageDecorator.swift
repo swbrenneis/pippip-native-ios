@@ -20,7 +20,7 @@ class TextMessageDecorator: ChatItemsDecoratorProtocol {
         for index in 0..<chatItems.count {
             let chatItem = chatItems[index] as! PippipTextMessageModel
             var showingTail = true
-            var bottomMargin: CGFloat = 5.0
+            var bottomMargin: CGFloat = 15.0
             if index < chatItems.count - 1 {
                 let nextItem = chatItems[index + 1] as! PippipTextMessageModel
                 if chatItem.textMessage.originating == nextItem.textMessage.originating {

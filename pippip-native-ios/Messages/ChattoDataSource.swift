@@ -35,6 +35,9 @@ class ChattoDataSource: ChatDataSourceProtocol {
         slidingWindow = SlidingMessageWindow(conversation: conversation, windowSize: 25)
         chatItemFactory = TextChatItemFactory()
 
+        NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
+                                               name: Notifications.NewMessages, object: nil)
+        
     }
 
     func loadNext() {
@@ -58,6 +61,23 @@ class ChattoDataSource: ChatDataSourceProtocol {
         slidingWindow.insertMessage(textMessage)
         delegate?.chatDataSourceDidUpdate(self, updateType: .pagination)
 
+    }
+
+    func clearMessages() {
+
+        assert(Thread.isMainThread, "clearMessages not called from main thread")
+        slidingWindow.clearMessages()
+        delegate?.chatDataSourceDidUpdate(self, updateType: .pagination)
+
+    }
+
+    @objc func newMessages(_ notification: Notification) {
+
+        DispatchQueue.main.async {
+            self.slidingWindow.newMessages()
+            self.delegate?.chatDataSourceDidUpdate(self, updateType: .pagination)
+        }
+        
     }
 
 }

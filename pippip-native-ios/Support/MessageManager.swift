@@ -26,7 +26,9 @@ import UIKit
                 tuple["timestamp"] = textMessage.timestamp
                 serverMessages.append(tuple)
             }
-            print("Contact for ID \(textMessage.contactId) not found")
+            else {
+                print("Contact for ID \(textMessage.contactId) not found")
+            }
         }
         var request = [AnyHashable: Any]()
         request["method"] = "AcknowledgeMessages"
@@ -36,13 +38,18 @@ import UIKit
                 print("Messages acknowledged, \(exceptions.count) exceptions")
             }
             for textMessage in textMessages {
+                textMessage.acknowledged = true
+                /*
                 if (textMessage.contactId != NSNotFound) {
                     let conversation = ConversationCache.getConversation(textMessage.contactId)
                     conversation.acknowledgeMessage(textMessage)
                     let message = self.messageDatabase.getMessage(Int(textMessage.messageId))
                     message.acknowledged = true
+                    self.messageDatabase.update(message)
                 }
+ */
             }
+            self.addTextMessages(textMessages)
             NotificationCenter.default.post(name: Notifications.NewMessages, object: nil)
         })
         messageTask.errorTitle = "Message Error"
@@ -86,9 +93,9 @@ import UIKit
 
     }
 
-    func deleteMessages(_ contactId: Int) {
+    func clearMessages(_ contactId: Int) {
 
-        messageDatabase.deleteAllMessages(contactId)
+        messageDatabase.clearMessages(contactId)
 
     }
 
@@ -123,7 +130,7 @@ import UIKit
                     }
                 }
                 if !textMessages.isEmpty {
-                    self.addTextMessages(textMessages)
+                    //self.addTextMessages(textMessages)
                     self.acknowledgeMessages(textMessages)
                 }
             }
@@ -182,19 +189,16 @@ import UIKit
 
         if (!retry) {
             try textMessage.encrypt()
+            textMessage.timestamp = Int64(Date().timeIntervalSince1970 * 1000)
             messageDatabase.add(textMessage)
         }
         let messageId = textMessage.messageId
 
         let enclaveTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
             if let ts = response["timestamp"] as? NSNumber {
-                let timestamp = ts.int64Value
-                let conversation = ConversationCache.getConversation(textMessage.contactId)
-                let actual = conversation.setMessageTimestamp(textMessage.messageId, timestamp: timestamp)
-                let message = self.messageDatabase.getMessage(Int(messageId))
-                message.acknowledged = true
-                message.timestamp = actual
-                self.messageDatabase.update(message)
+                textMessage.timestamp = ts.int64Value
+                textMessage.acknowledged = true
+                self.messageDatabase.update(textMessage)
             }
         })
         let contact = contactManager.getContactById(textMessage.contactId)

@@ -93,7 +93,7 @@
     
 }
 
-- (void)deleteAllMessages:(NSInteger)contactId {
+- (void)clearMessages:(NSInteger)contactId {
     
     RLMRealm *realm = [RLMRealm defaultRealm];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
@@ -174,7 +174,7 @@
 
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %lld", contactId];
     RLMResults<DatabaseMessage*> *messages = [[DatabaseMessage objectsWithPredicate:predicate]
-                                              sortedResultsUsingKeyPath:@"timestamp" ascending:NO];
+                                              sortedResultsUsingKeyPath:@"timestamp" ascending:YES];
     NSMutableArray *textMessages = [NSMutableArray array];
     NSUInteger actual = pos + count;
     if (actual > messages.count) {

@@ -122,6 +122,7 @@
     
     sessionActive = NO;
     [contactManager clearContacts];
+    [ConversationCache clearCache];
     
 }
 

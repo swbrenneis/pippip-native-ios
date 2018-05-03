@@ -13,15 +13,22 @@ class Conversation: NSObject {
     var contact: Contact
     var messageManager: MessageManager
     // Sorted list, oldest first
-    private var messageList = SortedArray<TextMessage>(areInIncreasingOrder: >)
+    private var messageList = SortedArray<TextMessage>(areInIncreasingOrder: { id1, id2 in
+        if id1.timestamp < id2.timestamp {
+            return true
+        }
+        else {
+            return false
+        }
+    })
     private var messageMap = [Int64: TextMessage]()
     private var timestampSet = Set<Int64>()
     private var mostRecent: TextMessage?
     private var pos: Int = Int.max
-    private var count: Int
+    private var newMessages: Int
     var messageCount: Int {
         get {
-            return count
+            return messageList.count
         }
     }
 
@@ -29,7 +36,7 @@ class Conversation: NSObject {
 
         self.contact = contact
         messageManager = MessageManager()
-        count = messageManager.getMessageCount(contact.contactId)
+        newMessages = 0
 
         super.init()
 
@@ -61,7 +68,9 @@ class Conversation: NSObject {
                 else if textMessage.timestamp > mostRecent!.timestamp {
                     mostRecent = textMessage
                 }
-                count += 1
+                if !textMessage.originating {
+                    newMessages += 1
+                }
             }
             else {
                 print("Duplicate messageId \(textMessage.messageId)")
@@ -76,8 +85,7 @@ class Conversation: NSObject {
         messageMap.removeAll()
         timestampSet.removeAll()
         mostRecent = nil
-        count = 0
-        messageManager.deleteMessages(contact.contactId)
+        messageManager.clearMessages(contact.contactId)
 
     }
 
@@ -91,7 +99,6 @@ class Conversation: NSObject {
             if message.messageId == mostRecent?.messageId {
                 mostRecent = nil
             }
-            count -= 1
             messageManager.deleteMessage(messageId)
         }
 
@@ -100,31 +107,25 @@ class Conversation: NSObject {
     // Lazy loading of message list.
     func getMessages(pos: Int, count: Int) -> [TextMessage] {
 
-        assert(pos >= 0 || pos < self.count)
-        var actualCount = pos + count
-        if actualCount > self.count {
-            actualCount = self.count
-        }
-
         if pos < self.pos {
+            // Returns a sorted list. Return maximum of messages remaining in database or count.
             let messages = messageManager.getTextMessages(contactId: contact.contactId,
-                                                          pos: pos, count: actualCount)
+                                                          pos: pos, count: count)
             self.pos = pos
-            messageList.insert(contentsOf: messages)
-            for message in messages {
-                messageMap[message.messageId] = message
-                timestampSet.insert(message.timestamp)
-                if mostRecent == nil {
-                    mostRecent = message
-                }
-                else if message.timestamp > mostRecent!.timestamp {
-                    mostRecent = message
+            if !messages.isEmpty {
+                for message in messages {
+                    if messageMap[message.messageId] == nil {
+                        messageMap[message.messageId] = message
+                        messageList.insert(message)
+                    }
                 }
             }
         }
 
+        assert(pos < messageList.count || (pos == 0 && messageList.count == 0))
+        let actualCount = min(messageList.count, pos + count)
         var subrange = [TextMessage]()
-        for index in 0..<actualCount {
+        for index in pos..<actualCount {
             subrange.append(messageList[index])
         }
         return subrange
@@ -144,11 +145,15 @@ class Conversation: NSObject {
 
     }
 
-    func markMessagesRead() {
+    func markMessagesRead(_ messages: [Message]) {
 
-        for message in messageList {
+        for message in messages {
             if !message.read {
                 message.read = true
+                // Most recent message may be a different instance.
+                if mostRecent?.messageId == message.messageId {
+                    mostRecent?.read = true
+                }
                 messageManager.markMessageRead(message.messageId)
             }
         }
@@ -157,55 +162,35 @@ class Conversation: NSObject {
 
     @objc func mostRecentMessage() -> TextMessage? {
 
-        if mostRecent == nil {
-            mostRecent = messageManager.mostRecentMessage(contact.contactId)
-        }
-        return mostRecent
-
-    }
-
-/*
-    func loadMessages() {
-
-        if !messagesLoaded {
-            messagesLoaded = true
-            let messages = messageManager.getTextMessages(contact.contactId)
-            for message in messages {
-                // Eliminate duplicates. These should only exist when debugging
-                while timestampSet.contains(message.timestamp) {
-                    message.timestamp += 1
-                }
-                messageMap[message.messageId] = message
-                messageList.append(message)
-                timestampSet.insert(message.timestamp)
-                if mostRecent == nil {
-                    mostRecent = message
-                }
-                else if message.timestamp > mostRecent!.timestamp {
-                    mostRecent = message
-                }
+        if messageList.isEmpty {
+            if let textMessage = messageManager.mostRecentMessage(contact.contactId) {
+                messageList.insert(textMessage)
+                messageMap[textMessage.messageId] = textMessage
             }
         }
-        NotificationCenter.default.post(name: Notifications.MessagesReady, object: messageList)
-
+        return messageList.last
 
     }
 
- */
+    // Resets new message count
+    func newMessageCount() -> Int {
+
+        let newCount = newMessages
+        newMessages = 0
+        return newCount
+
+    }
+
     func sendMessage(_ textMessage: TextMessage) throws {
 
+        textMessage.read = true
         let messageId = try messageManager.sendMessage(textMessage, retry: false)
         messageList.insert(textMessage)
         messageMap[messageId] = textMessage
-        if mostRecent == nil {
-            mostRecent = textMessage
-        }
-        else if textMessage.timestamp > mostRecent!.timestamp {
-            mostRecent = textMessage
-        }
+        mostRecent = textMessage
 
     }
-
+/*
     func setMessageTimestamp(_ messageId: Int64, timestamp: Int64) -> Int64 {
 
         var time = timestamp
@@ -219,5 +204,5 @@ class Conversation: NSObject {
         return time
 
     }
-
+*/
 }

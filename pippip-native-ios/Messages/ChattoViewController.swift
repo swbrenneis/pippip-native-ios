@@ -11,7 +11,8 @@ import ChattoAdditions
 
 class ChattoViewController: BaseChatViewController {
 
-    @objc var contact: Contact!
+    @objc var contact: Contact?
+    var selectView: SelectContactView?
     var chatInputPresenter: BasicChatInputBarPresenter!
     var dataSource: ChattoDataSource!
     var messageManager = MessageManager()
@@ -19,15 +20,40 @@ class ChattoViewController: BaseChatViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        dataSource =
-            ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
-        self.chatDataSource = dataSource
         self.chatItemsDecorator = TextMessageDecorator()
-        self.navigationItem.title = contact.displayName
+        var items = [UIBarButtonItem]()
+        let editItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editMessages(_:)))
+        items.append(editItem)
+        self.navigationItem.rightBarButtonItems = items
+
+        NotificationCenter.default.addObserver(self, selector: #selector(contactSelected(_:)),
+                                               name: Notifications.ContactSelected, object: nil)
+
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if contact != nil {
+            dataSource =
+                ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
+            self.chatDataSource = dataSource
+            self.navigationItem.title = contact!.displayName
+        }
+        else {
+            let frame = self.view.bounds
+            let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.7)
+            selectView = SelectContactView(frame: viewRect)
+            selectView!.contentView.backgroundColor = UIColor.init(gradientStyle: .topToBottom, withFrame: viewRect, andColors: [UIColor.flatPowderBlue, UIColor.flatSkyBlue])
+            selectView!.contentView.alpha = 0.8
+            selectView!.center = self.view.center
+            self.view.addSubview(self.selectView!)
+        }
 
     }
 
     override func createChatInputView() -> UIView {
+
         let chatInputView = ChatInputBar.loadNib()
         var appearance = ChatInputBarAppearance()
         appearance.sendButtonAppearance.title = NSLocalizedString("Send", comment: "")
@@ -35,6 +61,7 @@ class ChattoViewController: BaseChatViewController {
         self.chatInputPresenter = BasicChatInputBarPresenter(chatInputBar: chatInputView, chatInputItems: self.createChatInputItems(), chatInputBarAppearance: appearance)
         chatInputView.maxCharactersCount = 1000
         return chatInputView
+
     }
 
     func createChatInputItems() -> [ChatInputItemProtocol] {
@@ -48,8 +75,10 @@ class ChattoViewController: BaseChatViewController {
         let item = TextChatInputItem()
         item.textInputHandler = { [weak self] text in
             let textMessage = TextMessage(text: text, contact: (self?.contact)!)
+            let contactId = self?.contact?.contactId ?? 0
             do {
-                try self?.messageManager.sendMessage(textMessage, retry: false)
+                let conversation = ConversationCache.getConversation(contactId)
+                try conversation.sendMessage(textMessage)
                 self?.dataSource.addTextMessage(textMessage)
             }
             catch {
@@ -77,4 +106,48 @@ class ChattoViewController: BaseChatViewController {
 
     }
 
+    @objc func cancelEdit(_ item: Any) {
+        
+        var items = [UIBarButtonItem]()
+        let editItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editMessages(_:)))
+        items.append(editItem)
+        self.navigationItem.rightBarButtonItems = items
+        
+    }
+    
+    @objc func clearMessages(_ item: Any) {
+
+        self.dataSource.clearMessages()
+        
+        var items = [UIBarButtonItem]()
+        let editItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editMessages(_:)))
+        items.append(editItem)
+        self.navigationItem.rightBarButtonItems = items
+        
+    }
+    
+    @objc func editMessages(_ item: Any) {
+        
+        var items = [UIBarButtonItem]()
+        let cancelItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self,
+                                         action: #selector(cancelEdit(_:)))
+        items.append(cancelItem)
+        let clearItem = UIBarButtonItem(title: "Clear", style: .plain,
+                                        target: self, action: #selector(clearMessages(_:)))
+        items.append(clearItem)
+        self.navigationItem.rightBarButtonItems = items
+        
+    }
+
+    @objc func contactSelected(_ notification: Notification) {
+        
+        contact = notification.object as? Contact
+        dataSource =
+            ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
+        DispatchQueue.main.async {
+            self.chatDataSource = self.dataSource
+            self.navigationItem.title = self.contact!.displayName
+        }
+        
+    }
 }

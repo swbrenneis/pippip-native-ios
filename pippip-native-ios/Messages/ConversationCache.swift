@@ -26,5 +26,11 @@ import UIKit
         }
 
     }
-    
+
+    @objc static func clearCache() {
+
+        ConversationCache.conversations.removeAll()
+
+    }
+
 }
