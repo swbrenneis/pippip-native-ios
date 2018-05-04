@@ -18,6 +18,7 @@
 		551051082020BC36000A313E /* DatabaseMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 551051072020BC36000A313E /* DatabaseMessage.m */; };
 		5516978F20994A01002BB4C1 /* MessagesHeadingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5516978E20994A01002BB4C1 /* MessagesHeadingCell.swift */; };
 		55169791209A4894002BB4C1 /* PreviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55169790209A4894002BB4C1 /* PreviewCell.swift */; };
+		55169793209B7282002BB4C1 /* LocalAuthCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55169792209B7282002BB4C1 /* LocalAuthCell.swift */; };
 		551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A183E1FA0FA030050C93C /* NewAccountFinish.m */; };
 		551A18421FA0FA740050C93C /* NewAccountFinal.m in Sources */ = {isa = PBXBuildFile; fileRef = 551A18411FA0FA740050C93C /* NewAccountFinal.m */; };
 		55206DA92075486000B0B246 /* SelectContactView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55206DA82075486000B0B246 /* SelectContactView.xib */; };
@@ -60,7 +61,6 @@
 		5575D3D02062E96400593AF7 /* MoreCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5575D3CF2062E96400593AF7 /* MoreCellItem.m */; };
 		557C2B552093AF840069336D /* ChattoDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B542093AF840069336D /* ChattoDataSource.swift */; };
 		557C2B592093B8360069336D /* PippipTextMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B582093B8360069336D /* PippipTextMessageModel.swift */; };
-		557C2B5B2093BEB60069336D /* PippipTextMessageViewModelBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B5A2093BEB60069336D /* PippipTextMessageViewModelBuilder.swift */; };
 		557C2B5D2093C5080069336D /* PippipMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B5C2093C5080069336D /* PippipMessageModel.swift */; };
 		557C2B5F2093C5530069336D /* PippipTextMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B5E2093C5530069336D /* PippipTextMessageViewModel.swift */; };
 		557C2B652093CE7C0069336D /* PippipTextMessageInteractionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B642093CE7C0069336D /* PippipTextMessageInteractionHandler.swift */; };
@@ -69,7 +69,6 @@
 		557C2B70209635E00069336D /* SlidingMessageWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B6F209635E00069336D /* SlidingMessageWindow.swift */; };
 		557C2B72209657FD0069336D /* ConversationCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B71209657FD0069336D /* ConversationCache.swift */; };
 		557C2B742096A03D0069336D /* PippipMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B732096A03D0069336D /* PippipMessageViewModel.swift */; };
-		557C2B762096A3A10069336D /* TextChatItemFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B752096A3A00069336D /* TextChatItemFactory.swift */; };
 		557CE571203A61DB008AF8CF /* ApplicationSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE570203A61DB008AF8CF /* ApplicationSingleton.m */; };
 		557CE58A2040A41F008AF8CF /* NicknameCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 557CE5892040A41F008AF8CF /* NicknameCell.m */; };
 		5586B882206428A400641514 /* PublicIdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B881206428A400641514 /* PublicIdCell.swift */; };
@@ -213,6 +212,7 @@
 		551051072020BC36000A313E /* DatabaseMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseMessage.m; sourceTree = "<group>"; };
 		5516978E20994A01002BB4C1 /* MessagesHeadingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesHeadingCell.swift; sourceTree = "<group>"; };
 		55169790209A4894002BB4C1 /* PreviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewCell.swift; sourceTree = "<group>"; };
+		55169792209B7282002BB4C1 /* LocalAuthCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthCell.swift; sourceTree = "<group>"; };
 		551A183D1FA0FA030050C93C /* NewAccountFinish.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinish.h; sourceTree = "<group>"; };
 		551A183E1FA0FA030050C93C /* NewAccountFinish.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountFinish.m; sourceTree = "<group>"; };
 		551A18401FA0FA740050C93C /* NewAccountFinal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountFinal.h; sourceTree = "<group>"; };
@@ -273,7 +273,6 @@
 		5579D45B1FE8491C007BCFE4 /* ResponseConsumer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ResponseConsumer.h; sourceTree = "<group>"; };
 		557C2B542093AF840069336D /* ChattoDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattoDataSource.swift; sourceTree = "<group>"; };
 		557C2B582093B8360069336D /* PippipTextMessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessageModel.swift; sourceTree = "<group>"; };
-		557C2B5A2093BEB60069336D /* PippipTextMessageViewModelBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessageViewModelBuilder.swift; sourceTree = "<group>"; };
 		557C2B5C2093C5080069336D /* PippipMessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipMessageModel.swift; sourceTree = "<group>"; };
 		557C2B5E2093C5530069336D /* PippipTextMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessageViewModel.swift; sourceTree = "<group>"; };
 		557C2B642093CE7C0069336D /* PippipTextMessageInteractionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessageInteractionHandler.swift; sourceTree = "<group>"; };
@@ -282,7 +281,6 @@
 		557C2B6F209635E00069336D /* SlidingMessageWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingMessageWindow.swift; sourceTree = "<group>"; };
 		557C2B71209657FD0069336D /* ConversationCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCache.swift; sourceTree = "<group>"; };
 		557C2B732096A03D0069336D /* PippipMessageViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PippipMessageViewModel.swift; sourceTree = "<group>"; };
-		557C2B752096A3A00069336D /* TextChatItemFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextChatItemFactory.swift; sourceTree = "<group>"; };
 		557CE56F203A61DB008AF8CF /* ApplicationSingleton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplicationSingleton.h; sourceTree = "<group>"; };
 		557CE570203A61DB008AF8CF /* ApplicationSingleton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApplicationSingleton.m; sourceTree = "<group>"; };
 		557CE5882040A41F008AF8CF /* NicknameCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NicknameCell.h; sourceTree = "<group>"; };
@@ -631,11 +629,9 @@
 				557C2B642093CE7C0069336D /* PippipTextMessageInteractionHandler.swift */,
 				557C2B582093B8360069336D /* PippipTextMessageModel.swift */,
 				557C2B5E2093C5530069336D /* PippipTextMessageViewModel.swift */,
-				557C2B5A2093BEB60069336D /* PippipTextMessageViewModelBuilder.swift */,
 				55169790209A4894002BB4C1 /* PreviewCell.swift */,
 				55206DAA20754A2500B0B246 /* SelectContactView.swift */,
 				557C2B6F209635E00069336D /* SlidingMessageWindow.swift */,
-				557C2B752096A3A00069336D /* TextChatItemFactory.swift */,
 				5500D171207455450016AC71 /* TextMessage.swift */,
 				557C2B682093F5F50069336D /* TextMessageDecorator.swift */,
 			);
@@ -653,6 +649,7 @@
 				55A734BB206F319900D31AD6 /* DeleteFriendCellData.swift */,
 				5586B8842064826000641514 /* EditWhitelistCell.swift */,
 				55A734BD206F31DB00D31AD6 /* FriendCellData.swift */,
+				55169792209B7282002BB4C1 /* LocalAuthCell.swift */,
 				554D01C5207C54A900C19373 /* LocalPasswordCell.swift */,
 				5575D3CE2062E96400593AF7 /* MoreCellItem.h */,
 				5575D3CF2062E96400593AF7 /* MoreCellItem.m */,
@@ -1174,7 +1171,6 @@
 				55AA555B1FA14D7100A7026B /* GCMCodec.cc in Sources */,
 				5500D16A207405190016AC71 /* DeleteAccountCell.swift in Sources */,
 				55FB2F62202A6D7B005E3730 /* CKIVGenerator.mm in Sources */,
-				557C2B5B2093BEB60069336D /* PippipTextMessageViewModelBuilder.swift in Sources */,
 				55A734B1206EC54B00D31AD6 /* ExpandingTableSelectorProtocol.swift in Sources */,
 				55AA55011FA14C1300A7026B /* CKSHA256.mm in Sources */,
 				55AA54FC1FA14C1300A7026B /* CKRSAKeyPair.m in Sources */,
@@ -1218,9 +1214,9 @@
 				557C2B552093AF840069336D /* ChattoDataSource.swift in Sources */,
 				55AA555A1FA14D7100A7026B /* PrivateKey.cc in Sources */,
 				5536A68B206831B400B7E6D8 /* SwiftConfigurator.swift in Sources */,
-				557C2B762096A3A10069336D /* TextChatItemFactory.swift in Sources */,
 				55206DAB20754A2500B0B246 /* SelectContactView.swift in Sources */,
 				553789982002C2B20043BCF4 /* ContactDatabase.m in Sources */,
+				55169793209B7282002BB4C1 /* LocalAuthCell.swift in Sources */,
 				55AA555E1FA14D7100A7026B /* SHA384.cc in Sources */,
 				55B781AA1FDE161E00330B80 /* Logout.m in Sources */,
 				555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */,
@@ -1510,7 +1506,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "pippip-native-ios/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1518,12 +1514,13 @@
 					"$(USER_LIBRARY_DIR)/Frameworks",
 					"$(PROJECT_DIR)",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = org.secomm.pippip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "pippip-native-ios/pippip-native-ios-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1545,7 +1542,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "pippip-native-ios/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1557,7 +1554,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "pippip-native-ios/pippip-native-ios-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

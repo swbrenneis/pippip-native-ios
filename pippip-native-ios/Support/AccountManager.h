@@ -10,10 +10,12 @@
 
 @interface AccountManager : NSObject
 
-- (NSString*)loadAccount;
++ (NSString*_Nullable)accountName;
 
-- (void)loadConfig:(NSString*)accountName;
++ (void)accountName:(NSString*_Nonnull)name;
 
-- (void)setDefaultConfig:(NSString*)accountName;
+- (void)loadAccount;
+
+- (void)setDefaultConfig;
 
 @end

@@ -23,7 +23,7 @@ class TextMessageDecorator: ChatItemsDecoratorProtocol {
             var bottomMargin: CGFloat = 15.0
             if index < chatItems.count - 1 {
                 let nextItem = chatItems[index + 1] as! PippipTextMessageModel
-                if chatItem.textMessage.originating == nextItem.textMessage.originating {
+                if chatItem.message.originating == nextItem.message.originating {
                     showingTail = false
                     bottomMargin = 1.0
                 }

@@ -44,6 +44,8 @@
 
 - (TextMessage*_Nullable)mostRecentTextMessage:(NSInteger)contactId;
 
+- (void)scrubCleartext:(TextMessage*_Nonnull)message;
+
 - (void)updateMessage:(Message*_Nonnull)message;
 
 - (void)updateTextMessage:(TextMessage*_Nonnull)message;

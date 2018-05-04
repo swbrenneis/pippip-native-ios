@@ -33,11 +33,6 @@
     sessionActive = NO;
     suspended = NO;
     notificationComplete = YES;
-    // We need to create a dummy session for statup before authentication.
-    SessionStateActual *actual = [[SessionStateActual alloc] init];
-    actual.authenticated = NO;
-    SessionState *sessionState = [[SessionState alloc] init];
-    [sessionState setState:actual];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(newSession:)

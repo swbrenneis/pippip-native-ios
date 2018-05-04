@@ -379,16 +379,27 @@ class ContactManager: NSObject {
         var updates = [Contact]()
 
         for serverContact in serverContacts {
-            if let updated = Contact(serverContact: serverContact) {
-                let contact = ContactManager.contactMap[updated.publicId]
-                updated.nickname = contact?.nickname
-                ContactManager.contactMap[updated.publicId] = updated
-                for index in 0..<ContactManager.contactList.count {
-                    if ContactManager.contactList[index].publicId == updated.publicId {
-                        ContactManager.contactList[index] = updated
-                    }
+            let publicId = serverContact["publicId"] as? String ?? ""
+            if let contact = ContactManager.contactMap[publicId] {
+                contact.status = serverContact["status"] as! String
+                contact.timestamp = (serverContact["timestamp"] as! NSNumber).int64Value
+                let authData = serverContact["authData"] as! String
+                contact.authData = Data(base64Encoded: authData)
+                let nonce = serverContact["nonce"] as! String
+                contact.nonce = Data(base64Encoded: nonce)
+                let keys = serverContact["messageKeys"] as! [String]
+                var messageKeys = [Data]()
+                for key in keys {
+                    messageKeys.append(Data(base64Encoded: key)!)
                 }
-                updates.append(updated)
+                contact.messageKeys = messageKeys
+                updates.append(contact)
+            }
+            else {
+                var info = [AnyHashable: Any]()
+                info["title"] = "Contact Error"
+                info["message"] = "Updated contact not found"
+                NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
             }
         }
         contactDatabase.update(updates)

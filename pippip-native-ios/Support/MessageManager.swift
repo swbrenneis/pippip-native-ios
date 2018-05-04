@@ -82,20 +82,20 @@ import UIKit
         return messageDatabase.allTextMessages()
     }
 
+    func clearMessages(_ contactId: Int) {
+        
+        messageDatabase.clearMessages(contactId)
+        
+    }
+    
     func decryptAll() {
 
         let messageIds = messageDatabase.allMessageIds();
         for messageId in messageIds {
             let textMessage = messageDatabase.getTextMessage(messageId.intValue)
-            textMessage.decrypt(true)   // No notification
+            textMessage.decrypt(noNotify: true)   // No notification
             messageDatabase.update(textMessage)
         }
-
-    }
-
-    func clearMessages(_ contactId: Int) {
-
-        messageDatabase.clearMessages(contactId)
 
     }
 
@@ -179,7 +179,7 @@ import UIKit
         for messageId in messageIds {
             let textMessage = messageDatabase.getTextMessage(messageId.intValue)
             textMessage.cleartext = nil
-            messageDatabase.update(textMessage)
+            messageDatabase.scrubCleartext(textMessage)
         }
         
     }

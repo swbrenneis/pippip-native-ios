@@ -10,25 +10,14 @@ import Foundation
 
 @objc class UserVault: NSObject {
 
-    var sessionStateActual: SessionStateActual
-
-    @objc override init() {
-        sessionStateActual = SessionStateActual()
-        super.init()
-    }
-
-    @objc init(with state: SessionStateActual) {
-        sessionStateActual = state
-        super.init()
-    }
+    var sessionState = SessionState()
 
     @objc func changePassphrase(oldPassphrase: String, newPassphrase: String) throws {
 
-        let sessionState = SessionState()
         let docsURLs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let docURL = docsURLs[0]
         let vaultsURL = docURL.appendingPathComponent("PippipVaults", isDirectory: true)
-        let vaultURL = vaultsURL.appendingPathComponent(sessionState.accountName)
+        let vaultURL = vaultsURL.appendingPathComponent(AccountManager.accountName()!)
         let vaultData = try Data(contentsOf: vaultURL)
 
         try decode(vaultData, passphrase: oldPassphrase)
@@ -39,11 +28,10 @@ import Foundation
 
     static func validatePassphrase(_ passphrase: String) throws -> Bool {
 
-        let sessionState = SessionState()
         let docsURLs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let docURL = docsURLs[0]
         let vaultsURL = docURL.appendingPathComponent("PippipVaults", isDirectory: true)
-        let vaultUrl = vaultsURL.appendingPathComponent(sessionState.accountName)
+        let vaultUrl = vaultsURL.appendingPathComponent(AccountManager.accountName()!)
         let vaultData = try Data(contentsOf: vaultUrl)
 
         let digest = CKSHA256()
@@ -71,19 +59,19 @@ import Foundation
             throw error!
         }
 
-        sessionStateActual.publicId = codec.getString()
-        sessionStateActual.accountRandom = codec.getBlock()
-        sessionStateActual.genpass = codec.getBlock()
-        sessionStateActual.svpswSalt = codec.getBlock()
-        sessionStateActual.authData = codec.getBlock()
-        sessionStateActual.enclaveKey = codec.getBlock()
-        sessionStateActual.contactsKey = codec.getBlock()
-        sessionStateActual.userPrivateKeyPEM = codec.getString()
-        sessionStateActual.userPublicKeyPEM = codec.getString()
+        sessionState.publicId = codec.getString()
+        sessionState.accountRandom = codec.getBlock()
+        sessionState.genpass = codec.getBlock()
+        sessionState.svpswSalt = codec.getBlock()
+        sessionState.authData = codec.getBlock()
+        sessionState.enclaveKey = codec.getBlock()
+        sessionState.contactsKey = codec.getBlock()
+        sessionState.userPrivateKeyPEM = codec.getString()
+        sessionState.userPublicKeyPEM = codec.getString()
 
         let pem = CKPEMCodec()
-        sessionStateActual.userPrivateKey = pem.decodePrivateKey(sessionStateActual.userPrivateKeyPEM)
-        sessionStateActual.userPublicKey = pem.decodePublicKey(sessionStateActual.userPublicKeyPEM)
+        sessionState.userPrivateKey = pem.decodePrivateKey(sessionState.userPrivateKeyPEM)
+        sessionState.userPublicKey = pem.decodePublicKey(sessionState.userPublicKeyPEM)
 
     }
 
@@ -94,15 +82,15 @@ import Foundation
         let vaultKey = digest?.digest(authData!)
 
         let codec = CKGCMCodec()
-        codec.put(sessionStateActual.publicId)
-        codec.putBlock(sessionStateActual.accountRandom)
-        codec.putBlock(sessionStateActual.genpass)
-        codec.putBlock(sessionStateActual.svpswSalt)
-        codec.putBlock(sessionStateActual.authData)
-        codec.putBlock(sessionStateActual.enclaveKey)
-        codec.putBlock(sessionStateActual.contactsKey)
-        codec.put(sessionStateActual.userPrivateKeyPEM)
-        codec.put(sessionStateActual.userPublicKeyPEM)
+        codec.put(sessionState.publicId)
+        codec.putBlock(sessionState.accountRandom)
+        codec.putBlock(sessionState.genpass)
+        codec.putBlock(sessionState.svpswSalt)
+        codec.putBlock(sessionState.authData)
+        codec.putBlock(sessionState.enclaveKey)
+        codec.putBlock(sessionState.contactsKey)
+        codec.put(sessionState.userPrivateKeyPEM)
+        codec.put(sessionState.userPublicKeyPEM)
 
         return try codec.encrypt(vaultKey, withAuthData: authData)
 

@@ -11,26 +11,27 @@ import ChattoAdditions
 
 class PippipTextMessageModel: TextMessageModel<PippipMessageModel> {
 
-    var textMessage: TextMessage
-    
+    var message: Message
+    var messageText = "Processing..."
+
     init(textMessage: TextMessage) {
 
-        self.textMessage = textMessage
-        var messageText: String!
+        message = textMessage
         if textMessage.cleartext != nil {
             messageText = textMessage.cleartext!
         }
-        else if textMessage.ciphertext!.count < 100 {
-            textMessage.decrypt(true)   // No notification
+        else if textMessage.ciphertext!.count < 50 {
+            textMessage.decrypt(noNotify: true)
             messageText = textMessage.cleartext!
         }
         else {
-            textMessage.decrypt()
-            messageText = "Processing..."
+            DispatchQueue.global(qos: .background).async {
+                textMessage.decrypt(noNotify: false)
+            }
         }
         super.init(messageModel: PippipMessageModel(textMessage), text: messageText)
 
     }
-    
+
 }
 

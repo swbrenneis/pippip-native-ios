@@ -14,15 +14,7 @@
 
 - (BOOL)addWhitelistEntry:(NSDictionary*)entity;
 
-//- (NSArray<NSNumber*>*)allContactIds;
-
-//- (void)deleteContactId:(NSString*)publicId;
-
 - (BOOL)deleteWhitelistEntry:(NSString*)publicId;
-
-- (BOOL)getCleartextMessages;
-
-//- (NSInteger)getContactId:(NSString*)publicId;
 
 - (NSString*)getContactPolicy;
 
@@ -34,11 +26,17 @@
 
 - (NSInteger)newMessageId;
 
-- (void)setCleartextMessages:(BOOL)cleartext;
-    
 - (void)setContactPolicy:(NSString*)policy;
 
 - (void)setNickname:(NSString*)nickname;
+
+- (BOOL)storeCleartextMessages;
+
+- (void)storeCleartextMessages:(BOOL)cleartext;
+
+- (BOOL)useLocalAuth;
+
+- (void)useLocalAuth:(BOOL)localAuth;
 
 - (NSInteger)whitelistIndexOf:(NSString*)publicId;
 

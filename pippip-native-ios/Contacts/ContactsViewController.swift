@@ -57,8 +57,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         contactsModel.headerViews[1] = ContactsHeaderView(headerFrame)
 
         authView = self.storyboard?.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController
-        
-        authView!.suspended = true
+        authView?.isAuthenticated = true
 
         var items = [UIBarButtonItem]()
         let addItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addContact(_:)))
@@ -110,25 +109,17 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
 
     @objc func appResumed(_ notification: Notification) {
 
-        if (suspended) {
+        if suspended {
             suspended = false
-            let info = notification.userInfo
-            if let suspendedTime = info?[AnyHashable("suspendedTime")] as? NSNumber {
-                if (suspendedTime.intValue > 0 && suspendedTime.intValue < 1800) {
-                    authView!.suspended = true
-                }
-                else {
-                    authView?.suspended = false
-                    let auth = Authenticator(forLogout: ())
-                    auth?.logout()
-                }
-                DispatchQueue.main.async {
-                    self.present(self.authView!, animated: true, completion: nil)
-                }
+            if let info = notification.userInfo {
+                authView?.suspendedTime = (info["suspendedTime"] as! NSNumber).intValue
+            }
+            DispatchQueue.main.async {
+                self.present(self.authView!, animated: true, completion: nil)
             }
             
         }
-
+        
     }
     
     @objc func appSuspended(_ notification: Notification) {

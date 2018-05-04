@@ -35,7 +35,9 @@ import Foundation
     static let MessageSent = NSNotification.Name("MessageSent")
     static let MessagesUpdated = NSNotification.Name("MessagesUpdated")
     static let CleartextAvailable = NSNotification.Name("CleartextAvailable")
+    static let DecryptComplete = NSNotification.Name("DecryptComplete")
     static let ThumbprintComplete = NSNotification.Name("ThumbprintComplete")
     static let MessagesReady = NSNotification.Name("MessagesReady")
+    static let SessionEnded = NSNotification.Name("SessionEnded")
 
 }

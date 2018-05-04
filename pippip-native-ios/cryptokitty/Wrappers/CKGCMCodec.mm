@@ -10,6 +10,7 @@
 #import "GCMCodec.h"
 #import "EncodingException.h"
 #import "ErrorCodes.h"
+#import <iostream>
 
 @interface CKGCMCodec ()
 {
@@ -99,7 +100,11 @@
     
     std::string str;
     *gcmCodec >> str;
-    return [NSString stringWithUTF8String:str.c_str()];
+    //std::cout << "CKGCMCodec::getString - " << str << std::endl;
+    NSString *result = [[NSString alloc] initWithBytes:str.c_str()
+                                                length:str.length()
+                                              encoding:NSUTF8StringEncoding];
+    return result;
     
 }
 

@@ -19,17 +19,16 @@ class PippipMessageViewModel: MessageViewModelProtocol {
     var status: MessageViewModelStatus
     var avatarImage: Observable<UIImage?>
 
-    init(message: Message) {
+    init(model: PippipMessageModel) {
 
         decorationAttributes = BaseMessageDecorationAttributes()
-        isIncoming = !message.originating
+        isIncoming = model.isIncoming
         isUserInteractionEnabled = false
         isShowingFailedIcon = false
-        let dateTime = Date(timeIntervalSince1970: Double(message.timestamp) / 1000)
         let formatter = DateFormatter()
         formatter.timeStyle = .medium
         formatter .dateStyle = .medium
-        date = formatter.string(from: dateTime)
+        date = formatter.string(from: model.date)
         status = .success
         avatarImage = Observable(UIImage(named: "avatar-user-small"))
 

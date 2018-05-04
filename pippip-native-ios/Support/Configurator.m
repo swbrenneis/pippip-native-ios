@@ -10,15 +10,13 @@
 #import "pippip_native_ios-Swift.h"
 #import "ApplicationSingleton.h"
 #import "AccountConfig.h"
+#import "AccountManager.h"
 #import "CKGCMCodec.h"
 #import <Realm/Realm.h>
-
-//static NSLock *idLock = nil;
 
 @interface Configurator ()
 {
     NSMutableArray *privateWhitelist;
-    // NSMutableDictionary<NSString*, NSNumber*> *idMap;
     NSMutableDictionary *keyIndexes;
     SessionState *sessionState;
 }
@@ -58,38 +56,7 @@
     return idx == NSNotFound;
 
 }
-/*
-- (NSArray<NSNumber*>*)allContactIds {
 
-    if (idMap.count == 0) {
-        [self decodeIdMap:[self getConfig]];
-    }
-    return [idMap allValues];
-
-}
-
-- (void)decodeIdMap:(AccountConfig*)config {
-
-//    idMap[@"b555352bdb5721a9aba9b078dbf709fd857ca34b"]= [NSNumber numberWithInteger:14];
-//    [self encodeIdMap:config];
-    if (config.idMap != nil) {
-        CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:config.idMap];
-        NSError *error = nil;
-        [codec decrypt:sessionState.contactsKey withAuthData:sessionState.authData withError:&error];
-        if (error == nil) {
-            NSInteger count = [codec getInt];
-            while (idMap.count < count) {
-                NSString *publicId = [codec getString];
-                idMap[publicId] = [NSNumber numberWithInteger:[codec getInt]];
-            }
-        }
-        else {
-            NSLog(@"Error decoding contact ID map: %@", error.localizedDescription);
-        }
-    }
-
-}
-*/
 - (void)decodeWhitelist:(AccountConfig*)config {
 
     if (config.whitelist != nil) {
@@ -114,14 +81,7 @@
     }
 
 }
-/*
-- (void)deleteContactId:(NSString *)publicId {
 
-    [idMap removeObjectForKey:publicId];
-    [self encodeIdMap:[self getConfig]];
-
-}
-*/
 - (BOOL)deleteWhitelistEntry:(NSString *)publicId {
 
     AccountConfig *config = [self getConfig];
@@ -139,39 +99,7 @@
     return deleteIndex != NSNotFound;
 
 }
-/*
-- (void)encodeIdMap:(AccountConfig*)config {
 
-    RLMRealm *realm = [RLMRealm defaultRealm];
-    if (idMap.count > 0) {
-        CKGCMCodec *codec = [[CKGCMCodec alloc] init];
-        [codec putInt:idMap.count];
-        for (NSString* publicId in idMap.allKeys) {
-            [codec putString:publicId];
-            NSNumber *cid = idMap[publicId];
-            [codec putInt:[cid integerValue]];
-        }
-        NSError *error = nil;
-        NSData *encoded = [codec encrypt:sessionState.contactsKey
-                            withAuthData:sessionState.authData
-                               withError:&error];
-        if (error == nil) {
-            [realm beginWriteTransaction];
-            config.idMap = encoded;
-            [realm commitWriteTransaction];
-        }
-        else {
-            NSLog(@"Error while encoding contact ID map: %@", error.localizedDescription);
-        }
-    }
-    else {
-        [realm beginWriteTransaction];
-        config.idMap = nil;
-        [realm commitWriteTransaction];
-    }
-    
-}
-*/
 - (void)encodeWhitelist:(AccountConfig*)config {
 
     RLMRealm *realm = [RLMRealm defaultRealm];
@@ -208,36 +136,16 @@
 
 }
 
-- (BOOL)getCleartextMessages {
-    AccountConfig *config = [self getConfig];
-    return config.cleartextMessages;
-}
-
 - (AccountConfig*)getConfig {
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"accountName = %@", sessionState.accountName];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"accountName = %@",
+                              [AccountManager accountName]];
     RLMResults<AccountConfig*> *configResults = [AccountConfig objectsWithPredicate:predicate];
-    // NSLog(@"Config results count = %ld", configResults.count);
-    return [configResults firstObject];
+    AccountConfig *cfg = [configResults firstObject];
+    return cfg;
 
 }
-/*
-- (NSInteger)getContactId:(NSString *)publicId {
 
-    if (idMap.count == 0) {
-        AccountConfig *config = [self getConfig];
-        [self decodeIdMap:config];
-    }
-    NSNumber *cid = idMap[publicId];
-    if (cid != nil) {
-        return [cid integerValue];
-    }
-    else {
-        return NSNotFound;
-    }
-
-}
-*/
 - (NSString*)getContactPolicy {
     AccountConfig *config = [self getConfig];
     return config.contactPolicy;
@@ -304,7 +212,14 @@
     
 }
 
-- (void)setCleartextMessages:(BOOL)cleartext {
+- (BOOL)storeCleartextMessages {
+
+    AccountConfig *config = [self getConfig];
+    return config.cleartextMessages;
+
+}
+
+- (void)storeCleartextMessages:(BOOL)cleartext {
     
     AccountConfig *config = [self getConfig];
     RLMRealm *realm = [RLMRealm defaultRealm];
@@ -332,6 +247,23 @@
     config.nickname = nickname;
     [realm commitWriteTransaction];
 
+}
+
+- (BOOL)useLocalAuth {
+    
+    AccountConfig *config = [self getConfig];
+    return config.localAuth;
+    
+}
+
+- (void)useLocalAuth:(BOOL)localAuth {
+    
+    AccountConfig *config = [self getConfig];
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    [realm beginWriteTransaction];
+    config.localAuth = localAuth;
+    [realm commitWriteTransaction];
+    
 }
 
 - (NSInteger)whitelistIndexOf:(NSString *)publicId {

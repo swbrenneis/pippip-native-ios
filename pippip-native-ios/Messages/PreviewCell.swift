@@ -11,7 +11,7 @@ import UIKit
 class PreviewCell: UITableViewCell {
 
     static let secondsPerHour: Int64 = 3600
-    static let secondsPerDay: Int64 = 3600 * 24
+    static let secondsPerDay: Double = 3600 * 24
 
     @IBOutlet weak var messageReadIndicator: UIImageView!
     @IBOutlet weak var senderLabel: UILabel!
@@ -19,7 +19,6 @@ class PreviewCell: UITableViewCell {
     @IBOutlet weak var timestampLabel: UILabel!
 
     var contactManager = ContactManager()
-    var configured = false
     var textMessage: TextMessage!
 
     override func awakeFromNib() {
@@ -27,6 +26,9 @@ class PreviewCell: UITableViewCell {
         // Initialization code
         NotificationCenter.default.addObserver(self, selector: #selector(cleartextAvailable(_:)),
                                                name: Notifications.CleartextAvailable, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(sessionEnded(_:)),
+                                               name: Notifications.SessionEnded, object: nil)
+
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -38,18 +40,20 @@ class PreviewCell: UITableViewCell {
     @objc func configure(_ textMessage: TextMessage) {
 
         messageReadIndicator.isHidden = textMessage.read
-        if !configured {
-            configured = true
+        if self.textMessage == nil || self.textMessage.messageId != textMessage.messageId {
+            //configured = true
             self.textMessage = textMessage
             let contact = contactManager.getContactById(textMessage.contactId)
             senderLabel.text = contact?.displayName
             timestampLabel.text = convertTimestamp(textMessage.timestamp) + " >"
             if textMessage.ciphertext!.count < 100 {
-                textMessage.decrypt(true)   // No notification
+                textMessage.decrypt(noNotify: true)   // No notification
                 setPreviewText(textMessage.cleartext!)
             }
             else {
-                textMessage.decrypt(false)
+                DispatchQueue.global(qos: .background).async {
+                    textMessage.decrypt()
+                }
             }
         }
         
@@ -57,28 +61,26 @@ class PreviewCell: UITableViewCell {
 
     func convertTimestamp(_ timestamp: Int64) -> String {
 
-        let ts = timestamp / 1000
-        let now = Int64(Date().timeIntervalSince1970)
-        let secondsSinceMidnight = now % PreviewCell.secondsPerHour
-        let midnight = now - secondsSinceMidnight
-        let yesterday = midnight - PreviewCell.secondsPerDay
+        let messageDate = Date(timeIntervalSince1970: Double(timestamp / 1000))
+        let now = Date()
+        let elapsed = now.timeIntervalSince(messageDate)
+//        let nowTs = Int64(now.timeIntervalSince1970)
+//        let secondsSinceMidnight = Int64(now.timeIntervalSince1970) % PreviewCell.secondsPerDay
+//        let midnight = Date(timeIntervalSince1970: Double(nowTs - secondsSinceMidnight))
+//        let midnightTs = Int64(midnight.timeIntervalSince1970)
+//        let yesterday = Date(timeIntervalSince1970: Double(midnightTs - PreviewCell.secondsPerDay))
 
-        if ts < yesterday {
-            let time = Date(timeIntervalSince1970: Double(ts))
+        if elapsed > PreviewCell.secondsPerDay {
             let formatter = DateFormatter()
             formatter.dateStyle = .short
             formatter.timeStyle = .none
-            return formatter.string(from: time)
-        }
-        else if ts < midnight {
-            return "Yesterday"
+            return formatter.string(from: messageDate)
         }
         else {
-            let time = Date(timeIntervalSince1970: Double(ts))
             let formatter = DateFormatter()
-            formatter.dateStyle = .none
+            formatter.dateStyle = .short
             formatter.timeStyle = .short
-            return formatter.string(from: time)
+            return formatter.string(from: messageDate)
         }
 
     }
@@ -100,10 +102,17 @@ class PreviewCell: UITableViewCell {
         if let textMessage = notification.object as? TextMessage {
             if textMessage.messageId == self.textMessage.messageId {
                 DispatchQueue.main.async {
-                    self.setPreviewText(textMessage.cleartext)
+                    let text = textMessage.cleartext ?? "<nil>"
+                    self.setPreviewText(text)
                 }
             }
         }
+
+    }
+
+    @objc func sessionEnded(_ notification: Notification) {
+
+        textMessage = nil
 
     }
 

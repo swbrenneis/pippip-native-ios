@@ -26,6 +26,7 @@ class LocalPasswordCell: TableViewCellWithController {
         changePassphraseButton.alpha = 0.0
         
     }
+
     @objc class func cellItem() -> MoreCellItem {
         
         let item = MoreCellItem()

@@ -16,30 +16,44 @@ import LocalAuthentication
 
     @IBOutlet weak var authButton: UIButton!
 
-    @objc var suspended = false
     var accountName: String?
-    var sessionState = SessionState()
     var accountManager = AccountManager()
+    var config = Configurator()
+    var authenticator = Authenticator()
+    @objc var isAuthenticated = false
+    @objc var suspendedTime: Int = 0
+    private var localAuth = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //let backgroundColor = UIColor(red: 79/255, green: 209/255, blue: 204/255, alpha: 1.0)
-        //self.view.backgroundColor = backgroundColor
-        //authButton.titleLabel?.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
-        
     }
 
     override func viewWillAppear(_ animated: Bool) {
 
-        if accountName == nil {
-            accountName = accountManager.loadAccount()
-        }
-        if (accountName!.utf8.count > 0) {
+        if isAuthenticated {
+            accountName = AccountManager.accountName()
+            localAuth = true
             authButton.setTitle("Sign In", for: .normal)
+            authButton.isHidden = true
+            if !config.useLocalAuth() || suspendedTime > 1800 {
+                localAuth = false
+                authenticator.logout()
+                authButton.isHidden = false
+            }
         }
         else {
-            authButton.setTitle("Create New Account", for: .normal)
+            localAuth = false
+            if accountName == nil {
+                accountManager.loadAccount()
+                accountName = AccountManager.accountName()
+            }
+            if (accountName!.utf8.count > 0) {
+                authButton.setTitle("Sign In", for: .normal)
+            }
+            else {
+                authButton.setTitle("Create New Account", for: .normal)
+            }
         }
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
                                                name: Notifications.PresentAlert, object: nil)
@@ -54,7 +68,7 @@ import LocalAuthentication
     
     override func viewDidAppear(_ animated: Bool) {
         
-        if (suspended) {
+        if (localAuth) {
             let laContext = LAContext()
             var authError: NSError? = nil
             if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)) {
@@ -67,8 +81,8 @@ import LocalAuthentication
                                             }
                                             else {
                                                 print("Thumbprint authentication failed")
-                                                let authenticator = Authenticator()
-                                                authenticator.logout()
+                                                self.authenticator.logout()
+                                                self.authButton.isHidden = false
                                             }
                 })
             }
@@ -187,7 +201,6 @@ import LocalAuthentication
         let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
         hud.mode = .annularDeterminate;
         hud.label.text = "Authenticating...";
-        let authenticator = Authenticator()
         authenticator.authenticate(self.accountName, withPassphrase: passphrase)
 
     }
@@ -212,9 +225,7 @@ import LocalAuthentication
         NotificationCenter.default.removeObserver(self, name: Notifications.UpdateProgress, object: nil)
         DispatchQueue.main.async {
             MBProgressHUD.hide(for: self.view, animated: true)
-            if (!self.suspended) {
-                NotificationCenter.default.post(name: Notifications.NewSession, object: nil)
-            }
+            NotificationCenter.default.post(name: Notifications.NewSession, object: nil)
             self.dismiss(animated: true, completion: nil)
         }
 
@@ -244,19 +255,7 @@ import LocalAuthentication
         }
 
     }
-/*
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 
-        if (accountName.utf8.count > 0) {
-            doAuthenticateAlerts()
-        }
-        else {
-            doNewAccountAlerts()
-        }
-        return true
-
-    }
-*/
     func dropdownAlertWasTapped(_ alert: RKDropdownAlert!) -> Bool {
         return true
     }

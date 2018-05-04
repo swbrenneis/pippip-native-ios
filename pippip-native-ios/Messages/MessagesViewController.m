@@ -132,15 +132,7 @@
     if (suspended) {
         suspended = NO;
         NSDictionary *info = notification.userInfo;
-        NSInteger suspendedTime = [info[@"suspendedTime"] integerValue];
-        if (suspendedTime > 0 && suspendedTime < 1800) {
-            authView.suspended = true;
-        }
-        else {
-            authView.suspended = false;
-            Authenticator *auth = [[Authenticator alloc] initForLogout];
-            [auth logout];
-        }
+        authView.suspendedTime = [info[@"suspendedTime"] integerValue];
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.view.window != nil) {
@@ -165,6 +157,7 @@
 //    messageManager = [[MessageManager alloc] init];
     // This has to be done here because the default Realm hasn't been set
     // until the user is authenticated
+    authView.isAuthenticated = YES;
     contactManager = [[ContactManager alloc] init];
     [self getMostRecentMessages];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -197,11 +190,12 @@
 
 - (IBAction)signoutClicked:(UIBarButtonItem *)sender {
 
-    Authenticator *auth = [[Authenticator alloc] initForLogout];
+    [mostRecent removeAllObjects];
+    [_tableView reloadData];
+    Authenticator *auth = [[Authenticator alloc] init];
     [auth logout];
-    [authView setSuspended:NO];
+    authView.isAuthenticated = NO;
     [self presentViewController:authView animated:YES completion:nil];
-//    [self performSegueWithIdentifier:@"AuthModalSegue" sender:nil];
 
 }
 

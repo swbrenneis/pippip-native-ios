@@ -11,7 +11,6 @@ import ChattoAdditions
 
 class PippipMessageModel: MessageModelProtocol {
 
-    var message: Message
     var senderId: String
     var isIncoming: Bool
     var date: Date
@@ -21,7 +20,6 @@ class PippipMessageModel: MessageModelProtocol {
 
     init(_ message: Message) {
 
-        self.message = message
         let contactManager = ContactManager()
         let contact = contactManager.getContactById(message.contactId)!
 

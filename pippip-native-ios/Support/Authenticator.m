@@ -11,7 +11,6 @@
 #import "Authenticator.h"
 #import "ApplicationSingleton.h"
 #import "AccountSession.h"
-#import "AccountManager.h"
 #import "AuthenticationRequest.h"
 #import "AuthenticationResponse.h"
 #import "ClientAuthChallenge.h"
@@ -28,7 +27,6 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 {
     ProcessStep step;
     SessionState *sessionState;
-    SessionStateActual *sessionStateActual;
 
 }
 
@@ -48,19 +46,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     errorDelegate = [[NotificationErrorDelegate alloc] init:@"Authentication Error"];
     _session = [ApplicationSingleton instance].restSession;
     sessionState = [[SessionState alloc] init];
-    sessionStateActual = [[SessionStateActual alloc] init];
-    [sessionState setState:sessionStateActual];
 
-    return self;
-    
-}
-
-- (instancetype)initForLogout {
-    self = [super init];
-    
-    errorDelegate = [[NotificationErrorDelegate alloc] init:@"Authentication Error"];
-    _session = [ApplicationSingleton instance].restSession;
-    sessionState = [[SessionState alloc] init];
     return self;
     
 }
@@ -85,7 +71,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 - (void)authenticated {
 
-    sessionStateActual.authenticated = true;
+    sessionState.authenticated = true;
 
     [[NSNotificationCenter defaultCenter] postNotificationName:AUTHENTICATED object:nil];
 
@@ -115,9 +101,8 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:accountName];
     NSData *vaultData = [NSData dataWithContentsOfFile:vaultPath];
 
-    UserVault *vault = [[UserVault alloc] initWith:sessionStateActual];
+    UserVault *vault = [[UserVault alloc] init];
     [vault decode:vaultData passphrase:passphrase error:error];
-    sessionStateActual.accountName = accountName;
     
 }
 
@@ -142,7 +127,9 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     step = LOGOUT;
     postPacket = [[Logout alloc] init];
     [_session queuePost:self];
-    [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_ENDED object:nil];
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:SESSION_ENDED object:nil];
+    });
 
 }
 

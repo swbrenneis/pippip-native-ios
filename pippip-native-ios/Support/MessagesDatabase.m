@@ -219,6 +219,23 @@
     
 }
 
+- (void)scrubCleartext:(TextMessage *)message {
+
+        RLMRealm *realm = [RLMRealm defaultRealm];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageId = %lld", message.messageId];
+        RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+        if (messages.count > 0) {
+            DatabaseMessage *dbMessage = [messages firstObject];
+            [realm beginWriteTransaction];
+            dbMessage.cleartext = nil;
+            [realm commitWriteTransaction];
+        }
+        else {
+            NSLog(@"Message with ID %lld not found for update", message.messageId);
+        }
+    
+}
+
 - (void)updateMessage:(Message *)message {
     
     RLMRealm *realm = [RLMRealm defaultRealm];
@@ -239,18 +256,20 @@
 }
 
 - (void)updateTextMessage:(TextMessage *)message {
-    
-    RLMRealm *realm = [RLMRealm defaultRealm];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageId = %lld", message.messageId];
-    RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
-    if (messages.count > 0) {
-        DatabaseMessage *dbMessage = [messages firstObject];
-        [realm beginWriteTransaction];
-        dbMessage.cleartext = message.cleartext;
-        [realm commitWriteTransaction];
-    }
-    else {
-        NSLog(@"Message with ID %lld not found for update", message.messageId);
+
+    if ([config storeCleartextMessages]) {
+        RLMRealm *realm = [RLMRealm defaultRealm];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageId = %lld", message.messageId];
+        RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];
+        if (messages.count > 0) {
+            DatabaseMessage *dbMessage = [messages firstObject];
+            [realm beginWriteTransaction];
+            dbMessage.cleartext = message.cleartext;
+            [realm commitWriteTransaction];
+        }
+        else {
+            NSLog(@"Message with ID %lld not found for update", message.messageId);
+        }
     }
     
 }

@@ -7,27 +7,26 @@
 //
 
 import UIKit
+import Chatto
 
 class SlidingMessageWindow: NSObject {
 
     var conversation: Conversation
     var windowSize: Int
     var windowPos: Int
-    // Sorted, newest last
     var window: [TextMessage]
+    var items: [ChatItemProtocol]
 
     init(conversation: Conversation, windowSize: Int) {
 
         self.conversation = conversation
         self.windowSize = windowSize
 
-        window = conversation.getMessages(pos: 0, count: windowSize)
-        // Always move the window to the end of the list
-        if (window.count < windowSize) {
-            windowPos = 0
-        }
-        else {
-            windowPos = conversation.messageCount - windowSize
+        windowPos = max(0, conversation.messageCount - windowSize)
+        window = conversation.getMessages(pos: windowPos, count: windowSize)
+        items = [ChatItemProtocol]()
+        for textMessage in window {
+            items.append(PippipTextMessageModel(textMessage: textMessage))
         }
         conversation.markMessagesRead(window)
 
@@ -35,7 +34,7 @@ class SlidingMessageWindow: NSObject {
 
     func canSlideDown() -> Bool {
 
-        return windowPos + windowSize < conversation.messageCount
+        return windowPos + window.count < conversation.messageCount
 
     }
 
@@ -56,28 +55,27 @@ class SlidingMessageWindow: NSObject {
     func insertMessage(_ textMessage: TextMessage) {
 
         conversation.addTextMessages([textMessage])
-        if window.count == windowSize {
-            windowPos = min(windowPos + 1, conversation.messageCount - 1)
-        }
-        window = conversation.getMessages(pos: windowPos, count: windowSize)
+        window.append(textMessage)
+        items.append(PippipTextMessageModel(textMessage: textMessage))
 
     }
 
     func newMessages() {
 
-        if window.count == windowSize {
-            windowPos += conversation.newMessageCount()
+        let newMessages = conversation.getMessages(pos: windowPos + window.count,
+                                                   count: conversation.newMessageCount())
+        for message in newMessages {
+            items.append(PippipTextMessageModel(textMessage: message))
         }
-        window = conversation.getMessages(pos: windowPos, count: windowSize)
-        conversation.markMessagesRead(window)
+        window.append(contentsOf: newMessages)
+        conversation.markMessagesRead(newMessages)
 
     }
 
     func slideDown() {
 
         if canSlideDown() {
-            windowPos = min(conversation.messageCount - 1, windowPos + (windowSize / 2))
-            window = conversation.getMessages(pos: windowPos, count: windowSize)
+            windowPos = min(windowPos + windowSize, windowPos + (conversation.messageCount - windowSize))
             conversation.markMessagesRead(window)
         }
 
@@ -86,8 +84,27 @@ class SlidingMessageWindow: NSObject {
     func slideUp() {
 
         if canSlideUp() {
-            windowPos -= max(0, windowSize - (windowSize / 2))
-            window = conversation.getMessages(pos: windowPos, count: windowSize)
+            windowPos = max(0, windowPos - windowSize)
+            let newSize = min(windowSize, conversation.messageCount - window.count)
+            var newWindow = conversation.getMessages(pos: windowPos, count: newSize)
+            var newItems = [ChatItemProtocol]()
+            for message in newWindow {
+                newItems.append(PippipTextMessageModel(textMessage: message))
+            }
+            newWindow.append(contentsOf: window)
+            window = newWindow
+            newItems.append(contentsOf: items)
+            items = newItems
+        }
+
+    }
+
+    func updateChatItem(_ textMessage: TextMessage) {
+
+        for index in 0..<window.count {
+            if window[index].messageId == textMessage.messageId {
+                items[index] = PippipTextMessageModel(textMessage: textMessage)
+            }
         }
 
     }

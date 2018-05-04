@@ -19,5 +19,6 @@
 @property (nonatomic) NSData *whitelist;
 @property (nonatomic) NSData *idMap;
 @property (nonatomic) BOOL cleartextMessages;
+@property (nonatomic) BOOL localAuth;
 
 @end

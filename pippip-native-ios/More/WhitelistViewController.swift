@@ -37,6 +37,7 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
 
         authView =
             self.storyboard?.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController
+        authView?.isAuthenticated = true
 
     }
 
@@ -54,8 +55,11 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
     }
 
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
 
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
 
     }
 
@@ -135,7 +139,7 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         self.present(alert, animated: true, completion: nil)
         
     }
-    
+
     @objc func presentAlert(_ notification: Notification) {
 
         let userInfo = notification.userInfo!
@@ -151,26 +155,18 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
     }
 
     @objc func appResumed(_ notification: Notification) {
-        
+
         if suspended {
             suspended = false
             if let info = notification.userInfo {
-                let suspendedTime = info["suspendedTime"] as! NSNumber
-                if suspendedTime.intValue > 0 && suspendedTime.intValue < 1800 {
-                    authView!.suspended = true
-                }
-            }
-            else {
-                authView?.suspended = false
-                let auth = Authenticator()
-                auth.logout()
+                authView?.suspendedTime = (info["suspendedTime"] as! NSNumber).intValue
             }
             DispatchQueue.main.async {
                 self.present(self.authView!, animated: true, completion: nil)
             }
             
         }
-        
+
     }
     
     @objc func appSuspended(_ notification: Notification) {
@@ -233,7 +229,7 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         }
 
     }
-    
+
     func dropdownAlertWasTapped(_ alert: RKDropdownAlert!) -> Bool {
         return true
     }

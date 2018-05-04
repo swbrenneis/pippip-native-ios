@@ -28,7 +28,7 @@ class Conversation: NSObject {
     private var newMessages: Int
     var messageCount: Int {
         get {
-            return messageList.count
+            return messageManager.getMessageCount(contact.contactId)
         }
     }
 
@@ -122,11 +122,12 @@ class Conversation: NSObject {
             }
         }
 
-        assert(pos < messageList.count || (pos == 0 && messageList.count == 0))
-        let actualCount = min(messageList.count, pos + count)
+        let actualPos = min(pos, pos - self.pos)
+        let actualCount = min(count, messageList.count)
+        assert(actualPos + actualCount <= messageList.count)
         var subrange = [TextMessage]()
-        for index in pos..<actualCount {
-            subrange.append(messageList[index])
+        for index in 0..<actualCount {
+            subrange.append(messageList[index + actualPos])
         }
         return subrange
         

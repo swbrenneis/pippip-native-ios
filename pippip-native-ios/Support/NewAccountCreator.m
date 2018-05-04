@@ -24,7 +24,6 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 @interface NewAccountCreator ()
 {
     ProcessStep step;
-    SessionStateActual *sessionStateActual;
     SessionState *sessionState;
     NSString *passphrase;
 }
@@ -52,9 +51,9 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 - (void)accountCreated {
 
     [self storeVault];
-    sessionStateActual.authenticated = true;
+    sessionState.authenticated = true;
     AccountManager *accountManager = [[AccountManager alloc] init];
-    [accountManager setDefaultConfig:sessionState.accountName];
+    [accountManager setDefaultConfig];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:AUTHENTICATED object:sessionState];
     
@@ -62,14 +61,13 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
 
 - (void)createAccount:(NSString*)accountName withPassphrase:(NSString *)pass {
 
+    [AccountManager accountName:accountName];
     passphrase = pass;
     ParameterGenerator *generator = [[ParameterGenerator alloc] init];
     [generator generateParameters:accountName];
     NSMutableDictionary *info = [NSMutableDictionary dictionary];
     info[@"progress"] = [NSNumber numberWithFloat:0.25];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateProgress" object:nil userInfo:info];
-    sessionStateActual = generator;
-    [sessionState setState:generator];
     // Start the session.
     [_session startSession:self];
 
@@ -143,9 +141,9 @@ typedef enum STEP { REQUEST, FINISH } ProcessStep;
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docPath = [paths objectAtIndex:0];
     NSString *vaultsPath = [docPath stringByAppendingPathComponent:@"PippipVaults"];
-    NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:sessionState.accountName];
+    NSString *vaultPath = [vaultsPath stringByAppendingPathComponent:[AccountManager accountName]];
   
-    UserVault *vault = [[UserVault alloc] initWith:sessionStateActual];
+    UserVault *vault = [[UserVault alloc] init];
     NSError *error = nil;
     NSData *vaultData = [vault encode:passphrase error:&error];
 

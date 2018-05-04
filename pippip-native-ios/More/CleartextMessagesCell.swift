@@ -20,7 +20,7 @@ class CleartextMessagesCell: TableViewCellWithController {
         super.awakeFromNib()
         // Initialization code
 
-        let cleartext = config.getCleartextMessages()
+        let cleartext = config.storeCleartextMessages()
         cleartextMessagesSwitch.setOn(!cleartext, animated: true)
 
     }
@@ -59,7 +59,7 @@ class CleartextMessagesCell: TableViewCellWithController {
                         + "Do you want to continue?"
         let alert = PMAlertController(title: "Caution!", description: message, image: nil, style: .alert)
         alert.addAction(PMAlertAction(title: "Yes", style: .default, action: { () in
-            self.config.setCleartextMessages(true)
+            self.config.storeCleartextMessages(true)
             self.doDecrypt()
         }))
         alert.addAction(PMAlertAction(title: "No", style: .cancel))
@@ -73,7 +73,7 @@ class CleartextMessagesCell: TableViewCellWithController {
             let hud = MBProgressHUD.showAdded(to: self.superview!, animated: true)
             hud.mode = .indeterminate
             hud.label.text = "Scrubbing messages"
-            config.setCleartextMessages(false)
+            config.storeCleartextMessages(false)
             DispatchQueue.main.async {
                 self.messageManager.scrubCleartext()
                 MBProgressHUD.hide(for: self.superview!, animated: true)

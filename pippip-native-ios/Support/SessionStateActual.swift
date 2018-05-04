@@ -11,7 +11,6 @@ import Foundation
 class SessionStateActual: NSObject {
 
     // Authentication state parameters
-    @objc var accountName: String?
     @objc var authenticated: Bool
     
     // Server parameters

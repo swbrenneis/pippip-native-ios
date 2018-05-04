@@ -8,40 +8,40 @@
 
 import Foundation
 
-@objc class ParameterGenerator: SessionStateActual {
+@objc class ParameterGenerator: NSObject {
+
+    private var sessionState = SessionState()
 
     @objc func generateParameters(_ accountName: String) {
 
-        self.accountName = accountName
-        
         let rnd: CKSecureRandom = CKSecureRandom()
         
         // Create generated password.
-        self.genpass = rnd.nextBytes(20)
+        sessionState.genpass = rnd.nextBytes(20)
         
         // Create the server vault passphrase salt.
-        self.svpswSalt = rnd.nextBytes(8)
+        sessionState.svpswSalt = rnd.nextBytes(8)
         
         // Create GCM authentication data.
         let digest: CKSHA256 = CKSHA256()
-        self.authData = digest.digest(self.genpass)
+        sessionState.authData = digest.digest(sessionState.genpass)
         
         // Create the message AES block cipher key.
         var keyRandom = rnd.nextBytes(32)
-        self.enclaveKey = digest.digest(keyRandom)
+        sessionState.enclaveKey = digest.digest(keyRandom)
         
         // Create the contact database AES block cipher key.
         keyRandom = rnd.nextBytes(32)
-        self.contactsKey = digest.digest(keyRandom)
+        sessionState.contactsKey = digest.digest(keyRandom)
         
         // Create the user RSA keys.
         let gen: CKRSAKeyPairGenerator = CKRSAKeyPairGenerator()
         let pair: CKRSAKeyPair = gen.generateKeyPair(2048)
         let pem: CKPEMCodec  = CKPEMCodec()
-        self.userPrivateKey = pair.privateKey
-        self.userPublicKey = pair.publicKey
-        self.userPrivateKeyPEM = pem.encode(pair.privateKey, with:pair.publicKey)
-        self.userPublicKeyPEM = pem.encode(pair.publicKey)
+        sessionState.userPrivateKey = pair.privateKey
+        sessionState.userPublicKey = pair.publicKey
+        sessionState.userPrivateKeyPEM = pem.encode(pair.privateKey, with:pair.publicKey)
+        sessionState.userPublicKeyPEM = pem.encode(pair.publicKey)
         
         // Create the public ID.
         let sha1: CKSHA1 = CKSHA1()
@@ -52,7 +52,7 @@ import Foundation
         sha1.update(timebytes)
         let seData = "secomm.org".data(using: String.Encoding.utf8)
         sha1.update(seData)
-        self.publicId = HexCodec.hexString(sha1.digest())
+        sessionState.publicId = HexCodec.hexString(sha1.digest())
 
     }
 

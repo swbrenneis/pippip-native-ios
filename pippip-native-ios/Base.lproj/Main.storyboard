@@ -28,8 +28,8 @@
                                     <constraint firstAttribute="width" constant="344" id="q5e-Id-M0A"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="v1.0.2 1301052018" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Af-Fx-X0y">
-                                <rect key="frame" x="135" y="612.5" width="105" height="14.5"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Version 1.0.3 20180504" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Af-Fx-X0y">
+                                <rect key="frame" x="121" y="612.5" width="133.5" height="14.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <color key="textColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                                 <nil key="highlightedColor"/>
@@ -489,8 +489,39 @@
                                     <outlet property="passphraseText" destination="Bad-RO-KYH" id="JGi-PV-c4H"/>
                                 </connections>
                             </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LocalAuthCell" rowHeight="65" id="czg-9F-760" customClass="LocalAuthCell" customModule="pippip_native_ios" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="433.5" width="375" height="65"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="czg-9F-760" id="51d-Ux-HsH">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="64.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use thumbprint authentication" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eFL-CK-4BW">
+                                            <rect key="frame" x="16" y="21" width="233" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="omd-ph-v9H">
+                                            <rect key="frame" x="304" y="16" width="51" height="31"/>
+                                            <connections>
+                                                <action selector="localAuthChanged:" destination="czg-9F-760" eventType="valueChanged" id="pt5-on-8ML"/>
+                                            </connections>
+                                        </switch>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="omd-ph-v9H" firstAttribute="centerY" secondItem="51d-Ux-HsH" secondAttribute="centerY" id="1XR-uF-roS"/>
+                                        <constraint firstItem="eFL-CK-4BW" firstAttribute="centerY" secondItem="51d-Ux-HsH" secondAttribute="centerY" id="4rf-l5-Hfj"/>
+                                        <constraint firstItem="omd-ph-v9H" firstAttribute="leading" secondItem="eFL-CK-4BW" secondAttribute="trailing" constant="55" id="Rqp-ZV-oda"/>
+                                        <constraint firstItem="eFL-CK-4BW" firstAttribute="leading" secondItem="51d-Ux-HsH" secondAttribute="leadingMargin" id="uY8-uh-f97"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="localAuthSwitch" destination="omd-ph-v9H" id="ajA-Tb-Fcy"/>
+                                </connections>
+                            </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="EditWhitelistCell" textLabel="Odx-Gm-Qeb" rowHeight="50" style="IBUITableViewCellStyleDefault" id="mL8-Am-R6w" customClass="EditWhitelistCell" customModule="pippip_native_ios" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="433.5" width="375" height="50"/>
+                                <rect key="frame" x="0.0" y="498.5" width="375" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="mL8-Am-R6w" id="nPV-uy-2xY">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="49.5"/>

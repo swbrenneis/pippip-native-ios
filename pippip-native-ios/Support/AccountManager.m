@@ -11,6 +11,7 @@
 #import <Realm/Realm.h>
 
 static const float CURRENT_VERSION = 1.0;
+static NSString *acctName = nil;
 
 @interface AccountManager ()
 {
@@ -20,7 +21,15 @@ static const float CURRENT_VERSION = 1.0;
 
 @implementation AccountManager
 
-- (NSString*)loadAccount {
++ (NSString*)accountName {
+    return acctName;
+}
+
++ (void)accountName:(NSString*)name {
+    acctName = name;
+}
+
+- (void)loadAccount {
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docPath = [paths objectAtIndex:0];
@@ -34,20 +43,16 @@ static const float CURRENT_VERSION = 1.0;
     }
 #endif
     if (accountNames.count > 0) {
-        NSString *accountName = [accountNames firstObject];
-        [self loadConfig:accountName];
-        return accountName;
-    }
-    else {
-        return @"";
+        acctName = [accountNames firstObject];
+        [self loadConfig];
     }
 
 }
 
-- (void)loadConfig:(NSString*)accountName {
+- (void)loadConfig {
 
-    [self setRealmConfiguration:accountName];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"accountName = %@", accountName];
+    [self setRealmConfiguration];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"accountName = %@", acctName];
     RLMResults<AccountConfig*> *configList = [AccountConfig objectsWithPredicate:predicate];
     if (configList.count > 0) {
         // This is where we do version migrations
@@ -55,20 +60,26 @@ static const float CURRENT_VERSION = 1.0;
         if (config.version < 1.0) {
             RLMRealm *realm = [RLMRealm defaultRealm];
             [realm beginWriteTransaction];
-            config.version = CURRENT_VERSION;
             config.cleartextMessages = NO;
+            [realm commitWriteTransaction];
+        }
+        if (config.version < 1.1) {
+            RLMRealm *realm = [RLMRealm defaultRealm];
+            [realm beginWriteTransaction];
+            config.localAuth = YES;
+            config.version = CURRENT_VERSION;
             [realm commitWriteTransaction];
         }
     }
 
 }
 
-- (void)setDefaultConfig:(NSString*)accountName {
+- (void)setDefaultConfig {
 
-    [self setRealmConfiguration:accountName];
+    [self setRealmConfiguration];
     AccountConfig *config = [[AccountConfig alloc] init];
     config.version = 1.0;
-    config.accountName = accountName;
+    config.accountName = acctName;
     config.contactPolicy = @"whitelist";
     config.messageId = 1;
     config.contactId = 1;
@@ -83,16 +94,16 @@ static const float CURRENT_VERSION = 1.0;
 
 }
 
-- (void)setRealmConfiguration:(NSString*)name {
+- (void)setRealmConfiguration {
     
     RLMRealmConfiguration *config = [RLMRealmConfiguration defaultConfiguration];
     // Use the default directory, but replace the filename with the username
     config.fileURL = [[[config.fileURL URLByDeletingLastPathComponent]
-                       URLByAppendingPathComponent:name]
+                       URLByAppendingPathComponent:acctName]
                       URLByAppendingPathExtension:@"realm"];
-    config.schemaVersion = 8;
+    config.schemaVersion = 9;
     config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
-        if (oldSchemaVersion < 8) {
+        if (oldSchemaVersion < 9) {
             // No migration necessary
         }
     };

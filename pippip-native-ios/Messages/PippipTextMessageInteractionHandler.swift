@@ -15,31 +15,31 @@ class PippipTextMessageInteractionHandler: BaseMessageInteractionHandlerProtocol
         
     }
 
-    func userDidTapOnFailIcon(viewModel: PippipTextMessageViewModel, failIconView: UIView) {
+    func userDidTapOnFailIcon(viewModel: TextMessageViewModel<PippipTextMessageModel>, failIconView: UIView) {
         
     }
 
-    func userDidTapOnAvatar(viewModel: PippipTextMessageViewModel) {
+    func userDidTapOnAvatar(viewModel: TextMessageViewModel<PippipTextMessageModel>) {
         
     }
 
-    func userDidTapOnBubble(viewModel: PippipTextMessageViewModel) {
+    func userDidTapOnBubble(viewModel: TextMessageViewModel<PippipTextMessageModel>) {
         
     }
 
-    func userDidBeginLongPressOnBubble(viewModel: PippipTextMessageViewModel) {
+    func userDidBeginLongPressOnBubble(viewModel: TextMessageViewModel<PippipTextMessageModel>) {
         
     }
 
-    func userDidEndLongPressOnBubble(viewModel: PippipTextMessageViewModel) {
+    func userDidEndLongPressOnBubble(viewModel: TextMessageViewModel<PippipTextMessageModel>) {
         
     }
 
-    func userDidSelectMessage(viewModel: PippipTextMessageViewModel) {
+    func userDidSelectMessage(viewModel: TextMessageViewModel<PippipTextMessageModel>) {
         
     }
 
-    func userDidDeselectMessage(viewModel: PippipTextMessageViewModel) {
+    func userDidDeselectMessage(viewModel: TextMessageViewModel<PippipTextMessageModel>) {
         
     }
 

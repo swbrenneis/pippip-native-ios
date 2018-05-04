@@ -39,6 +39,7 @@ static const NSInteger EDIT_INDEX = 4;
     [super viewDidLoad];
 
     authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
+    authView.isAuthenticated = YES;
     suspended = NO;
     deleteItem = [DeleteAccountCell cellItem];
     nicknameCell = [self.tableView dequeueReusableCellWithIdentifier:@"NicknameCell"];
@@ -54,6 +55,7 @@ static const NSInteger EDIT_INDEX = 4;
     [cellItems addObject:nicknameItem];
     [cellItems addObject:[LocalPasswordCell cellItem]];
     [cellItems addObject:[CleartextMessagesCell cellItem]];
+    [cellItems addObject:[LocalAuthCell cellItem]];
     [cellItems addObject:[ContactPolicyCell cellItem]];
     suspendItems = [NSMutableArray array];
 
@@ -122,25 +124,14 @@ static const NSInteger EDIT_INDEX = 4;
 
     if (suspended) {
         suspended = NO;
-        [cellItems addObjectsFromArray:suspendItems];
-        [suspendItems removeAllObjects];
         NSDictionary *info = notification.userInfo;
-        NSInteger suspendedTime = [info[@"suspendedTime"] integerValue];
-        if (suspendedTime > 0 && suspendedTime < 1800) {
-            authView.suspended = YES;
-        }
-        else {
-            authView.suspended = NO;
-            Authenticator *auth = [[Authenticator alloc] initForLogout];
-            [auth logout];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (self.view.window != nil) {
-                [self presentViewController:self->authView animated:YES completion:nil];
-            }
-            [self.tableView reloadData];
-        });
+        authView.suspendedTime = [info[@"suspendedTime"] integerValue];
     }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.view.window != nil) {
+            [self presentViewController:self->authView animated:YES completion:nil];
+        }
+    });
     
 }
 

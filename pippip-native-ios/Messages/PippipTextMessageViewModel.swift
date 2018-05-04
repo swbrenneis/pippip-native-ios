@@ -11,10 +11,10 @@ import ChattoAdditions
 
 class PippipTextMessageViewModel: TextMessageViewModel<PippipTextMessageModel> {
 
-    init(textMessage: TextMessage) {
+    init(textMessageModel: PippipTextMessageModel, messageModel: PippipMessageModel) {
 
-        super.init(textMessage: PippipTextMessageModel(textMessage: textMessage),
-                   messageViewModel: PippipMessageViewModel(message: textMessage))
+        super.init(textMessage: textMessageModel,
+                   messageViewModel: PippipMessageViewModel(model: messageModel))
 
     }
 

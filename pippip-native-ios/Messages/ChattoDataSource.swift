@@ -22,22 +22,20 @@ class ChattoDataSource: ChatDataSourceProtocol {
         }
     }
     var chatItems: [ChatItemProtocol] {
-        get {
-            return chatItemFactory.makeChatItems(slidingWindow.window)
-        }
+        return slidingWindow.items
     }
     var delegate: ChatDataSourceDelegateProtocol?
     var slidingWindow: SlidingMessageWindow
-    var chatItemFactory: TextChatItemFactory
 
     init(conversation: Conversation) {
 
-        slidingWindow = SlidingMessageWindow(conversation: conversation, windowSize: 25)
-        chatItemFactory = TextChatItemFactory()
+        slidingWindow = SlidingMessageWindow(conversation: conversation, windowSize: 15)
 
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(cleartextAvailable(_:)),
+                                               name: Notifications.CleartextAvailable, object: nil)
+
     }
 
     func loadNext() {
@@ -78,6 +76,17 @@ class ChattoDataSource: ChatDataSourceProtocol {
             self.delegate?.chatDataSourceDidUpdate(self, updateType: .pagination)
         }
         
+    }
+
+    @objc func cleartextAvailable(_ notification: Notification) {
+
+        if let textMessage = notification.object as? TextMessage {
+            DispatchQueue.main.async {
+                self.slidingWindow.updateChatItem(textMessage)
+                self.delegate?.chatDataSourceDidUpdate(self, updateType: .reload)
+            }
+        }
+
     }
 
 }

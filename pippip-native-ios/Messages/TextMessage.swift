@@ -56,28 +56,38 @@ class TextMessage: Message {
 
     }
 
-    @objc func decrypt(_ noNotify: Bool = false) {
+    @objc func decrypt(noNotify: Bool = false) {
 
         if cleartext == nil {
             guard let _ = ciphertext else { return }
-            let contact = contactManager.getContactById(contactId)!
-            let ivGen = CKIVGenerator()
-            let iv = ivGen.generate(Int(sequence), withNonce: contact.nonce)
-            let codec = CKGCMCodec(data: ciphertext)!
-            codec.setIV(iv)
-            var error: NSError? = nil
-            codec.decrypt(contact.messageKeys![keyIndex], withAuthData: contact.authData,
-                          withError: &error)
-            if let _ = error {
-                let message = error?.debugDescription ?? "Unknown"
-                print("Error decrypting message - \(message)")
-            }
-            else if compressed {
-                self.cleartext = decompress(codec.getBlock())
+            if let contact = contactManager.getContactById(contactId) {
+                let ivGen = CKIVGenerator()
+                let iv = ivGen.generate(Int(sequence), withNonce: contact.nonce)
+                let codec = CKGCMCodec(data: ciphertext)!
+                codec.setIV(iv)
+                var error: NSError? = nil
+                codec.decrypt(contact.messageKeys![keyIndex], withAuthData: contact.authData,
+                              withError: &error)
+                if let _ = error {
+                    let message = error?.debugDescription ?? "Unknown"
+                    print("Error decrypting message - \(message)")
+                }
+                else if compressed {
+                    let block = codec.getBlock()!
+                    self.cleartext = decompress(block)
+                    print("Compressed size \(block.count)")
+                    print("Cleartext length \(self.cleartext!.utf8.count)")
+                }
+                else {
+                    self.cleartext = codec.getString()
+                }
             }
             else {
-                self.cleartext = codec.getString()
+                print("Invalid contact ID in message")
             }
+        }
+        if cleartext == nil {
+            cleartext = "Decryption failed"
         }
         if !noNotify {
             NotificationCenter.default.post(name: Notifications.CleartextAvailable, object: self)
@@ -88,7 +98,7 @@ class TextMessage: Message {
     @objc override func encodeForDatabase() -> DatabaseMessage {
 
         let dbMessage = super.encodeForDatabase()
-        if config.getCleartextMessages() {
+        if config.storeCleartextMessages() {
             dbMessage.cleartext = cleartext
         }
         return dbMessage
@@ -102,7 +112,7 @@ class TextMessage: Message {
         let iv = ivGen.generate(Int(sequence), withNonce: contact.nonce)
         let codec = CKGCMCodec()
         codec.setIV(iv)
-        if cleartext!.count > 100 {
+        if cleartext!.utf8.count > 500 {
             codec.putBlock(compress(cleartext!))
             compressed = true
         }

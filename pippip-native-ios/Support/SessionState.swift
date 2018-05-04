@@ -13,109 +13,143 @@ import UIKit
  */
 class SessionState: NSObject {
 
-    private static var actual: SessionStateActual?
+    private static var actual = SessionStateActual()
 
-    @objc var accountName: String {
+    @objc var accountRandom: Data? {
         get {
-            return SessionState.actual!.accountName!
+            return SessionState.actual.accountRandom
         }
-    }
-    @objc var accountRandom: Data {
-        get {
-            return SessionState.actual!.accountRandom!
-        }
-        set (rnd) {
-            SessionState.actual!.accountRandom = rnd
+        set {
+            SessionState.actual.accountRandom = newValue
         }
     }
     @objc var authenticated: Bool {
         get {
-            return SessionState.actual!.authenticated
+            return SessionState.actual.authenticated
+        }
+        set {
+            SessionState.actual.authenticated = newValue
         }
     }
-    @objc var authData: Data {
+    @objc var authData: Data? {
         get {
-            return SessionState.actual!.authData!
+            return SessionState.actual.authData
+        }
+        set {
+            SessionState.actual.authData = newValue
         }
     }
     @objc var authToken: UInt64 {
         get {
-            return SessionState.actual!.authToken
+            return SessionState.actual.authToken
         }
-        set (token) {
-            SessionState.actual!.authToken = token;
-        }
-    }
-    @objc var clientAuthRandom: Data {
-        get {
-            return SessionState.actual!.clientAuthRandom!
-        }
-        set (rnd) {
-            SessionState.actual!.clientAuthRandom = rnd
+        set {
+            SessionState.actual.authToken = newValue
         }
     }
-    @objc var contactsKey: Data {
+    @objc var clientAuthRandom: Data? {
         get {
-            return SessionState.actual!.contactsKey!
+            return SessionState.actual.clientAuthRandom
+        }
+        set {
+            SessionState.actual.clientAuthRandom = newValue
         }
     }
-    @objc var enclaveKey: Data {
+    @objc var contactsKey: Data? {
         get {
-            return SessionState.actual!.enclaveKey!
+            return SessionState.actual.contactsKey
+        }
+        set {
+            SessionState.actual.contactsKey = newValue
         }
     }
-    @objc var genpass: Data {
+    @objc var enclaveKey: Data? {
         get {
-            return SessionState.actual!.genpass!
+            return SessionState.actual.enclaveKey
+        }
+        set {
+            SessionState.actual.enclaveKey = newValue
         }
     }
-    @objc var publicId: String {
+    @objc var genpass: Data? {
         get {
-            return SessionState.actual!.publicId!
+            return SessionState.actual.genpass
+        }
+        set {
+            SessionState.actual.genpass = newValue
         }
     }
-    @objc var serverAuthRandom: Data {
+    @objc var publicId: String? {
         get {
-            return SessionState.actual!.serverAuthRandom!
+            return SessionState.actual.publicId
         }
-        set (rnd) {
-            SessionState.actual!.serverAuthRandom = rnd
+        set {
+            SessionState.actual.publicId = newValue
         }
     }
-    @objc var serverPublicKey: CKRSAPublicKey {
+    @objc var serverAuthRandom: Data? {
         get {
-            return SessionState.actual!.serverPublicKey!
+            return SessionState.actual.serverAuthRandom
         }
-        set (key) {
-            SessionState.actual!.serverPublicKey = key
+        set {
+            SessionState.actual.serverAuthRandom = newValue
+        }
+    }
+    @objc var serverPublicKey: CKRSAPublicKey? {
+        get {
+            return SessionState.actual.serverPublicKey
+        }
+        set {
+            SessionState.actual.serverPublicKey = newValue
         }
     }
     @objc var sessionId: Int32 {
         get {
-            return SessionState.actual!.sessionId
+            return SessionState.actual.sessionId
         }
-        set (sessionId) {
-            SessionState.actual!.sessionId = sessionId
+        set {
+            SessionState.actual.sessionId = newValue
         }
     }
-    @objc var svpswSalt: Data {
+    @objc var svpswSalt: Data? {
         get {
-            return SessionState.actual!.svpswSalt!
+            return SessionState.actual.svpswSalt
+        }
+        set {
+            SessionState.actual.svpswSalt = newValue
         }
     }
-    @objc var userPrivateKey: CKRSAPrivateKey {
+    @objc var userPrivateKey: CKRSAPrivateKey? {
         get {
-            return SessionState.actual!.userPrivateKey!
+            return SessionState.actual.userPrivateKey
+        }
+        set {
+            SessionState.actual.userPrivateKey = newValue
         }
     }
-    @objc var userPublicKeyPEM: String {
+    @objc var userPublicKeyPEM: String? {
         get {
-            return SessionState.actual!.userPublicKeyPEM!
+            return SessionState.actual.userPublicKeyPEM
+        }
+        set {
+            SessionState.actual.userPublicKeyPEM = newValue
         }
     }
-
-    @objc func setState(_ sessionState: SessionStateActual) {
-        SessionState.actual = sessionState
+    @objc var userPrivateKeyPEM: String? {
+        get {
+            return SessionState.actual.userPrivateKeyPEM
+        }
+        set {
+            SessionState.actual.userPrivateKeyPEM = newValue
+        }
     }
-
+    @objc var userPublicKey: CKRSAPublicKey? {
+        get {
+            return SessionState.actual.userPublicKey
+        }
+        set {
+            SessionState.actual.userPublicKey = newValue
+        }
+    }
+    
 }
