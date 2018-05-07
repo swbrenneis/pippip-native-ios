@@ -48,13 +48,14 @@ import LocalAuthentication
                 accountManager.loadAccount()
                 accountName = AccountManager.accountName()
             }
-            if (accountName!.utf8.count > 0) {
+            if (accountName != nil) {
                 authButton.setTitle("Sign In", for: .normal)
             }
             else {
                 authButton.setTitle("Create New Account", for: .normal)
             }
         }
+        authButton.isHidden = false
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
                                                name: Notifications.PresentAlert, object: nil)
         
@@ -97,7 +98,7 @@ import LocalAuthentication
 
     @IBAction func authClicked(_ sender: Any) {
 
-        if accountName!.utf8.count > 0 {
+        if accountName != nil {
             doAuthenticateAlerts()
         }
         else {
