@@ -75,7 +75,7 @@ class NewContactSelector: ExpandingTableSelectorProtocol {
                                       style: .default, action: { () in
                                         self.nickname = alert.textFields[0].text ?? ""
                                         self.publicId = alert.textFields[1].text ?? ""
-                                        if self.nickname == self.config.getNickname()
+                                        if self.nickname == self.config.nickname
                                             || self.publicId == self.sessionState.publicId {
                                             let alertColor = UIColor.flatSand
                                             RKDropdownAlert.title("Add Contact Error",

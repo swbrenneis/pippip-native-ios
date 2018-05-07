@@ -18,7 +18,7 @@ class LocalAuthCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
         
-        localAuthSwitch.setOn(config.useLocalAuth(), animated: true)
+        localAuthSwitch.setOn(config.useLocalAuth, animated: true)
 
     }
 
@@ -39,7 +39,7 @@ class LocalAuthCell: UITableViewCell {
     
     @IBAction func localAuthChanged(_ sender: UISwitch) {
 
-        config.useLocalAuth(sender.isOn)
+        config.useLocalAuth = sender.isOn
 
     }
 }

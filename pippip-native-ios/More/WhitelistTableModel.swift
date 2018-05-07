@@ -32,24 +32,19 @@ class WhitelistTableModel: BaseExpandingTableModel {
 
     }
 
-    func setFriends(whitelist: [[ AnyHashable: Any]], tableView: ExpandingTableView) {
+    func setFriends(whitelist: [Entity], tableView: ExpandingTableView) {
 
         tableModel[0]?.removeAll()
         var cells = [FriendCellData]()
-        for contact in whitelist {
+        for entity in whitelist {
             let friendCell = tableView.dequeueReusableCell(withIdentifier: "FriendCell") as! FriendCell
-            if let nickname = contact[AnyHashable("nickname")] as? String {
+            if let nickname = entity.nickname {
                 friendCell.cellView?.nicknameLabel.text = nickname
             }
             else {
                 friendCell.cellView?.nicknameLabel.text = ""
             }
-            if let publicId = contact[AnyHashable("publicId")] as? String {
-                friendCell.cellView?.publicIdLabel.text = publicId
-            }
-            else {
-                friendCell.cellView?.publicIdLabel.text = ""
-            }
+            friendCell.cellView?.publicIdLabel.text = entity.publicId
             let cellData = FriendCellData(friendCell: friendCell, tableView: tableView)
             cells.append(cellData)
         }

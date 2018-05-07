@@ -56,7 +56,7 @@ class DeleteContactSelector: ExpandingTableSelectorProtocol {
                                       style: PMAlertControllerStyle.alert)
         alert.addAction(PMAlertAction(title: "Yes",
                                       style: .cancel, action: { () in
-                                        self.contactManager.deleteContact(self.publicId)
+                                        self.contactManager.deleteContact(publicId: self.publicId)
         }))
         alert.addAction(PMAlertAction(title: "No", style: .default))
         viewController?.present(alert, animated: true, completion: nil)

@@ -10,9 +10,9 @@ import UIKit
 
 @objc class ConversationCache: NSObject {
 
-    private static var conversations = [Int: Conversation]()
+    private static var conversations = [Int32: Conversation]()
     
-    @objc static func getConversation(_ contactId: Int) -> Conversation {
+    @objc static func getConversation(_ contactId: Int32) -> Conversation {
 
         if let conversation = ConversationCache.conversations[contactId] {
             return conversation

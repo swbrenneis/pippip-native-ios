@@ -25,7 +25,8 @@ class Conversation: NSObject {
     private var timestampSet = Set<Int64>()
     private var mostRecent: TextMessage?
     private var pos: Int = Int.max
-    private var newMessages: Int
+    private var newMessages = [TextMessage]()
+
     var messageCount: Int {
         get {
             return messageManager.getMessageCount(contact.contactId)
@@ -36,8 +37,7 @@ class Conversation: NSObject {
 
         self.contact = contact
         messageManager = MessageManager()
-        newMessages = 0
-
+    
         super.init()
 
     }
@@ -69,7 +69,7 @@ class Conversation: NSObject {
                     mostRecent = textMessage
                 }
                 if !textMessage.originating {
-                    newMessages += 1
+                    newMessages.append(textMessage)
                 }
             }
             else {
@@ -133,6 +133,14 @@ class Conversation: NSObject {
         
     }
 
+    func getNewMessages() -> [TextMessage] {
+
+        let messages = newMessages
+        newMessages.removeAll()
+        return messages
+
+    }
+
     /*
      * Returns a temporary timestamp for sorting purposes
      */
@@ -173,15 +181,6 @@ class Conversation: NSObject {
 
     }
 
-    // Resets new message count
-    func newMessageCount() -> Int {
-
-        let newCount = newMessages
-        newMessages = 0
-        return newCount
-
-    }
-
     func sendMessage(_ textMessage: TextMessage) throws {
 
         textMessage.read = true
@@ -191,19 +190,5 @@ class Conversation: NSObject {
         mostRecent = textMessage
 
     }
-/*
-    func setMessageTimestamp(_ messageId: Int64, timestamp: Int64) -> Int64 {
 
-        var time = timestamp
-        while timestampSet.contains(time) {
-            time += 1
-        }
-        timestampSet.insert(time)
-        let message = messageMap[messageId]!
-        message.timestamp = time
-        // Check timestamp in list
-        return time
-
-    }
-*/
 }

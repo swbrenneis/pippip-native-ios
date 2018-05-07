@@ -7,10 +7,10 @@
 //
 
 import UIKit
+import RealmSwift
 
 @objc class MessageManager: NSObject {
 
-    var messageDatabase = MessagesDatabase()
     var contactManager = ContactManager()
     var config = Configurator()
 
@@ -39,15 +39,6 @@ import UIKit
             }
             for textMessage in textMessages {
                 textMessage.acknowledged = true
-                /*
-                if (textMessage.contactId != NSNotFound) {
-                    let conversation = ConversationCache.getConversation(textMessage.contactId)
-                    conversation.acknowledgeMessage(textMessage)
-                    let message = self.messageDatabase.getMessage(Int(textMessage.messageId))
-                    message.acknowledged = true
-                    self.messageDatabase.update(message)
-                }
- */
             }
             self.addTextMessages(textMessages)
             NotificationCenter.default.post(name: Notifications.NewMessages, object: nil)
@@ -62,7 +53,13 @@ import UIKit
      */
     private func addTextMessages(_ textMessages: [TextMessage]) {
 
-        messageDatabase.add(textMessages)
+        let realm = try! Realm()
+        try! realm.write {
+            for textMessage in textMessages {
+                realm.add(textMessage.encodeForDatabase())
+            }
+        }
+
         let ids = contactManager.allContactIds()
         for contactId in ids {
             var newMessages = [TextMessage]()
@@ -75,39 +72,54 @@ import UIKit
                 ConversationCache.getConversation(contactId).addTextMessages(newMessages)
             }
         }
-        
-    }
 
-    @objc func allMessages() -> [TextMessage] {
-        return messageDatabase.allTextMessages()
     }
+/*
+    func allMessages() -> [TextMessage] {
+    }
+*/
+    func clearMessages(_ contactId: Int32) {
 
-    func clearMessages(_ contactId: Int) {
-        
-        messageDatabase.clearMessages(contactId)
-        
+        let realm = try! Realm()
+        let messages = realm.objects(DatabaseMessage.self).filter("contactId == %d", contactId)
+        if !messages.isEmpty {
+            try! realm.write {
+                realm.delete(messages)
+            }
+        }
+
     }
     
     func decryptAll() {
 
-        let messageIds = messageDatabase.allMessageIds();
-        for messageId in messageIds {
-            let textMessage = messageDatabase.getTextMessage(messageId.intValue)
+        let realm = try! Realm()
+        let messages = realm.objects(DatabaseMessage.self)
+        for dbMessage in messages {
+            let textMessage = TextMessage(dbMessage: dbMessage)
             textMessage.decrypt(noNotify: true)   // No notification
-            messageDatabase.update(textMessage)
+            try! realm.write {
+                dbMessage.cleartext = textMessage.cleartext
+            }
         }
 
     }
 
     func deleteMessage(_ messageId: Int64) {
-        
-        messageDatabase.deleteMessage(Int(messageId))
+
+        let realm = try! Realm()
+        if let dbMessage = realm.objects(DatabaseMessage.self).filter("messageId == %lld", messageId).first {
+            try! realm.write {
+                realm.delete(dbMessage)
+            }
+        }
         
     }
 
-    func getMessageCount(_ contactId: Int) -> Int {
+    func getMessageCount(_ contactId: Int32) -> Int {
 
-        return messageDatabase.getMessageCount(contactId)
+        let realm = try! Realm()
+        let messages = realm.objects(DatabaseMessage.self).filter("contactId == %ld", contactId)
+        return messages.count
 
     }
 
@@ -123,8 +135,9 @@ import UIKit
                     if let publicId = message["fromId"] as? String {
                         if let contact = self.contactManager.getContact(publicId) {
                             if contact.status == "accepted" {
-                                let textMessage = TextMessage(serverMessage: message)
-                                textMessages.append(textMessage)
+                                if let textMessage = TextMessage(serverMessage: message) {
+                                    textMessages.append(textMessage)
+                                }
                             }
                         }
                     }
@@ -140,46 +153,48 @@ import UIKit
 
     }
 
-    func getTextMessages(contactId: Int, pos: Int, count: Int) -> [TextMessage] {
+    func getTextMessages(contactId: Int32, pos: Int, count: Int) -> [TextMessage] {
 
-        return messageDatabase.getTextMessages(contactId, withPosition:pos, withCount:count)
+        var textMessages = [TextMessage]()
+        let realm = try! Realm()
+        let messages = realm.objects(DatabaseMessage.self).filter("contactId = %d", contactId)
+        for index in pos..<messages.count {
+            textMessages.append(TextMessage(dbMessage: messages[index]))
+        }
+        return textMessages
 
     }
 
     func markMessageRead(_ messageId: Int64) {
 
-        let message = messageDatabase.getMessage(Int(messageId))
-        message.read = true
-        messageDatabase.update(message)
-
-    }
-
-    func mostRecentMessage(_ contactId: Int) -> TextMessage? {
-
-        return messageDatabase.mostRecentTextMessage(contactId);
-
-    }
-/*
-    @objc func mostRecentMessages() -> [TextMessage] {
-
-        var messages = [TextMessage]()
-        let contactIds = contactManager.allContactIds()
-        for contactId in contactIds {
-            if let message = messageDatabase.mostRecentTextMessage(contactId) {
-                messages.append(message)
+        let realm = try! Realm()
+        if let dbMessage = realm.objects(DatabaseMessage.self).filter("messageId == %lld", messageId).first {
+            try! realm.write {
+                dbMessage.read = true
             }
         }
-        return messages
 
     }
-*/
+
+    func mostRecentMessage(_ contactId: Int32) -> TextMessage? {
+
+        let realm = try! Realm()
+        let message = realm.objects(DatabaseMessage.self).filter("contactId = %d", contactId)
+                                                            .sorted(byKeyPath: "timestamp", ascending: true)
+                                                            .last
+        guard let _ = message else { return nil }
+        return TextMessage(dbMessage: message!)
+
+    }
+
     func scrubCleartext() {
-        
-        let messageIds = messageDatabase.allMessageIds();
-        for messageId in messageIds {
-            let textMessage = messageDatabase.getTextMessage(messageId.intValue)
-            textMessage.cleartext = nil
-            messageDatabase.scrubCleartext(textMessage)
+
+        let realm = try! Realm()
+        let messages = realm.objects(DatabaseMessage.self)
+        try! realm.write {
+            for dbMessage in messages {
+                dbMessage.cleartext = nil
+            }
         }
         
     }
@@ -190,7 +205,8 @@ import UIKit
         if (!retry) {
             try textMessage.encrypt()
             textMessage.timestamp = Int64(Date().timeIntervalSince1970 * 1000)
-            messageDatabase.add(textMessage)
+            textMessage.messageId = config.newMessageId()
+            addTextMessages([textMessage])
         }
         let messageId = textMessage.messageId
 
@@ -198,7 +214,7 @@ import UIKit
             if let ts = response["timestamp"] as? NSNumber {
                 textMessage.timestamp = ts.int64Value
                 textMessage.acknowledged = true
-                self.messageDatabase.update(textMessage)
+                self.updateMessage(textMessage)
             }
         })
         let contact = contactManager.getContactById(textMessage.contactId)
@@ -212,7 +228,14 @@ import UIKit
 
     func updateMessage(_ message: Message) {
 
-        messageDatabase.update(message)
+        let realm = try! Realm()
+        if let dbMessage = realm.objects(DatabaseMessage.self).filter("messageId == %lld", message.messageId).first {
+            try! realm.write {
+                dbMessage.acknowledged = message.acknowledged
+                dbMessage.timestamp = message.timestamp
+                dbMessage.read = message.read
+            }
+        }
 
     }
 

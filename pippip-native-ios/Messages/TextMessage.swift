@@ -33,7 +33,7 @@ class TextMessage: Message {
 
     }
     
-    override init(serverMessage: [AnyHashable : Any]) {
+    override init?(serverMessage: [AnyHashable : Any]) {
 
         super.init(serverMessage: serverMessage)
 
@@ -66,7 +66,8 @@ class TextMessage: Message {
                 let codec = CKGCMCodec(data: ciphertext)!
                 codec.setIV(iv)
                 var error: NSError? = nil
-                codec.decrypt(contact.messageKeys![keyIndex], withAuthData: contact.authData,
+                let ki = Int(keyIndex)
+                codec.decrypt(contact.messageKeys![ki], withAuthData: contact.authData,
                               withError: &error)
                 if let _ = error {
                     let message = error?.debugDescription ?? "Unknown"
@@ -98,7 +99,7 @@ class TextMessage: Message {
     @objc override func encodeForDatabase() -> DatabaseMessage {
 
         let dbMessage = super.encodeForDatabase()
-        if config.storeCleartextMessages() {
+        if config.storeCleartextMessages {
             dbMessage.cleartext = cleartext
         }
         return dbMessage
@@ -120,7 +121,8 @@ class TextMessage: Message {
             codec.put(cleartext)
             compressed = false
         }
-        try ciphertext = codec.encrypt(contact.messageKeys![keyIndex], withAuthData: contact.authData)
+        let ki = Int(keyIndex)
+        try ciphertext = codec.encrypt(contact.messageKeys![ki], withAuthData: contact.authData)
         
     }
 

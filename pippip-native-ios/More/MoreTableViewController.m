@@ -13,7 +13,6 @@
 #import "Authenticator.h"
 #import "Notifications.h"
 #import "MoreCellItem.h"
-#import "Configurator.h"
 #import "RKDropdownAlert.h"
 #import "Chameleon.h"
 
@@ -59,7 +58,7 @@ static const NSInteger EDIT_INDEX = 4;
     [cellItems addObject:[ContactPolicyCell cellItem]];
     suspendItems = [NSMutableArray array];
 
-    NSString *policy = [config getContactPolicy];
+    NSString *policy = config.contactPolicy;
     if ([policy isEqualToString:@"whitelist"]) {
         [cellItems addObject:[EditWhitelistCell cellItem]];
     }

@@ -60,7 +60,7 @@ class DeleteAccountCell: TableViewCellWithController, RKDropdownAlertDelegate {
 
     func checkPassphrase() {
 
-        let accountName = AccountManager.accountName()
+        let accountName = AccountManager.accountName
         let alert = PMAlertController(title: "Delete Account",
                                       description: "Enter your passphrase",
                                       image: nil,

@@ -20,7 +20,7 @@ class ContactPolicyCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        currentPolicy = config.getContactPolicy()
+        currentPolicy = config.contactPolicy
         if (currentPolicy == "public") {
             contactPolicySwitch.setOn(true, animated: true)
         }
@@ -55,7 +55,7 @@ class ContactPolicyCell: UITableViewCell {
             DispatchQueue.main.async {
                 if (result == "policySet") {
                     self.currentPolicy = self.selectedPolicy
-                    self.config.setContactPolicy(self.currentPolicy)
+                    self.config.contactPolicy = self.currentPolicy
                     var info = [AnyHashable: Any]()
                     info["policy"] = self.currentPolicy
                     NotificationCenter.default.post(name: Notifications.PolicyChanged, object: nil,

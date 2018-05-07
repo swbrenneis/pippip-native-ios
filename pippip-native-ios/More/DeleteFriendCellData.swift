@@ -51,19 +51,32 @@ class DeleteFriendSelector: ExpandingTableSelectorProtocol {
 
     @objc func friendDeleted(_ : Notification) {
 
+        let completion = { () -> Void in
+            DispatchQueue.main.async {
+                let alertColor = UIColor.flatLime
+                RKDropdownAlert.title("Friend Deleted", message: "This friend has been removed from your friends list",
+                                      backgroundColor: alertColor,
+                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                      time: 2, delegate: nil)
+                self.tableView.collapseRow(at: self.friendPath!, count: 1)
+                if let model = self.tableView.expandingModel {
+                    let _ = model.removeCell(section: self.friendPath!.section, row: self.friendPath!.row)
+                    self.tableView.deleteRows(at: model.deletePaths, with: .right)
+                }
+            }
+        }
+
         NotificationCenter.default.removeObserver(self, name: Notifications.FriendDeleted, object: nil)
-        config.deleteWhitelistEntry(publicId)
-        DispatchQueue.main.async {
-            let alertColor = UIColor.flatLime
-            RKDropdownAlert.title("Friend Deleted", message: "This friend has been removed from your friends list",
+        do {
+            try config.deleteWhitelistEntry(publicId)
+            completion()
+        }
+        catch {
+            let alertColor = UIColor.flatSand
+            RKDropdownAlert.title("Delete Friend Error", message: "\(error)",
                                   backgroundColor: alertColor,
                                   textColor: ContrastColorOf(alertColor, returnFlat: true),
                                   time: 2, delegate: nil)
-            self.tableView.collapseRow(at: self.friendPath!, count: 1)
-            if let model = self.tableView.expandingModel {
-                let _ = model.removeCell(section: self.friendPath!.section, row: self.friendPath!.row)
-                self.tableView.deleteRows(at: model.deletePaths, with: .right)
-            }
         }
 
     }

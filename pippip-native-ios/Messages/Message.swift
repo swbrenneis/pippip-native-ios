@@ -15,8 +15,8 @@ import UIKit
     @objc var version: Float = 0
     @objc var acknowledged = false
     @objc var ciphertext: Data?
-    @objc var contactId: Int = 0
-    @objc var keyIndex: Int = 0
+    @objc var contactId: Int32 = 0
+    @objc var keyIndex: Int32 = 0
     @objc var messageId: Int64 = 0
     @objc var messageType = ""
     @objc var originating = true
@@ -28,20 +28,24 @@ import UIKit
     var config = Configurator()
     var contactManager = ContactManager()
 
-    init(serverMessage: [AnyHashable: Any]) {
+    init?(serverMessage: [AnyHashable: Any]) {
 
+        messageId = config.newMessageId()
         let b64 = serverMessage["body"] as! String
         ciphertext = Data(base64Encoded: b64)
         let publicId = serverMessage["fromId"] as! String
-        contactId = contactManager.getContactId(publicId)
-        let ki = serverMessage["keyIndex"] as! NSNumber
-        keyIndex = ki.intValue
-        messageType = serverMessage["messageType"] as! String
+        guard let cid = contactManager.getContactId(publicId) else { return nil }
+        contactId = cid
+        guard let ki = serverMessage["keyIndex"] as? NSNumber else { return nil }
+        keyIndex = ki.int32Value
+        guard let mt = serverMessage["messageType"] as? String else { return nil }
+        messageType = mt
         originating = false
-        let sq = serverMessage["sequence"] as! NSNumber
+        guard let sq = serverMessage["sequence"] as? NSNumber else { return nil }
         sequence = sq.int64Value
-        let ts = serverMessage["timestamp"] as! NSNumber
+        guard let ts = serverMessage["timestamp"] as? NSNumber else { return nil }
         timestamp = ts.int64Value
+        // Some older messages don't have the compressed property
         if let comp = serverMessage["compressed"] as? NSNumber {
             compressed = comp.boolValue
         }
@@ -76,7 +80,7 @@ import UIKit
         keyIndex = dbMessage.keyIndex
         messageId = Int64(dbMessage.messageId)
         messageType = dbMessage.messageType
-        originating = dbMessage.sent
+        originating = dbMessage.originating
         read = dbMessage.read
         sequence = Int64(dbMessage.sequence)
         timestamp = Int64(dbMessage.timestamp)
@@ -102,15 +106,15 @@ import UIKit
 
         let dbMessage = DatabaseMessage()
         dbMessage.messageType = messageType
-        dbMessage.messageId = Int(messageId)
+        dbMessage.messageId = messageId
         dbMessage.contactId = contactId
         dbMessage.message = ciphertext
         dbMessage.acknowledged = acknowledged
         dbMessage.read = read
-        dbMessage.sent = originating
-        dbMessage.sequence = Int(sequence)
+        dbMessage.originating = originating
+        dbMessage.sequence = sequence
         dbMessage.keyIndex = keyIndex
-        dbMessage.timestamp = Int(timestamp)
+        dbMessage.timestamp = timestamp
         dbMessage.compressed = compressed
         dbMessage.version = version
 

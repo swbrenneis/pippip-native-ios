@@ -8,7 +8,6 @@
 
 #import "pippip_native_ios-Swift.h"
 #import "AccountDeleter.h"
-#import "Configurator.h"
 #import "Authenticator.h"
 #import <Realm/Realm.h>
 
@@ -48,7 +47,7 @@
 - (void)deleteNickname {
 
     Configurator *config = [[Configurator alloc] init];
-    NSString *nickname = [config getNickname];
+    NSString *nickname = config.nickname;
     if (nickname != nil) {
         ContactManager *contactManager = [[ContactManager alloc] init];
         [contactManager updateNicknameWithNewNickname:nil oldNickname:nickname];

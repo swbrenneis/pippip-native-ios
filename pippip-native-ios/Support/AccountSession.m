@@ -11,7 +11,6 @@
 #import "AccountSession.h"
 #import "ApplicationSingleton.h"
 #import "Notifications.h"
-#import "MessagesDatabase.h"
 
 @interface AccountSession ()
 {

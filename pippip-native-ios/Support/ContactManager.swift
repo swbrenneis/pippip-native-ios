@@ -7,27 +7,34 @@
 //
 
 import UIKit
+import RealmSwift
 
 class ContactManager: NSObject {
 
+    static let CURRENT_VERSION: Float = 1.0
     static private var contactList = [Contact]()
     static private var contactMap = [String: Contact]()
-    static private var contactIdMap = [Int: Contact]()
+    static private var contactIdMap = [Int32: Contact]()
     static private var requestList = [[AnyHashable: Any]]()
     static private var initialized = false
 
-    var contactDatabase: ContactDatabase
     var config = Configurator()
+    var sessionState = SessionState()
  
     override init() {
-
-        contactDatabase = ContactDatabase()
 
         super.init()
 
         if (!ContactManager.initialized) {
             ContactManager.initialized = true
-            ContactManager.contactList = contactDatabase.getContactList()
+            assert(AccountManager.accountName != nil)
+            let realm = try! Realm()
+            let contacts = realm.objects(DatabaseContact.self)
+            for dbContact in contacts {
+                if let contact = decodeContact(dbContact) {
+                    ContactManager.contactList.append(contact)
+                }
+            }
             mapContacts()
         }
         
@@ -81,18 +88,23 @@ class ContactManager: NSObject {
         }
         else {
             contact.contactId = config.newContactId()
-            contactDatabase.add(contact)
             ContactManager.contactMap[contact.publicId] = contact
             ContactManager.contactIdMap[contact.contactId] = contact
             ContactManager.contactList.append(contact)
+            let realm = try! Realm()
+            let dbContact = DatabaseContact()
+            dbContact.contactId = contact.contactId
+            dbContact.encoded = encodeContact(contact)
+            try! realm.write {
+                realm.add(dbContact)
+            }
         }
         
     }
     
-    func addFriend(_ publicId:String) -> Bool {
+    func addFriend(_ publicId: String) -> Bool {
 
-        let found = config.whitelistIndex(of: publicId)
-        if found == NSNotFound {
+        if let _ = config.whitelistIndexOf(publicId) {
             var request = [AnyHashable: Any]()
             request["method"] = "UpdateWhitelist"
             request["id"] = publicId
@@ -133,9 +145,9 @@ class ContactManager: NSObject {
 
     }
 
-    func allContactIds() -> [Int] {
+    func allContactIds() -> [Int32] {
 
-        var allIds = [Int]()
+        var allIds = [Int32]()
         for contact in ContactManager.contactList {
             allIds.append(contact.contactId)
         }
@@ -152,7 +164,52 @@ class ContactManager: NSObject {
 
     }
 
-    func deleteContact(_ publicId: String) {
+    func decodeContact(_ dbContact: DatabaseContact) -> Contact? {
+
+        let codec = CKGCMCodec(data: dbContact.encoded)
+        var error: NSError? = nil
+        codec?.decrypt(sessionState.contactsKey, withAuthData: sessionState.authData, withError: &error)
+        if error != nil {
+            let errString = error?.localizedDescription
+            print("Error decrypting contact: \(errString!)")
+            return nil
+        }
+        let contact = Contact(contactId: dbContact.contactId)
+        contact.publicId = codec!.getString()
+        contact.status = codec!.getString()
+        let nickname = codec!.getString()
+        if nickname!.utf8.count > 0 {
+            contact.nickname = nickname
+        }
+        contact.timestamp = codec!.getLong()
+        let count = codec!.getInt()
+        if count > 0 {
+            contact.messageKeys = [Data]()
+            while contact.messageKeys!.count < count {
+                contact.messageKeys!.append(codec!.getBlock())
+            }
+            contact.authData = codec!.getBlock()
+            contact.nonce = codec!.getBlock()
+            contact.currentIndex = codec!.getInt()
+            contact.currentSequence = Int64(codec!.getInt())
+        }
+        
+        return contact
+
+    }
+
+    func deleteContact(contactId: Int32) {
+
+        let realm = try! Realm()
+        if let contact = realm.objects(DatabaseContact.self).filter("contactId == %d", contactId).first {
+            try! realm.write {
+                realm.delete(contact)
+            }
+        }
+
+    }
+
+    func deleteContact(publicId: String) {
         
         var request = [AnyHashable: Any]()
         request["method"] = "DeleteContact"
@@ -162,10 +219,10 @@ class ContactManager: NSObject {
                 // If there are duplicates in the database, this will prevent crashes
                 // However, duplicates will require two separate deletes
                 if let contactId = ContactManager.contactMap[publicId]?.contactId {
-                    self.contactDatabase.deleteContact(contactId)
+                    self.deleteContact(contactId: contactId)
                     ContactManager.contactMap.removeValue(forKey: publicId)
-                    let messageDatabase = MessagesDatabase()
-                    messageDatabase.clearMessages(contactId)
+                    let messageManager = MessageManager()
+                    messageManager.clearMessages(contactId)
                     var newList = [Contact]()
                     for contact in ContactManager.contactList {
                         if contact.publicId != publicId {
@@ -196,27 +253,57 @@ class ContactManager: NSObject {
         deleteTask.sendRequest(request)
 
     }
-    
+
+    func encodeContact(_ contact: Contact) -> Data? {
+
+        let codec = CKGCMCodec()
+        codec.put(contact.publicId)
+        codec.put(contact.status)
+        if contact.nickname != nil {
+            codec.put(contact.nickname)
+        }
+        else {
+            codec.put("")
+        }
+        codec.putLong(contact.timestamp)
+        if contact.messageKeys != nil {
+            codec.put(Int32(contact.messageKeys!.count))
+            for key in contact.messageKeys! {
+                codec.putBlock(key)
+            }
+            codec.putBlock(contact.authData!)
+            codec.putBlock(contact.nonce!)
+            codec.put(contact.currentIndex)
+            codec.putLong(contact.currentSequence)
+        }
+        else {
+            codec.put(0)
+        }
+        do {
+            return try codec.encrypt(sessionState.contactsKey, withAuthData: sessionState.authData)
+        }
+        catch {
+            print("Error encrypting contact: \(error)")
+            return nil
+        }
+        
+    }
+
     @objc func getContact(_ publicId: String) -> Contact? {
 
         return ContactManager.contactMap[publicId]
 
     }
 
-    @objc func getContactById(_ contactId: Int) -> Contact? {
+    @objc func getContactById(_ contactId: Int32) -> Contact? {
 
         return ContactManager.contactIdMap[contactId]
 
     }
 
-    func getContactId(_ publicId: String) -> Int {
+    func getContactId(_ publicId: String) -> Int32? {
 
-        if let contact = ContactManager.contactMap[publicId] {
-            return contact.contactId
-        }
-        else {
-            return NSNotFound
-        }
+        return ContactManager.contactMap[publicId]?.contactId
 
     }
 
@@ -364,7 +451,19 @@ class ContactManager: NSObject {
     
     func updateContact(_ contact: Contact) {
 
-        contactDatabase.update([contact])
+        let realm = try! Realm()
+        guard let dbContact =
+            realm.objects(DatabaseContact.self).filter("contactId == %d", contact.contactId).first else {
+                print("Contact for ID \(contact.contactId) not found for update")
+                return
+        }
+        try! realm.write {
+            if dbContact.version < ContactManager.CURRENT_VERSION {
+                dbContact.version = ContactManager.CURRENT_VERSION
+            }
+            dbContact.encoded = encodeContact(contact)
+        }
+
         ContactManager.contactMap[contact.publicId] = contact
         for index in 0..<ContactManager.contactList.count {
             if ContactManager.contactList[index].publicId == contact.publicId {
@@ -393,6 +492,7 @@ class ContactManager: NSObject {
                     messageKeys.append(Data(base64Encoded: key)!)
                 }
                 contact.messageKeys = messageKeys
+                updateContact(contact)
                 updates.append(contact)
             }
             else {
@@ -402,7 +502,6 @@ class ContactManager: NSObject {
                 NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
             }
         }
-        contactDatabase.update(updates)
         return updates
 
     }

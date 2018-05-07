@@ -10,8 +10,8 @@ import UIKit
 
 @objc class Contact: NSObject {
 
-    @objc var contactId: Int
-    @objc var publicId: String
+    @objc var contactId: Int32 = 0
+    @objc var publicId = ""
     @objc var nickname: String?
     @objc var displayName: String {
         get {
@@ -24,35 +24,21 @@ import UIKit
             }
         }
     }
-    @objc var status: String
-    @objc var timestamp: Int64
-    @objc var currentIndex: Int
-    @objc var currentSequence: Int64
+    @objc var status = ""
+    @objc var timestamp: Int64 = 0
+    @objc var currentIndex: Int32 = 0
+    @objc var currentSequence: Int64 = 1
     @objc var authData: Data?
     @objc var nonce: Data?
     @objc var messageKeys: [ Data ]?
 
-    @objc override init() {
-
-        contactId = 0
-        publicId = ""
-        status = ""
-        timestamp = 0
-        currentIndex = 0
-        currentSequence = 1
-
+    override init() {
         super.init()
-
     }
-    
-    @objc init(contactId: Int) {
+
+    @objc init(contactId: Int32) {
 
         self.contactId = contactId
-        publicId = ""
-        status = ""
-        timestamp = 0
-        currentIndex = 0
-        currentSequence = 1
         
         super.init()
 
@@ -63,7 +49,8 @@ import UIKit
         guard let puid = serverContact["publicId"] as? String else { return nil }
         publicId = puid
         let contactManager = ContactManager()
-        contactId = contactManager.getContactId(publicId)
+        guard let cid = contactManager.getContactId(publicId) else { return nil }
+        contactId = cid
         guard let stat = serverContact["status"] as? String else { return nil }
         status = stat
         currentIndex = 0

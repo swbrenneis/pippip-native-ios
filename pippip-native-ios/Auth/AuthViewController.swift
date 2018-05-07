@@ -32,11 +32,11 @@ import LocalAuthentication
     override func viewWillAppear(_ animated: Bool) {
 
         if isAuthenticated {
-            accountName = AccountManager.accountName()
+            accountName = AccountManager.accountName
             localAuth = true
             authButton.setTitle("Sign In", for: .normal)
             authButton.isHidden = true
-            if !config.useLocalAuth() || suspendedTime > 1800 {
+            if !config.useLocalAuth || suspendedTime > 1800 {
                 localAuth = false
                 authenticator.logout()
                 authButton.isHidden = false
@@ -45,15 +45,20 @@ import LocalAuthentication
         else {
             localAuth = false
             if accountName == nil {
-                accountManager.loadAccount()
-                accountName = AccountManager.accountName()
+                do {
+                    accountName = try accountManager.loadAccount()
+                }
+                catch {
+                    print("Error loading acount: \(error)")
+                }
+                if accountName != nil {
+                    authButton.setTitle("Sign In", for: .normal)
+                }
+                else {
+                    authButton.setTitle("Create New Account", for: .normal)
+                }
             }
-            if (accountName!.utf8.count > 0) {
-                authButton.setTitle("Sign In", for: .normal)
-            }
-            else {
-                authButton.setTitle("Create New Account", for: .normal)
-            }
+            authButton.isHidden = false
         }
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
                                                name: Notifications.PresentAlert, object: nil)
@@ -97,7 +102,7 @@ import LocalAuthentication
 
     @IBAction func authClicked(_ sender: Any) {
 
-        if accountName!.utf8.count > 0 {
+        if accountName != nil {
             doAuthenticateAlerts()
         }
         else {
@@ -215,7 +220,7 @@ import LocalAuthentication
         hud.mode = .annularDeterminate;
         hud.label.text = "Creating...";
         let newAccountCreator = NewAccountCreator()
-        newAccountCreator.createAccount(self.accountName, withPassphrase: passphrase)
+        newAccountCreator.createAccount(accountName: accountName!, passphrase: passphrase)
 
     }
 
@@ -223,6 +228,7 @@ import LocalAuthentication
 
         NotificationCenter.default.removeObserver(self, name: Notifications.Authenticated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.UpdateProgress, object: nil)
+        accountManager.loadConfig()
         DispatchQueue.main.async {
             MBProgressHUD.hide(for: self.view, animated: true)
             NotificationCenter.default.post(name: Notifications.NewSession, object: nil)

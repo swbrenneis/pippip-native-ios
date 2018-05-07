@@ -8,7 +8,6 @@
 
 #import "NicknameCell.h"
 #import "pippip_native_ios-Swift.h"
-#import "Configurator.h"
 #import "ApplicationSingleton.h"
 #import "Notifications.h"
 
@@ -44,7 +43,7 @@
     config = [[Configurator alloc] init];
     contactManager = [[ContactManager alloc] init];
     
-    currentNickname = [config getNickname];
+    currentNickname = config.nickname;
     if (currentNickname != nil) {
         _nicknameTextField.text = currentNickname;
     }
@@ -72,7 +71,7 @@
 - (void)newSession:(NSNotification*)notification {
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        self->currentNickname = [self->config getNickname];
+        self->currentNickname = self->config.nickname;
         if (self->currentNickname != nil) {
             self->_nicknameTextField.text = self->currentNickname;
         }
@@ -105,7 +104,7 @@
 
     NSDictionary *info = notification.userInfo;
     NSLog(@"Nickname %@ set", info[@"result"]);
-    [config setNickname:pendingNickname];
+    config.nickname = pendingNickname;
     currentNickname = pendingNickname;
     pendingNickname = nil;
     dispatch_async(dispatch_get_main_queue(), ^{
