@@ -39,6 +39,8 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
             authView?.isAuthenticated = true
         }
 
+        self.setThemeUsingPrimaryColor(UIColor.white, with: .contrast)
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -152,7 +154,7 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
         self.navigationItem.rightBarButtonItems = items
         
     }
-    
+
     @objc func editMessages(_ item: Any) {
         
         var items = [UIBarButtonItem]()

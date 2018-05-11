@@ -180,9 +180,9 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         NotificationCenter.default.removeObserver(self, name: Notifications.FriendAdded, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
 
-        var entity = [ AnyHashable("publicId"): publicId ]
+        var entity = ["publicId": publicId]
         if (nickname.utf8.count > 0) {
-            entity[AnyHashable("nickname")] = nickname
+            entity["nickname"] = nickname
         }
         config.addWhitelistEntry(entity)
         DispatchQueue.main.async {
@@ -191,13 +191,11 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
                                   backgroundColor: alertColor,
                                   textColor: ContrastColorOf(alertColor, returnFlat: true),
                                   time: 2, delegate: nil)
-            let friendCell = self.tableView.dequeueReusableCell(withIdentifier: "FriendCell") as? FriendCell
-            friendCell?.cellView?.nicknameLabel.text = self.nickname
-            friendCell?.cellView?.publicIdLabel.text = self.publicId
-            let cellData = FriendCellData(friendCell: friendCell!, tableView: self.tableView)
-            let model = self.tableView.expandingModel!
-            model.appendCell(cellData, section: 0)
-            self.tableView.insertRows(at: model.insertPaths, with: .left)
+            let friendData = FriendCellData(entity: entity)
+            let friendSelector = FriendCellSelector()
+            friendSelector.tableView = self.tableView
+            friendData.selector = friendSelector
+            self.tableView.expandingModel?.appendCell(cellData: friendData, section: 0, with: .left)
         }
 
     }

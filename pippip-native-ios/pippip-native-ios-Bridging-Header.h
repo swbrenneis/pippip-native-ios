@@ -27,4 +27,5 @@
 #import "EnclaveRequest.h"
 #import "EnclaveResponse.h"
 #import "AccountManager.h"
+#import "MoreTableViewController.h"
 

@@ -8,19 +8,27 @@
 
 import UIKit
 
-class ContactPublicIdData: CellDataProtocol {
+class ContactPublicIdData: NSObject, CellDataProtocol {
 
-    var cell: UITableViewCell
-    var cellHeight: CGFloat
-    var selector: ExpandingTableSelectorProtocol
+    var cellId: String = "ContactPublicIdCell"
+    var cellHeight: CGFloat = 70.0
+    var selector: ExpandingTableSelectorProtocol?
     var userData: [String : Any]?
-    
-    init(contactPublicIdCell: ContactPublicIdCell, tableView: ExpandingTableView) {
-        
-        cell = contactPublicIdCell
-        cellHeight = 70.0
-        selector = NoopTableSelector()
-        
+    var publicId: String
+
+    init(publicId: String) {
+
+        self.publicId = publicId
+
+        super.init()
+
     }
-    
+
+    func configureCell(_ cell: UITableViewCell) {
+
+        let publicIdCell = cell as? ContactPublicIdCell
+        publicIdCell?.publicIdLabel.text = publicId
+
+    }
+
 }

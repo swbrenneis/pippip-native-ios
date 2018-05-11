@@ -10,11 +10,9 @@ import UIKit
 
 protocol ExpandingTableSelectorProtocol {
 
+    var viewController: UIViewController? { get set }
+    var tableView: ExpandingTableView? { get set }
+
     func didSelect(_ indexPath: IndexPath)
 
 }
-
-class NoopTableSelector: ExpandingTableSelectorProtocol {
-    func didSelect(_ indexPath: IndexPath) { }
-}
-

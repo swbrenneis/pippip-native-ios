@@ -27,6 +27,8 @@ import LocalAuthentication
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        authButton.backgroundColor = UIColor.clear
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -188,7 +190,11 @@ import LocalAuthentication
                                       style: .default, action: { () in
                                         self.doNewAccount("")
         }))
-        alert.addAction(PMAlertAction(title: "Start Over", style: .cancel))
+        alert.addAction(PMAlertAction(title: "Start Over", style: .cancel,
+                                      action: { () in
+            self.accountName = nil
+        }))
+        alert.alertActionStackView.axis = .vertical
         self.present(alert, animated: true, completion: nil)
 
     }

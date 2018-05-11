@@ -90,11 +90,13 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self->contactManager getPendingRequests];
     });
+
 #if TARGET_OS_SIMULATOR
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self getNewMessages];
     });
 #endif
+
 
 }
 

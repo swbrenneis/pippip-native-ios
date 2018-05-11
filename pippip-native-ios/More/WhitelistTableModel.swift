@@ -37,23 +37,13 @@ class WhitelistTableModel: BaseExpandingTableModel {
         tableModel[0]?.removeAll()
         var cells = [FriendCellData]()
         for contact in whitelist {
-            let friendCell = tableView.dequeueReusableCell(withIdentifier: "FriendCell") as! FriendCell
-            if let nickname = contact[AnyHashable("nickname")] as? String {
-                friendCell.cellView?.nicknameLabel.text = nickname
-            }
-            else {
-                friendCell.cellView?.nicknameLabel.text = ""
-            }
-            if let publicId = contact[AnyHashable("publicId")] as? String {
-                friendCell.cellView?.publicIdLabel.text = publicId
-            }
-            else {
-                friendCell.cellView?.publicIdLabel.text = ""
-            }
-            let cellData = FriendCellData(friendCell: friendCell, tableView: tableView)
+            let cellData = FriendCellData(entity: contact)
+            let friendSelector = FriendCellSelector()
+            friendSelector.tableView = tableView
+            cellData.selector = friendSelector
             cells.append(cellData)
         }
-        insertCells(cells, section: 0, at: 0)
+        appendCells(cellData: cells, section: 0, with: .left)
 
     }
 

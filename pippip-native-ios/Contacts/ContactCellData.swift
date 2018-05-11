@@ -10,24 +10,30 @@ import UIKit
 
 class ContactCellData: CellDataProtocol {
 
-    var cell: UITableViewCell
-    var cellHeight: CGFloat
-    var selector: ExpandingTableSelectorProtocol
+    var cellId: String = "ContactCell"
+    var cellHeight: CGFloat = ContactCell.cellHeight
+    var selector: ExpandingTableSelectorProtocol?
     var userData: [String : Any]?
     var contact: Contact
-    
-    init(contactCell: ContactCell, contact: Contact, viewController: ContactsViewController) {
+    var contactCell: ContactCell?
+
+    init(contact: Contact) {
 
         self.contact = contact
-        cell = contactCell
-        cellHeight = ContactCell.cellHeight
-        let contactSelector = ContactCellSelector(contact, viewController: viewController)
-        contactSelector.contactCell = contactCell
-        selector = contactSelector
 
         NotificationCenter.default.addObserver(self, selector: #selector(pendingContactsUpdated(_:)),
                                                name: Notifications.PendingContactsUpdated, object: nil)
 
+    }
+
+    func configureCell(_ cell: UITableViewCell) {
+
+        contactCell = cell as? ContactCell
+        contactCell?.identLabel.text = contact.displayName
+        contactCell?.statusImageView.image = UIImage(named: contact.status)
+        let contactSelector = selector as? ContactCellSelector
+        contactSelector?.contactCell = contactCell
+        
     }
 
     deinit {
@@ -40,11 +46,10 @@ class ContactCellData: CellDataProtocol {
     @objc func pendingContactsUpdated(_ notification: Notification) {
 
         if let contacts = notification.object as? [Contact] {
-            let contactCell = cell as! ContactCell
             for updated in contacts {
                 if updated.publicId == contact.publicId {
                     DispatchQueue.main.async {
-                        contactCell.statusImageView.image = UIImage.init(named: updated.status)
+                        self.contactCell?.statusImageView.image = UIImage.init(named: updated.status)
                     }
                     contact = updated
                 }
@@ -56,47 +61,35 @@ class ContactCellData: CellDataProtocol {
 }
 
 class ContactCellSelector: ExpandingTableSelectorProtocol {
-    
-    weak var viewController: ContactsViewController?
-    weak var contactCell: ContactCell?
-    weak var tableView: ExpandingTableView?
-    var contact: Contact
-    var lastSeenFormatter: DateFormatter
 
-    init(_ contact: Contact, viewController: ContactsViewController) {
+    var viewController: UIViewController?
+    var tableView: ExpandingTableView?
+    var contact: Contact
+    var contactCell: ContactCell?
+
+    init(contact: Contact) {
+
         self.contact = contact
-        self.viewController = viewController
-        self.tableView = viewController.tableView
-        lastSeenFormatter = DateFormatter()
-        lastSeenFormatter.dateFormat = "MMM dd YYYY hh:mm"
+
     }
 
     func didSelect(_ indexPath: IndexPath) {
         
         if contactCell!.isExpanded() {
             contactCell!.close()
-            tableView?.collapseRow(at: indexPath, count: 3)
+            tableView?.collapseRow(at: indexPath)
         }
         else {
             contactCell!.open()
             var cells = [ CellDataProtocol ]()
-            // Public ID cell
-            let publicIdCell =
-                tableView?.dequeueReusableCell(withIdentifier: "ContactPublicIdCell") as? ContactPublicIdCell
-            publicIdCell?.publicIdLabel.text = contact.publicId
-            cells.append(ContactPublicIdData(contactPublicIdCell: publicIdCell!, tableView: tableView!))
-            // Last seen cell
-            let lastSeenCell = tableView?.dequeueReusableCell(withIdentifier: "LastSeenCell") as? LastSeenCell
-            if (contact.timestamp == 0) {
-                lastSeenCell?.lastSeenLabel.text = "Never"
-            }
-            else {
-                let tsDate = Date.init(timeIntervalSince1970: TimeInterval(contact.timestamp))
-                lastSeenCell?.lastSeenLabel.text = lastSeenFormatter.string(from: tsDate)
-            }
-            cells.append(LastSeenCellData(contactCell: lastSeenCell!, tableView: tableView!))
-            // Delete contact cell
-            cells.append(DeleteContactData(publicId: contact.publicId, viewController: viewController!))
+            cells.append(ContactPublicIdData(publicId: contact.publicId))
+            cells.append(LastSeenCellData(contact: contact))
+            let deleteData = DeleteContactData()
+            let deleteSelector = DeleteContactSelector(contact.publicId)
+            deleteSelector.viewController = viewController
+            deleteSelector.tableView = tableView
+            deleteData.selector = deleteSelector
+            cells.append(deleteData)
             tableView?.expandRow(at: indexPath, cells: cells)
         }
     }

@@ -24,10 +24,8 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     var authView: AuthViewController?
     var nickname: String?
     var publicId = ""
-    var debugDelete = false
-    var debugging = false
+    var debugging = true
     var suspended = false
-    var pendingRequests = [[AnyHashable: Any]]()
     var pendingCellData: PendingRequestsCellData?
 
     init() {
@@ -82,18 +80,23 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                name: Notifications.AppSuspended, object: nil)
 
-        contactsModel.setContacts(contactManager.getContactList(), viewController: self)
-        tableView.reloadData()
-        pendingRequests = contactManager.getContactRequests()
+        contactsModel.setContacts(contactList: contactManager.getContactList(), viewController: self)
+        let pendingRequests = Array(contactManager.pendingRequests)
         if pendingRequests.count > 0 {
-            pendingCellData = PendingRequestsCellData(pendingRequests, viewController: self)
-            tableView.expandingModel!.insertCell(pendingCellData!, section: 0, row: 0)
-            tableView.insertRows(at: self.tableView.expandingModel!.insertPaths, with: .top)
+            pendingCellData = PendingRequestsCellData()
+            let pendingCellSelector = PendingRequestsSelector(requests: pendingRequests)
+            pendingCellSelector.tableView = tableView
+            pendingCellSelector.viewController = self
+            pendingCellData?.selector = pendingCellSelector
+            tableView?.expandingModel?.appendCell(cellData: pendingCellData!, section: 0, with: .top)
         }
 
     }
 
     override func viewWillDisappear(_ animated: Bool) {
+
+        pendingCellData = nil
+        tableView.expandingModel?.clear()
 
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
@@ -126,7 +129,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
 
         suspended = true
         DispatchQueue.main.async {
-            self.contactsModel.clear(1, tableView: self.tableView)
+            self.contactsModel.clear(section: 1)
         }
 
     }
@@ -147,17 +150,17 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
                 contactCell.identLabel.text = String(fragment) + " ..."
             }
             contactCell.statusImageView.image = UIImage(named: contact.status)
-            let cellData = ContactCellData(contactCell: contactCell,
-                                           contact: contact, viewController: self)
-            if let model = self.tableView.expandingModel {
-                model.appendCell(cellData, section: 1)
-                let alertColor = UIColor.flatLime
-                RKDropdownAlert.title("Contact Added", message: "This contact has been added to your contacts list",
-                                      backgroundColor: alertColor,
-                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                      time: 2, delegate: nil)
-                self.tableView.insertRows(at: model.insertPaths, with: .right)
-            }
+            let cellData = ContactCellData(contact: contact)
+            let cellSelector = ContactCellSelector(contact: contact)
+            cellSelector.tableView = self.tableView
+            cellSelector.viewController = self
+            cellData.selector = cellSelector
+            self.tableView.expandingModel?.appendCell(cellData: cellData, section: 1, with: .right)
+            let alertColor = UIColor.flatLime
+            RKDropdownAlert.title("Contact Added", message: "This contact has been added to your contacts list",
+                                  backgroundColor: alertColor,
+                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                  time: 2, delegate: nil)
         }
         
     }
@@ -175,9 +178,8 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         })
         alert.addAction(PMAlertAction(title: "Delete",
                                       style: .default, action: { () in
-                                        self.debugDelete = true
                                         self.nickname = alert.textFields[0].text ?? ""
-                                        self.contactManager.matchNickname(nickname: self.nickname, publicId: nil)
+                                        self.contactManager.deleteServerContact(nickname: self.nickname!)
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true, completion: nil)
@@ -192,13 +194,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         if let puid = info["publicId"] as? String {
             publicId = puid
             nickname = info["nickname"] as? String ?? ""
-            if (debugDelete) {
-                debugDelete = false
-                contactManager.deleteContact(publicId)
-            }
-            else {
-                contactManager.requestContact(publicId: publicId, nickname: nickname)
-            }
+            contactManager.requestContact(publicId: publicId, nickname: nickname)
         }
         else {
             DispatchQueue.main.async {
@@ -215,18 +211,28 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     
     @objc func requestsUpdated(_ notification: Notification) {
 
-        guard let newRequests = notification.object as? Bool else { return }
-        if newRequests {
-            pendingRequests = contactManager.getContactRequests()
+        guard let requestCount = notification.object as? Int else { return }
+        if requestCount > 0 {
+            let pendingRequests = Array(contactManager.pendingRequests)
             if pendingCellData == nil {
                 DispatchQueue.main.async {
-                    self.pendingCellData = PendingRequestsCellData(self.pendingRequests, viewController: self)
-                    self.tableView.expandingModel!.insertCell(self.pendingCellData!, section: 0, row: 0)
-                    self.tableView.insertRows(at: self.tableView.expandingModel!.insertPaths, with: .top)
+                    self.pendingCellData = PendingRequestsCellData()
+                    let pendingCellSelector = PendingRequestsSelector(requests: pendingRequests)
+                    pendingCellSelector.tableView = self.tableView
+                    pendingCellSelector.viewController = self
+                    self.pendingCellData?.selector = pendingCellSelector
+                    self.tableView.expandingModel?.appendCell(cellData: self.pendingCellData!,
+                                                              section: 0, with: .top)
                 }
             }
             else {
-                pendingCellData?.updateRequests(pendingRequests)
+                pendingCellData?.updateRequests(requests: pendingRequests)
+            }
+        }
+        else {
+            pendingCellData = nil
+            DispatchQueue.main.async {
+                self.tableView.expandingModel?.clear(section: 0)
             }
         }
 

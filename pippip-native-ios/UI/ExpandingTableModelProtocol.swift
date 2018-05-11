@@ -10,10 +10,12 @@ import UIKit
 
 protocol CellDataProtocol {
 
-    var cell: UITableViewCell { get set }
     var cellHeight: CGFloat { get set }
-    var selector: ExpandingTableSelectorProtocol { get set }
+    var cellId: String { get set }
+    var selector: ExpandingTableSelectorProtocol? { get set }
     var userData: [ String: Any ]? { get set }
+
+    func configureCell(_ cell: UITableViewCell);
 
 }
 
@@ -24,29 +26,31 @@ protocol ViewDataProtocol {
 
 }
 
-protocol ExpandingTableModelProtocol {
+protocol ExpandingTableModelProtocol: UITableViewDelegate, UITableViewDataSource {
 
+    var tableView: UITableView! { get set }
     var tableModel: [ Int: [ CellDataProtocol ] ] { get }
-    
     var headerViews: [ Int: ViewDataProtocol ] { get }
 
-    var insertPaths: [ IndexPath ] { get }
+    func appendCell(cellData: CellDataProtocol, section: Int, with: UITableViewRowAnimation)
     
-    var deletePaths: [ IndexPath ] { get }
+    func appendCells(cellData: [CellDataProtocol], section: Int, with: UITableViewRowAnimation);
 
-    func appendCell(_ cell: CellDataProtocol, section: Int)
+    func clear()
 
-    func clear(_ section: Int, tableView: UITableView)
+    func clear(section: Int)
 
-    func getCells(section: Int, row: Int, count: Int) -> [CellDataProtocol];
+    func getCells(section: Int) -> [CellDataProtocol]?
 
-    func insertCell(_ cell: CellDataProtocol, section: Int, row: Int)
+    func insertCell(cellData: CellDataProtocol, section: Int, row: Int, with: UITableViewRowAnimation)
     
-    func insertCells(_ cells: [ CellDataProtocol ], section: Int, at: Int)
-    
-    func removeCell(section: Int, row: Int) -> CellDataProtocol?
+    func insertCells(cellData: [CellDataProtocol], section: Int, at: Int, with: UITableViewRowAnimation)
 
-    func removeCells(section: Int, row: Int, count: Int) -> [ CellDataProtocol ]?
+    //@discardableResult
+    func removeCell(section: Int, row: Int, with: UITableViewRowAnimation) // -> CellDataProtocol?
+
+    //@discardableResult
+    func removeCells(section: Int, row: Int, count: Int, with: UITableViewRowAnimation) // -> [ CellDataProtocol ]?
 
 }
 

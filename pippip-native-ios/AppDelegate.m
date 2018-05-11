@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "ApplicationSingleton.h"
 #import "TargetConditionals.h"
+#import "Chameleon.h"
 
 @interface AppDelegate ()
 
@@ -36,11 +37,15 @@
         }
     }];
     // Clear any notifications we didn't get
-    if (application.applicationIconBadgeNumber == 0) {
-        [application setApplicationIconBadgeNumber:1];
-        [application setApplicationIconBadgeNumber:0];
-    }
+    //if (application.applicationIconBadgeNumber == 0) {
+    //    [application setApplicationIconBadgeNumber:1];
+    //    [application setApplicationIconBadgeNumber:0];
+    //}
 #endif
+
+    // Chameleon theme
+    [Chameleon setGlobalThemeUsingPrimaryColor:UIColor.flatPowderBlueColor withContentStyle:UIContentStyleContrast];
+
     return YES;
 
 }

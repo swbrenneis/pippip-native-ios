@@ -62,8 +62,7 @@ class SlidingMessageWindow: NSObject {
 
     func newMessages() {
 
-        let newMessages = conversation.getMessages(pos: windowPos + window.count,
-                                                   count: conversation.newMessageCount())
+        let newMessages = conversation.newMessages
         for message in newMessages {
             items.append(PippipTextMessageModel(textMessage: message))
         }

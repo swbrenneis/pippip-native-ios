@@ -15,7 +15,7 @@ class ContactsHeaderView: ViewDataProtocol {
     
     init(_ frame: CGRect) {
         view = UIView(frame: frame)
-        view.backgroundColor = UIColor(named: "Pale Gray")
+        view.backgroundColor = UIColor.flatWhiteDark
         height = 40.0
     }
     
@@ -30,20 +30,19 @@ class ContactsTableModel: BaseExpandingTableModel {
         
     }
 
-    func setContacts(_ contactList: [ Contact ], viewController: ContactsViewController) {
+    func setContacts(contactList: [Contact], viewController: ContactsViewController) {
 
-        var cells = [ CellDataProtocol ]()
-        let tableView = viewController.tableView!
-        for contact in contactList {
-            let contactCell = tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
-            contactCell.identLabel.text = contact.displayName
-            contactCell.statusImageView.image = UIImage(named: contact.status)
-            let cellData = ContactCellData(contactCell: contactCell,
-                                           contact: contact, viewController: viewController)
-            cells.append(cellData)
-        }
-        if cells.count > 0 {
-            insertCells(cells, section: 1, at: 0)
+        if !contactList.isEmpty {
+            var cells = [CellDataProtocol]()
+            for contact in contactList {
+                let cellData = ContactCellData(contact: contact)
+                let cellSelector = ContactCellSelector(contact: contact)
+                cellSelector.tableView = viewController.tableView
+                cellSelector.viewController = viewController
+                cellData.selector = cellSelector
+                cells.append(cellData)
+            }
+            insertCells(cellData: cells, section: 1, at: 0, with: .top)
         }
 
     }

@@ -57,7 +57,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
     func addTextMessage(_ textMessage: TextMessage) {
 
         slidingWindow.insertMessage(textMessage)
-        delegate?.chatDataSourceDidUpdate(self, updateType: .pagination)
+        delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
 
     }
 

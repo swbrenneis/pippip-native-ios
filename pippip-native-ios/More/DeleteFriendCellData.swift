@@ -10,33 +10,31 @@ import UIKit
 import RKDropdownAlert
 import ChameleonFramework
 
-class DeleteFriendCellData: CellDataProtocol {
+class DeleteFriendCellData: NSObject, CellDataProtocol {
 
-    var cell: UITableViewCell
-    var cellHeight: CGFloat
-    var selector: ExpandingTableSelectorProtocol
+    var cellId: String = "DeleteFriendCell"
+    var cellHeight: CGFloat = 50.0
+    var selector: ExpandingTableSelectorProtocol?
     var userData: [String : Any]?
 
-    init(publicId: String, tableView: ExpandingTableView) {
-        cell = tableView.dequeueReusableCell(withIdentifier: "DeleteFriendCell")!
-        cellHeight = 50.0
-        selector = DeleteFriendSelector(publicId, tableView: tableView)
+    func configureCell(_ cell: UITableViewCell) {
+        // noop
     }
 
 }
 
 class DeleteFriendSelector: ExpandingTableSelectorProtocol {
 
+    var viewController: UIViewController?
+    var tableView: ExpandingTableView?
     var contactManager = ContactManager()
     var config = Configurator()
     var publicId: String
-    var tableView: ExpandingTableView
     var friendPath: IndexPath?
 
-    init(_ publicId: String, tableView: ExpandingTableView) {
+    init(publicId: String) {
 
         self.publicId = publicId
-        self.tableView = tableView
 
     }
 
@@ -47,6 +45,7 @@ class DeleteFriendSelector: ExpandingTableSelectorProtocol {
         
         friendPath = IndexPath(row: indexPath.row-1, section: indexPath.section)
         contactManager.deleteFriend(publicId)
+
     }
 
     @objc func friendDeleted(_ : Notification) {
@@ -59,11 +58,9 @@ class DeleteFriendSelector: ExpandingTableSelectorProtocol {
                                   backgroundColor: alertColor,
                                   textColor: ContrastColorOf(alertColor, returnFlat: true),
                                   time: 2, delegate: nil)
-            self.tableView.collapseRow(at: self.friendPath!, count: 1)
-            if let model = self.tableView.expandingModel {
-                let _ = model.removeCell(section: self.friendPath!.section, row: self.friendPath!.row)
-                self.tableView.deleteRows(at: model.deletePaths, with: .right)
-            }
+            self.tableView?.collapseRow(at: self.friendPath!)
+            self.tableView?.expandingModel?.removeCell(section: self.friendPath!.section,
+                                                       row: self.friendPath!.row, with: .left)
         }
 
     }

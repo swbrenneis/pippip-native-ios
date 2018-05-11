@@ -6,12 +6,10 @@ target 'pippip-native-ios' do
   use_frameworks!
 
   # Pods for pippip-native-ios
-#  pod 'ExpandableCell'
   pod 'PMAlertController'
   pod 'ChameleonFramework/Swift', :git => 'https://github.com/ViccAlexander/Chameleon.git'
-# pod 'SlackTextViewController'
-# pod 'Texture'
   pod 'RKDropdownAlert'
+  pod 'FrostedSidebar'
   pod 'Realm'
   pod 'Realm/Headers'
   pod 'DataCompression'

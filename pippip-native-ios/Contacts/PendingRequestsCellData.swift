@@ -8,75 +8,71 @@
 
 import UIKit
 
-class PendingRequestsCellData: CellDataProtocol {
+class PendingRequestsCellData: NSObject, CellDataProtocol {
 
-    var cell: UITableViewCell
-    var cellHeight: CGFloat
-    var selector: ExpandingTableSelectorProtocol
+    var cellId: String = "PendingRequestsCell"
+    var cellHeight: CGFloat = 50.0
+    var selector: ExpandingTableSelectorProtocol?
     var userData: [String: Any]?
+
+    func updateRequests(requests: [ContactRequest]) {
+
+        let pendingSelector = selector as? PendingRequestsSelector
+        pendingSelector?.updateRequests(requests: requests)
+
+    }
+
+    func configureCell(_ cell: UITableViewCell) {
+
+        let pendingSelector = selector as? PendingRequestsSelector
+        pendingSelector?.cell = cell as? ExpandingTableViewCell
+
+    }
     
-    init(_ requests: [[AnyHashable:Any]], viewController: ContactsViewController) {
-
-        let pendingCell =
-            viewController.tableView.dequeueReusableCell(withIdentifier: "PendingRequestsCell") as! ExpandingTableViewCell
-        cell = pendingCell
-        cellHeight = 50.0
-        let requestsSelector = PendingRequestsSelector(pendingCell, requests: requests, viewController: viewController)
-        selector = requestsSelector
-        
-    }
-
-    func updateRequests(_ requests: [[AnyHashable: Any]]) {
-
-        let pendingSelector = selector as! PendingRequestsSelector
-        pendingSelector.updateRequests(requests)
-
-    }
-
 }
 
 class PendingRequestsSelector: ExpandingTableSelectorProtocol {
 
-    weak var cell: ExpandingTableViewCell?
-    weak var viewController: ContactsViewController?
-    var requests: [[AnyHashable:Any]]
+    var viewController: UIViewController?
+    var tableView: ExpandingTableView?
+    var cell: ExpandingTableViewCell?
+    var requests: [ContactRequest]
 
-    init(_ cell: ExpandingTableViewCell, requests: [[AnyHashable:Any]], viewController: ContactsViewController) {
+    init(requests: [ContactRequest]) {
 
-        self.cell = cell
         self.requests = requests
-        self.viewController = viewController
 
     }
 
     func didSelect(_ indexPath: IndexPath) {
 
         cell!.setSelected(false, animated: true)
-        let tableView = viewController!.tableView!
         if cell!.isExpanded() {
             cell!.close()
-            let _ = tableView.expandingModel!.removeCells(section: 0, row: 1, count: requests.count)
-            tableView.deleteRows(at: tableView.expandingModel!.deletePaths, with: .top)
+            tableView?.collapseRow(at: indexPath)
         }
         else {
             cell!.open()
             var cells = [CellDataProtocol]()
             for request in requests {
-                cells.append(PendingRequestCellData(request, viewController: viewController))
+                let pendingData = PendingRequestCellData(contactRequest: request)
+                let pendingSelector = PendingRequestSelector(contactRequest: request)
+                pendingSelector.viewController = self.viewController
+                pendingSelector.tableView = self.tableView
+                pendingData.selector = pendingSelector
+                cells.append(pendingData)
             }
-            tableView.expandingModel?.insertCells(cells, section: 0, at: 1)
-            tableView.insertRows(at: tableView.expandingModel!.insertPaths, with: .bottom)
+            tableView?.expandRow(at: indexPath, cells: cells)
         }
 
     }
 
-    func updateRequests(_ requests: [[AnyHashable: Any]]) {
+    func updateRequests(requests: [ContactRequest]) {
 
-        let tableView = viewController!.tableView!
         if cell!.isExpanded() {
             DispatchQueue.main.async {
-                let _ = tableView.expandingModel!.removeCells(section: 0, row: 1, count: requests.count)
-                tableView.deleteRows(at: tableView.expandingModel!.deletePaths, with: .top)
+                self.tableView?.expandingModel!.removeCells(section: 0, row: 1, count: requests.count,
+                                                            with: .left)
             }
         }
         self.requests = requests
@@ -84,10 +80,14 @@ class PendingRequestsSelector: ExpandingTableSelectorProtocol {
             DispatchQueue.main.async {
                 var cells = [CellDataProtocol]()
                 for request in requests {
-                    cells.append(PendingRequestCellData(request, viewController: self.viewController))
+                    let pendingData = PendingRequestCellData(contactRequest: request)
+                    let pendingSelector = PendingRequestSelector(contactRequest: request)
+                    pendingSelector.viewController = self.viewController
+                    pendingSelector.tableView = self.tableView
+                    pendingData.selector = pendingSelector
+                    cells.append(pendingData)
                 }
-                tableView.expandingModel?.insertCells(cells, section: 0, at: 1)
-                tableView.insertRows(at: tableView.expandingModel!.insertPaths, with: .bottom)
+                self.tableView?.expandingModel?.insertCells(cellData: cells, section: 0, at: 1, with: .right)
             }
         }
         

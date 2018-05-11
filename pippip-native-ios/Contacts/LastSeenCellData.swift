@@ -10,18 +10,33 @@ import UIKit
 
 class LastSeenCellData: CellDataProtocol {
 
-    var cell: UITableViewCell
+    var cellId: String = "LastSeenCell"
     var cellHeight: CGFloat
-    var selector: ExpandingTableSelectorProtocol
+    var selector: ExpandingTableSelectorProtocol?
     var userData: [String : Any]?
-    
-    init(contactCell: LastSeenCell, tableView: ExpandingTableView) {
-        
-        cell = contactCell
+    var contact: Contact
+    var lastSeenFormatter: DateFormatter
+
+    init(contact: Contact) {
+
+        self.contact = contact
         cellHeight = LastSeenCell.cellHeight
-        selector = NoopTableSelector()
-        
+        lastSeenFormatter = DateFormatter()
+        lastSeenFormatter.dateFormat = "MMM dd YYYY hh:mm"
+
     }
-    
+
+    func configureCell(_ cell: UITableViewCell) {
+
+        guard let lastSeenCell = cell as? LastSeenCell else { return }
+        if (contact.timestamp == 0) {
+            lastSeenCell.lastSeenLabel.text = "Never"
+        }
+        else {
+            let tsDate = Date.init(timeIntervalSince1970: TimeInterval(contact.timestamp))
+            lastSeenCell.lastSeenLabel.text = lastSeenFormatter.string(from: tsDate)
+        }
+
+    }
 
 }

@@ -96,6 +96,7 @@
         [errorDelegate responseError:@"This nickname is in use, please choose another."];
         dispatch_async(dispatch_get_main_queue(), ^{
             self->_nicknameTextField.text = self->currentNickname;
+            [self->_changeNicknameButton setHidden:YES];
         });
     }
 

@@ -10,22 +10,37 @@ import UIKit
 
 class FriendCellData: CellDataProtocol {
 
-    var cell: UITableViewCell
-    var cellHeight: CGFloat
-    var selector: ExpandingTableSelectorProtocol
+    var cellHeight: CGFloat = 70.0
+    var cellId: String = "FriendCell"
+    var selector: ExpandingTableSelectorProtocol?
     var userData: [String : Any]?
+    var entity: [AnyHashable: Any]
     
-    init(friendCell: FriendCell, tableView: ExpandingTableView) {
-        
-        cell = friendCell
-        cellHeight = 70.0
-        let friendSelector = FriendCellSelector()
-        friendSelector.friendCell = friendCell
-        friendSelector.tableView = tableView
-        selector = friendSelector
-        
+    init(entity: [AnyHashable: Any]) {
+
+        self.entity = entity
+
     }
-    
+
+    func configureCell(_ cell: UITableViewCell) {
+
+        guard let friendCell = cell as? FriendCell else { return }
+        let friendSelector = selector as! FriendCellSelector
+        friendSelector.friendCell = friendCell
+        if let nickname = entity["nickname"] as? String {
+            friendCell.cellView?.nicknameLabel.text = nickname
+        }
+        else {
+            friendCell.cellView?.nicknameLabel.text = ""
+        }
+        if let publicId = entity["publicId"] as? String {
+            friendCell.cellView?.publicIdLabel.text = publicId
+        }
+        else {
+            friendCell.cellView?.publicIdLabel.text = ""
+        }
+
+    }
 }
 
 class FriendCell : ExpandingTableViewCell {
@@ -52,20 +67,24 @@ class FriendCell : ExpandingTableViewCell {
 }
 
 class FriendCellSelector: ExpandingTableSelectorProtocol {
-    
-    weak var tableView: ExpandingTableView?
-    weak var friendCell: FriendCell?
+
+    var viewController: UIViewController?
+    var tableView: ExpandingTableView?
+    var friendCell: FriendCell?
 
     func didSelect(_ indexPath: IndexPath) {
         
         if friendCell!.isExpanded() {
             friendCell!.close()
-            tableView?.collapseRow(at: indexPath, count: 1)
+            tableView?.collapseRow(at: indexPath)
         }
         else {
             friendCell!.open()
             let publicId = friendCell?.cellView?.publicIdLabel.text
-            let deleteData = DeleteFriendCellData(publicId: publicId!, tableView: tableView!)
+            let deleteData = DeleteFriendCellData()
+            let deleteSelector = DeleteFriendSelector(publicId: publicId!)
+            deleteSelector.tableView = tableView
+            deleteData.selector = deleteSelector
             tableView?.expandRow(at: indexPath, cells: [ deleteData ])
         }
     }

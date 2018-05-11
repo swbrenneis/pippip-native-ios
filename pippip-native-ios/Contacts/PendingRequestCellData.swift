@@ -9,46 +9,58 @@
 import UIKit
 import PMAlertController
 
-class PendingRequestCellData: CellDataProtocol {
+class PendingRequestCellData: NSObject, CellDataProtocol {
 
-    var cell: UITableViewCell
-    var cellHeight: CGFloat
-    var selector: ExpandingTableSelectorProtocol
+    var cellId: String = "PendingRequestCell"
+    var cellHeight: CGFloat = 65
+    var selector: ExpandingTableSelectorProtocol?
     var userData: [String : Any]?
+    var contactRequest: ContactRequest
+/*
+    init?(entity:[AnyHashable:Any]) {
 
-    init(_ entity:[AnyHashable:Any], viewController: ContactsViewController?) {
+        guard let req = ContactRequest(serverRequest: entity) else { return nil }
+        contactRequest = req
 
-        let pendingCell =
-            viewController!.tableView.dequeueReusableCell(withIdentifier: "PendingRequestCell") as! PendingRequestCell
-        let pendingSelector = PendingRequestSelector(viewController: viewController)
-        if let nickname = entity[AnyHashable("nickname")] as? String {
-            pendingCell.nicknameLabel.text = nickname
-            pendingSelector.nickname = nickname
-        }
-        else {
-            pendingCell.nicknameLabel.text = ""
-        }
-        if let publicId = entity[AnyHashable("publicId")] as? String {
-            pendingCell.publicIdLabel.text = publicId
-            pendingSelector.publicId = publicId
-        }
-        selector = pendingSelector
-        cell = pendingCell
-        cellHeight = 65.0
+    }
+*/
+
+    init(contactRequest: ContactRequest) {
+
+        self.contactRequest = contactRequest
 
     }
 
+    func configureCell(_ cell: UITableViewCell) {
+        
+        guard let pendingCell = cell as? PendingRequestCell else { return }
+        pendingCell.nicknameLabel.text = contactRequest.nickname ?? ""
+        pendingCell.publicIdLabel.text = contactRequest.publicId
+
+    }
+    
 }
 
 class PendingRequestSelector: ExpandingTableSelectorProtocol {
 
-    weak var viewController: ContactsViewController?
-    var publicId = ""
-    var nickname: String?
+    var viewController: UIViewController?
+    var tableView: ExpandingTableView?
+    var contactRequest: ContactRequest
     var contactManager = ContactManager()
+    var selectedPath: IndexPath?
+/*
+    init?(entity: [AnyHashable: Any]) {
 
-    init(viewController: ContactsViewController?) {
-        self.viewController = viewController
+        guard let req = ContactRequest(serverRequest: entity) else { return nil }
+        contactRequest = req
+        
+    }
+*/
+
+    init(contactRequest: ContactRequest) {
+
+        self.contactRequest = contactRequest
+
     }
 
     func didSelect(_ indexPath: IndexPath) {
@@ -56,22 +68,27 @@ class PendingRequestSelector: ExpandingTableSelectorProtocol {
         NotificationCenter.default.addObserver(self, selector: #selector(requestAcknowledged(_:)),
                                                name: Notifications.RequestAcknowledged, object: nil)
 
-        let name = nickname ?? publicId
+        selectedPath = indexPath
+        let name = contactRequest.nickname ?? contactRequest.publicId
+
         let alert = PMAlertController(title: "New Contact Request",
                                       description: "New contact request from \(name)",
                                       image: nil,
                                       style: PMAlertControllerStyle.alert)
         alert.addAction(PMAlertAction(title: "Accept",
                                       style: .default, action: { () in
-                                        self.contactManager.acknowledgeRequest(response: "accept", publicId: self.publicId, nickname: self.nickname)
+                                        self.contactManager.acknowledgeRequest(contactRequest: self.contactRequest,
+                                                                               response: "accept")
         }))
         alert.addAction(PMAlertAction(title: "Reject",
                                       style: .default, action: { () in
-                                        self.contactManager.acknowledgeRequest(response: "reject", publicId: self.publicId, nickname: self.nickname)
+                                        self.contactManager.acknowledgeRequest(contactRequest: self.contactRequest,
+                                                                               response: "reject")
         }))
         alert.addAction(PMAlertAction(title: "Delete",
                                       style: .default, action: { () in
-                                        self.contactManager.acknowledgeRequest(response: "ignore", publicId: self.publicId, nickname: self.nickname)
+                                        self.contactManager.acknowledgeRequest(contactRequest: self.contactRequest,
+                                                                               response: "ignore")
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         viewController?.present(alert, animated: true, completion: nil)
@@ -83,44 +100,34 @@ class PendingRequestSelector: ExpandingTableSelectorProtocol {
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestAcknowledged, object: nil)
 
         DispatchQueue.main.async {
-            let requests = self.contactManager.getContactRequests()
+            let requests = self.contactManager.pendingRequests
             if requests.count == 0 {
-                self.viewController!.contactsModel.clear(0, tableView: self.viewController!.tableView)
+                self.tableView?.expandingModel?.clear(section: 0)
             }
             else {
-                // count = 0 means return all cells from row to end of section
-                let cells = self.viewController!.contactsModel.getCells(section: 0, row: 1, count: 0)
-                var item = 1
-                for cell in cells {
-                    let requestCellData = cell as!PendingRequestCellData
-                    let requestCell = requestCellData.cell as! PendingRequestCell
-                    var found = false
-                    for request in requests {
-                        if request["publicId"] as? String == requestCell.publicIdLabel.text {
-                            found = true
+                self.tableView?.collapseRow(at: self.selectedPath!)
+                let cells = self.tableView?.expandingModel?.getCells(section: 0)
+                var removed = false
+                for item in 1..<cells!.count {
+                    if !removed {
+                        let requestCellData = cells![item] as! PendingRequestCellData
+                        if !requests.contains(requestCellData.contactRequest) {
+                            self.tableView?.expandingModel?.removeCell(section: 0, row: item, with: .left)
+                            removed = true
                         }
                     }
-                    if !found {
-                        let _ = self.viewController!.contactsModel.removeCell(section: 0, row: item)
-                        self.viewController!.tableView.deleteRows(at: self.viewController!.contactsModel.deletePaths,
-                                                                  with: .top)
-                    }
-                    item += 1
                 }
             }
 
             let contactList = self.contactManager.getContactList()
             let contact = contactList.last!
             if contact.status == "accepted" || contact.status == "rejected" {
-                let contactCell =
-                    self.viewController!.tableView.dequeueReusableCell(withIdentifier: "ContactCell") as! ContactCell
-                contactCell.identLabel.text = contact.displayName
-                contactCell.statusImageView.image = UIImage(named: contact.status)
-                let cellData = ContactCellData(contactCell: contactCell, contact: contact,
-                                               viewController: self.viewController!)
-                self.viewController!.contactsModel.appendCell(cellData, section: 1)
-                self.viewController!.tableView.insertRows(at: self.viewController!.contactsModel.insertPaths,
-                                                          with: .bottom)
+                let cellData = ContactCellData(contact: contact)
+                let cellSelector = ContactCellSelector(contact: contact)
+                cellSelector.tableView = self.tableView
+                cellSelector.viewController = self.viewController
+                cellData.selector = cellSelector
+                self.tableView?.expandingModel?.appendCell(cellData: cellData, section: 1, with: .right)
             }
         }
 

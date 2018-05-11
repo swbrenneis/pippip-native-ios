@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import ChameleonFramework
 
 class PreviewCell: UITableViewCell {
 
@@ -37,7 +38,7 @@ class PreviewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
-    @objc func configure(_ textMessage: TextMessage) {
+    @objc func configure(textMessage: TextMessage, backgroundColor: UIColor) {
 
         messageReadIndicator.isHidden = textMessage.read
         if self.textMessage == nil || self.textMessage.messageId != textMessage.messageId {
@@ -56,7 +57,15 @@ class PreviewCell: UITableViewCell {
                 }
             }
         }
-        
+
+        self.backgroundColor = .clear
+        contentView.backgroundColor = backgroundColor
+        contentView.layer.cornerRadius = 15
+        contentView.layer.masksToBounds = true
+        senderLabel.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
+        previewLabel.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
+        timestampLabel.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
+
     }
 
     func convertTimestamp(_ timestamp: Int64) -> String {

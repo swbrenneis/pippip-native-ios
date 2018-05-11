@@ -8,70 +8,88 @@
 
 import UIKit
 
-class BaseExpandingTableModel: ExpandingTableModelProtocol {
+class BaseExpandingTableModel: NSObject, ExpandingTableModelProtocol {
 
+    var tableView: UITableView!
     var tableModel: [Int : [CellDataProtocol]]
     var headerViews: [Int : ViewDataProtocol]
-    var insertPaths: [IndexPath]
-    var deletePaths: [IndexPath]
     
-    init() {
+    override init() {
 
         tableModel = [0 : [CellDataProtocol]()]
         headerViews = [ Int: ViewDataProtocol ]()
-        insertPaths = [ IndexPath ]()
-        deletePaths = [ IndexPath ]()
+
+        super.init()
 
     }
 
-    func clear(_ section: Int, tableView: UITableView) {
+    func clear() {
 
-        if tableModel[section] != nil {
-            while tableModel[section]!.count > 0 {
-                let _ = removeCell(section: section, row: 0)
-                tableView.deleteRows(at: deletePaths, with: .top)
-            }
+        assert(Thread.isMainThread)
+        for key in tableModel.keys {
+            tableModel[key] = nil
         }
+        tableView.reloadData()
+
+    }
+
+    func clear(section: Int) {
+
+        assert(Thread.isMainThread)
+        tableModel[section]?.removeAll()
+        tableView.reloadData()
         
     }
     
-    func appendCell(_ cell: CellDataProtocol, section: Int) {
+    func appendCell(cellData: CellDataProtocol, section: Int, with: UITableViewRowAnimation) {
         
+        assert(Thread.isMainThread)
+        var indexPath = IndexPath(row: 0, section: section)
         if tableModel[section] == nil {
-            tableModel[section] = [ cell ]
+            tableModel[section] = [cellData]
+            indexPath.row = 0
         }
         else {
-            tableModel[section]?.append(cell)
+            tableModel[section]!.append(cellData)
+            indexPath.row = tableModel[section]!.count - 1
         }
-        insertPaths = [ IndexPath(row: tableModel[section]!.count-1, section: section)]
+        tableView.insertRows(at: [indexPath], with: with)
         
     }
 
-    /*
-     * Get cells from row to row + count, inclusive. If count = 0
-     * get cells from row to end of section, inclusive
-     */
-    func getCells(section: Int, row: Int, count: Int) -> [CellDataProtocol] {
-        
-        var cells = [CellDataProtocol]()
-        var rowCount = count
-        if count == 0 || row + count > tableModel[section]!.count {
-            rowCount = tableModel[section]!.count - row
+    func appendCells(cellData: [CellDataProtocol], section: Int, with: UITableViewRowAnimation) {
+
+        assert(Thread.isMainThread)
+        var paths = [IndexPath]()
+        let count = tableModel[section]?.count ?? 0
+        for row in 0..<cellData.count {
+            paths.append(IndexPath(row: count + row, section: section))
         }
-        for index in 0..<rowCount {
-            cells.append(tableModel[section]![row + index])
+        if tableModel[section] == nil {
+            tableModel[section] = cellData
         }
-        return cells
+        else {
+            tableModel[section]?.append(contentsOf: cellData)
+        }
+        tableView.insertRows(at: paths, with: with)
+
+    }
+
+    func getCells(section: Int) -> [CellDataProtocol]? {
+
+        return tableModel[section]
         
     }
     
-    func insertCell(_ cell: CellDataProtocol, section: Int, row: Int) {
-        
+    func insertCell(cellData: CellDataProtocol, section: Int, row: Int, with: UITableViewRowAnimation) {
+
+        assert(Thread.isMainThread)
+        assert(tableModel[section] != nil || row == 0)
         if tableModel[section] == nil {
-            tableModel[section] = [ cell ]
+            tableModel[section] = [cellData]
         }
         else if row >= tableModel[section]!.count {
-            tableModel[section]!.append(cell)
+            assert(false, "Attempt to insert cell beyond end of table")
         }
         else {
             var newCells = [ CellDataProtocol ]()
@@ -80,86 +98,130 @@ class BaseExpandingTableModel: ExpandingTableModelProtocol {
                     newCells.append(tableModel[section]![i])
                 }
                 else {
-                    newCells.append(cell)
+                    newCells.append(cellData)
                 }
             }
             tableModel[section] = newCells
         }
-        insertPaths = [ IndexPath(row: row, section: section) ]
+        tableView.insertRows(at: [IndexPath(row: row, section: section)], with: with)
         
     }
     
-    func insertCells(_ cells: [CellDataProtocol], section: Int, at: Int) {
-        
+    func insertCells(cellData: [CellDataProtocol], section: Int, at: Int, with: UITableViewRowAnimation) {
+
+        assert(Thread.isMainThread)
         if tableModel[section] == nil {
-            tableModel[section] = cells
+            tableModel[section] = cellData
         }
-        else if (at >= tableModel[section]!.count) {
-            tableModel[section]?.append(contentsOf: cells)
+        else if (at > tableModel[section]!.count) {
+            assert(false, "Attempt to insert cells beyond end of table")
+        }
+        else if at == tableModel[section]!.count {
+            appendCells(cellData: cellData, section: section, with: with)
         }
         else {
-            var newCells = [ CellDataProtocol ]()
-            for i in 0..<tableModel[section]!.count {
-                if i == at {
-                    newCells.append(contentsOf: cells)
-                }
+            var insertPaths = [IndexPath]()
+            for row in 0..<cellData.count {
+                insertPaths.append(IndexPath(row: row + at, section: section))
+            }
+            let prefix = tableModel[section]![0..<at]
+            let suffix = tableModel[section]![at..<tableModel[section]!.count]
+            tableModel[section]!.removeAll()
+            tableModel[section]!.append(contentsOf: prefix)
+            tableModel[section]!.append(contentsOf: cellData)
+            tableModel[section]!.append(contentsOf: suffix)
+            tableView.insertRows(at: insertPaths, with: with)
+        }
+        
+    }
+
+    func removeCell(section: Int, row: Int, with: UITableViewRowAnimation) {
+
+        assert(Thread.isMainThread)
+        assert(tableModel[section]?[row] != nil)
+        // var deleted: CellDataProtocol?
+        var newCells = [CellDataProtocol]()
+        for i in 0..<tableModel[section]!.count {
+            if i != row {
                 newCells.append(tableModel[section]![i])
             }
-            tableModel[section] = newCells
         }
-        insertPaths = [ IndexPath ]()
-        for i in 0..<cells.count {
-            insertPaths.append(IndexPath(row: at+i, section: section))
-        }
+        tableModel[section] = newCells
+        tableView.deleteRows(at: [IndexPath(row: row, section: section)], with: with)
         
     }
     
-    func removeCell(section: Int, row: Int) -> CellDataProtocol? {
+    func removeCells(section: Int, row: Int, count: Int, with: UITableViewRowAnimation) {
+
+        assert(Thread.isMainThread)
+        assert(tableModel[section] != nil)
+        assert(row + count <= tableModel[section]!.count, "Attempt to remove cells beyond the end of the table")
+        var deletePaths = [IndexPath ]()
+        var newCells = [CellDataProtocol]()
+        let end = row + count
+        for i in 0..<tableModel[section]!.count {
+            if i < row || i >= end {
+                newCells.append(tableModel[section]![i])
+            }
+            else {
+                deletePaths.append(IndexPath(row: i, section: section))
+            }
+        }
+        tableModel[section] = newCells
+        tableView.deleteRows(at: deletePaths, with: with)
+
+    }
+
+    func numberOfSections(in tableView: UITableView) -> Int {
+
+        return tableModel.keys.count
+
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+        return tableModel[section]!.count
+
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+        guard let cellData = tableModel[indexPath.section]?[indexPath.row] else { assert(false, "Table view to table model row mismatch") }
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellData.cellId, for: indexPath)
+        cellData.configureCell(cell)
+        return cell
+
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+
+        guard let cellData = tableModel[indexPath.section]?[indexPath.row] else { assert(false, "Table view to table model row mismatch") }
+        return cellData.cellHeight
+
+    }
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+
+        return headerViews[section]?.view
+
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        if tableModel[section] == nil {
-            return nil
+        if let viewData = headerViews[section] {
+            return viewData.height
         }
         else {
-            var deleted: CellDataProtocol?
-            var newCells = [ CellDataProtocol ]()
-            for i in 0..<tableModel[section]!.count {
-                if i != row {
-                    newCells.append(tableModel[section]![i])
-                }
-                else {
-                    deleted = tableModel[section]![i]
-                }
-            }
-            tableModel[section] = newCells
-            deletePaths = [ IndexPath(row: row, section: section) ]
-            return deleted
+            return 0
         }
-        
+
     }
-    
-    func removeCells(section: Int, row: Int, count: Int) -> [CellDataProtocol]? {
-        
-        if tableModel[section] == nil {
-            return nil
-        }
-        else {
-            deletePaths = [ IndexPath ]()
-            var deleted = [ CellDataProtocol ]()
-            var newCells = [ CellDataProtocol ]()
-            let end = row + count
-            for i in 0..<tableModel[section]!.count {
-                if i < row || i >= end {
-                    newCells.append(tableModel[section]![i])
-                }
-                else {
-                    deleted.append(tableModel[section]![i])
-                    deletePaths.append(IndexPath(row: i, section: section))
-                }
-            }
-            tableModel[section] = newCells
-            return deleted
-        }
-        
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+        guard let cellData = tableModel[indexPath.section]?[indexPath.row] else { assert(false, "Table view to table model row mismatch") }
+        cellData.selector?.didSelect(indexPath)
+
     }
-    
+
 }

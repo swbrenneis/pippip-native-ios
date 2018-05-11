@@ -11,33 +11,30 @@ import PMAlertController
 import RKDropdownAlert
 import ChameleonFramework
 
-class DeleteContactData: CellDataProtocol {
+class DeleteContactData: NSObject, CellDataProtocol {
 
-    var cell: UITableViewCell
-    var cellHeight: CGFloat
-    var selector: ExpandingTableSelectorProtocol
+    var cellHeight: CGFloat = 50.0
+    var cellId: String = "DeleteContactCell"
+    var selector: ExpandingTableSelectorProtocol?
     var userData: [String : Any]?
     
-    init(publicId: String, viewController: ContactsViewController) {
-        cell = viewController.tableView.dequeueReusableCell(withIdentifier: "DeleteContactCell")!
-        cellHeight = 50.0
-        selector = DeleteContactSelector(publicId, viewController: viewController)
+    func configureCell(_ cell: UITableViewCell) {
+        // noop
     }
-    
+
 }
 
 class DeleteContactSelector: ExpandingTableSelectorProtocol {
     
-    var contactManager: ContactManager
-    var publicId: String
-    weak var viewController: ContactsViewController?
+    var viewController: UIViewController?
+    var tableView: ExpandingTableView?
     var contactPath: IndexPath?
-    
-    init(_ publicId: String, viewController: ContactsViewController) {
+    var contactManager = ContactManager()
+    var publicId: String
+
+    init(_ publicId: String) {
         
         self.publicId = publicId
-        contactManager = ContactManager()
-        self.viewController = viewController
         
     }
     
@@ -66,17 +63,16 @@ class DeleteContactSelector: ExpandingTableSelectorProtocol {
     @objc func contactDeleted(_ : Notification) {
         
         NotificationCenter.default.removeObserver(self, name: Notifications.ContactDeleted, object: nil)
+
         DispatchQueue.main.async {
             let alertColor = UIColor.flatLime
             RKDropdownAlert.title("Contact Deleted", message: "This contact has been removed from your contacts list",
                                   backgroundColor: alertColor,
                                   textColor: ContrastColorOf(alertColor, returnFlat: true),
                                   time: 2, delegate: nil)
-            self.viewController?.tableView.collapseRow(at: self.contactPath!, count: 3)
-            if let model = self.viewController?.tableView.expandingModel {
-                let _ = model.removeCell(section: self.contactPath!.section, row: self.contactPath!.row)
-                self.viewController?.tableView.deleteRows(at: model.deletePaths, with: .right)
-            }
+            self.tableView?.collapseRow(at: self.contactPath!)
+            self.tableView?.expandingModel?.removeCell(section: self.contactPath!.section, row: self.contactPath!.row,
+                                       with: .left)
         }
         
     }
