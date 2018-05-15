@@ -14,6 +14,8 @@
 
 + (void)accountName:(NSString*_Nonnull)name;
 
++ (BOOL)production;
+
 - (void)loadAccount;
 
 - (void)setDefaultConfig;

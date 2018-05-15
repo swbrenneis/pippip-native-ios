@@ -30,7 +30,7 @@ import UIKit
                 print("Contact for ID \(textMessage.contactId) not found")
             }
         }
-        var request = [AnyHashable: Any]()
+        var request = [String: Any]()
         request["method"] = "AcknowledgeMessages"
         request["messages"] = serverMessages
         let messageTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
@@ -39,15 +39,6 @@ import UIKit
             }
             for textMessage in textMessages {
                 textMessage.acknowledged = true
-                /*
-                if (textMessage.contactId != NSNotFound) {
-                    let conversation = ConversationCache.getConversation(textMessage.contactId)
-                    conversation.acknowledgeMessage(textMessage)
-                    let message = self.messageDatabase.getMessage(Int(textMessage.messageId))
-                    message.acknowledged = true
-                    self.messageDatabase.update(message)
-                }
- */
             }
             self.addTextMessages(textMessages)
             NotificationCenter.default.post(name: Notifications.NewMessages, object: nil)
@@ -113,7 +104,7 @@ import UIKit
 
     @objc func getNewMessages() {
 
-        var request = [AnyHashable: Any]()
+        var request = [String: Any]()
         request["method"] = "GetMessages"
         let messageTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
             if let messages = response["messages"] as? [[AnyHashable: Any]] {

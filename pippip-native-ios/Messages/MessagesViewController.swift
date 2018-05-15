@@ -166,13 +166,13 @@ class MessagesViewController: UIViewController {
 
     @objc func appResumed(_ notification: Notification) {
 
-        if suspended {
+        if suspended && sessionState.authenticated {
             suspended = false
             let info = notification.userInfo!
             authView.suspendedTime = info["suspendedTime"] as? Int ?? 0
-        }
-        DispatchQueue.main.async {
-            self.present(self.authView, animated: true, completion: nil)
+            DispatchQueue.main.async {
+                self.present(self.authView, animated: true, completion: nil)
+            }
         }
         
     }

@@ -16,6 +16,7 @@ class SlidingMessageWindow: NSObject {
     var windowPos: Int
     var window: [TextMessage]
     var items: [ChatItemProtocol]
+    var suspendedItems: [ChatItemProtocol]?
 
     init(conversation: Conversation, windowSize: Int) {
 
@@ -71,6 +72,12 @@ class SlidingMessageWindow: NSObject {
 
     }
 
+    func resume() {
+
+        items = suspendedItems!
+
+    }
+
     func slideDown() {
 
         if canSlideDown() {
@@ -96,6 +103,13 @@ class SlidingMessageWindow: NSObject {
             items = newItems
         }
 
+    }
+
+    func suspend() {
+
+        suspendedItems = items
+        items.removeAll()
+    
     }
 
     func updateChatItem(_ textMessage: TextMessage) {

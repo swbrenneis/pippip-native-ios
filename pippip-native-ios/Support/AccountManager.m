@@ -29,6 +29,10 @@ static NSString *acctName = nil;
     acctName = name;
 }
 
++ (BOOL)production {
+    return false;
+}
+
 - (void)loadAccount {
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);

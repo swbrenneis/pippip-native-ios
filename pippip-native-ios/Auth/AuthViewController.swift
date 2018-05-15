@@ -16,6 +16,7 @@ import LocalAuthentication
 
     @IBOutlet weak var authButton: UIButton!
 
+    @objc static var sessionTTL: Int64 = 0
     var accountName: String?
     var accountManager = AccountManager()
     var config = Configurator()
@@ -38,7 +39,7 @@ import LocalAuthentication
             localAuth = true
             authButton.setTitle("Sign In", for: .normal)
             authButton.isHidden = true
-            if !config.useLocalAuth() || suspendedTime > 1800 {
+            if !config.useLocalAuth() || suspendedTime > AuthViewController.sessionTTL {
                 localAuth = false
                 authenticator.logout()
                 authButton.isHidden = false

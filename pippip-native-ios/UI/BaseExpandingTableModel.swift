@@ -23,24 +23,6 @@ class BaseExpandingTableModel: NSObject, ExpandingTableModelProtocol {
 
     }
 
-    func clear() {
-
-        assert(Thread.isMainThread)
-        for key in tableModel.keys {
-            tableModel[key] = nil
-        }
-        tableView.reloadData()
-
-    }
-
-    func clear(section: Int) {
-
-        assert(Thread.isMainThread)
-        tableModel[section]?.removeAll()
-        tableView.reloadData()
-        
-    }
-    
     func appendCell(cellData: CellDataProtocol, section: Int, with: UITableViewRowAnimation) {
         
         assert(Thread.isMainThread)
@@ -56,9 +38,9 @@ class BaseExpandingTableModel: NSObject, ExpandingTableModelProtocol {
         tableView.insertRows(at: [indexPath], with: with)
         
     }
-
+    
     func appendCells(cellData: [CellDataProtocol], section: Int, with: UITableViewRowAnimation) {
-
+        
         assert(Thread.isMainThread)
         var paths = [IndexPath]()
         let count = tableModel[section]?.count ?? 0
@@ -72,7 +54,25 @@ class BaseExpandingTableModel: NSObject, ExpandingTableModelProtocol {
             tableModel[section]?.append(contentsOf: cellData)
         }
         tableView.insertRows(at: paths, with: with)
+        
+    }
+    
+    func clear() {
 
+        assert(Thread.isMainThread)
+        for key in tableModel.keys {
+            tableModel[key]?.removeAll()
+        }
+        tableView.reloadData()
+
+    }
+
+    func clear(section: Int) {
+
+        assert(Thread.isMainThread)
+        tableModel[section]?.removeAll()
+        tableView.reloadData()
+        
     }
 
     func getCells(section: Int) -> [CellDataProtocol]? {
@@ -180,13 +180,15 @@ class BaseExpandingTableModel: NSObject, ExpandingTableModelProtocol {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-        return tableModel[section]!.count
+        return tableModel[section]?.count ?? 0
 
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        guard let cellData = tableModel[indexPath.section]?[indexPath.row] else { assert(false, "Table view to table model row mismatch") }
+        guard let cellData = tableModel[indexPath.section]?[indexPath.row] else {
+            assert(false, "Table view to table model row mismatch")
+            return UITableViewCell() }
         let cell = tableView.dequeueReusableCell(withIdentifier: cellData.cellId, for: indexPath)
         cellData.configureCell(cell)
         return cell
@@ -195,7 +197,9 @@ class BaseExpandingTableModel: NSObject, ExpandingTableModelProtocol {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-        guard let cellData = tableModel[indexPath.section]?[indexPath.row] else { assert(false, "Table view to table model row mismatch") }
+        guard let cellData = tableModel[indexPath.section]?[indexPath.row] else {
+            assert(false, "Table view to table model row mismatch")
+            return 0.0 }
         return cellData.cellHeight
 
     }
@@ -219,7 +223,9 @@ class BaseExpandingTableModel: NSObject, ExpandingTableModelProtocol {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        guard let cellData = tableModel[indexPath.section]?[indexPath.row] else { assert(false, "Table view to table model row mismatch") }
+        guard let cellData = tableModel[indexPath.section]?[indexPath.row] else {
+            assert(false, "Table view to table model row mismatch")
+            return }
         cellData.selector?.didSelect(indexPath)
 
     }

@@ -70,7 +70,7 @@ class ContactManager: NSObject {
 
     func acknowledgeRequest(contactRequest: ContactRequest, response: String) {
 
-        var request = [AnyHashable: Any]()
+        var request = [String: Any]()
         request["method"] = "AcknowledgeRequest"
         request["id"] = contactRequest.publicId
         request["response"] = response
@@ -120,7 +120,7 @@ class ContactManager: NSObject {
 
         let found = config.whitelistIndex(of: publicId)
         if found == NSNotFound {
-            var request = [AnyHashable: Any]()
+            var request = [String: Any]()
             request["method"] = "UpdateWhitelist"
             request["id"] = publicId
             request["action"] = "add"
@@ -169,7 +169,7 @@ class ContactManager: NSObject {
 
     func deleteContact(_ publicId: String) {
         
-        var request = [AnyHashable: Any]()
+        var request = [String: Any]()
         request["method"] = "DeleteContact"
         request["publicId"] = publicId
         let deleteTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
@@ -200,7 +200,7 @@ class ContactManager: NSObject {
 
     func deleteFriend(_ publicId: String) {
 
-        var request = [AnyHashable: Any]()
+        var request = [String: Any]()
         request["method"] = "UpdateWhitelist"
         request["id"] = publicId
         request["action"] = "delete"
@@ -241,7 +241,7 @@ class ContactManager: NSObject {
 
     @objc func getPendingRequests() {
 
-        var request = [AnyHashable: Any]()
+        var request = [String: Any]()
         request["method"] = "GetPendingRequests"
         let getTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
             if let requests = response["requests"] as? [[AnyHashable: Any]] {
@@ -281,7 +281,7 @@ class ContactManager: NSObject {
     
     @objc func matchNickname(nickname: String?, publicId: String?) {
 
-        var request = [AnyHashable: Any]()
+        var request = [String: Any]()
         request["method"] = "MatchNickname"
         if (nickname != nil) {
             request["nickname"] = nickname
@@ -299,7 +299,7 @@ class ContactManager: NSObject {
 
     func requestContact(publicId: String, nickname: String?) {
 
-        var request = [AnyHashable: Any]()
+        var request = [String: Any]()
         request["method"] = "RequestContact"
         request["id"] = publicId
         if let _ = ContactManager.contactMap[publicId] {
@@ -344,7 +344,7 @@ class ContactManager: NSObject {
 
     @objc func setContactPolicy(_ policy: String) {
         
-        var request = [AnyHashable: Any]()
+        var request = [String: Any]()
         request["method"] = "SetContactPolicy"
         request["policy"] = policy
         let setTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
@@ -357,7 +357,7 @@ class ContactManager: NSObject {
 
     @objc func updateNickname(newNickname: String?, oldNickname: String?) {
 
-        var request = [AnyHashable: Any]()
+        var request = [String: Any]()
         request["method"] = "SetNickname"
         if (oldNickname != nil) {
             request["oldNickname"] = oldNickname
@@ -433,7 +433,7 @@ class ContactManager: NSObject {
             }
         }
 
-        var request = [AnyHashable: Any]()
+        var request = [String: Any]()
         request["method"] = "UpdatePendingContacts"
         request["pending"] = pending
         let updateTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in

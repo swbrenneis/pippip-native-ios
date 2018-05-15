@@ -10,7 +10,7 @@ import UIKit
 
 class EnclaveTask: NSObject, RequestProcessProtocol {
 
-    var postPacket: PostPacket?
+    var postPacket: PostPacketProtocol?
     var errorDelegate: ErrorDelegate
     var completion: ([AnyHashable: Any]) -> Void
     var errorTitle : String? {
@@ -42,13 +42,19 @@ class EnclaveTask: NSObject, RequestProcessProtocol {
         }
     }
 
-    func sendRequest(_ request: [AnyHashable: Any]) {
+    func sendRequest(_ request: [String: Any]) {
 
-        let session = ApplicationSingleton.instance().restSession
-        let enclaveRequest = EnclaveRequest()
-        enclaveRequest.setRequest(request)
-        postPacket = enclaveRequest
-        session?.queuePost(self)
+        do {
+            let session = ApplicationSingleton.instance().restSession
+            let enclaveRequest = EnclaveRequest()
+            try enclaveRequest.setRequest(request)
+            postPacket = enclaveRequest
+            session?.queuePost(self)
+        }
+        catch {
+            print("Error sending enclave request: \(error)")
+            errorDelegate.requestError("Failed to send request")
+        }
         
     }
 

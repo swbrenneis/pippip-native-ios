@@ -12,6 +12,8 @@
 
 @interface RESTSession : NSObject <NSURLConnectionDelegate>
 
+@property (nonatomic) NSString *urlBase;
+
 - (void)queuePost:(id<RequestProcessProtocol>)process;
 
 - (void)startSession:(id<RequestProcessProtocol>)process;

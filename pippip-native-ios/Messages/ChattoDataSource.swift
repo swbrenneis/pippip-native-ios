@@ -35,6 +35,10 @@ class ChattoDataSource: ChatDataSourceProtocol {
                                                name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(cleartextAvailable(_:)),
                                                name: Notifications.CleartextAvailable, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
+                                               name: Notifications.AppResumed, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
+                                               name: Notifications.AppSuspended, object: nil)
 
     }
 
@@ -85,6 +89,24 @@ class ChattoDataSource: ChatDataSourceProtocol {
                 self.slidingWindow.updateChatItem(textMessage)
                 self.delegate?.chatDataSourceDidUpdate(self, updateType: .reload)
             }
+        }
+
+    }
+
+    @objc func appResumed(_ notification: Notification) {
+
+        DispatchQueue.main.async {
+            self.slidingWindow.resume()
+            self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
+        }
+
+    }
+
+    @objc func appSuspended(_ notification: Notification) {
+
+        DispatchQueue.main.async {
+            self.slidingWindow.suspend()
+            self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
         }
 
     }

@@ -6,9 +6,10 @@
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
-#import "ServerAuthorized.h"
 #import "pippip_native_ios-Swift.h"
+#import "ServerAuthorized.h"
 #import "ApplicationSingleton.h"
+#import "AccountManager.h"
 #import "CKRSACodec.h"
 
 @interface ServerAuthorized ()
@@ -57,8 +58,15 @@
     return 15.0;
 }
 
-- (NSString*)restURL {
-    return @"https://pippip.secomm.cc/authenticator/authorized";
+- (NSString*)restPath {
+    
+    if (AccountManager.production) {
+        return @"/authenticator/authorized";
+    }
+    else {
+        return @"/authorized";
+    }
+
 }
 
 @end

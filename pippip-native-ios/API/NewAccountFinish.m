@@ -6,9 +6,10 @@
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
-#import "NewAccountFinish.h"
 #import "pippip_native_ios-Swift.h"
+#import "NewAccountFinish.h"
 #import "ApplicationSingleton.h"
+#import "AccountManager.h"
 #import "CKRSACodec.h"
 
 @interface NewAccountFinish ()
@@ -54,8 +55,15 @@
     return 20.0;
 }
 
-- (NSString*)restURL {
-    return @"https://pippip.secomm.cc/authenticator/new-account-finish";
+- (NSString*)restPath {
+
+    if (AccountManager.production) {
+        return @"/authenticator/new-account-finish";
+    }
+    else {
+        return @"/new-account-finish";
+    }
+
 }
 
 @end

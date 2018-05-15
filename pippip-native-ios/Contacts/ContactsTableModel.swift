@@ -32,6 +32,7 @@ class ContactsTableModel: BaseExpandingTableModel {
 
     func setContacts(contactList: [Contact], viewController: ContactsViewController) {
 
+        tableModel[1]?.removeAll()
         if !contactList.isEmpty {
             var cells = [CellDataProtocol]()
             for contact in contactList {

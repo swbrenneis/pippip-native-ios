@@ -7,8 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PostPacket.h"
 
-@interface NewAccountFinish : NSObject <PostPacket>
+@interface NewAccountFinish : NSObject <PostPacketProtocol>
 
 @end

@@ -17,5 +17,7 @@ import Foundation
     @objc func responseError(_: String)
 
     @objc func sessionError(_: String)
-
+    
+    @objc func requestError(_: String)
+    
 }

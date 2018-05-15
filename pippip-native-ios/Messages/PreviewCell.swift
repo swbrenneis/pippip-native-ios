@@ -20,7 +20,7 @@ class PreviewCell: UITableViewCell {
     @IBOutlet weak var timestampLabel: UILabel!
 
     var contactManager = ContactManager()
-    var textMessage: TextMessage!
+    var textMessage: TextMessage?
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -41,7 +41,7 @@ class PreviewCell: UITableViewCell {
     @objc func configure(textMessage: TextMessage, backgroundColor: UIColor) {
 
         messageReadIndicator.isHidden = textMessage.read
-        if self.textMessage == nil || self.textMessage.messageId != textMessage.messageId {
+        if self.textMessage == nil || self.textMessage?.messageId != textMessage.messageId {
             //configured = true
             self.textMessage = textMessage
             let contact = contactManager.getContactById(textMessage.contactId)
@@ -109,7 +109,7 @@ class PreviewCell: UITableViewCell {
     @objc func cleartextAvailable(_ notification: Notification) {
 
         if let textMessage = notification.object as? TextMessage {
-            if textMessage.messageId == self.textMessage.messageId {
+            if textMessage.messageId == self.textMessage?.messageId {
                 DispatchQueue.main.async {
                     let text = textMessage.cleartext ?? "<nil>"
                     self.setPreviewText(text)

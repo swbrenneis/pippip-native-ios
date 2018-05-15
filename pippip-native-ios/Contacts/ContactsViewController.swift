@@ -24,7 +24,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     var authView: AuthViewController?
     var nickname: String?
     var publicId = ""
-    var debugging = true
+    var debugging = false
     var suspended = false
     var pendingCellData: PendingRequestsCellData?
 

@@ -7,8 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PostPacket.h"
 
-@interface ServerAuthorized : NSObject<PostPacket>
+@interface ServerAuthorized : NSObject<PostPacketProtocol>
 
 @end

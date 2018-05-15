@@ -85,9 +85,9 @@ import UIKit
 
     }
 
-    func encodeForServer(publicId: String) -> [AnyHashable: Any] {
+    func encodeForServer(publicId: String) -> [String: Any] {
 
-        var serverMessage = [AnyHashable: Any]()
+        var serverMessage = [String: Any]()
         serverMessage["toId"] = publicId
         serverMessage["sequence"] = sequence
         serverMessage["keyIndex"] = keyIndex

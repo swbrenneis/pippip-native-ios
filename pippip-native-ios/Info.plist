@@ -17,11 +17,13 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0.3</string>
 	<key>CFBundleVersion</key>
-	<string>20180508</string>
+	<string>2018051101</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict/>
+	<key>NSCameraUsageDescription</key>
+	<string>Used for sending multimedia messages.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used for sending multimedia messages.</string>
 	<key>UIBackgroundModes</key>

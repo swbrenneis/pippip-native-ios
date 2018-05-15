@@ -8,7 +8,7 @@
 
 #import "pippip_native_ios-Swift.h"
 #import "NewAccountRequest.h"
-
+#import "AccountManager.h"
 
 @interface NewAccountRequest ()
 {
@@ -41,8 +41,15 @@
     return 10.0;
 }
 
-- (NSString*)restURL {
-    return @"https://pippip.secomm.cc/authenticator/new-account-request";
+- (NSString*)restPath {
+
+    if (AccountManager.production) {
+        return @"/authenticator/new-account-request";
+    }
+    else {
+        return @"/new-account-request";
+    }
+    
 }
 
 @end

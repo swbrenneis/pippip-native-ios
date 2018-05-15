@@ -10,7 +10,7 @@ import Foundation
 
 @objc protocol RequestProcessProtocol {
 
-    var postPacket: PostPacket? { get }
+    var postPacket: PostPacketProtocol? { get }
     var errorDelegate: ErrorDelegate { get }
 
     func sessionComplete(_ response:[AnyHashable: Any]?)

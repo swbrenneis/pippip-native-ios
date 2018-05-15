@@ -9,7 +9,7 @@
 #import "RESTSession.h"
 #import "pippip_native_ios-Swift.h"
 #import "Notifications.h"
-#import "PostPacket.h"
+#import "AccountManager.h"
 #import "stdio.h"
 
 @interface RESTSession ()
@@ -20,6 +20,7 @@
     NSLock *postLock;
     id<RequestProcessProtocol> currentProcess;
     BOOL sessionActive;
+    NSString *sessionPath;
 }
 
 @end
@@ -34,6 +35,14 @@
     processes = [NSMutableArray array];
     postLock = [[NSLock alloc] init];
     sessionActive = NO;
+    if (AccountManager.production) {
+        _urlBase = @"https://pippip.secomm.cc";
+        sessionPath = @"/authenticator/session-request";
+    }
+    else {
+        _urlBase = @"https://dev.secomm.org:8443/secomm-api-rest-1.1.0";
+        sessionPath = @"/session-request";
+    }
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionEnded:)
                                                  name:SESSION_ENDED object:nil];
@@ -77,16 +86,17 @@
         [self nextPost];
     };
     
-    id<PostPacket> packet = currentProcess.postPacket;
-    NSDictionary *packetData = [packet restPacket];
+    id<PostPacketProtocol> packet = currentProcess.postPacket;
+    NSDictionary *packetData = packet.restPacket;
     NSError *jsonError = nil;
     NSData *json = [NSJSONSerialization dataWithJSONObject:packetData
                                                    options:0
                                                      error:&jsonError];
-    NSURL *postURL = [NSURL URLWithString:[packet restURL]];
+    NSString *urlString = [_urlBase stringByAppendingString:packet.restPath];
+    NSURL *postURL = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:postURL
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
-                                                       timeoutInterval:[packet restTimeout]];
+                                                       timeoutInterval:packet.restTimeout];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     [request addValue:@"application/json" forHTTPHeaderField:@"Accept"];
@@ -169,7 +179,7 @@
                 }
                 else {
                     // The presence of a "Message" element indicates an API gateway error.
-                    NSString *message = [responseJson objectForKey:@"message"];
+                    NSString *message = responseJson[@"message"];
                     if (message != nil) {
                         [self sessionFailed:message];
                     }
@@ -183,7 +193,7 @@
     sessionActive = YES;
     currentProcess = process;
     // Perform the session request. The task defaults to "GET" method.
-    NSURL *sessionURL = [NSURL URLWithString:@"https://pippip.secomm.cc/authenticator/session-request"];
+    NSURL *sessionURL = [NSURL URLWithString:[_urlBase stringByAppendingString:sessionPath]];
     NSURLSessionDataTask *sessionTask = [urlSession dataTaskWithURL:sessionURL
                                                   completionHandler:sessionCompletion];
     [sessionTask resume];

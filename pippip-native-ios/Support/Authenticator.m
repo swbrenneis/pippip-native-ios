@@ -11,13 +11,10 @@
 #import "Authenticator.h"
 #import "ApplicationSingleton.h"
 #import "AccountSession.h"
-#import "AuthenticationRequest.h"
 #import "AuthenticationResponse.h"
-#import "ClientAuthChallenge.h"
 #import "ServerAuthChallenge.h"
 #import "ServerAuthorized.h"
 #import "ClientAuthorized.h"
-#import "Logout.h"
 #import "Notifications.h"
 #import "CKPEMCodec.h"
 
@@ -125,6 +122,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 - (void)logout {
 
     step = LOGOUT;
+    sessionState.authenticated = NO;
     postPacket = [[Logout alloc] init];
     [_session queuePost:self];
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
@@ -176,8 +174,10 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 - (void)sessionComplete:(NSDictionary*)response {
     
     if (response != nil) {
-        NSString *sessionId = [response objectForKey:@"sessionId"];
-        NSString *serverPublicKeyPEM = [response objectForKey:@"serverPublicKey"];
+        NSString *sessionId = response[@"sessionId"];
+        NSString *serverPublicKeyPEM = response[@"serverPublicKey"];
+        NSNumber *ttl = response[@"sessionTTL"];
+        AuthViewController.sessionTTL = [ttl longLongValue];
         if (sessionId == nil) {
             [errorDelegate sessionError:@"Invalid server response, missing session ID"];
         }

@@ -31,8 +31,15 @@ import UIKit
         NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
         
     }
-    
+
     func responseError(_ error: String) {
+        
+        info["message"] = error
+        NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+        
+    }
+    
+    func requestError(_ error: String) {
         
         info["message"] = error
         NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)

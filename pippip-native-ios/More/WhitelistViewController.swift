@@ -43,7 +43,7 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
 
-        tableModel!.setFriends(whitelist: config.whitelist, tableView: tableView)
+        tableModel?.setFriends(whitelist: config.whitelist, tableView: tableView)
 
         NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
                                                name: Notifications.AppResumed, object: nil)
@@ -61,6 +61,8 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
 
+        tableModel?.clear()
+    
     }
 
     override func didReceiveMemoryWarning() {
