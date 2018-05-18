@@ -10,6 +10,7 @@
 #import "ApplicationSingleton.h"
 #import "TargetConditionals.h"
 #import "Chameleon.h"
+#import "HexCodec.h"
 
 @interface AppDelegate ()
 
@@ -36,15 +37,10 @@
             NSLog(@"Failed to authorize notifications - %@", error);
         }
     }];
-    // Clear any notifications we didn't get
-    //if (application.applicationIconBadgeNumber == 0) {
-    //    [application setApplicationIconBadgeNumber:1];
-    //    [application setApplicationIconBadgeNumber:0];
-    //}
 #endif
 
     // Chameleon theme
-    [Chameleon setGlobalThemeUsingPrimaryColor:UIColor.flatPowderBlueColor withContentStyle:UIContentStyleContrast];
+    [Chameleon setGlobalThemeUsingPrimaryColor:UIColor.flatGreenColor withContentStyle:UIContentStyleContrast];
 
     return YES;
 
@@ -89,7 +85,9 @@
 - (void)application:(UIApplication *)application
         didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 
+    NSLog(@"Received device token %@", [HexCodec hexString:deviceToken]);
     [ApplicationSingleton instance].accountSession.deviceToken = deviceToken;
+    
 
 }
 
@@ -99,11 +97,11 @@
     NSLog(@"Failed to register for remote notifications: %@", error);
 
 }
-
+/*
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
     completionHandler(UIBackgroundFetchResultNewData);
 
 }
-
+*/
 @end

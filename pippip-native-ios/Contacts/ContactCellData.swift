@@ -84,8 +84,15 @@ class ContactCellSelector: ExpandingTableSelectorProtocol {
             var cells = [ CellDataProtocol ]()
             cells.append(ContactPublicIdData(publicId: contact.publicId))
             cells.append(LastSeenCellData(contact: contact))
+            if contact.status == "pending" {
+                let retryData = RetryRequestData()
+                let retrySelector = RetryRequestSelector(publicId: contact.publicId)
+                retrySelector.tableView = tableView
+                retryData.selector = retrySelector
+                cells.append(retryData)
+            }
             let deleteData = DeleteContactData()
-            let deleteSelector = DeleteContactSelector(contact.publicId)
+            let deleteSelector = DeleteContactSelector(publicId: contact.publicId, status: contact.status)
             deleteSelector.viewController = viewController
             deleteSelector.tableView = tableView
             deleteData.selector = deleteSelector

@@ -17,10 +17,10 @@
 {
     BOOL sessionActive;
     BOOL suspended;
-    BOOL notificationComplete;
     ContactManager *contactManager;
     MessageManager *messageManager;
     NSDate *suspendTime;
+    BOOL notificationComplete;
 }
 
 @end
@@ -42,6 +42,7 @@
                                              selector:@selector(sessionEnded:)
                                                  name:SESSION_ENDED
                                                object:nil];
+    /*
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(requestsUpdated:)
                                                  name:REQUESTS_UPDATED
@@ -50,13 +51,12 @@
                                              selector:@selector(newMessages:)
                                                  name:NEW_MESSAGES
                                                object:nil];
-
+*/
     return self;
 
 }
 
 #if TARGET_OS_SIMULATOR
-
 - (void)getNewMessages {
 
     if (sessionActive) {
@@ -69,39 +69,62 @@
     }
 
 }
-
 #endif
+/*
 - (void)newMessages:(NSNotification*)notification {
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-    });
     
-}
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSInteger badgeCount = [UIApplication sharedApplication].applicationIconBadgeNumber;
+        NSInteger messageCount = [(NSNumber*)notification.object integerValue];
+        NSInteger newBadgeCount = badgeCount - messageCount;
+        if (newBadgeCount < 0) {
+            newBadgeCount = 0;
+        }
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:newBadgeCount];
+    });
+    notificationComplete = YES;
 
+}
+*/
 - (void)newSession:(NSNotification*)notification {
 
     contactManager = [[ContactManager alloc] init];
     messageManager = [[MessageManager alloc] init];
 
     sessionActive = YES;
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-//    [messageManager getNewMessages];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        [self->contactManager getPendingRequests];
-    });
 
+    if (notificationComplete && [UIApplication sharedApplication].applicationIconBadgeNumber > 0) {
+        notificationComplete = NO;
+        [messageManager getNewMessages];
+        [contactManager getPendingRequests];
+        [contactManager updatePendingContacts];
+        notificationComplete = YES;
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    }
+/*
 #if TARGET_OS_SIMULATOR
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self getNewMessages];
     });
 #endif
-
+*/
 
 }
-
+/*
 - (void)requestsUpdated:(NSNotification*)notification {
 
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSInteger badgeCount = [UIApplication sharedApplication].applicationIconBadgeNumber;
+        NSInteger requestCount = [(NSNumber*)notification.object integerValue];
+        NSInteger newBadgeCount = badgeCount - requestCount;
+        if (newBadgeCount < 0) {
+            newBadgeCount = 0;
+        }
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:newBadgeCount];
+    });
+    notificationComplete = YES;
+
+#if TARGET_OS_SIMULATOR
     if (sessionActive) {
         [contactManager updatePendingContacts];
     }
@@ -112,11 +135,11 @@
                 }
             });
         });
-
+#endif
 }
-
+*/
 - (void)sessionEnded:(NSNotification*)notification {
-    
+
     sessionActive = NO;
     [contactManager clearContacts];
     [ConversationCache clearCache];
@@ -130,15 +153,17 @@
         sessionActive = YES;
         NSDate *resumeTime = [NSDate date];
         NSInteger suspendedTime = [resumeTime timeIntervalSinceDate:suspendTime];
-        if (suspendedTime > 0 && suspendedTime < 180) {     // 30 minutes
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                [self->contactManager getPendingRequests];
-            });
-        }
 
-        NSInteger badgeNumber = [UIApplication sharedApplication].applicationIconBadgeNumber;
-        if (badgeNumber > 0) {
-            [messageManager getNewMessages];
+        if (suspendedTime > 0 && suspendedTime < LocalAuthenticator.sessionTTL) {
+            NSInteger badgeNumber = [UIApplication sharedApplication].applicationIconBadgeNumber;
+            if (notificationComplete && badgeNumber > 0) {
+                notificationComplete = NO;
+                [messageManager getNewMessages];
+                [contactManager getPendingRequests];
+                [contactManager updatePendingContacts];
+                notificationComplete = YES;
+                [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+            }
         }
         NSMutableDictionary *info = [NSMutableDictionary dictionary];
         info[@"suspendedTime"] = [NSNumber numberWithInteger:suspendedTime];
@@ -162,19 +187,24 @@
 
     if (sessionActive) {
         NSInteger badgeNumber = [notification.request.content.badge integerValue];
-        if (badgeNumber > 0) {
+        if (notificationComplete && badgeNumber > 0) {
+            notificationComplete = NO;
             [messageManager getNewMessages];
+            [contactManager getPendingRequests];
+            [contactManager updatePendingContacts];
+            notificationComplete = YES;
+            [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
         }
     }
     completionHandler(UNNotificationPresentationOptionBadge);
 
 }
-
+/*
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler {
 
     [messageManager getNewMessages];
     completionHandler();
 
 }
-
+*/
 @end

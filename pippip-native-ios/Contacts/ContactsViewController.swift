@@ -21,7 +21,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
     var contactsModel: ContactsTableModel
     var config = Configurator()
     var sessionState = SessionState()
-    var authView: AuthViewController?
+    var localAuth: LocalAuthenticator!
     var nickname: String?
     var publicId = ""
     var debugging = false
@@ -54,8 +54,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         let headerFrame = CGRect(x: 0.0, y:0.0, width: self.view.frame.size.width, height:40.0)
         contactsModel.headerViews[1] = ContactsHeaderView(headerFrame)
 
-        authView = self.storyboard?.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController
-        authView?.isAuthenticated = true
+        localAuth = LocalAuthenticator(viewController: self, view: self.view)
 
         var items = [UIBarButtonItem]()
         let addItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addContact(_:)))
@@ -71,14 +70,15 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
 
+        localAuth.visible = true
         NotificationCenter.default.addObserver(self, selector: #selector(requestsUpdated(_:)),
                                                name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
                                                name: Notifications.PresentAlert, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
-                                               name: Notifications.AppResumed, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
-                                               name: Notifications.AppSuspended, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
+//                                               name: Notifications.AppResumed, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
+//                                               name: Notifications.AppSuspended, object: nil)
 
         contactsModel.setContacts(contactList: contactManager.getContactList(), viewController: self)
         let pendingRequests = Array(contactManager.pendingRequests)
@@ -95,13 +95,14 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
 
     override func viewWillDisappear(_ animated: Bool) {
 
+        localAuth.visible = false
         pendingCellData = nil
         tableView.expandingModel?.clear()
 
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
+        //NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
+        //NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
 
     }
 
@@ -109,7 +110,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+/*
     @objc func appResumed(_ notification: Notification) {
 
         if suspended {
@@ -124,7 +125,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         }
         
     }
-    
+
     @objc func appSuspended(_ notification: Notification) {
 
         suspended = true
@@ -133,7 +134,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         }
 
     }
-    
+*/
     @objc func contactRequested(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
@@ -194,7 +195,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
         if let puid = info["publicId"] as? String {
             publicId = puid
             nickname = info["nickname"] as? String ?? ""
-            contactManager.requestContact(publicId: publicId, nickname: nickname)
+            contactManager.requestContact(publicId: publicId, nickname: nickname, retry: false)
         }
         else {
             DispatchQueue.main.async {
@@ -276,7 +277,7 @@ class ContactsViewController: UIViewController, RKDropdownAlertDelegate {
                                             self.contactManager.matchNickname(nickname: self.nickname, publicId: nil)
                                         }
                                         else if self.publicId.utf8.count > 0 {
-                                            self.contactManager.requestContact(publicId: self.publicId, nickname: nil)
+                                            self.contactManager.requestContact(publicId: self.publicId, nickname: nil, retry: false)
                                         }
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))

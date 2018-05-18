@@ -22,22 +22,20 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
     var publicId = ""
     var contactManager = ContactManager()
     var sessionState = SessionState()
-    var authView: AuthViewController?
     var suspended = false
+    var localAuth: LocalAuthenticator!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         config.loadWhitelist()
 
+        localAuth = LocalAuthenticator(viewController: self, view: self.view)
+
         tableModel = WhitelistTableModel(self)
         tableView.expandingModel = tableModel
 
         tableView.register(FriendCell.self, forCellReuseIdentifier: "FriendCell")
-
-        authView =
-            self.storyboard?.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController
-        authView?.isAuthenticated = true
 
     }
 
@@ -45,10 +43,11 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
 
         tableModel?.setFriends(whitelist: config.whitelist, tableView: tableView)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
-                                               name: Notifications.AppResumed, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
-                                               name: Notifications.AppSuspended, object: nil)
+        localAuth.visible = true
+//        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
+//                                               name: Notifications.AppResumed, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
+//                                               name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
                                                name: Notifications.PresentAlert, object: nil)
 
@@ -57,9 +56,10 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
+        localAuth.visible = false
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
+//        NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
+//        NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
 
         tableModel?.clear()
     
@@ -155,7 +155,7 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         }
 
     }
-
+/*
     @objc func appResumed(_ notification: Notification) {
 
         if suspended {
@@ -176,7 +176,7 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         suspended = true
         
     }
-    
+*/
     @objc func friendAdded(_ : Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.FriendAdded, object: nil)

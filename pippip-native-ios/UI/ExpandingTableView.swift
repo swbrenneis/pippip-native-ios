@@ -38,6 +38,9 @@ class ExpandingTableView: UITableView {
 
     func collapseRow(at indexPath: IndexPath) {
 
+        if let cell = cellForRow(at: indexPath) as? ExpandingTableViewCell {
+            cell.close()
+        }
         guard let count = expandedCounts[indexPath] else { return }
         if count == 1 {
             expandingModel?.removeCell(section: indexPath.section, row: indexPath.item+1, with: .top)

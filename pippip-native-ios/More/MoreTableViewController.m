@@ -21,7 +21,6 @@ static const NSInteger EDIT_INDEX = 4;
 
 @interface MoreTableViewController ()
 {
-    AuthViewController *authView;
     BOOL suspended;
     NSMutableArray<MoreCellItem*> *cellItems;
     NSMutableArray<MoreCellItem*> *suspendItems;
@@ -29,6 +28,7 @@ static const NSInteger EDIT_INDEX = 4;
     UIView *headingView;
     NicknameCell *nicknameCell;
     Configurator *config;
+    LocalAuthenticator *localAuth;
 }
 
 @end
@@ -38,12 +38,12 @@ static const NSInteger EDIT_INDEX = 4;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    authView = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthViewController"];
-    authView.isAuthenticated = YES;
     suspended = NO;
     deleteItem = [DeleteAccountCell cellItem];
     nicknameCell = [self.tableView dequeueReusableCellWithIdentifier:@"NicknameCell"];
     config = [[Configurator alloc] init];
+
+    localAuth = [[LocalAuthenticator alloc] initWithViewController:self view:self.view];
 
     headingView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width, 40.0)];
     headingView.backgroundColor = [UIColor colorNamed:@"Pale Gray"];
@@ -83,12 +83,13 @@ static const NSInteger EDIT_INDEX = 4;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(appResumed:)
-                                               name:APP_RESUMED object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(appSuspended:)
-                                               name:APP_SUSPENDED object:nil];
+    localAuth.visible = true;
+//    [NSNotificationCenter.defaultCenter addObserver:self
+//                                           selector:@selector(appResumed:)
+//                                               name:APP_RESUMED object:nil];
+//    [NSNotificationCenter.defaultCenter addObserver:self
+//                                           selector:@selector(appSuspended:)
+//                                               name:APP_SUSPENDED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(presentAlert:)
                                                name:PRESENT_ALERT object:nil];
@@ -104,8 +105,9 @@ static const NSInteger EDIT_INDEX = 4;
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:APP_RESUMED object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:APP_SUSPENDED object:nil];
+    localAuth.visible = false;
+    //[[NSNotificationCenter defaultCenter] removeObserver:self name:APP_RESUMED object:nil];
+    //[[NSNotificationCenter defaultCenter] removeObserver:self name:APP_SUSPENDED object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:PRESENT_ALERT object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:nicknameCell name:NICKNAME_MATCHED object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:nicknameCell name:NICKNAME_UPDATED object:nil];
@@ -119,7 +121,7 @@ static const NSInteger EDIT_INDEX = 4;
     });
 
 }
-
+/*
 - (void)appResumed:(NSNotification*)notification {
 
     if (suspended) {
@@ -145,7 +147,7 @@ static const NSInteger EDIT_INDEX = 4;
 //    });
     
 }
-
+*/
 - (void)policyChanged:(NSNotification*)notification {
 
     NSDictionary *info = notification.userInfo;

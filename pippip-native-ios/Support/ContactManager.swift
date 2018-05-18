@@ -297,12 +297,12 @@ class ContactManager: NSObject {
         
     }
 
-    func requestContact(publicId: String, nickname: String?) {
+    func requestContact(publicId: String, nickname: String?, retry: Bool) {
 
         var request = [String: Any]()
         request["method"] = "RequestContact"
         request["id"] = publicId
-        if let _ = ContactManager.contactMap[publicId] {
+        if ContactManager.contactMap[publicId] != nil && !retry {
             var info = [AnyHashable: Any]()
             info["title"] = "Contact Error"
             info["message"] = "This contact already exists in your contact list"
@@ -310,12 +310,14 @@ class ContactManager: NSObject {
         }
         else {
             let reqTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
-                let contact = Contact()
-                contact.publicId = response["requestedContactId"] as! String
-                contact.nickname = nickname
-                contact.status = response["result"] as! String
-                self.addContact(contact)
-                NotificationCenter.default.post(name: Notifications.ContactRequested, object: contact)
+                if !retry {
+                    let contact = Contact()
+                    contact.publicId = response["requestedContactId"] as! String
+                    contact.nickname = nickname
+                    contact.status = response["result"] as! String
+                    self.addContact(contact)
+                    NotificationCenter.default.post(name: Notifications.ContactRequested, object: contact)
+                }
             })
             reqTask.errorTitle = "Contact Error"
             reqTask.sendRequest(request)

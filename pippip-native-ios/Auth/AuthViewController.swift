@@ -16,7 +16,6 @@ import LocalAuthentication
 
     @IBOutlet weak var authButton: UIButton!
 
-    @objc static var sessionTTL: Int64 = 0
     var accountName: String?
     var accountManager = AccountManager()
     var config = Configurator()
@@ -39,7 +38,7 @@ import LocalAuthentication
             localAuth = true
             authButton.setTitle("Sign In", for: .normal)
             authButton.isHidden = true
-            if !config.useLocalAuth() || suspendedTime > AuthViewController.sessionTTL {
+            if !config.useLocalAuth() || suspendedTime > LocalAuthenticator.sessionTTL {
                 localAuth = false
                 authenticator.logout()
                 authButton.isHidden = false
@@ -71,7 +70,7 @@ import LocalAuthentication
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        
+    
         if (localAuth) {
             let laContext = LAContext()
             var authError: NSError? = nil

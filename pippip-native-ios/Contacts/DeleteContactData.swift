@@ -31,19 +31,26 @@ class DeleteContactSelector: ExpandingTableSelectorProtocol {
     var contactPath: IndexPath?
     var contactManager = ContactManager()
     var publicId: String
+    var status: String
 
-    init(_ publicId: String) {
-        
+    init(publicId: String, status: String) {
+
         self.publicId = publicId
-        
+        self.status = status
+
     }
     
     func didSelect(_ indexPath: IndexPath) {
 
         NotificationCenter.default.addObserver(self, selector: #selector(contactDeleted(_:)),
                                                name: Notifications.ContactDeleted, object: nil)
-        
-        contactPath = IndexPath(row: indexPath.item-3, section: indexPath.section)
+
+
+        var offset = 3
+        if status == "pending" {
+            offset = 4
+        }
+        contactPath = IndexPath(row: indexPath.item-offset, section: indexPath.section)
         let message = "This contact and associated messages will be deleted\n"
                         + "This cannot be undone\n"
                         + "Proceed?"

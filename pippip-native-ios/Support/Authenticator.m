@@ -177,7 +177,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
         NSString *sessionId = response[@"sessionId"];
         NSString *serverPublicKeyPEM = response[@"serverPublicKey"];
         NSNumber *ttl = response[@"sessionTTL"];
-        AuthViewController.sessionTTL = [ttl longLongValue];
+        LocalAuthenticator.sessionTTL = [ttl longLongValue];
         if (sessionId == nil) {
             [errorDelegate sessionError:@"Invalid server response, missing session ID"];
         }

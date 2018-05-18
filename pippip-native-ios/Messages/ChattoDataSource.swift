@@ -77,7 +77,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
 
         DispatchQueue.main.async {
             self.slidingWindow.newMessages()
-            self.delegate?.chatDataSourceDidUpdate(self, updateType: .pagination)
+            self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
         }
         
     }

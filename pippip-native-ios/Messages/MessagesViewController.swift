@@ -10,6 +10,7 @@ import UIKit
 import FrostedSidebar
 import ChameleonFramework
 import RKDropdownAlert
+import LocalAuthentication
 
 class MessagesViewController: UIViewController {
 
@@ -21,13 +22,15 @@ class MessagesViewController: UIViewController {
     var conversationVew: ChattoViewController!
     var settingsView: MoreTableViewController!
     var mostRecent = [TextMessage]()
-    //var colorScheme = ColorSchemeOf(.complementary, color: UIColor.flatForestGreen, isFlatScheme: true)
     var contactManager: ContactManager!
     var sessionState = SessionState()
-    var authView: AuthViewController!
+    var barItems = [UIBarButtonItem]()
     var headingView: UIView!
-    var suspended = false
+//    var suspended = false
     var accountDeleted = false
+    var config = Configurator()
+    var authenticator = Authenticator()
+    var localAuth: LocalAuthenticator!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +39,9 @@ class MessagesViewController: UIViewController {
         let headingFrame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 10)
         headingView = UIView(frame: headingFrame)
         headingView.backgroundColor = .clear
+        
+        contactManager = ContactManager()
+        localAuth = LocalAuthenticator(viewController: self, view: self.view)
 
         // Do any additional setup after loading the view.
         let sidebarImages = [ UIImage(named: "contacts")!, UIImage(named: "compose")!,
@@ -46,6 +52,7 @@ class MessagesViewController: UIViewController {
         sidebar.actionForIndex[0] = {
             self.sidebarOn = false
             self.sidebar.dismissAnimated(true, completion: nil)
+            self.localAuth.visible = false
             self.navigationController?.pushViewController(self.contactsView, animated: true)
         }
         sidebar.actionForIndex[1] = {
@@ -57,6 +64,7 @@ class MessagesViewController: UIViewController {
         sidebar.actionForIndex[2] = {
             self.sidebarOn = false
             self.sidebar.dismissAnimated(true, completion: nil)
+            self.localAuth.visible = false
             self.navigationController?.pushViewController(self.settingsView, animated: true)
         }
         sidebar.actionForIndex[3] = {
@@ -65,29 +73,19 @@ class MessagesViewController: UIViewController {
             self.signOut()
         }
 
-        var items = [UIBarButtonItem]()
         let image = UIImage(named: "hamburgermenu")
         let hamburger = UIBarButtonItem(image: image, style: .plain, target: self,
                                         action: #selector(showSidebar(_:)))
-        items.append(hamburger)
-        self.navigationItem.rightBarButtonItems = items
-        /*
-        let titleView = UIImageView(frame: CGRect(x: 0, y: 0, width: 32, height: 32))
-        titleView.image = UIImage(named: "pippip3")
-        self.navigationItem.titleView = titleView
- */
-        //self.navigationItem.title = "Pippip Messaging"
+        barItems.append(hamburger)
 
         tableView.delegate = self
         tableView.dataSource = self
-
-        authView =
-            self.storyboard?.instantiateViewController(withIdentifier: "AuthViewController") as! AuthViewController
-
+/*
         NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
                                                name: Notifications.AppResumed, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                name: Notifications.AppSuspended, object: nil)
+ */
         NotificationCenter.default.addObserver(self, selector: #selector(newSession(_:)),
                                                name: Notifications.NewSession, object: nil)
 
@@ -103,9 +101,19 @@ class MessagesViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(thumbprintComplete(_:)),
                                                name: Notifications.ThumbprintComplete, object: nil)
 
-        if sessionState.authenticated && !suspended {
+        localAuth.visible = true
+        if accountDeleted {
+            mostRecent.removeAll()
+            tableView.reloadData()
+            accountDeleted = false
+            localAuth.showAuthView()
+        }
+        else if sessionState.authenticated {
             getMostRecentMessages()
             tableView.reloadData()
+        }
+        else {
+            localAuth.showAuthView()
         }
 
     }
@@ -119,25 +127,11 @@ class MessagesViewController: UIViewController {
 
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        if accountDeleted {
-            mostRecent.removeAll()
-            self.present(authView, animated: true, completion: nil)
-            accountDeleted = false
-        }
-        else if !sessionState.authenticated {
-            self.present(authView, animated: true, completion: nil)
-        }
-        
-    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
     @objc func showSidebar(_ item: Any) {
 
         if sidebarOn {
@@ -163,49 +157,55 @@ class MessagesViewController: UIViewController {
         }
         
     }
-
+/*
     @objc func appResumed(_ notification: Notification) {
 
         if suspended && sessionState.authenticated {
             suspended = false
             let info = notification.userInfo!
-            authView.suspendedTime = info["suspendedTime"] as? Int ?? 0
+            let suspendedTime = info["suspendedTime"] as? Int ?? 0
+            var localAuth = true
+            if !config.useLocalAuth() || suspendedTime > AuthViewController.sessionTTL {
+                localAuth = false
+                authenticator.logout()
+            }
+            
             DispatchQueue.main.async {
-                self.present(self.authView, animated: true, completion: nil)
+                if localAuth {
+                    self.authView.authButton.isHidden = true
+                    self.doThumbprint()
+                }
             }
         }
         
     }
-    
+*/
     func signOut() {
         
         mostRecent.removeAll()
         let auth = Authenticator()
         auth.logout()
-        authView.isAuthenticated = false
         DispatchQueue.main.async {
-            self.tableView.reloadData()
-            self.present(self.authView, animated: true, completion: nil)
+            self.navigationItem.rightBarButtonItems = nil
         }
 
     }
-    
+/*
     @objc func appSuspended(_ notification: Notification) {
 
         suspended = true
-        mostRecent.removeAll()
         DispatchQueue.main.async {
-            self.tableView.reloadData()
+            self.navigationItem.rightBarButtonItems = nil
+            self.view.addSubview(self.authView)
         }
-        
-    }
 
+    }
+*/
     @objc func newSession(_ notification: Notification) {
 
-        authView.isAuthenticated = true
-        contactManager = ContactManager()
         getMostRecentMessages()
         DispatchQueue.main.async {
+            self.navigationItem.rightBarButtonItems = self.barItems
             self.tableView.reloadData()
         }
 
@@ -238,7 +238,7 @@ class MessagesViewController: UIViewController {
 
         getMostRecentMessages()
         DispatchQueue.main.async {
-            self.tableView.reloadData()
+            self.navigationItem.rightBarButtonItems = self.barItems
         }
 
     }

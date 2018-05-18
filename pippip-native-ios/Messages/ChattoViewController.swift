@@ -18,8 +18,9 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
     var chatInputPresenter: BasicChatInputBarPresenter!
     var dataSource: ChattoDataSource!
     var messageManager = MessageManager()
-    var suspended = false
-    var authView: AuthViewController?
+//    var suspended = false
+//    var authView: AuthViewController?
+//    var localAuth: LocalAuthenticator!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,14 +33,8 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
 
         NotificationCenter.default.addObserver(self, selector: #selector(contactSelected(_:)),
                                                name: Notifications.ContactSelected, object: nil)
-        
-        if let sboard = self.navigationController?.storyboard {
-            authView =
-                sboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController
-            authView?.isAuthenticated = true
-        }
 
-        self.setThemeUsingPrimaryColor(UIColor.white, with: .contrast)
+//        localAuth = LocalAuthenticator(viewController: self, view: self.collectionView)
 
     }
 
@@ -61,9 +56,12 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
             selectView!.center = self.view.center
             self.view.addSubview(self.selectView!)
         }
-
+        
+//        localAuth.visible = true
+/*
         NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
                                                name: Notifications.AppResumed, object: nil)
+*/
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
@@ -74,6 +72,7 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
+//        localAuth.visible = false
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
@@ -167,7 +166,7 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
         self.navigationItem.rightBarButtonItems = items
         
     }
-
+/*
     @objc func appResumed(_ notification: Notification) {
         
         if suspended {
@@ -182,13 +181,15 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
         }
         
     }
-    
+*/
     @objc func appSuspended(_ notification: Notification) {
-        
-        suspended = true
-        
+
+        DispatchQueue.main.async {
+            self.navigationController?.popViewController(animated: true)
+        }
+
     }
-    
+
     @objc func contactSelected(_ notification: Notification) {
         
         contact = notification.object as? Contact

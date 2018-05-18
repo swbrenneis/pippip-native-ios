@@ -162,6 +162,10 @@
 		55E970A320AAE05E008C2F39 /* ClientAuthChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970A220AAE05E008C2F39 /* ClientAuthChallenge.swift */; };
 		55E970A520AAEF49008C2F39 /* AuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970A420AAEF49008C2F39 /* AuthenticationRequest.swift */; };
 		55E970A720AB07C6008C2F39 /* Logout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970A620AB07C6008C2F39 /* Logout.swift */; };
+		55E970A920AE28F0008C2F39 /* AuthView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E970A820AE28F0008C2F39 /* AuthView.xib */; };
+		55E970AB20AE2C11008C2F39 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970AA20AE2C11008C2F39 /* AuthView.swift */; };
+		55E970AD20AE6927008C2F39 /* LocalAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970AC20AE6927008C2F39 /* LocalAuthenticator.swift */; };
+		55E970AF20AF03EB008C2F39 /* RetryRequestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970AE20AF03EB008C2F39 /* RetryRequestData.swift */; };
 		55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */; };
 		55FA873F1FD187CD00FB96C0 /* Authenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873E1FD187CD00FB96C0 /* Authenticator.m */; };
 		55FA87451FD5CA4F00FB96C0 /* AuthenticationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 55FA87441FD5CA4F00FB96C0 /* AuthenticationResponse.m */; };
@@ -459,6 +463,10 @@
 		55E970A220AAE05E008C2F39 /* ClientAuthChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientAuthChallenge.swift; sourceTree = "<group>"; };
 		55E970A420AAEF49008C2F39 /* AuthenticationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRequest.swift; sourceTree = "<group>"; };
 		55E970A620AB07C6008C2F39 /* Logout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logout.swift; sourceTree = "<group>"; };
+		55E970A820AE28F0008C2F39 /* AuthView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthView.xib; sourceTree = "<group>"; };
+		55E970AA20AE2C11008C2F39 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		55E970AC20AE6927008C2F39 /* LocalAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthenticator.swift; sourceTree = "<group>"; };
+		55E970AE20AF03EB008C2F39 /* RetryRequestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryRequestData.swift; sourceTree = "<group>"; };
 		55FA873A1FD05E9800FB96C0 /* CKGCMCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKGCMCodec.h; sourceTree = "<group>"; };
 		55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKGCMCodec.mm; sourceTree = "<group>"; };
 		55FA873D1FD187CD00FB96C0 /* Authenticator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Authenticator.h; sourceTree = "<group>"; };
@@ -535,6 +543,8 @@
 			isa = PBXGroup;
 			children = (
 				55C88DC8206FFEC600D58BCA /* AuthViewController.swift */,
+				55E970AA20AE2C11008C2F39 /* AuthView.swift */,
+				55E970AC20AE6927008C2F39 /* LocalAuthenticator.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -602,6 +612,7 @@
 				55C88DD12071B1FB00D58BCA /* PendingRequestsCellData.swift */,
 				55316C8A206AD21800EB1AF7 /* PendingRequestCell.swift */,
 				55C88DD32071C9FA00D58BCA /* PendingRequestCellData.swift */,
+				55E970AE20AF03EB008C2F39 /* RetryRequestData.swift */,
 			);
 			path = Contacts;
 			sourceTree = "<group>";
@@ -782,6 +793,7 @@
 				55A734B2206ECE4F00D31AD6 /* ContactCellView.xib */,
 				55206DA82075486000B0B246 /* SelectContactView.xib */,
 				554C55E92075A65C00FE9C92 /* ContactTableViewCell.xib */,
+				55E970A820AE28F0008C2F39 /* AuthView.xib */,
 			);
 			path = Nibs;
 			sourceTree = "<group>";
@@ -1058,6 +1070,7 @@
 				5592A5971F8BBB4400F08BF5 /* LaunchScreen.storyboard in Resources */,
 				55206DA92075486000B0B246 /* SelectContactView.xib in Resources */,
 				554C55EA2075A65C00FE9C92 /* ContactTableViewCell.xib in Resources */,
+				55E970A920AE28F0008C2F39 /* AuthView.xib in Resources */,
 				5592A5941F8BBB4400F08BF5 /* Assets.xcassets in Resources */,
 				5592A5921F8BBB4400F08BF5 /* Main.storyboard in Resources */,
 				55A734B3206ECE4F00D31AD6 /* ContactCellView.xib in Resources */,
@@ -1214,12 +1227,14 @@
 				55DB7F481FD86AF800B4D262 /* ClientAuthorized.m in Sources */,
 				55E970A720AB07C6008C2F39 /* Logout.swift in Sources */,
 				554D01C8207D0E2500C19373 /* ContactManager.swift in Sources */,
+				55E970AF20AF03EB008C2F39 /* RetryRequestData.swift in Sources */,
 				55AA55541FA14D7100A7026B /* SHA256.cc in Sources */,
 				55206DB32076AC2000B0B246 /* RequestProcessProtocol.swift in Sources */,
 				55AA54E31FA14B1E00A7026B /* Int16.cc in Sources */,
 				55AA555F1FA14D7100A7026B /* DERCodec.cc in Sources */,
 				55C88DD42071C9FA00D58BCA /* PendingRequestCellData.swift in Sources */,
 				5575D3D02062E96400593AF7 /* MoreCellItem.m in Sources */,
+				55E970AD20AE6927008C2F39 /* LocalAuthenticator.swift in Sources */,
 				55AA55551FA14D7100A7026B /* SHA512.cc in Sources */,
 				55AA54FA1FA14C1300A7026B /* CKPEMCodec.mm in Sources */,
 				551A183F1FA0FA030050C93C /* NewAccountFinish.m in Sources */,
@@ -1265,6 +1280,7 @@
 				55DB7F451FD8692C00B4D262 /* ServerAuthorized.m in Sources */,
 				55AA55511FA14D7100A7026B /* RSAPrivateModKey.cc in Sources */,
 				557C2B5D2093C5080069336D /* PippipMessageModel.swift in Sources */,
+				55E970AB20AE2C11008C2F39 /* AuthView.swift in Sources */,
 				55AA55621FA14D7100A7026B /* RSAKeyPairGenerator.cc in Sources */,
 				557C2B70209635E00069336D /* SlidingMessageWindow.swift in Sources */,
 				55AA55631FA14D7100A7026B /* RSAPrivateCrtKey.cc in Sources */,

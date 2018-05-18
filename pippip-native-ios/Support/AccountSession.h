@@ -12,7 +12,7 @@
 @interface AccountSession : NSObject <UNUserNotificationCenterDelegate>
 
 @property (nonatomic) NSData *deviceToken;
-@property (nonatomic) NSInteger badgeNumber;
+//@property (nonatomic) NSInteger badgeNumber;
 
 - (void)resume;
 

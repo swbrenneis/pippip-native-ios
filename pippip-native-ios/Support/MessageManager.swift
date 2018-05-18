@@ -41,7 +41,7 @@ import UIKit
                 textMessage.acknowledged = true
             }
             self.addTextMessages(textMessages)
-            NotificationCenter.default.post(name: Notifications.NewMessages, object: nil)
+            NotificationCenter.default.post(name: Notifications.NewMessages, object: textMessages.count)
         })
         messageTask.errorTitle = "Message Error"
         messageTask.sendRequest(request)
