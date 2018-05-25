@@ -39,9 +39,6 @@
     }];
 #endif
 
-    // Chameleon theme
-    [Chameleon setGlobalThemeUsingPrimaryColor:UIColor.flatGreenColor withContentStyle:UIContentStyleContrast];
-
     return YES;
 
 }

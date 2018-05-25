@@ -11,31 +11,45 @@ import FrostedSidebar
 import ChameleonFramework
 import RKDropdownAlert
 import LocalAuthentication
+import Sheriff
 
 class MessagesViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var messageSearch: UISearchBar!
     
     var sidebar: FrostedSidebar!
     var sidebarOn = false
     var contactsView: ContactsViewController!
     var conversationVew: ChattoViewController!
-    var settingsView: MoreTableViewController!
-    var mostRecent = [TextMessage]()
+    var settingsView: SettingsTableViewController!
+    var previews = [TextMessage]()
+    var searched = [Conversation]()
     var contactManager: ContactManager!
     var sessionState = SessionState()
-    var barItems = [UIBarButtonItem]()
     var headingView: UIView!
-//    var suspended = false
     var accountDeleted = false
     var config = Configurator()
     var authenticator = Authenticator()
     var localAuth: LocalAuthenticator!
+    var alertPresenter = AlertPresenter()
+    var contactBarButton: UIBarButtonItem!
+    var contactBadge = GIBadgeView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.backgroundColor = UIColor.flatForestGreen
+        PippipTheme.setTheme()
+
+        self.view.backgroundColor = PippipTheme.viewColor
+        self.navigationController?.navigationBar.barTintColor = PippipTheme.navBarColor
+        self.navigationController?.navigationBar.tintColor = PippipTheme.navBarTint
+        messageSearch.backgroundColor = .clear
+        messageSearch.barTintColor = PippipTheme.navBarColor
+        let attributes: [NSAttributedStringKey: Any] = [NSAttributedStringKey.foregroundColor: PippipTheme.navBarTint]
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes,
+                                                                                                          for: .normal)
+
         let headingFrame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 10)
         headingView = UIView(frame: headingFrame)
         headingView.backgroundColor = .clear
@@ -48,11 +62,10 @@ class MessagesViewController: UIViewController {
                               UIImage(named: "settings")!, UIImage(named: "exit")! ]
         sidebar = FrostedSidebar(itemImages: sidebarImages, colors: nil, selectionStyle: .single)
         contactsView = self.storyboard?.instantiateViewController(withIdentifier: "ContactsViewController") as! ContactsViewController
-        settingsView = self.storyboard?.instantiateViewController(withIdentifier: "MoreTableViewController") as! MoreTableViewController
+        settingsView = self.storyboard?.instantiateViewController(withIdentifier: "SettingsTableViewController") as! SettingsTableViewController
         sidebar.actionForIndex[0] = {
             self.sidebarOn = false
             self.sidebar.dismissAnimated(true, completion: nil)
-            self.localAuth.visible = false
             self.navigationController?.pushViewController(self.contactsView, animated: true)
         }
         sidebar.actionForIndex[1] = {
@@ -64,7 +77,6 @@ class MessagesViewController: UIViewController {
         sidebar.actionForIndex[2] = {
             self.sidebarOn = false
             self.sidebar.dismissAnimated(true, completion: nil)
-            self.localAuth.visible = false
             self.navigationController?.pushViewController(self.settingsView, animated: true)
         }
         sidebar.actionForIndex[3] = {
@@ -76,44 +88,60 @@ class MessagesViewController: UIViewController {
         let image = UIImage(named: "hamburgermenu")
         let hamburger = UIBarButtonItem(image: image, style: .plain, target: self,
                                         action: #selector(showSidebar(_:)))
-        barItems.append(hamburger)
+        var rightBarItems = [UIBarButtonItem]()
+        rightBarItems.append(hamburger)
+        self.navigationItem.rightBarButtonItems = rightBarItems
+        var leftBarItems = [UIBarButtonItem]()
+        let composeImage = UIImage(named: "compose-small")?.withRenderingMode(.alwaysOriginal)
+        let compose = UIBarButtonItem(image: composeImage, style: .plain,
+                                      target: self, action: #selector(composeMessage(_:)))
+        let contactImage = UIImage(named: "contacts-small")?.withRenderingMode(.alwaysOriginal)
+        let contactImageView = UIImageView(image: contactImage)
+        contactBarButton = UIBarButtonItem(customView: contactImageView)
+        contactBarButton.customView?.addSubview(contactBadge)
+        contactBarButton.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self,
+                                                                                 action: #selector(showContacts(_:))))
+        contactBadge.topOffset = 3
+        leftBarItems.append(compose)
+        leftBarItems.append(contactBarButton)
+        self.navigationItem.leftBarButtonItems = leftBarItems
 
         tableView.delegate = self
         tableView.dataSource = self
-/*
-        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
-                                               name: Notifications.AppResumed, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
-                                               name: Notifications.AppSuspended, object: nil)
- */
+        messageSearch.delegate = self
+
         NotificationCenter.default.addObserver(self, selector: #selector(newSession(_:)),
                                                name: Notifications.NewSession, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(requestsUpdated(_:)),
+                                               name: Notifications.RequestsUpdated, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(requestAcknowledged(_:)),
+                                               name: Notifications.RequestAcknowledged, object: nil)
 
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        alertPresenter.present = true
+        localAuth.listening = true
+
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
-                                               name: Notifications.PresentAlert, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(thumbprintComplete(_:)),
                                                name: Notifications.ThumbprintComplete, object: nil)
 
-        localAuth.visible = true
         if accountDeleted {
-            mostRecent.removeAll()
+            previews.removeAll()
             tableView.reloadData()
             accountDeleted = false
-            localAuth.showAuthView()
+            localAuth.visible = true
         }
         else if sessionState.authenticated {
             getMostRecentMessages()
             tableView.reloadData()
         }
         else {
-            localAuth.showAuthView()
+            localAuth.visible = true
         }
 
     }
@@ -121,8 +149,9 @@ class MessagesViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
+        alertPresenter.present = false
+        localAuth.listening = false
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.ThumbprintComplete, object: nil)
 
     }
@@ -132,8 +161,22 @@ class MessagesViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    @objc func composeMessage(_ item: Any) {
+
+        let chatto = ChattoViewController()
+        self.navigationController?.pushViewController(chatto, animated: true)
+
+    }
+
+    @objc func showContacts(_ item: Any) {
+
+        self.navigationController?.pushViewController(self.contactsView, animated: true)
+
+    }
+
     @objc func showSidebar(_ item: Any) {
 
+        self.view.endEditing(true)
         if sidebarOn {
             sidebarOn = false
             sidebar.dismissAnimated(true, completion: nil)
@@ -147,66 +190,31 @@ class MessagesViewController: UIViewController {
 
     func getMostRecentMessages() {
 
-        mostRecent.removeAll()
+        previews.removeAll()
         let contactList = contactManager.getContactList()
         for contact in contactList {
             let conversation = ConversationCache.getConversation(contact.contactId)
             if let message = conversation.mostRecentMessage() {
-                mostRecent.append(message)
+                previews.append(message)
             }
         }
         
     }
-/*
-    @objc func appResumed(_ notification: Notification) {
 
-        if suspended && sessionState.authenticated {
-            suspended = false
-            let info = notification.userInfo!
-            let suspendedTime = info["suspendedTime"] as? Int ?? 0
-            var localAuth = true
-            if !config.useLocalAuth() || suspendedTime > AuthViewController.sessionTTL {
-                localAuth = false
-                authenticator.logout()
-            }
-            
-            DispatchQueue.main.async {
-                if localAuth {
-                    self.authView.authButton.isHidden = true
-                    self.doThumbprint()
-                }
-            }
-        }
-        
-    }
-*/
     func signOut() {
         
-        mostRecent.removeAll()
+        previews.removeAll()
         let auth = Authenticator()
         auth.logout()
-        DispatchQueue.main.async {
-            self.navigationItem.rightBarButtonItems = nil
-        }
 
     }
-/*
-    @objc func appSuspended(_ notification: Notification) {
 
-        suspended = true
-        DispatchQueue.main.async {
-            self.navigationItem.rightBarButtonItems = nil
-            self.view.addSubview(self.authView)
-        }
-
-    }
-*/
     @objc func newSession(_ notification: Notification) {
 
         getMostRecentMessages()
         DispatchQueue.main.async {
-            self.navigationItem.rightBarButtonItems = self.barItems
             self.tableView.reloadData()
+            self.localAuth.visible = false
         }
 
     }
@@ -219,30 +227,37 @@ class MessagesViewController: UIViewController {
         }
         
     }
-    
-    @objc func presentAlert(_ notification: Notification) {
 
-        let info = notification.userInfo!
-        let title = info["title"] as! String
-        let message = info["message"] as! String
+    @objc func requestsUpdated(_ notification: Notification) {
+        
+        guard let requestCount = notification.object as? Int else { return }
         DispatchQueue.main.async {
-            let alertColor = UIColor.flatSand
-            RKDropdownAlert.title(title, message: message, backgroundColor: alertColor,
-                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                  delegate: nil)
+            let badgeCount = self.contactBadge.badgeValue + requestCount
+            self.contactBadge.badgeValue = badgeCount
+        }
+        
+    }
+    
+    @objc func requestAcknowledged(_ notification: Notification) {
+        
+        DispatchQueue.main.async {
+            var badgeCount = self.contactBadge.badgeValue - 1
+            if (badgeCount < 0) {
+                badgeCount = 0
+            }
+            self.contactBadge.badgeValue = badgeCount
         }
         
     }
     
     @objc func thumbprintComplete(_ notification: Notification) {
 
-        getMostRecentMessages()
         DispatchQueue.main.async {
-            self.navigationItem.rightBarButtonItems = self.barItems
+            self.localAuth.visible = false
         }
 
     }
-    
+
     /*
     // MARK: - Navigation
 
@@ -255,94 +270,102 @@ class MessagesViewController: UIViewController {
 
 }
 
+extension MessagesViewController: UISearchBarDelegate {
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+
+        searched.removeAll()
+        self.view.endEditing(true)
+        getMostRecentMessages()
+        messageSearch.text = nil
+        self.tableView.reloadData()
+
+    }
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+
+        if searchText.utf8.count == 0 {
+            searched.removeAll()
+            getMostRecentMessages()
+        }
+        else if searchText.utf8.count == 1 {
+            searchCache(searchText)
+        }
+        else {
+            searchPreveiws(searchText)
+        }
+        self.tableView.reloadData()
+
+    }
+
+    func searchCache(_ fragment: String) {
+
+        searched = ConversationCache.searchConversations(fragment)
+        previews.removeAll()
+        for conversation in searched {
+            previews.append(conversation.findMessageText(fragment)!)
+        }
+
+    }
+
+    func searchPreveiws(_ fragment: String) {
+
+        previews.removeAll()
+        for conversation in searched {
+            if let message = conversation.findMessageText(fragment) {
+                previews.append(message)
+            }
+        }
+
+    }
+
+}
+
 extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+
+        return 1
+
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if (section == 0) {
-            return 1;
-        }
-        else {
-            return mostRecent.count;
-        }
+        return previews.count;
         
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        if (indexPath.section == 0) {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MessagesHeadingCell",
-                                                     for: indexPath) as! MessagesHeadingCell
-            cell.configure(backgroundColor: UIColor.flatCoffee)
-            cell.messageSearchTextField.delegate = self
-            return cell;
-        }
-        else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "PreviewCell",
-                                                     for: indexPath) as! PreviewCell
-            // Configure the cell...
-            let message = mostRecent[indexPath.item]
-            // This is code necessary to allow for a bug that stores a message before the contact
-            // has been accepted. It can be removed when general beta begins.
-            if let contact = contactManager.getContactById(message.contactId) {
-                if contact.status == "accepted" {
-                    cell.configure(textMessage: message, backgroundColor: UIColor.flatCoffeeDark)
-                }
+
+        let cell = tableView.dequeueReusableCell(withIdentifier: "PreviewCell",
+                                                 for: indexPath) as! PreviewCell
+        // Configure the cell...
+        let message = previews[indexPath.item]
+        // This is code necessary to allow for a bug that stores a message before the contact
+        // has been accepted. It can be removed when general beta begins.
+        if let contact = contactManager.getContactById(message.contactId) {
+            if contact.status == "accepted" {
+                cell.configure(textMessage: message)
             }
-            return cell;
         }
+        return cell;
 
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-        if (indexPath.section == 0) {
-            return 112.0;
-        }
-        else {
-            return 75.0;
-        }
+        return 75.0;
 
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        if (indexPath.section == 1) {
-            let contactId = mostRecent[indexPath.item].contactId
-            let viewController = ChattoViewController()
-            viewController.contact = contactManager.getContactById(contactId)
-            self.navigationController?.pushViewController(viewController, animated: true)
-        }
+        self.view.endEditing(true)
+        let contactId = previews[indexPath.item].contactId
+        let viewController = ChattoViewController()
+        viewController.contact = contactManager.getContactById(contactId)
+        self.navigationController?.pushViewController(viewController, animated: true)
 
     }
 
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        
-        if section == 1 {
-            return 5
-        }
-        else {
-            return 0
-        }
-
-    }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-
-        if section == 1 {
-            return headingView
-        }
-        else {
-            return nil
-        }
-
-    }
-}
-
-extension MessagesViewController: UITextFieldDelegate {
-    
 }

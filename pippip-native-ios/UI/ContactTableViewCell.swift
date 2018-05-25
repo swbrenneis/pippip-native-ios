@@ -10,26 +10,26 @@ import UIKit
 
 class ContactTableViewCell: UITableViewCell {
 
-    var cellView: ContactCellView?
+    @IBOutlet weak var nibView: UIView!
+    @IBOutlet weak var publicIdLabel: UILabel!
+    @IBOutlet weak var nicknameLabel: UILabel!
 
     public override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        commonInit()
+
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        commonInit()
+
     }
 
-    func commonInit() {
+    override func awakeFromNib() {
+        super.awakeFromNib()
 
-        cellView = ContactCellView(frame: self.bounds)
-        cellView?.backgroundColor = UIColor.clear
-        self.addSubview(cellView!)
-        self.backgroundColor = UIColor.clear
-        self.selectionStyle = .none
-        
+        self.backgroundColor = .clear
+        nibView.backgroundColor = .clear
+
     }
 
 }

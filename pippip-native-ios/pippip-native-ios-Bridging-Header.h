@@ -16,10 +16,9 @@
 #import "CKHMAC.h"
 #import "CKRSACodec.h"
 #import "HexCodec.h"
-#import "MoreCellItem.h"
 #import "ApplicationSingleton.h"
 #import "ContactDatabase.h"
-#import "Configurator.h"
+#import "ConfigDatabase.h"
 #import "MBProgressHUD.h"
 #import "Authenticator.h"
 #import "NewAccountCreator.h"
@@ -28,5 +27,4 @@
 #import "DatabaseMessage.h"
 #import "EnclaveResponse.h"
 #import "AccountManager.h"
-#import "MoreTableViewController.h"
-
+#import "AccountConfig.h"

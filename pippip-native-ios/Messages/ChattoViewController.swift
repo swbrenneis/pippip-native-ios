@@ -18,12 +18,12 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
     var chatInputPresenter: BasicChatInputBarPresenter!
     var dataSource: ChattoDataSource!
     var messageManager = MessageManager()
-//    var suspended = false
-//    var authView: AuthViewController?
-//    var localAuth: LocalAuthenticator!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.view.backgroundColor = PippipTheme.viewColor
+        self.collectionView.backgroundColor = .clear
 
         self.chatItemsDecorator = TextMessageDecorator()
         var items = [UIBarButtonItem]()
@@ -33,8 +33,6 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
 
         NotificationCenter.default.addObserver(self, selector: #selector(contactSelected(_:)),
                                                name: Notifications.ContactSelected, object: nil)
-
-//        localAuth = LocalAuthenticator(viewController: self, view: self.collectionView)
 
     }
 

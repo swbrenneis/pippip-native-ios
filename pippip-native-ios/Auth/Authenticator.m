@@ -7,7 +7,6 @@
 //
 
 #import "pippip_native_ios-Swift.h"
-
 #import "Authenticator.h"
 #import "ApplicationSingleton.h"
 #import "AccountSession.h"
@@ -27,7 +26,6 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 }
 
-@property (weak, nonatomic) AuthViewController *viewController;
 @property (weak, nonatomic) RESTSession *session;
 
 @end
@@ -40,7 +38,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 - (instancetype)init {
     self = [super init];
     
-    errorDelegate = [[NotificationErrorDelegate alloc] init:@"Authentication Error"];
+    errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"Authentication Error"];
     _session = [ApplicationSingleton instance].restSession;
     sessionState = [[SessionState alloc] init];
 

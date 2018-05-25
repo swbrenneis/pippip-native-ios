@@ -41,8 +41,8 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TF5-d6-lAQ">
-                    <rect key="frame" x="103.5" y="317" width="168" height="33"/>
-                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                    <rect key="frame" x="86" y="314.5" width="203" height="38"/>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
                     <state key="normal" title="Create New Account"/>
                     <connections>
                         <action selector="authSelected:" destination="-1" eventType="touchUpInside" id="8PO-jT-9M3"/>

@@ -23,29 +23,60 @@ class WhitelistHeaderView: ViewDataProtocol {
 
 class WhitelistTableModel: BaseExpandingTableModel {
 
-    weak var viewController: WhitelistViewController?
-
-    init(_ viewController: WhitelistViewController) {
+    override init() {
 
         super.init()
-        self.viewController = viewController
+
+        expandingCells[0] = [ExpandingTableViewCell]()
 
     }
 
-    func setFriends(whitelist: [[ AnyHashable: Any]], tableView: ExpandingTableView) {
+    func setFriends(whitelist: [Entity], tableView: ExpandingTableView) {
 
-        tableModel[0]?.removeAll()
-        var cells = [FriendCellData]()
-        for contact in whitelist {
-            let cellData = FriendCellData(entity: contact)
+        clear(section: 0)
+        guard let cells = createCells(cellId: "FriendCell", count: whitelist.count) as? [ExpandingTableViewCell]
+            else { return }
+        for index in 0..<cells.count {
+            let cell = cells[index]
+            let entity = whitelist[index]
+            cell.setMediumTheme()
+            cell.textLabel?.text = entity.nickname
+            cell.detailTextLabel?.text = entity.publicId
             let friendSelector = FriendCellSelector()
             friendSelector.tableView = tableView
-            cellData.selector = friendSelector
-            cells.append(cellData)
+            cell.selector = friendSelector
+            // Add child and selector
+            let deleteCells = createCells(cellId: "DeleteFriendCell", count: 1)
+            deleteCells[0].setLightTheme()
+            let deleteFriendSelector = DeleteFriendSelector(publicId: entity.publicId)
+            deleteFriendSelector.tableView = tableView
+            deleteCells[0].selector = deleteFriendSelector
+            cell.children = deleteCells
         }
-        appendCells(cellData: cells, section: 0, with: .left)
+        appendExpandingCells(cells: cells, section: 0, animation: .bottom)
 
     }
 
+    func getFriendCell(entity: Entity) -> ExpandingTableCell {
+        
+        guard let cells = createCells(cellId: "FriendCell", count: 1) as? [ExpandingTableViewCell]
+            else { return ExpandingTableCell() }
+        let cell = cells[0]
+        cell.setMediumTheme()
+        cell.textLabel?.text = entity.nickname
+        cell.detailTextLabel?.text = entity.publicId
+        let friendSelector = FriendCellSelector()
+        friendSelector.tableView = tableView
+        cell.selector = friendSelector
+        // Add child and selector
+        let deleteCells = createCells(cellId: "DeleteFriendCell", count: 1)
+        deleteCells[0].setLightTheme()
+        let deleteFriendSelector = DeleteFriendSelector(publicId: entity.publicId)
+        deleteFriendSelector.tableView = tableView
+        deleteCells[0].selector = deleteFriendSelector
+        cell.children = deleteCells
+        return cell
+
+    }
 
 }

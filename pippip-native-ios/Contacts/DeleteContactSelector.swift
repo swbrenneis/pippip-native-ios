@@ -11,27 +11,15 @@ import PMAlertController
 import RKDropdownAlert
 import ChameleonFramework
 
-class DeleteContactData: NSObject, CellDataProtocol {
-
-    var cellHeight: CGFloat = 50.0
-    var cellId: String = "DeleteContactCell"
-    var selector: ExpandingTableSelectorProtocol?
-    var userData: [String : Any]?
-    
-    func configureCell(_ cell: UITableViewCell) {
-        // noop
-    }
-
-}
-
-class DeleteContactSelector: ExpandingTableSelectorProtocol {
+class DeleteContactSelector: ExpandingTableCellSelectorProtocol {
     
     var viewController: UIViewController?
     var tableView: ExpandingTableView?
-    var contactPath: IndexPath?
+    var selectedPath: IndexPath?
     var contactManager = ContactManager()
     var publicId: String
     var status: String
+    var alertPresenter = AlertPresenter()
 
     init(publicId: String, status: String) {
 
@@ -40,7 +28,7 @@ class DeleteContactSelector: ExpandingTableSelectorProtocol {
 
     }
     
-    func didSelect(_ indexPath: IndexPath) {
+    func didSelect(indexPath: IndexPath, cell: UITableViewCell) {
 
         NotificationCenter.default.addObserver(self, selector: #selector(contactDeleted(_:)),
                                                name: Notifications.ContactDeleted, object: nil)
@@ -50,7 +38,7 @@ class DeleteContactSelector: ExpandingTableSelectorProtocol {
         if status == "pending" {
             offset = 4
         }
-        contactPath = IndexPath(row: indexPath.item-offset, section: indexPath.section)
+        selectedPath = IndexPath(row: indexPath.item-offset, section: indexPath.section)
         let message = "This contact and associated messages will be deleted\n"
                         + "This cannot be undone\n"
                         + "Proceed?"
@@ -67,19 +55,15 @@ class DeleteContactSelector: ExpandingTableSelectorProtocol {
 
     }
     
-    @objc func contactDeleted(_ : Notification) {
+    @objc func contactDeleted(_ notification: Notification) {
         
         NotificationCenter.default.removeObserver(self, name: Notifications.ContactDeleted, object: nil)
 
+        self.alertPresenter.successAlert(title: "Contact Deleted",
+                                         message: "This contact has been removed from your contacts list")
         DispatchQueue.main.async {
-            let alertColor = UIColor.flatLime
-            RKDropdownAlert.title("Contact Deleted", message: "This contact has been removed from your contacts list",
-                                  backgroundColor: alertColor,
-                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                  time: 2, delegate: nil)
-            self.tableView?.collapseRow(at: self.contactPath!)
-            self.tableView?.expandingModel?.removeCell(section: self.contactPath!.section, row: self.contactPath!.row,
-                                       with: .left)
+            self.tableView?.expandingModel?.removeExpandingCell(section: self.selectedPath!.section,
+                                                                row: self.selectedPath!.row, animation: .left)
         }
         
     }

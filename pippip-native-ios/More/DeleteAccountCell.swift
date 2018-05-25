@@ -8,17 +8,29 @@
 
 import UIKit
 import PMAlertController
-import RKDropdownAlert
 import ChameleonFramework
 
-class DeleteAccountCell: TableViewCellWithController, RKDropdownAlertDelegate {
+class DeleteAccountCellItem: MultiCellItemProtocol {
 
+    var cellReuseId: String = "DeleteAccountCell"
+    var cellHeight: CGFloat = 45.0
+    var currentCell: UITableViewCell?
+    
+}
+
+class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
+
+    static var cellItem: MultiCellItemProtocol = DeleteAccountCellItem()
+    var viewController: UITableViewController?
     var accountDeleter = AccountDeleter()
     var sessionState = SessionState()
+    var alertPresenter = AlertPresenter()
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+
+        self.textLabel?.textColor = UIColor.flatRed
+
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -27,15 +39,6 @@ class DeleteAccountCell: TableViewCellWithController, RKDropdownAlertDelegate {
         if selected {
             validateDelete()
         }
-
-    }
-
-    @objc class func cellItem() -> MoreCellItem {
-
-        let item = MoreCellItem()
-        item.cellHeight = 45.0
-        item.cellReuseId = "DeleteAccountCell"
-        return item
 
     }
 
@@ -77,19 +80,14 @@ class DeleteAccountCell: TableViewCellWithController, RKDropdownAlertDelegate {
                                         do {
                                             if try UserVault.validatePassphrase(passphrase)
                                                 && self.accountDeleter.deleteAccount(accountName) {
-                                                var info = [AnyHashable: Any]()
-                                                info["title"] = "Account Deleted"
-                                                info["message"] = "This account has been deleted and will now be logged out"
-                                                NotificationCenter.default.post(name: Notifications.PresentAlert,
-                                                                                object: nil, userInfo: info)
-                                                NotificationCenter.default.post(name: Notifications.AccountDeleted, object: nil)
+                                                self.alertPresenter.successAlert(title: "Account Deleted",
+                                                                                 message: "This account has been deleted and you will now be logged out")
+                                                NotificationCenter.default.post(name: Notifications.AccountDeleted,
+                                                                                object: nil)
                                             }
                                             else {
-                                                var info = [AnyHashable: Any]()
-                                                info["title"] = "Invalid Passphrase"
-                                                info["message"] = "Invalid passphrase\nAccount not deleted"
-                                                NotificationCenter.default.post(name: Notifications.PresentAlert,
-                                                                                object: nil, userInfo: info)
+                                                self.alertPresenter.infoAlert(title: "Invalid Passphrase",
+                                                                              message: "Invalid passphrase, account not deleted")
                                             }
                                         }
                                         catch {
@@ -101,12 +99,4 @@ class DeleteAccountCell: TableViewCellWithController, RKDropdownAlertDelegate {
         
     }
 
-    func dropdownAlertWasTapped(_ alert: RKDropdownAlert!) -> Bool {
-        return true
-    }
-    
-    func dropdownAlertWasDismissed() -> Bool {
-        return true
-    }
-    
 }

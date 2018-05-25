@@ -11,7 +11,6 @@
 #import "CKGCMCodec.h"
 #import "DatabaseContact.h"
 #import "ApplicationSingleton.h"
-#import "Configurator.h"
 #import "Notifications.h"
 #import <Realm/Realm.h>
 

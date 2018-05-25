@@ -8,6 +8,13 @@
 
 import UIKit
 
+struct Entity {
+
+    var publicId: String
+    var nickname: String?
+
+}
+
 @objc class Contact: NSObject {
 
     @objc var contactId: Int
@@ -31,6 +38,9 @@ import UIKit
     @objc var authData: Data?
     @objc var nonce: Data?
     @objc var messageKeys: [ Data ]?
+    @objc override var hashValue: Int {
+        return contactId
+    }
 
     @objc override init() {
 
@@ -83,5 +93,13 @@ import UIKit
         super.init()
 
     }
+/*
+    override func isEqual(_ object: Any?) -> Bool {
+
+        guard let contact = object as? Contact else { return false }
+        return contact.contactId == self.contactId
+
+    }
+*/
 
 }

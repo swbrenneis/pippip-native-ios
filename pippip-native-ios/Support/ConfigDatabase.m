@@ -6,30 +6,30 @@
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
-#import "Configurator.h"
 #import "pippip_native_ios-Swift.h"
+#import "ConfigDatabase.h"
 #import "ApplicationSingleton.h"
 #import "AccountConfig.h"
 #import "AccountManager.h"
 #import "CKGCMCodec.h"
 #import <Realm/Realm.h>
 
-@interface Configurator ()
+@interface ConfigDatabase ()
 {
-    NSMutableArray *privateWhitelist;
+    NSMutableArray *_whitelist;
     NSMutableDictionary *keyIndexes;
     SessionState *sessionState;
 }
 
 @end
 
-@implementation Configurator
+@implementation ConfigDatabase
 
 - (instancetype)init {
     self = [super init];
 
-    privateWhitelist = [NSMutableArray array];
-    _whitelist = privateWhitelist;
+    _whitelist = [NSMutableArray array];
+    _whitelist = _whitelist;
     //idMap = [NSMutableDictionary dictionary];
     keyIndexes = [NSMutableDictionary dictionary];
     sessionState = [[SessionState alloc] init];
@@ -41,16 +41,16 @@
 - (BOOL)addWhitelistEntry:(NSDictionary *)entity {
 
     AccountConfig *config = [self getConfig];
-    if (privateWhitelist.count == 0) {
+    if (_whitelist.count == 0) {
         [self decodeWhitelist:config];
     }
     NSString *publicId = entity[@"publicId"];
-    NSUInteger idx = [privateWhitelist indexOfObjectPassingTest:^BOOL(id obj, NSUInteger index, BOOL *stop) {
+    NSUInteger idx = [_whitelist indexOfObjectPassingTest:^BOOL(id obj, NSUInteger index, BOOL *stop) {
         NSDictionary *entry = obj;
         return [publicId isEqualToString:entry[@"publicId"]];
     }];
     if (idx == NSNotFound) {
-        [privateWhitelist addObject:entity];
+        [_whitelist addObject:entity];
         [self encodeWhitelist:config];
     }
     return idx == NSNotFound;
@@ -65,14 +65,14 @@
         [codec decrypt:sessionState.contactsKey withAuthData:sessionState.authData withError:&error];
         if (error == nil) {
             NSInteger count = [codec getInt];
-            while (privateWhitelist.count < count) {
+            while (_whitelist.count < count) {
                 NSMutableDictionary *entity = [NSMutableDictionary dictionary];
                 NSString *nickname = [codec getString];
                 if (nickname.length > 0) {
                     entity[@"nickname"] = nickname;
                 }
                 entity[@"publicId"] = [codec getString];
-                [privateWhitelist addObject:entity];
+                [_whitelist addObject:entity];
             }
         }
         else {
@@ -85,15 +85,15 @@
 - (BOOL)deleteWhitelistEntry:(NSString *)publicId {
 
     AccountConfig *config = [self getConfig];
-    if (privateWhitelist.count == 0) {
+    if (_whitelist.count == 0) {
         [self decodeWhitelist:config];
     }
-    NSUInteger deleteIndex = [privateWhitelist indexOfObjectPassingTest:^BOOL(id obj, NSUInteger index, BOOL *stop) {
+    NSUInteger deleteIndex = [_whitelist indexOfObjectPassingTest:^BOOL(id obj, NSUInteger index, BOOL *stop) {
         NSDictionary *entity = obj;
         return [publicId isEqualToString:entity[@"publicId"]];
     }];
     if (deleteIndex != NSNotFound) {
-        [privateWhitelist removeObjectAtIndex:deleteIndex];
+        [_whitelist removeObjectAtIndex:deleteIndex];
         [self encodeWhitelist:config];
     }
     return deleteIndex != NSNotFound;
@@ -103,10 +103,10 @@
 - (void)encodeWhitelist:(AccountConfig*)config {
 
     RLMRealm *realm = [RLMRealm defaultRealm];
-    if (privateWhitelist.count > 0) {
+    if (_whitelist.count > 0) {
         CKGCMCodec *codec = [[CKGCMCodec alloc] init];
-        [codec putInt:privateWhitelist.count];
-        for (NSDictionary *entity in privateWhitelist) {
+        [codec putInt:_whitelist.count];
+        for (NSDictionary *entity in _whitelist) {
             NSString *nickname = entity[@"nickname"];
             if (nickname == nil) {
                 nickname = @"";
@@ -178,7 +178,7 @@
 - (void)loadWhitelist {
 
     AccountConfig *config = [self getConfig];
-    if (privateWhitelist.count == 0) {
+    if (_whitelist.count == 0) {
         [self decodeWhitelist:config];
     }
 
@@ -269,7 +269,7 @@
 - (NSInteger)whitelistIndexOf:(NSString *)publicId {
 
     NSInteger index = 0;
-    for (NSDictionary *entry in privateWhitelist) {
+    for (NSDictionary *entry in _whitelist) {
         NSString *entryId = entry[@"publicId"];
         if ([entryId isEqualToString:publicId]) {
             return index;

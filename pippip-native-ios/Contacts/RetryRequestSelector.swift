@@ -10,21 +10,7 @@ import UIKit
 import RKDropdownAlert
 import ChameleonFramework
 
-class RetryRequestData: NSObject, CellDataProtocol {
-
-    var cellHeight: CGFloat = 50.0
-    var cellId: String = "RetryRequestCell"
-    var selector: ExpandingTableSelectorProtocol?
-    var userData: [String : Any]?
-    
-    func configureCell(_ cell: UITableViewCell) {
-        // Nothing to do
-    }
-    
-
-}
-
-class RetryRequestSelector: NSObject, ExpandingTableSelectorProtocol {
+class RetryRequestSelector: NSObject, ExpandingTableCellSelectorProtocol {
     var viewController: UIViewController?
     
     var tableView: ExpandingTableView?
@@ -38,7 +24,7 @@ class RetryRequestSelector: NSObject, ExpandingTableSelectorProtocol {
 
     }
 
-    func didSelect(_ indexPath: IndexPath) {
+    func didSelect(indexPath: IndexPath, cell: UITableViewCell) {
 
         contactManager.requestContact(publicId: publicId, nickname: nil, retry: true)
         tableView?.collapseRow(at: IndexPath(row: indexPath.row - 3, section: indexPath.section))

@@ -21,21 +21,38 @@ class LocalAuthenticator: NSObject {
     var sessionState = SessionState()
     var config = Configurator()
     var authenticator = Authenticator()
-    @objc var visible: Bool {
+    @objc var listening: Bool {
         didSet {
-            if visible {
+            if listening {
                 NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
                                                        name: Notifications.AppResumed, object: nil)
                 NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                        name: Notifications.AppSuspended, object: nil)
                 NotificationCenter.default.addObserver(self, selector: #selector(sessionEnded(_:)),
                                                        name: Notifications.SessionEnded, object: nil)
-                
+                // Used to dismiss the HUD
+                NotificationCenter.default.addObserver(authView, selector: #selector(AuthView.presentAlert(_:)),
+                                                       name: Notifications.PresentAlert, object: nil)
             }
             else {
                 NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
                 NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
                 NotificationCenter.default.removeObserver(self, name: Notifications.SessionEnded, object: nil)
+                NotificationCenter.default.removeObserver(authView, name: Notifications.PresentAlert, object: nil)
+            }
+        }
+    }
+    @objc var visible: Bool {
+        didSet {
+            if visible {
+                assert(Thread.isMainThread)
+                viewController.navigationController?.isNavigationBarHidden = true
+                view.addSubview(authView)
+            }
+            else {
+                assert(Thread.isMainThread)
+                viewController.navigationController?.isNavigationBarHidden = false
+                authView.removeFromSuperview()
             }
         }
     }
@@ -51,7 +68,7 @@ class LocalAuthenticator: NSObject {
         let logoWidth = bounds.width * 0.7
         authView.logoLeading.constant = (bounds.width - logoWidth) / 2
         authView.logoTrailing.constant = (bounds.width - logoWidth) / 2
-        let backgroundColor = UIColor.flatForestGreen
+        let backgroundColor = UIColor.flatForestGreen.lighten(byPercentage: 0.15)!
         authView.contentView.backgroundColor = backgroundColor
         authView.authButton.setTitleColor(ContrastColorOf(backgroundColor, returnFlat: true), for: .normal)
         authView.authButton.backgroundColor = .clear
@@ -59,6 +76,7 @@ class LocalAuthenticator: NSObject {
         authView.secommLabel.textColor = UIColor.flatWhite
 
         visible = false
+        listening = false
 
         super.init()
 
@@ -73,11 +91,8 @@ class LocalAuthenticator: NSObject {
             laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
                                      localizedReason: "Please provide your thumbprint to open Pippip", reply: { (success : Bool, error : Error? ) -> Void in
                                         if (success) {
-                                            DispatchQueue.main.async {
-                                                self.authView.removeFromSuperview()
-                                                NotificationCenter.default.post(name: Notifications.ThumbprintComplete,
-                                                                                object: nil)
-                                            }
+                                            NotificationCenter.default.post(name: Notifications.ThumbprintComplete,
+                                                                            object: nil)
                                         }
                                         else {
                                             print("Thumbprint authentication failed")
@@ -89,13 +104,6 @@ class LocalAuthenticator: NSObject {
         
     }
 
-    func showAuthView() {
-
-        assert(Thread.isMainThread)
-        view.addSubview(authView)
-
-    }
-
     @objc func appResumed(_ notification: Notification) {
         
         if suspended && sessionState.authenticated {
@@ -103,14 +111,13 @@ class LocalAuthenticator: NSObject {
             let info = notification.userInfo!
             let suspendedTime = info["suspendedTime"] as? Int ?? 0
             var localAuth = true
-            if !config.useLocalAuth() || suspendedTime > LocalAuthenticator.sessionTTL {
+            if !config.localAuth || suspendedTime > LocalAuthenticator.sessionTTL {
                 localAuth = false
                 authenticator.logout()
             }
             
             DispatchQueue.main.async {
                 if localAuth {
-                    self.authView.authButton.isHidden = true
                     self.doThumbprint()
                 }
             }
@@ -122,7 +129,8 @@ class LocalAuthenticator: NSObject {
         
         suspended = true
         DispatchQueue.main.async {
-            self.view.addSubview(self.authView)
+            self.authView.authButton.isHidden = true
+            self.visible = true
         }
         
     }
@@ -131,7 +139,7 @@ class LocalAuthenticator: NSObject {
 
         DispatchQueue.main.async {
             self.authView.authButton.isHidden = false
-            self.view.addSubview(self.authView)
+            self.visible = true
         }
 
     }

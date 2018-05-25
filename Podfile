@@ -15,6 +15,7 @@ target 'pippip-native-ios' do
   pod 'DataCompression'
   pod 'Chatto', '= 3.3.1'
   pod 'ChattoAdditions', '= 3.3.1'
+  pod 'Sheriff'
 
   target 'pippip-native-iosTests' do
     inherit! :search_paths

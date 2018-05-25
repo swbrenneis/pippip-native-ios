@@ -8,25 +8,27 @@
 
 import UIKit
 
-@objc class PublicIdCell: UITableViewCell {
+class PublicIdCellItem: MultiCellItemProtocol {
+
+    var cellReuseId: String = "PublicIdCell"
+    var cellHeight: CGFloat = 65.0
+    var currentCell: UITableViewCell?
+
+}
+
+class PublicIdCell: PippipTableViewCell, MultiCellProtocol {
 
     @IBOutlet weak var publicIdLabel: UILabel!
-
+    @IBOutlet weak var titleLabel: UILabel!
+    
+    static var cellItem: MultiCellItemProtocol = PublicIdCellItem()
+    var viewController: UITableViewController?
     var sessionState = SessionState()
 
     override public var canBecomeFirstResponder: Bool {
         get {
             return true
         }
-    }
-
-    @objc class func cellItem() -> MoreCellItem {
-
-        let item: MoreCellItem = MoreCellItem()
-        item.cellHeight = 65.0
-        item.cellReuseId = "PublicIdCell"
-        return item
-
     }
 
     override func awakeFromNib() {
@@ -43,7 +45,31 @@ import UIKit
         // Configure the view for the selected state
     }
 
-     func attachTapHandler() {
+    override func setDarkTheme() {
+        
+        publicIdLabel.textColor = PippipTheme.darkTextColor
+        // titleLabel.textColor = PippipTheme.darkTextColor
+        super.setDarkTheme()
+        
+    }
+    
+    override func setMediumTheme() {
+        
+        publicIdLabel.textColor = PippipTheme.mediumTextColor
+        //titleLabel.textColor = PippipTheme.mediumTextColor
+        super.setMediumTheme()
+        
+    }
+    
+    override func setLightTheme() {
+        
+        publicIdLabel.textColor = PippipTheme.lightTextColor
+        // titleLabel.textColor = PippipTheme.lightTextColor
+        super.setLightTheme()
+        
+    }
+    
+    func attachTapHandler() {
 
         let tapped: UIGestureRecognizer = UILongPressGestureRecognizer(target: self,
                                                                        action: #selector(handleTap))

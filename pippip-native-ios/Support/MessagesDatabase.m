@@ -10,7 +10,6 @@
 #import "MessagesDatabase.h"
 #import "ApplicationSingleton.h"
 #import "DatabaseMessage.h"
-#import "Configurator.h"
 #import "CKIVGenerator.h"
 #import "CKGCMCodec.h"
 #import <Realm/Realm.h>
@@ -257,7 +256,7 @@
 
 - (void)updateTextMessage:(TextMessage *)message {
 
-    if ([config storeCleartextMessages]) {
+    if (config.storeCleartextMessages) {
         RLMRealm *realm = [RLMRealm defaultRealm];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageId = %lld", message.messageId];
         RLMResults<DatabaseMessage*> *messages = [DatabaseMessage objectsWithPredicate:predicate];

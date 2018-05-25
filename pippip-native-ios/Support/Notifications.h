@@ -22,7 +22,6 @@ static NSString *FRIEND_DELETED = @"FriendDeleted";
 static NSString *CONVERSATION_LOADED = @"ConversationLoaded";
 static NSString *MESSAGES_UPDATED = @"MessagesUpdated";
 static NSString *PENDING_CONTACTS_UPDATED = @"PendingContactsUpdated";
-static NSString *PRESENT_ALERT = @"PresentAlert";
 static NSString *POLICY_UPDATED = @"PolicyUpdated";
 static NSString *POLICY_CHANGED = @"PolicyChanged";
 static NSString *CONTACT_DELETED = @"ContactDeleted";

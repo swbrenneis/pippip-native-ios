@@ -33,4 +33,17 @@ import UIKit
 
     }
 
+    static func searchConversations(_ fragment: String) -> [Conversation] {
+
+        var found = [Conversation]()
+        for contactId in conversations.keys {
+            let conversation = conversations[contactId]!
+            if conversation.searchMessages(fragment) {
+                found.append(conversation)
+            }
+        }
+        return found
+    
+    }
+
 }

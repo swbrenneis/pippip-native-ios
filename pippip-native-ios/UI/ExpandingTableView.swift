@@ -18,36 +18,20 @@ class ExpandingTableView: UITableView {
         }
     }
 
-    var expandedCounts = [IndexPath: Int]()
+    func collapseAll(section: Int) {
 
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
+
     }
-    */
 
+    func expandRow(at indexPath: IndexPath, cells: [ExpandingTableCell]?) {
 
-    func expandRow(at indexPath: IndexPath, cells: [ CellDataProtocol ]) {
-
-        expandingModel?.insertCells(cellData: cells, section: indexPath.section, at: indexPath.item+1, with: .bottom)
-        expandedCounts[indexPath] = cells.count
+        expandingModel?.expandCell(indexPath: indexPath, children: cells)
 
     }
 
     func collapseRow(at indexPath: IndexPath) {
 
-        if let cell = cellForRow(at: indexPath) as? ExpandingTableViewCell {
-            cell.close()
-        }
-        guard let count = expandedCounts[indexPath] else { return }
-        if count == 1 {
-            expandingModel?.removeCell(section: indexPath.section, row: indexPath.item+1, with: .top)
-        }
-        else {
-            expandingModel?.removeCells(section: indexPath.section, row: indexPath.item+1, count: count, with: .top)
-        }
+        expandingModel?.collapseCell(indexPath: indexPath)
 
     }
 

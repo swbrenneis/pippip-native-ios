@@ -41,7 +41,8 @@ class SelectContactView: UIView {
         searchText.becomeFirstResponder()
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(ContactTableViewCell.self, forCellReuseIdentifier: "ContactTableViewCell")
+        let nib = UINib(nibName: "ContactTableViewCell", bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: "SelectContactCell")
         selectButton.isEnabled = false
         selectButton.isHidden = true
 
@@ -113,16 +114,16 @@ extension SelectContactView: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let contactCell = tableView.dequeueReusableCell(withIdentifier: "ContactTableViewCell") as! ContactTableViewCell
+        let selectCell = tableView.dequeueReusableCell(withIdentifier: "SelectContactCell") as? ContactTableViewCell
         let contact = contactList[indexPath.item]
-        contactCell.cellView?.publicIdLabel.text = contact.publicId
+        selectCell?.publicIdLabel.text = contact.publicId
         if let nickname = contact.nickname {
-            contactCell.cellView?.nicknameLabel.text = nickname
+            selectCell?.nicknameLabel.text = nickname
         }
         else {
-            contactCell.cellView?.nicknameLabel.text = ""
+            selectCell?.nicknameLabel.text = ""
         }
-        return contactCell
+        return selectCell!
 
     }
 

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LastSeenCell: UITableViewCell {
+class LastSeenCell: ExpandingTableCell {
 
     @IBOutlet weak var lastSeenLabel: UILabel!
 
@@ -25,4 +25,46 @@ class LastSeenCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    func setLastSeen(timestamp: Int64) {
+
+        let lastSeenFormatter = DateFormatter()
+        lastSeenFormatter.dateFormat = "MMM dd YYYY hh:mm"
+        if (timestamp == 0) {
+            lastSeenLabel.text = "Never"
+        }
+        else {
+            let tsDate = Date.init(timeIntervalSince1970: TimeInterval(timestamp))
+            lastSeenLabel.text = lastSeenFormatter.string(from: tsDate)
+        }
+
+    }
+
+    override func configure() {
+
+        setLightTheme()
+        super.configure()
+
+    }
+
+    override func setDarkTheme() {
+        
+        lastSeenLabel.textColor = PippipTheme.darkTextColor
+        super.setDarkTheme()
+        
+    }
+    
+    override func setMediumTheme() {
+
+        lastSeenLabel.textColor = PippipTheme.mediumTextColor
+        super.setMediumTheme()
+        
+    }
+    
+    override func setLightTheme() {
+        
+        lastSeenLabel.textColor = PippipTheme.lightTextColor
+        super.setLightTheme()
+        
+    }
+    
 }

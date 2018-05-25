@@ -9,7 +9,7 @@
 import UIKit
 import ChameleonFramework
 
-class MessagesHeadingCell: UITableViewCell {
+class MessagesHeadingCell: PippipTableViewCell {
 
     @IBOutlet weak var messageSearchTextField: UITextField!
     @IBOutlet weak var messagesLabel: UILabel!
@@ -25,15 +25,13 @@ class MessagesHeadingCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
-    @objc func configure(backgroundColor: UIColor) {
+    @objc func configure() {
 
-        self.backgroundColor = .clear
-        contentView.backgroundColor = backgroundColor
-        contentView.layer.cornerRadius = 15
-        contentView.layer.masksToBounds = true
-        messageSearchTextField.backgroundColor = backgroundColor
-        messageSearchTextField.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
-        messagesLabel.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
+        messageSearchTextField.backgroundColor = PippipTheme.mediumCellColor
+        messageSearchTextField.textColor = PippipTheme.mediumTextColor
+        messagesLabel.textColor = PippipTheme.mediumTextColor
+
+        super.setMediumTheme()
 
     }
 

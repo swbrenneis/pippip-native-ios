@@ -15,13 +15,13 @@ class EnclaveTask: NSObject, RequestProcessProtocol {
     var completion: ([AnyHashable: Any]) -> Void
     var errorTitle : String? {
         didSet {
-            errorDelegate = NotificationErrorDelegate(errorTitle!)
+            errorDelegate = NotificationErrorDelegate(title: errorTitle!)
         }
     }
 
     init(_ completion: @escaping ([AnyHashable: Any]) -> Void) {
 
-        errorDelegate = NotificationErrorDelegate("Unknown")
+        errorDelegate = NotificationErrorDelegate(title: "Unknown")
         self.completion = completion
 
         super.init()

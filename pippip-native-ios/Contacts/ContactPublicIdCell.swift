@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ContactPublicIdCell: UITableViewCell {
+class ContactPublicIdCell: ExpandingTableCell {
 
     @IBOutlet weak var publicIdLabel: UILabel!
 
@@ -23,4 +23,32 @@ class ContactPublicIdCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    override func configure() {
+
+        setLightTheme()
+        super.configure()
+
+    }
+
+    override func setDarkTheme() {
+        
+        publicIdLabel.textColor = PippipTheme.darkTextColor
+        super.setDarkTheme()
+        
+    }
+    
+    override func setMediumTheme() {
+        
+        publicIdLabel.textColor = PippipTheme.mediumTextColor
+        super.setMediumTheme()
+        
+    }
+    
+    override func setLightTheme() {
+        
+        publicIdLabel.textColor = PippipTheme.lightTextColor
+        super.setLightTheme()
+        
+    }
+    
 }

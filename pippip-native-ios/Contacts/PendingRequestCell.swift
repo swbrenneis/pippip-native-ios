@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PendingRequestCell: UITableViewCell {
+class PendingRequestCell: ExpandingTableCell {
 
     @IBOutlet weak var nicknameLabel: UILabel!
     @IBOutlet weak var publicIdLabel: UILabel!
@@ -24,4 +24,25 @@ class PendingRequestCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    override func setLightTheme() {
+        
+        nicknameLabel.textColor = PippipTheme.lightTextColor
+        super.setLightTheme()
+        
+    }
+    
+    override func setMediumTheme() {
+        
+        nicknameLabel.textColor = PippipTheme.mediumTextColor
+        super.setMediumTheme()
+        
+    }
+    
+    override func setDarkTheme() {
+        
+        nicknameLabel.textColor = PippipTheme.darkTextColor
+        super.setDarkTheme()
+        
+    }
+    
 }

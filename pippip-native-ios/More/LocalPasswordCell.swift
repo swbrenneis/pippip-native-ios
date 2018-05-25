@@ -11,28 +11,29 @@ import PMAlertController
 import RKDropdownAlert
 import ChameleonFramework
 
-class LocalPasswordCell: TableViewCellWithController {
+class LocalPasswordCellItem: MultiCellItemProtocol {
+
+    var cellReuseId: String = "LocalPasswordCell"
+    var cellHeight: CGFloat = 65.0
+    var currentCell: UITableViewCell?
+
+}
+
+class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
 
     @IBOutlet weak var passphraseText: UITextField!
     @IBOutlet weak var changePassphraseButton: UIButton!
 
+    static var cellItem: MultiCellItemProtocol = LocalPasswordCellItem()
+    var viewController: UITableViewController?
     var sessionState = SessionState()
+    var alertPresenter = AlertPresenter()
 
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
 
-        changePassphraseButton.isEnabled = false
-        changePassphraseButton.alpha = 0.0
-        
-    }
-
-    @objc class func cellItem() -> MoreCellItem {
-        
-        let item = MoreCellItem()
-        item.cellHeight = 65.0
-        item.cellReuseId = "LocalPasswordCell"
-        return item
+        changePassphraseButton.isHidden = true
         
     }
 
@@ -42,23 +43,38 @@ class LocalPasswordCell: TableViewCellWithController {
         // Configure the view for the selected state
     }
 
+    override func setDarkTheme() {
+        
+        passphraseText.textColor = PippipTheme.darkTextColor
+        super.setDarkTheme()
+        
+    }
+    
+    override func setMediumTheme() {
+        
+        passphraseText.textColor = PippipTheme.mediumTextColor
+        super.setMediumTheme()
+        
+    }
+    
+    override func setLightTheme() {
+        
+        passphraseText.textColor = PippipTheme.lightTextColor
+        super.setLightTheme()
+        
+    }
+    
     func doChangePassphrase(oldPassphrase: String, newPassphrase: String) {
 
         let vault = UserVault()
         do {
             try vault.changePassphrase(oldPassphrase: oldPassphrase, newPassphrase: newPassphrase)
-            let alertColor = UIColor.flatLime
-            RKDropdownAlert.title("Passphrase Changed", message: "Your local passphrase has been changed",
-                                  backgroundColor: alertColor,
-                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                  time: 2, delegate: nil)
+            alertPresenter.successAlert(title: "Passphrase Changes", message: "Your local passphrase has been changed")
             resetCell()
         }
         catch {
-            var info = [AnyHashable: Any]()
-            info["title"] = "Change Passphrase Exception"
-            info["message"] = "An error has occurred, please try again"
-            NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+            alertPresenter.errorAlert(title: "Change Passphrase Error",
+                                      message: "An error has occurred, please try again")
         }
     }
 

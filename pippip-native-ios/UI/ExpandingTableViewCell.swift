@@ -7,11 +7,16 @@
 //
 
 import UIKit
+import ChameleonFramework
 
-class ExpandingTableViewCell: UITableViewCell {
+class ExpandingTableViewCell: ExpandingTableCell {
 
-    var isOpen = false
-    var openCloseImage: UIImageView!
+    var isOpen: Bool {
+        return openFlag
+    }
+    var openCloseLabel: UILabel!
+    var children: [ExpandingTableCell]?
+    private var openFlag = false
 
     public override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -43,40 +48,57 @@ class ExpandingTableViewCell: UITableViewCell {
         let width = self.bounds.width
         let height = self.bounds.height
         
-        openCloseImage.frame = CGRect(x: width - 40, y: (height - 12)/2, width: 12, height: 12)
-
+        openCloseLabel.frame = CGRect(x: width - 40, y: (height - 12)/2, width: 12, height: 12)
+        
     }
-    
+
     func initialize() {
 
-        isOpen = false
-        openCloseImage  = UIImageView()
-        openCloseImage.image = UIImage(named: "to-expand")
-        self.contentView.addSubview(openCloseImage)
+        openCloseLabel = UILabel()
+        openCloseLabel.font = UIFont(name: "Arial-BoldMT", size: 21)
+        openCloseLabel.text = "+"
+        self.contentView.addSubview(openCloseLabel)
         self.selectionStyle = .none
 
     }
 
+    override func setDarkTheme() {
+        
+        openCloseLabel.textColor = PippipTheme.darkTextColor
+        super.setDarkTheme()
+
+    }
+    
+    override func setMediumTheme() {
+        
+        openCloseLabel.textColor = PippipTheme.mediumTextColor
+        super.setMediumTheme()
+
+    }
+    
+    override func setLightTheme() {
+        
+        openCloseLabel.textColor = PippipTheme.lightTextColor
+        super.setLightTheme()
+
+    }
+    
     func open() {
 
-        if !isOpen {
-            openCloseImage.image = UIImage(named: "to-collapse")
-            isOpen = true
+        if !openFlag {
+            openCloseLabel.text = "-"
+            openFlag = true
         }
 
     }
 
     func close() {
 
-        if isOpen {
-            openCloseImage.image = UIImage(named: "to-expand")
-            isOpen = false
+        if openFlag {
+            openCloseLabel.text = "+"
+            openFlag = false
         }
         
-    }
-
-    open func isExpanded() -> Bool {
-        return isOpen
     }
 
 }

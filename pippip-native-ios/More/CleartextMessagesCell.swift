@@ -9,7 +9,18 @@
 import UIKit
 import PMAlertController
 
-class CleartextMessagesCell: TableViewCellWithController {
+class CleartextMessagesCellItem: MultiCellItemProtocol {
+
+    var cellReuseId: String = "CleartextMessagesCell"
+    var cellHeight: CGFloat = 65.0
+    var currentCell: UITableViewCell?
+
+}
+
+class CleartextMessagesCell: PippipTableViewCell, MultiCellProtocol {
+
+    static var cellItem: MultiCellItemProtocol = CleartextMessagesCellItem()
+    var viewController: UITableViewController?    
 
     @IBOutlet weak var cleartextMessagesSwitch: UISwitch!
 
@@ -20,7 +31,7 @@ class CleartextMessagesCell: TableViewCellWithController {
         super.awakeFromNib()
         // Initialization code
 
-        let cleartext = config.storeCleartextMessages()
+        let cleartext = config.storeCleartextMessages
         cleartextMessagesSwitch.setOn(!cleartext, animated: true)
 
     }
@@ -29,15 +40,6 @@ class CleartextMessagesCell: TableViewCellWithController {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
-    }
-
-    @objc class func cellItem() -> MoreCellItem {
-        
-        let item = MoreCellItem()
-        item.cellHeight = 65.0
-        item.cellReuseId = "CleartextMessagesCell"
-        return item
-        
     }
 
     func doDecrypt() {
@@ -59,7 +61,7 @@ class CleartextMessagesCell: TableViewCellWithController {
                         + "Do you want to continue?"
         let alert = PMAlertController(title: "Caution!", description: message, image: nil, style: .alert)
         alert.addAction(PMAlertAction(title: "Yes", style: .default, action: { () in
-            self.config.storeCleartextMessages(true)
+            self.config.storeCleartextMessages = true
             self.doDecrypt()
         }))
         alert.addAction(PMAlertAction(title: "No", style: .cancel))
@@ -73,7 +75,7 @@ class CleartextMessagesCell: TableViewCellWithController {
             let hud = MBProgressHUD.showAdded(to: self.superview!, animated: true)
             hud.mode = .indeterminate
             hud.label.text = "Scrubbing messages"
-            config.storeCleartextMessages(false)
+            config.storeCleartextMessages = false
             DispatchQueue.main.async {
                 self.messageManager.scrubCleartext()
                 MBProgressHUD.hide(for: self.superview!, animated: true)

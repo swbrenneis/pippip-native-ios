@@ -10,27 +10,15 @@ import UIKit
 import RKDropdownAlert
 import ChameleonFramework
 
-class DeleteFriendCellData: NSObject, CellDataProtocol {
-
-    var cellId: String = "DeleteFriendCell"
-    var cellHeight: CGFloat = 50.0
-    var selector: ExpandingTableSelectorProtocol?
-    var userData: [String : Any]?
-
-    func configureCell(_ cell: UITableViewCell) {
-        // noop
-    }
-
-}
-
-class DeleteFriendSelector: ExpandingTableSelectorProtocol {
+class DeleteFriendSelector: ExpandingTableCellSelectorProtocol {
 
     var viewController: UIViewController?
     var tableView: ExpandingTableView?
     var contactManager = ContactManager()
     var config = Configurator()
     var publicId: String
-    var friendPath: IndexPath?
+    var friendPath: IndexPath!
+    var alertPresenter = AlertPresenter()
 
     init(publicId: String) {
 
@@ -38,7 +26,7 @@ class DeleteFriendSelector: ExpandingTableSelectorProtocol {
 
     }
 
-    func didSelect(_ indexPath: IndexPath) {
+    func didSelect(indexPath: IndexPath, cell: UITableViewCell) {
 
         NotificationCenter.default.addObserver(self, selector: #selector(friendDeleted(_:)),
                                                name: Notifications.FriendDeleted, object: nil)
@@ -52,15 +40,11 @@ class DeleteFriendSelector: ExpandingTableSelectorProtocol {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.FriendDeleted, object: nil)
         config.deleteWhitelistEntry(publicId)
+        self.alertPresenter.successAlert(title: "Friend Deleted",
+                                         message: "This friend has been removed from your friends list")
         DispatchQueue.main.async {
-            let alertColor = UIColor.flatLime
-            RKDropdownAlert.title("Friend Deleted", message: "This friend has been removed from your friends list",
-                                  backgroundColor: alertColor,
-                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                  time: 2, delegate: nil)
-            self.tableView?.collapseRow(at: self.friendPath!)
-            self.tableView?.expandingModel?.removeCell(section: self.friendPath!.section,
-                                                       row: self.friendPath!.row, with: .left)
+            self.tableView?.expandingModel?.removeExpandingCell(section: self.friendPath.section,
+                                                                row: self.friendPath.row, animation: .left)
         }
 
     }

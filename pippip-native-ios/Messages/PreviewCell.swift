@@ -9,7 +9,7 @@
 import UIKit
 import ChameleonFramework
 
-class PreviewCell: UITableViewCell {
+class PreviewCell: PippipTableViewCell {
 
     static let secondsPerHour: Int64 = 3600
     static let secondsPerDay: Double = 3600 * 24
@@ -25,8 +25,6 @@ class PreviewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        NotificationCenter.default.addObserver(self, selector: #selector(cleartextAvailable(_:)),
-                                               name: Notifications.CleartextAvailable, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(sessionEnded(_:)),
                                                name: Notifications.SessionEnded, object: nil)
 
@@ -38,11 +36,12 @@ class PreviewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
-    @objc func configure(textMessage: TextMessage, backgroundColor: UIColor) {
+    @objc func configure(textMessage: TextMessage) {
 
         messageReadIndicator.isHidden = textMessage.read
         if self.textMessage == nil || self.textMessage?.messageId != textMessage.messageId {
-            //configured = true
+            NotificationCenter.default.addObserver(self, selector: #selector(cleartextAvailable(_:)),
+                                                   name: Notifications.CleartextAvailable, object: nil)
             self.textMessage = textMessage
             let contact = contactManager.getContactById(textMessage.contactId)
             senderLabel.text = contact?.displayName
@@ -58,13 +57,11 @@ class PreviewCell: UITableViewCell {
             }
         }
 
-        self.backgroundColor = .clear
-        contentView.backgroundColor = backgroundColor
-        contentView.layer.cornerRadius = 15
-        contentView.layer.masksToBounds = true
-        senderLabel.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
-        previewLabel.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
-        timestampLabel.textColor = ContrastColorOf(backgroundColor, returnFlat: true)
+        senderLabel.textColor = PippipTheme.darkTextColor
+        previewLabel.textColor = PippipTheme.darkTextColor
+        timestampLabel.textColor = PippipTheme.darkTextColor
+
+        super.setDarkTheme()
 
     }
 
@@ -73,11 +70,6 @@ class PreviewCell: UITableViewCell {
         let messageDate = Date(timeIntervalSince1970: Double(timestamp / 1000))
         let now = Date()
         let elapsed = now.timeIntervalSince(messageDate)
-//        let nowTs = Int64(now.timeIntervalSince1970)
-//        let secondsSinceMidnight = Int64(now.timeIntervalSince1970) % PreviewCell.secondsPerDay
-//        let midnight = Date(timeIntervalSince1970: Double(nowTs - secondsSinceMidnight))
-//        let midnightTs = Int64(midnight.timeIntervalSince1970)
-//        let yesterday = Date(timeIntervalSince1970: Double(midnightTs - PreviewCell.secondsPerDay))
 
         if elapsed > PreviewCell.secondsPerDay {
             let formatter = DateFormatter()
@@ -110,6 +102,7 @@ class PreviewCell: UITableViewCell {
 
         if let textMessage = notification.object as? TextMessage {
             if textMessage.messageId == self.textMessage?.messageId {
+                NotificationCenter.default.removeObserver(self, name: Notifications.CleartextAvailable, object: nil)
                 DispatchQueue.main.async {
                     let text = textMessage.cleartext ?? "<nil>"
                     self.setPreviewText(text)

@@ -8,17 +8,6 @@
 
 import UIKit
 
-protocol CellDataProtocol {
-
-    var cellHeight: CGFloat { get set }
-    var cellId: String { get set }
-    var selector: ExpandingTableSelectorProtocol? { get set }
-    var userData: [ String: Any ]? { get set }
-
-    func configureCell(_ cell: UITableViewCell);
-
-}
-
 protocol ViewDataProtocol {
 
     var view: UIView { get set }
@@ -26,31 +15,47 @@ protocol ViewDataProtocol {
 
 }
 
+protocol ExpandingTableCellSelectorProtocol {
+    
+    var viewController: UIViewController? { get set }
+    var tableView: ExpandingTableView? { get set }
+    
+    func didSelect(indexPath: IndexPath, cell: UITableViewCell)
+    
+}
+
 protocol ExpandingTableModelProtocol: UITableViewDelegate, UITableViewDataSource {
 
-    var tableView: UITableView! { get set }
-    var tableModel: [ Int: [ CellDataProtocol ] ] { get }
+    var tableView: ExpandingTableView! { get set }
     var headerViews: [ Int: ViewDataProtocol ] { get }
 
-    func appendCell(cellData: CellDataProtocol, section: Int, with: UITableViewRowAnimation)
+    func appendChildren(cells: [ExpandingTableCell], indexPath: IndexPath)
     
-    func appendCells(cellData: [CellDataProtocol], section: Int, with: UITableViewRowAnimation);
-
-    func clear()
+    func appendChildren(cells: [ExpandingTableCell], parent: ExpandingTableViewCell)
+    
+    func appendExpandingCell(cell: ExpandingTableViewCell, section: Int, animation: UITableViewRowAnimation)
+    
+    func appendExpandingCells(cells: [ExpandingTableViewCell], section: Int, animation: UITableViewRowAnimation)
 
     func clear(section: Int)
 
-    func getCells(section: Int) -> [CellDataProtocol]?
+    func collapseAll()
 
-    func insertCell(cellData: CellDataProtocol, section: Int, row: Int, with: UITableViewRowAnimation)
+    func collapseCell(indexPath: IndexPath)
+
+    func createCells(cellIds: [String]) -> [ExpandingTableCell]
     
-    func insertCells(cellData: [CellDataProtocol], section: Int, at: Int, with: UITableViewRowAnimation)
+    func createCells(cellId: String, count: Int) -> [ExpandingTableCell]
 
-    //@discardableResult
-    func removeCell(section: Int, row: Int, with: UITableViewRowAnimation) // -> CellDataProtocol?
+    func expandCell(indexPath: IndexPath, children: [ExpandingTableCell]?)
 
-    //@discardableResult
-    func removeCells(section: Int, row: Int, count: Int, with: UITableViewRowAnimation) // -> [ CellDataProtocol ]?
+    func getCell(indexPath: IndexPath) -> UITableViewCell
+    
+    func getChildren(indexPath: IndexPath) -> [ExpandingTableCell]?
+
+    func removeChild(indexPath: IndexPath, index: Int)
+
+    func removeExpandingCell(section: Int, row: Int, animation: UITableViewRowAnimation)
 
 }
 

@@ -8,17 +8,26 @@
 
 import UIKit
 
-class LocalAuthCell: UITableViewCell {
+class LocalAuthCellItem: MultiCellItemProtocol {
 
+    var cellReuseId: String = "LocalAuthCell"
+    var cellHeight: CGFloat = 65.0
+    var currentCell: UITableViewCell?
+
+}
+
+class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
     @IBOutlet weak var localAuthSwitch: UISwitch!
 
+    static var cellItem: MultiCellItemProtocol = LocalAuthCellItem()
+    var viewController: UITableViewController?
     var config = Configurator()
 
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
         
-        localAuthSwitch.setOn(config.useLocalAuth(), animated: true)
+        localAuthSwitch.setOn(config.localAuth, animated: true)
 
     }
 
@@ -28,18 +37,9 @@ class LocalAuthCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
-    @objc class func cellItem() -> MoreCellItem {
-        
-        let item = MoreCellItem()
-        item.cellHeight = 65.0
-        item.cellReuseId = "LocalAuthCell"
-        return item
-        
-    }
-    
     @IBAction func localAuthChanged(_ sender: UISwitch) {
 
-        config.useLocalAuth(sender.isOn)
+        config.localAuth = sender.isOn
 
     }
 }

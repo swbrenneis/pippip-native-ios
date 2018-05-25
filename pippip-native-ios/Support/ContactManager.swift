@@ -83,7 +83,7 @@ class ContactManager: NSObject {
                 self.addContact(contact)
                 ContactManager.requestSet.remove(contactRequest)
                 DispatchQueue.global().async {
-                    NotificationCenter.default.post(name: Notifications.RequestAcknowledged, object: nil)
+                    NotificationCenter.default.post(name: Notifications.RequestAcknowledged, object: contact)
                 }
             }
             else {
@@ -118,7 +118,7 @@ class ContactManager: NSObject {
     
     func addFriend(_ publicId:String) -> Bool {
 
-        let found = config.whitelistIndex(of: publicId)
+        let found = config.whitelistIndexOf(publicId)
         if found == NSNotFound {
             var request = [String: Any]()
             request["method"] = "UpdateWhitelist"

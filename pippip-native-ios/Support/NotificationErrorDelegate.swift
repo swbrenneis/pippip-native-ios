@@ -10,46 +10,42 @@ import UIKit
 
 @objc class NotificationErrorDelegate: NSObject, ErrorDelegate {
 
-    private var info: [AnyHashable: Any]
+    var alertPresenter = AlertPresenter()
+    var title: String
 
-    @objc init(_ title: String) {
+    @objc init(title: String) {
 
-        info = [ "title" : title ]
+        self.title = title
 
     }
 
     func getMethodError(_ error: String) {
 
-        info["message"] = error
-        NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+        alertPresenter.errorAlert(title: title, message: error)
         
     }
     
     func postMethodError(_ error: String) {
-        
-        info["message"] = error
-        NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+
+        alertPresenter.errorAlert(title: title, message: error)
         
     }
 
     func responseError(_ error: String) {
-        
-        info["message"] = error
-        NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+
+        alertPresenter.errorAlert(title: title, message: error)
         
     }
     
     func requestError(_ error: String) {
-        
-        info["message"] = error
-        NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+
+        alertPresenter.errorAlert(title: title, message: error)
         
     }
     
     func sessionError(_ error: String) {
-        
-        info["message"] = error
-        NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+
+        alertPresenter.errorAlert(title: title, message: error)
         
     }
     

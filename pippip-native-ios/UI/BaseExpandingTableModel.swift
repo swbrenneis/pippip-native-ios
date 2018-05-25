@@ -10,197 +10,317 @@ import UIKit
 
 class BaseExpandingTableModel: NSObject, ExpandingTableModelProtocol {
 
-    var tableView: UITableView!
-    var tableModel: [Int : [CellDataProtocol]]
-    var headerViews: [Int : ViewDataProtocol]
+    var tableView: ExpandingTableView!
+    var headerViews = [Int : ViewDataProtocol]()
+    var expandingCells = [Int: [ExpandingTableViewCell]]()
     
-    override init() {
+    func appendChildren(cells: [ExpandingTableCell], indexPath: IndexPath) {
 
-        tableModel = [0 : [CellDataProtocol]()]
-        headerViews = [ Int: ViewDataProtocol ]()
-
-        super.init()
-
-    }
-
-    func appendCell(cellData: CellDataProtocol, section: Int, with: UITableViewRowAnimation) {
-        
-        assert(Thread.isMainThread)
-        var indexPath = IndexPath(row: 0, section: section)
-        if tableModel[section] == nil {
-            tableModel[section] = [cellData]
-            indexPath.row = 0
+        let row = translateRow(indexPath)
+        let cell = expandingCells[indexPath.section]![row]
+        var childRow = cell.children?.count ?? 0
+        if cell.children != nil {
+            cell.children?.append(contentsOf: cells)
         }
         else {
-            tableModel[section]!.append(cellData)
-            indexPath.row = tableModel[section]!.count - 1
+            childRow = cell.children!.count
+            cell.children = cells
         }
-        tableView.insertRows(at: [indexPath], with: with)
-        
+        if cell.isOpen {
+            var paths = [IndexPath]()
+            for index in 0..<cells.count {
+                paths.append(IndexPath(row: index+childRow + 1, section: indexPath.section))
+            }
+            tableView.insertRows(at: paths, with: .top)
+        }
+    
     }
     
-    func appendCells(cellData: [CellDataProtocol], section: Int, with: UITableViewRowAnimation) {
-        
-        assert(Thread.isMainThread)
+    func appendChildren(cells: [ExpandingTableCell], parent: ExpandingTableViewCell) {
+
+        guard let path = getPath(cell: parent) else { return }
+        appendChildren(cells: cells, indexPath: path)
+
+    }
+
+    func appendExpandingCell(cell: ExpandingTableViewCell, section: Int, animation: UITableViewRowAnimation) {
+
+        if expandingCells[section] == nil {
+            expandingCells[section] = [ExpandingTableViewCell]()
+        }
+        let row = max(expandingCells[section]!.count - 1, 0)
+        expandingCells[section]?.append(cell)
         var paths = [IndexPath]()
-        let count = tableModel[section]?.count ?? 0
-        for row in 0..<cellData.count {
-            paths.append(IndexPath(row: count + row, section: section))
+        paths.append(IndexPath(row: row, section: section))
+        // Add the child cells, if any
+        if cell.isOpen && cell.children != nil {
+            for childRow in 0..<cell.children!.count {
+                paths.append(IndexPath(row: row+childRow, section: section))
+            }
         }
-        if tableModel[section] == nil {
-            tableModel[section] = cellData
-        }
-        else {
-            tableModel[section]?.append(contentsOf: cellData)
-        }
-        tableView.insertRows(at: paths, with: with)
+        tableView.insertRows(at: paths, with: animation)
         
     }
     
-    func clear() {
+    func appendExpandingCells(cells: [ExpandingTableViewCell], section: Int, animation: UITableViewRowAnimation) {
 
-        assert(Thread.isMainThread)
-        for key in tableModel.keys {
-            tableModel[key]?.removeAll()
+        if expandingCells[section] == nil {
+            expandingCells[section] = [ExpandingTableViewCell]()
         }
-        tableView.reloadData()
-
+        let row = max(expandingCells[section]!.count - 1, 0)
+        expandingCells[section]?.append(contentsOf: cells)
+        var paths = [IndexPath]()
+        var children = 0
+        for expanding in 0..<cells.count {
+            let cell = cells[expanding]
+            paths.append(IndexPath(row: row+children+expanding, section: section))
+            // Add the child cells, if any
+            if cell.isOpen && cell.children != nil {
+                for childRow in 0..<cell.children!.count {
+                    paths.append(IndexPath(row: row+expanding+childRow+children, section: section))
+                }
+                children = children + cell.children!.count
+            }
+        }
+        tableView.insertRows(at: paths, with: animation)
+        
     }
 
     func clear(section: Int) {
 
         assert(Thread.isMainThread)
-        tableModel[section]?.removeAll()
+        expandingCells[section]?.removeAll()
         tableView.reloadData()
         
     }
 
-    func getCells(section: Int) -> [CellDataProtocol]? {
-
-        return tableModel[section]
-        
-    }
-    
-    func insertCell(cellData: CellDataProtocol, section: Int, row: Int, with: UITableViewRowAnimation) {
+    func collapseAll() {
 
         assert(Thread.isMainThread)
-        assert(tableModel[section] != nil || row == 0)
-        if tableModel[section] == nil {
-            tableModel[section] = [cellData]
-        }
-        else if row >= tableModel[section]!.count {
-            assert(false, "Attempt to insert cell beyond end of table")
-        }
-        else {
-            var newCells = [ CellDataProtocol ]()
-            for i in 0..<tableModel[section]!.count {
-                if i != row {
-                    newCells.append(tableModel[section]![i])
-                }
-                else {
-                    newCells.append(cellData)
+        for section in expandingCells.keys {
+            if let cells = expandingCells[section] {
+                for cell in cells {
+                    cell.close()
                 }
             }
-            tableModel[section] = newCells
         }
-        tableView.insertRows(at: [IndexPath(row: row, section: section)], with: with)
+        self.tableView.reloadData()
+
+    }
+
+    func collapseCell(indexPath: IndexPath) {
+
+        assert(Thread.isMainThread, "collapseCell must be called from the main thread")
+        let actual = translateRow(indexPath)
+        let cell = expandingCells[indexPath.section]?[actual]
+        assert(cell != nil)
+        cell?.close()
+        if cell!.children!.count > 0 {
+            var paths = [IndexPath]()
+            for row in 0..<cell!.children!.count {
+                paths.append(IndexPath(row: indexPath.row+row+1, section: indexPath.section))
+            }
+            self.tableView.deleteRows(at: paths, with: .top)
+        }
+
+    }
+
+    func createCells(cellIds: [String]) -> [ExpandingTableCell] {
+        
+        var cells = [ExpandingTableCell]()
+        for cellId in cellIds {
+            if let cell = self.tableView.dequeueReusableCell(withIdentifier: cellId) as? ExpandingTableCell {
+                cell.configure()
+                cells.append(cell)
+            }
+        }
+        return cells
         
     }
     
-    func insertCells(cellData: [CellDataProtocol], section: Int, at: Int, with: UITableViewRowAnimation) {
+    func createCells(cellId: String, count: Int) -> [ExpandingTableCell] {
+        
+        var cells = [ExpandingTableCell]()
+        while cells.count < count {
+            guard let cell = self.tableView.dequeueReusableCell(withIdentifier: cellId) as? ExpandingTableCell
+                else { return [ExpandingTableCell]() }
+            cell.configure()
+            cells.append(cell)
+        }
+        return cells
+        
+    }
+    
+    func expandCell(indexPath: IndexPath, children: [ExpandingTableCell]?) {
+
+        assert(Thread.isMainThread, "expandCell must be called from the main thread")
+        let actual = translateRow(indexPath)
+        guard let cell = expandingCells[indexPath.section]?[actual] else { return }
+        if cell.children == nil || children != nil {
+            cell.children = children
+        }
+        assert(cell.children != nil)
+        cell.open()
+        var paths = [IndexPath]()
+        let count = cell.children?.count ?? 0
+        for row in 0..<count {
+            paths.append(IndexPath(row: indexPath.row+row+1, section: indexPath.section))
+        }
+        self.tableView.insertRows(at: paths, with: .top)
+
+    }
+
+    // This will be called after cells are inserted
+    func getCell(indexPath: IndexPath) -> UITableViewCell {
 
         assert(Thread.isMainThread)
-        if tableModel[section] == nil {
-            tableModel[section] = cellData
+        guard let cells = expandingCells[indexPath.section] else { return UITableViewCell() }
+        var childCount = 0
+        for expanding in 0..<cells.count {
+            let cell = cells[expanding]
+            if expanding + childCount == indexPath.row {
+                // Expanding cell
+                return cell
+            }
+            else if cell.isOpen && cell.children != nil {
+                for childIndex in 0..<cell.children!.count {
+                    if expanding + childCount + childIndex + 1 == indexPath.row {
+                        return cell.children![childIndex]
+                    }
+                }
+                childCount = childCount + cell.children!.count
+            }
         }
-        else if (at > tableModel[section]!.count) {
-            assert(false, "Attempt to insert cells beyond end of table")
+        return UITableViewCell()
+        
+    }
+
+    func getCells(cellIds: [String]) -> [ExpandingTableCell] {
+
+        var cells = [ExpandingTableCell]()
+        for cellId in cellIds {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId) as? ExpandingTableCell else {
+                assert(false, "Invalid table cell type")
+            }
+            cell.configure()
+            cells.append(cell)
         }
-        else if at == tableModel[section]!.count {
-            appendCells(cellData: cellData, section: section, with: with)
+        return cells
+
+    }
+
+    func getChildren(indexPath: IndexPath) -> [ExpandingTableCell]? {
+
+        let row = translateRow(indexPath)
+        guard let cell = expandingCells[indexPath.section]?[row] else { return nil }
+        return cell.children
+
+    }
+
+    func getPath(cell: ExpandingTableViewCell) -> IndexPath? {
+
+        for section in expandingCells.keys {
+            for item in 0..<expandingCells[section]!.count {
+                if cell == expandingCells[section]![item] {
+                    return IndexPath(row: item, section: section)
+                }
+            }
+        }
+        return nil
+
+    }
+
+    func getRowCount(section: Int) -> Int {
+
+        if expandingCells[section] != nil {
+            var count = expandingCells[section]!.count
+            for cell in expandingCells[section]! {
+                if cell.isOpen && cell.children != nil {
+                    count = count + cell.children!.count
+                }
+            }
+            return count
         }
         else {
-            var insertPaths = [IndexPath]()
-            for row in 0..<cellData.count {
-                insertPaths.append(IndexPath(row: row + at, section: section))
-            }
-            let prefix = tableModel[section]![0..<at]
-            let suffix = tableModel[section]![at..<tableModel[section]!.count]
-            tableModel[section]!.removeAll()
-            tableModel[section]!.append(contentsOf: prefix)
-            tableModel[section]!.append(contentsOf: cellData)
-            tableModel[section]!.append(contentsOf: suffix)
-            tableView.insertRows(at: insertPaths, with: with)
+            return 0
         }
+
+    }
+
+    func removeExpandingCell(section: Int, row: Int, animation: UITableViewRowAnimation) {
+
+        guard let cells = expandingCells[section] else { return }
+        let cell = cells[row]
+        var paths = [IndexPath]()
+        let translated = translateRow(IndexPath(row: row, section: section))
+        paths.append(IndexPath(row: row, section: section))
+        if cell.isOpen && cell.children != nil {
+            for child in 0..<cell.children!.count {
+                paths.append(IndexPath(row: row+child, section: section))
+            }
+        }
+        expandingCells[section]!.remove(at: translated)
+        tableView.deleteRows(at: paths, with: animation)
         
     }
 
-    func removeCell(section: Int, row: Int, with: UITableViewRowAnimation) {
+    func removeChild(indexPath: IndexPath, index: Int) {
 
         assert(Thread.isMainThread)
-        assert(tableModel[section]?[row] != nil)
-        // var deleted: CellDataProtocol?
-        var newCells = [CellDataProtocol]()
-        for i in 0..<tableModel[section]!.count {
-            if i != row {
-                newCells.append(tableModel[section]![i])
-            }
+        let row = translateRow(indexPath)
+        guard let cell = expandingCells[indexPath.section]?[row] else { return }
+        assert(cell.children != nil)
+        cell.children?.remove(at: index)
+        if cell.isOpen {
+            tableView.deleteRows(at: [IndexPath(row: row+index+1, section: indexPath.section)], with: .left)
         }
-        tableModel[section] = newCells
-        tableView.deleteRows(at: [IndexPath(row: row, section: section)], with: with)
-        
-    }
-    
-    func removeCells(section: Int, row: Int, count: Int, with: UITableViewRowAnimation) {
 
-        assert(Thread.isMainThread)
-        assert(tableModel[section] != nil)
-        assert(row + count <= tableModel[section]!.count, "Attempt to remove cells beyond the end of the table")
-        var deletePaths = [IndexPath ]()
-        var newCells = [CellDataProtocol]()
-        let end = row + count
-        for i in 0..<tableModel[section]!.count {
-            if i < row || i >= end {
-                newCells.append(tableModel[section]![i])
+    }
+
+    // Translates a table row to an expanding cell row
+    func translateRow(_ indexPath: IndexPath) -> Int {
+        
+        guard let cells = expandingCells[indexPath.section] else { return 0 }
+        var childCount = 0
+        for expanding in 0..<cells.count {
+            if expanding + childCount == indexPath.row {
+                return expanding
             }
             else {
-                deletePaths.append(IndexPath(row: i, section: section))
+                let cell = cells[expanding]
+                if cell.isOpen && cell.children != nil {
+                    childCount = childCount + cell.children!.count
+                }
             }
         }
-        tableModel[section] = newCells
-        tableView.deleteRows(at: deletePaths, with: with)
-
+        assert(false, "Index path is invalid")
+        
     }
+
+    // Table view data source
 
     func numberOfSections(in tableView: UITableView) -> Int {
 
-        return tableModel.keys.count
+        return expandingCells.count
 
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-        return tableModel[section]?.count ?? 0
+        return getRowCount(section: section)
 
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        guard let cellData = tableModel[indexPath.section]?[indexPath.row] else {
-            assert(false, "Table view to table model row mismatch")
-            return UITableViewCell() }
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellData.cellId, for: indexPath)
-        cellData.configureCell(cell)
-        return cell
+        return getCell(indexPath: indexPath)
 
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-        guard let cellData = tableModel[indexPath.section]?[indexPath.row] else {
-            assert(false, "Table view to table model row mismatch")
-            return 0.0 }
-        return cellData.cellHeight
+        guard let cell = getCell(indexPath: indexPath) as? ExpandingTableViewCell else { return 0.0 }
+        return cell.cellHeight
 
     }
 
@@ -223,10 +343,8 @@ class BaseExpandingTableModel: NSObject, ExpandingTableModelProtocol {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        guard let cellData = tableModel[indexPath.section]?[indexPath.row] else {
-            assert(false, "Table view to table model row mismatch")
-            return }
-        cellData.selector?.didSelect(indexPath)
+        guard let cell = getCell(indexPath: indexPath) as? ExpandingTableViewCell else { return }
+        cell.selector?.didSelect(indexPath: indexPath, cell: cell)
 
     }
 

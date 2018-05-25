@@ -8,17 +8,19 @@
 
 import UIKit
 
-class EditWhitelistCell: UITableViewCell {
+class EditWhitelistCellItem: MultiCellItemProtocol {
 
-    @objc class func cellItem() -> MoreCellItem {
-        
-        let item: MoreCellItem = MoreCellItem()
-        item.cellHeight = 50.0
-        item.cellReuseId = "EditWhitelistCell"
-        return item
-        
-    }
-    
+    var cellReuseId: String = "EditWhitelistCell"
+    var cellHeight: CGFloat = 50.0
+    var currentCell: UITableViewCell?
+
+}
+
+class EditWhitelistCell: PippipTableViewCell, MultiCellProtocol {
+
+    static var cellItem: MultiCellItemProtocol = EditWhitelistCellItem()
+    var viewController: UITableViewController?
+
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -30,4 +32,25 @@ class EditWhitelistCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    override func setDarkTheme() {
+        
+        self.textLabel?.textColor = PippipTheme.darkTextColor
+        super.setDarkTheme()
+        
+    }
+    
+    override func setMediumTheme() {
+        
+        self.textLabel?.textColor = PippipTheme.mediumTextColor
+        super.setMediumTheme()
+        
+    }
+    
+    override func setLightTheme() {
+        
+        self.textLabel?.textColor = PippipTheme.lightTextColor
+        super.setLightTheme()
+        
+    }
+    
 }

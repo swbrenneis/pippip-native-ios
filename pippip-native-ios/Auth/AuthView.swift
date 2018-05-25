@@ -52,14 +52,6 @@ class AuthView: UIView, RKDropdownAlertDelegate {
 
     }
 
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-    }
-    */
-
     @IBAction func authSelected(_ sender: Any) {
 
         if accountName != nil {
@@ -199,18 +191,12 @@ class AuthView: UIView, RKDropdownAlertDelegate {
         }
         
     }
-    
+
+    // This is just used to dismiss the HUD
     @objc func presentAlert(_ notification: Notification) {
-        
-        let userInfo = notification.userInfo!
-        let title = userInfo["title"] as? String
-        let message = userInfo["message"] as? String
+
         DispatchQueue.main.async {
             MBProgressHUD.hide(for: self, animated: true)
-            let alertColor = UIColor.flatSand
-            RKDropdownAlert.title(title, message: message, backgroundColor: alertColor,
-                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                  time: 2, delegate: self)
         }
         
     }

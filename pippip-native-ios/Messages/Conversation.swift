@@ -176,6 +176,28 @@ class Conversation: NSObject {
 
     }
 
+    func findMessageText(_ fragment: String) -> TextMessage? {
+        
+        for textMessage in messageList {
+            if let _ = textMessage.cleartext?.uppercased().range(of: fragment.uppercased()) {
+                return textMessage
+            }
+        }
+        return nil
+        
+    }
+    
+    func searchMessages(_ fragment: String) -> Bool {
+        
+        for textMessage in messageList {
+            if let _ = textMessage.cleartext?.uppercased().range(of: fragment.uppercased()) {
+                return true
+            }
+        }
+        return false
+        
+    }
+    
     func sendMessage(_ textMessage: TextMessage) throws {
 
         textMessage.read = true

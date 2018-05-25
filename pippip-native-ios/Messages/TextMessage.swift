@@ -98,7 +98,7 @@ class TextMessage: Message {
     @objc override func encodeForDatabase() -> DatabaseMessage {
 
         let dbMessage = super.encodeForDatabase()
-        if config.storeCleartextMessages() {
+        if config.storeCleartextMessages {
             dbMessage.cleartext = cleartext
         }
         return dbMessage

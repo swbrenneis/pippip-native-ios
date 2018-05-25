@@ -8,19 +8,30 @@
 
 import UIKit
 
-class ContactPolicyCell: UITableViewCell {
+class ContactPolicyCellItem: MultiCellItemProtocol {
+
+    var cellReuseId: String = "ContactPolicyCell"
+    var cellHeight: CGFloat = 65.0
+    var currentCell: UITableViewCell?
+
+}
+
+class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
 
     @IBOutlet weak var contactPolicySwitch: UISwitch!
 
+    static var cellItem: MultiCellItemProtocol = ContactPolicyCellItem()
+    var viewController: UITableViewController?
     var contactManager = ContactManager()
     var config = Configurator()
     var currentPolicy = "whitelist"
     var selectedPolicy = "whitelist"
+    var alertPresenter = AlertPresenter()
 
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        currentPolicy = config.getContactPolicy()
+        currentPolicy = config.contactPolicy
         if (currentPolicy == "public") {
             contactPolicySwitch.setOn(true, animated: true)
         }
@@ -39,15 +50,6 @@ class ContactPolicyCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
-    @objc class func cellItem() -> MoreCellItem {
-        
-        let item = MoreCellItem()
-        item.cellHeight = 65.0
-        item.cellReuseId = "ContactPolicyCell"
-        return item
-        
-    }
-
     @objc func policyUpdated(_ notification: Notification) {
 
         guard let info = notification.userInfo else { return }
@@ -55,7 +57,7 @@ class ContactPolicyCell: UITableViewCell {
             DispatchQueue.main.async {
                 if (result == "policySet") {
                     self.currentPolicy = self.selectedPolicy
-                    self.config.setContactPolicy(self.currentPolicy)
+                    self.config.contactPolicy = self.currentPolicy
                     var info = [AnyHashable: Any]()
                     info["policy"] = self.currentPolicy
                     NotificationCenter.default.post(name: Notifications.PolicyChanged, object: nil,
@@ -65,10 +67,7 @@ class ContactPolicyCell: UITableViewCell {
             }
         }
         else {
-            var info = [AnyHashable: Any]()
-            info["title"] = "Policy Error"
-            info["message"] = "Invalid server response"
-            NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+            alertPresenter.errorAlert(title: "PolicyError", message: "Invlaid Server Response")
             DispatchQueue.main.async {
                 self.resetCell()
             }

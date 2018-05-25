@@ -24,18 +24,24 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
     var sessionState = SessionState()
     var suspended = false
     var localAuth: LocalAuthenticator!
+    var alertPresenter = AlertPresenter()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.view.backgroundColor = PippipTheme.viewColor
 
         config.loadWhitelist()
 
         localAuth = LocalAuthenticator(viewController: self, view: self.view)
 
-        tableModel = WhitelistTableModel(self)
+        tableModel = WhitelistTableModel()
         tableView.expandingModel = tableModel
 
-        tableView.register(FriendCell.self, forCellReuseIdentifier: "FriendCell")
+        var rightBarItems = [UIBarButtonItem]()
+        let compose = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addFriend(_:)))
+        rightBarItems.append(compose)
+        self.navigationItem.rightBarButtonItems = rightBarItems
 
     }
 
@@ -43,25 +49,21 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
 
         tableModel?.setFriends(whitelist: config.whitelist, tableView: tableView)
 
-        localAuth.visible = true
-//        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
-//                                               name: Notifications.AppResumed, object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
-//                                               name: Notifications.AppSuspended, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
-                                               name: Notifications.PresentAlert, object: nil)
+        localAuth.listening = true
+        alertPresenter.present = true
+        NotificationCenter.default.addObserver(self, selector: #selector(thumbprintComplete(_:)),
+                                               name: Notifications.ThumbprintComplete, object: nil)
 
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        localAuth.visible = false
-        NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
-//        NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
-//        NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
+        localAuth.listening = false
+        alertPresenter.present = false
+        NotificationCenter.default.removeObserver(self, name: Notifications.ThumbprintComplete, object: nil)
 
-        tableModel?.clear()
+        tableView.collapseAll(section: 0)
     
     }
 
@@ -74,7 +76,7 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         
         let alertColor = UIColor.flatSand
         if let nick = nickname {
-            let myNick = config.getNickname()
+            let myNick = config.nickname
             if myNick == nick {
                 RKDropdownAlert.title("Add Friend Error", message: "You can't add yourself",
                                       backgroundColor: alertColor,
@@ -97,7 +99,7 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         
     }
     
-    @IBAction func addFriend(_ sender: Any) {
+    @objc func addFriend(_ sender: Any) {
 
         NotificationCenter.default.addObserver(self, selector: #selector(friendAdded(_:)),
                                                name: Notifications.FriendAdded, object: nil)
@@ -142,62 +144,18 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         
     }
 
-    @objc func presentAlert(_ notification: Notification) {
-
-        let userInfo = notification.userInfo!
-        let title = userInfo["title"] as? String
-        let message = userInfo["message"] as? String
-        DispatchQueue.main.async {
-            let alertColor = UIColor.flatSand
-            RKDropdownAlert.title(title, message: message, backgroundColor: alertColor,
-                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                  time: 2, delegate: self)
-        }
-
-    }
-/*
-    @objc func appResumed(_ notification: Notification) {
-
-        if suspended {
-            suspended = false
-            if let info = notification.userInfo {
-                authView?.suspendedTime = (info["suspendedTime"] as! NSNumber).intValue
-            }
-            DispatchQueue.main.async {
-                self.present(self.authView!, animated: true, completion: nil)
-            }
-            
-        }
-
-    }
-    
-    @objc func appSuspended(_ notification: Notification) {
-        
-        suspended = true
-        
-    }
-*/
     @objc func friendAdded(_ : Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.FriendAdded, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
 
-        var entity = ["publicId": publicId]
-        if (nickname.utf8.count > 0) {
-            entity["nickname"] = nickname
-        }
-        config.addWhitelistEntry(entity)
+        let entity = Entity(publicId: publicId, nickname: nickname)
+        //config.addWhitelistEntry(entity)
         DispatchQueue.main.async {
-            let alertColor = UIColor.flatLime
-            RKDropdownAlert.title("Friend Added", message: "This friend has been added to your friends list",
-                                  backgroundColor: alertColor,
-                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                  time: 2, delegate: nil)
-            let friendData = FriendCellData(entity: entity)
-            let friendSelector = FriendCellSelector()
-            friendSelector.tableView = self.tableView
-            friendData.selector = friendSelector
-            self.tableView.expandingModel?.appendCell(cellData: friendData, section: 0, with: .left)
+            self.alertPresenter.successAlert(title: "Friend Added",
+                                            message: "This friend has been added to your friends list")
+            let friendCell = self.tableModel!.getFriendCell(entity: entity) as! ExpandingTableViewCell
+            self.tableModel!.appendExpandingCell(cell: friendCell, section: 0, animation: .top)
         }
 
     }
@@ -230,6 +188,14 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
 
     }
 
+    @objc func thumbprintComplete(_ notification: Notification) {
+        
+        DispatchQueue.main.async {
+            self.localAuth.visible = false
+        }
+        
+    }
+    
     func dropdownAlertWasTapped(_ alert: RKDropdownAlert!) -> Bool {
         return true
     }
