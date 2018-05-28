@@ -12,12 +12,18 @@
 
 @interface ContactDatabase : NSObject
 
-- (void)addContact:(Contact*)contact;
+- (void)addContact:(Contact*_Nonnull)contact;
+
+- (void)addContactRequests:(NSArray<NSDictionary*>*_Nonnull)request;
 
 - (BOOL)deleteContact:(NSInteger)contactId;
 
-- (NSArray<Contact*>*)getContactList;
+- (BOOL)deleteContactRequest:(NSString*_Nonnull)publicId;
 
-- (void)updateContacts:(NSArray<Contact*>*)contacts;
+- (NSArray<Contact*>*_Nonnull)getContactList;
+
+- (NSArray<NSDictionary*>*_Nonnull)getContactRequests;
+
+- (void)updateContacts:(NSArray<Contact*>*_Nonnull)contacts;
 
 @end

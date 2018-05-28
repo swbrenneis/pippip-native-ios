@@ -29,6 +29,7 @@ class ContactTableViewCell: UITableViewCell {
 
         self.backgroundColor = .clear
         nibView.backgroundColor = .clear
+        self.selectionStyle = .none
 
     }
 

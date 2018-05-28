@@ -8,7 +8,6 @@
 
 import UIKit
 import PMAlertController
-import RKDropdownAlert
 import ChameleonFramework
 
 class LocalPasswordCellItem: MultiCellItemProtocol {

@@ -10,6 +10,7 @@
 #import "ContactDatabase.h"
 #import "CKGCMCodec.h"
 #import "DatabaseContact.h"
+#import "DatabaseContactRequest.h"
 #import "ApplicationSingleton.h"
 #import "Notifications.h"
 #import <Realm/Realm.h>
@@ -47,6 +48,23 @@
     [realm addObject:dbContact];
     [realm commitWriteTransaction];
     
+}
+
+- (void)addContactRequests:(NSArray<NSDictionary *> *)requests {
+
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    for (NSDictionary *request in requests) {
+        NSString *publicId = request[@"publicId"];
+        if (![self requestExists:publicId]) {
+            DatabaseContactRequest *dbRequest = [[DatabaseContactRequest alloc] init];
+            dbRequest.publicId = publicId;
+            dbRequest.nickname = request[@"nickname"];
+            [realm beginWriteTransaction];
+            [realm addObject:dbRequest];
+            [realm commitWriteTransaction];
+        }
+    }
+
 }
 
 - (Contact*)decodeContact:(NSData*)encoded withContactId:(NSInteger)contactId {
@@ -103,6 +121,25 @@
 
 }
 
+- (BOOL)deleteContactRequest:(NSString *)publicId {
+    
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"publicId = %@", publicId];
+    RLMResults<DatabaseContactRequest*> *requests = [DatabaseContactRequest objectsWithPredicate:predicate];
+    if (requests.count > 0) {
+        DatabaseContactRequest *dbRequest = requests.firstObject;
+        [realm beginWriteTransaction];
+        [realm deleteObject:dbRequest];
+        [realm commitWriteTransaction];
+        return YES;
+    }
+    else {
+        NSLog(@"Contact request with ID %@ not found for delete", publicId);
+        return NO;
+    }
+
+}
+
 - (NSData*)encodeContact:(Contact*)contact {
 
     CKGCMCodec *codec = [[CKGCMCodec alloc] init];
@@ -154,20 +191,7 @@
     return contact;
     
 }
-/*
-- (Contact*)getContactById:(NSInteger)contactId {
-    
-    Contact *contact = nil;
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId = %ld", contactId];
-    RLMResults<DatabaseContact*> *contacts = [DatabaseContact objectsWithPredicate:predicate];
-    if (contacts.count > 0) {
-        DatabaseContact *dbContact = [contacts firstObject];
-        contact = [self decodeContact:dbContact.encoded];
-    }
-    return contact;
-    
-}
-*/
+
 - (NSArray<Contact*>*)getContactList {
 
     NSMutableArray *indexed = [NSMutableArray array];
@@ -185,6 +209,30 @@
     }
     return indexed;
 
+}
+
+- (NSArray<NSDictionary*>*)getContactRequests {
+
+    NSMutableArray<NSDictionary*> *requests = [NSMutableArray array];
+    RLMResults<DatabaseContactRequest*> *dbRequests = [DatabaseContactRequest allObjects];
+    for (DatabaseContactRequest *dbRequest in dbRequests) {
+        NSMutableDictionary *request = [NSMutableDictionary dictionary];
+        request[@"publicId"] = dbRequest.publicId;
+        if (dbRequest.nickname != nil) {
+            request[@"nickname"] = dbRequest.nickname;
+        }
+        [requests addObject:request];
+    }
+    return requests;
+
+}
+
+- (BOOL)requestExists:(NSString*)publicId {
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"publicId = %@", publicId];
+    RLMResults<DatabaseContactRequest*> *requests = [DatabaseContactRequest objectsWithPredicate:predicate];
+    return requests.count > 0;
+    
 }
 
 - (void)updateDatabaseContact:(Contact*)contact {

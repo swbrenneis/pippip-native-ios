@@ -93,13 +93,9 @@ struct Entity {
         super.init()
 
     }
-/*
-    override func isEqual(_ object: Any?) -> Bool {
 
-        guard let contact = object as? Contact else { return false }
-        return contact.contactId == self.contactId
-
+    static func ==(lhs: Contact, rhs: Contact) -> Bool {
+        return lhs.contactId == rhs.contactId
     }
-*/
 
 }

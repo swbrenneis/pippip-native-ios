@@ -122,6 +122,11 @@ class LocalAuthenticator: NSObject {
                 }
             }
         }
+        else {
+            DispatchQueue.main.async {
+                self.authView.authButton.isHidden = false
+            }
+        }
         
     }
 

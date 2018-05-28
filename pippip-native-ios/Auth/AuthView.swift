@@ -7,11 +7,10 @@
 //
 
 import UIKit
-import RKDropdownAlert
 import PMAlertController
 import ChameleonFramework
 
-class AuthView: UIView, RKDropdownAlertDelegate {
+class AuthView: UIView {
 
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var logoImage: UIImageView!
@@ -25,6 +24,7 @@ class AuthView: UIView, RKDropdownAlertDelegate {
     var accountName = AccountManager.accountName()
     var viewController: UIViewController!
     var authenticator = Authenticator()
+    var alertPresenter = AlertPresenter()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -114,11 +114,8 @@ class AuthView: UIView, RKDropdownAlertDelegate {
                                         self.accountName = alert.textFields[0].text ?? ""
                                         let passphrase = alert.textFields[1].text ?? ""
                                         if self.accountName!.utf8.count == 0 {
-                                            let alertColor = UIColor.flatSand
-                                            RKDropdownAlert.title("Invalid Account Name",
-                                                                  message: "Empty account names are not permitted", backgroundColor: alertColor,
-                                                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                                                  time: 2, delegate: self)
+                                            self.alertPresenter.errorAlert(title: "Invalid Account Name",
+                                                                           message: "Empty account names are not permitted")
                                         }
                                         else if passphrase.utf8.count == 0 {
                                             DispatchQueue.main.async {
@@ -210,13 +207,5 @@ class AuthView: UIView, RKDropdownAlertDelegate {
         }
         
     }
-    
-    func dropdownAlertWasTapped(_ alert: RKDropdownAlert!) -> Bool {
-        return true
-    }
-    
-    func dropdownAlertWasDismissed() -> Bool {
-        return true
-    }
-    
+
 }

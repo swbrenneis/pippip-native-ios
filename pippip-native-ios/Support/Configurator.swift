@@ -52,9 +52,32 @@ class Configurator: NSObject {
     }
     var database = ConfigDatabase()
 
-    func deleteWhitelistEntry(_ publicId: String) {
+    func addWhitelistEntry(_ entity: Entity) {
+
+        var entry = [AnyHashable: Any]()
+        entry["publicId"] = entity.publicId
+        if entity.nickname != nil
+        {
+            entry["nickname"] = entity.nickname
+        }
+        database.addWhitelistEntry(entry)
+        privateWhitelist.append(entity)
+        
+    }
+
+    func deleteWhitelistEntry(_ publicId: String) -> Int {
 
         database.deleteWhitelistEntry(publicId)
+
+        var index: Int = -1
+        for i in 0..<privateWhitelist.count {
+            if privateWhitelist[i].publicId == publicId {
+                index = i
+            }
+        }
+        assert(index >= 0)
+        privateWhitelist.remove(at: index)
+        return index
 
     }
 

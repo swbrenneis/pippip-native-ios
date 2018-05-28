@@ -8,16 +8,14 @@
 
 import UIKit
 import PMAlertController
-import RKDropdownAlert
 import ChameleonFramework
 
-class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
+class WhitelistViewController: UIViewController {
 
-    @IBOutlet weak var tableView: ExpandingTableView!
+    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var tableBottom: NSLayoutConstraint!
     
     var config = Configurator()
-    var tableModel: WhitelistTableModel?
     var nickname = ""
     var publicId = ""
     var contactManager = ContactManager()
@@ -25,29 +23,33 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
     var suspended = false
     var localAuth: LocalAuthenticator!
     var alertPresenter = AlertPresenter()
+    var rightBarItems = [UIBarButtonItem]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.view.backgroundColor = PippipTheme.viewColor
+        tableView.delegate = self
+        tableView.dataSource = self
 
         config.loadWhitelist()
 
         localAuth = LocalAuthenticator(viewController: self, view: self.view)
 
-        tableModel = WhitelistTableModel()
-        tableView.expandingModel = tableModel
-
-        var rightBarItems = [UIBarButtonItem]()
-        let compose = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addFriend(_:)))
-        rightBarItems.append(compose)
+        let addFriend = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addFriend(_:)))
+        rightBarItems.append(addFriend)
+        let editFriends = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editFriends(_:)))
+        rightBarItems.append(editFriends)
         self.navigationItem.rightBarButtonItems = rightBarItems
+
+        NotificationCenter.default.addObserver(self, selector: #selector(friendDeleted(_:)),
+                                               name: Notifications.FriendDeleted, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(friendAdded(_:)),
+                                               name: Notifications.FriendAdded, object: nil)
 
     }
 
     override func viewWillAppear(_ animated: Bool) {
-
-        tableModel?.setFriends(whitelist: config.whitelist, tableView: tableView)
 
         localAuth.listening = true
         alertPresenter.present = true
@@ -63,8 +65,6 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         alertPresenter.present = false
         NotificationCenter.default.removeObserver(self, name: Notifications.ThumbprintComplete, object: nil)
 
-        tableView.collapseAll(section: 0)
-    
     }
 
     override func didReceiveMemoryWarning() {
@@ -74,24 +74,17 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
 
     func checkSelfAdd(nickname: String?, publicId: String?) -> Bool {
         
-        let alertColor = UIColor.flatSand
         if let nick = nickname {
             let myNick = config.nickname
             if myNick == nick {
-                RKDropdownAlert.title("Add Friend Error", message: "You can't add yourself",
-                                      backgroundColor: alertColor,
-                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                      time: 2, delegate: nil)
+                alertPresenter.errorAlert(title: "Add Friend Error", message: "You can't add yourself")
                 return true
             }
         }
         if let puid = publicId {
             let myId = sessionState.publicId
             if myId == puid {
-                RKDropdownAlert.title("Add Friend Error", message: "You can't add yourself",
-                                      backgroundColor: alertColor,
-                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                      time: 2, delegate: nil)
+                alertPresenter.errorAlert(title: "Add Friend Error", message: "You can't add yourself")
                 return true
             }
         }
@@ -101,8 +94,6 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
     
     @objc func addFriend(_ sender: Any) {
 
-        NotificationCenter.default.addObserver(self, selector: #selector(friendAdded(_:)),
-                                               name: Notifications.FriendAdded, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(nicknameMatched(_:)),
                                                name: Notifications.NicknameMatched, object: nil)
         
@@ -130,11 +121,8 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
                                             }
                                             else if self.publicId.utf8.count > 0 {
                                                 if !self.contactManager.addFriend(self.publicId) {
-                                                    let alertColor = UIColor.flatSand
-                                                    RKDropdownAlert.title("Add Friend Error", message: "You already added that friend",
-                                                                          backgroundColor: alertColor,
-                                                                          textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                                                          time: 2, delegate: nil)
+                                                    self.alertPresenter.errorAlert(title: "Add Friend Error",
+                                                                                   message: "You already added that friend")
                                                 }
                                             }
                                         }
@@ -144,46 +132,65 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         
     }
 
+    @objc func editFriends(_ sender: Any) {
+
+        tableView.setEditing(true, animated: true)
+        rightBarItems.removeLast()
+        let endEdit = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(endEditFriends(_:)))
+        rightBarItems.append(endEdit)
+        self.navigationItem.rightBarButtonItems = rightBarItems
+
+    }
+
+    @objc func endEditFriends(_ sender: Any) {
+        
+        tableView.setEditing(false, animated: true)
+        rightBarItems.removeLast()
+        let editFriends = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editFriends(_:)))
+        rightBarItems.append(editFriends)
+        self.navigationItem.rightBarButtonItems = rightBarItems
+
+    }
+
     @objc func friendAdded(_ : Notification) {
 
-        NotificationCenter.default.removeObserver(self, name: Notifications.FriendAdded, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
 
         let entity = Entity(publicId: publicId, nickname: nickname)
-        //config.addWhitelistEntry(entity)
+        config.addWhitelistEntry(entity)
         DispatchQueue.main.async {
+            self.tableView.insertRows(at: [IndexPath(row: self.config.whitelist.count-1, section: 0)],
+                                      with: .left)
             self.alertPresenter.successAlert(title: "Friend Added",
                                             message: "This friend has been added to your friends list")
-            let friendCell = self.tableModel!.getFriendCell(entity: entity) as! ExpandingTableViewCell
-            self.tableModel!.appendExpandingCell(cell: friendCell, section: 0, animation: .top)
         }
 
     }
-    
+
+    @objc func friendDeleted(_ notification:Notification) {
+
+        DispatchQueue.main.async {
+            let row = self.config.deleteWhitelistEntry(self.publicId)
+            self.tableView.deleteRows(at: [IndexPath(row: row, section: 0)], with: .top)
+            self.alertPresenter.successAlert(title: "Friend Deleted",
+                                             message: "This friend has been deleted from your list")
+        }
+
+    }
+
     @objc func nicknameMatched(_ notification: Notification) {
         
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
 
         let info = notification.userInfo!
-        let alertColor = UIColor.flatSand
         if let puid = info["publicId"] as? String {
             publicId = puid
             if !contactManager.addFriend(self.publicId) {
-                DispatchQueue.main.async {
-                    RKDropdownAlert.title("Add Friend Error", message: "You already added that friend",
-                                          backgroundColor: alertColor,
-                                          textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                          time: 2, delegate: nil)
-                }
+                alertPresenter.errorAlert(title: "Add Friend Error", message: "You already added that friend")
             }
         }
         else {
-            DispatchQueue.main.async {
-                RKDropdownAlert.title("Add Friend Error", message: "That nickname doesn't exist",
-                                      backgroundColor: alertColor,
-                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                      time: 2, delegate: nil)
-            }
+            alertPresenter.errorAlert(title: "Add Friend Error", message: "That nickname doesn't exist")
         }
 
     }
@@ -195,15 +202,7 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         }
         
     }
-    
-    func dropdownAlertWasTapped(_ alert: RKDropdownAlert!) -> Bool {
-        return true
-    }
-    
-    func dropdownAlertWasDismissed() -> Bool {
-        return true
-    }
-    
+
     @IBAction func done(_ sender: Any) {
 
         dismiss(animated: true, completion: nil)
@@ -219,6 +218,56 @@ class WhitelistViewController: UIViewController, RKDropdownAlertDelegate {
         // Pass the selected object to the new view controller.
     }
     */
+
+}
+
+extension WhitelistViewController: UITableViewDelegate, UITableViewDataSource {
+
+    func numberOfSections(in tableView: UITableView) -> Int {
+
+        return 1
+
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+        return config.whitelist.count
+
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FriendCell", for: indexPath)
+            as? PippipTableViewCell else { return UITableViewCell() }
+        let entity = config.whitelist[indexPath.row]
+        cell.setMediumTheme()
+        cell.textLabel?.text = entity.nickname
+        cell.detailTextLabel?.text = entity.publicId
+        return cell
+
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+
+        return 75.0
+
+    }
+
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+
+        return true
+
+    }
+
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle,
+                   forRowAt indexPath: IndexPath) {
+
+        if editingStyle == .delete {
+            publicId = config.whitelist[indexPath.row].publicId
+            contactManager.deleteFriend(publicId)
+        }
+
+    }
 
 }
 

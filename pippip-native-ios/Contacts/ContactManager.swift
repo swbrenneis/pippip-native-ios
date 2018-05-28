@@ -6,9 +6,7 @@
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
-import UIKit
-import RKDropdownAlert
-import ChameleonFramework
+import Foundation
 
 struct ContactRequest: Hashable {
 
@@ -41,7 +39,7 @@ struct ContactRequest: Hashable {
 
 class ContactManager: NSObject {
 
-    static private var contactList = [Contact]()
+    static private var contactSet = Set<Contact>()
     static private var contactMap = [String: Contact]()
     static private var contactIdMap = [Int: Contact]()
     static private var requestSet = Set<ContactRequest>()
@@ -52,6 +50,10 @@ class ContactManager: NSObject {
     var pendingRequests: Set<ContactRequest> {
         return ContactManager.requestSet
     }
+    var contactList: [Contact] {
+        return Array(ContactManager.contactSet)
+    }
+    var alertPresenter = AlertPresenter()
  
     override init() {
 
@@ -62,7 +64,16 @@ class ContactManager: NSObject {
         let sessionState = SessionState()
         if (sessionState.authenticated && !ContactManager.initialized) {
             ContactManager.initialized = true
-            ContactManager.contactList = contactDatabase.getContactList()
+            let list = contactDatabase.getContactList()
+            for contact in list {
+                ContactManager.contactSet.insert(contact)
+            }
+            let requests = contactDatabase.getContactRequests()
+            for request in requests {
+                if let contactRequest = ContactRequest(serverRequest: request) {
+                    ContactManager.requestSet.insert(contactRequest)
+                }
+            }
             mapContacts()
         }
         
@@ -82,15 +93,14 @@ class ContactManager: NSObject {
                 contact.nickname = contactRequest.nickname
                 self.addContact(contact)
                 ContactManager.requestSet.remove(contactRequest)
+                self.contactDatabase.deleteContactRequest(contact.publicId)
                 DispatchQueue.global().async {
                     NotificationCenter.default.post(name: Notifications.RequestAcknowledged, object: contact)
                 }
             }
             else {
-                var info = [AnyHashable: Any]()
-                info["title"] = "Contact Error"
-                info["message"] = "Invalid response to acknowledgement"
-                NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+                self.alertPresenter.errorAlert(title: "Contact Error",
+                                               message: "Invalid response to acknowledgement")
             }
         })
         ackTask.errorTitle = "Contact Error"
@@ -101,17 +111,14 @@ class ContactManager: NSObject {
     func addContact(_ contact: Contact) {
 
         if ContactManager.contactMap[contact.publicId] != nil {
-            var info = [AnyHashable:Any]()
-            info["title"] = "Contact Error"
-            info["message"] = "Attempted to add duplicate contact"
-            NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+            alertPresenter.errorAlert(title: "Contact Error", message: "Attempted to add duplicate contact")
         }
         else {
             contact.contactId = config.newContactId()
             contactDatabase.add(contact)
             ContactManager.contactMap[contact.publicId] = contact
             ContactManager.contactIdMap[contact.contactId] = contact
-            ContactManager.contactList.append(contact)
+            ContactManager.contactSet.insert(contact)
         }
         
     }
@@ -137,13 +144,17 @@ class ContactManager: NSObject {
 
     }
 
-    // Returns true if new requests were added
     func addRequests(_ requests: [[AnyHashable: Any]]) {
 
+        var newRequests = [[AnyHashable: Any]]()
         for request in requests {
             if let contactRequest = ContactRequest(serverRequest: request) {
                 ContactManager.requestSet.insert(contactRequest)
+                newRequests.append(request)
             }
+        }
+        if !newRequests.isEmpty {
+            contactDatabase.addContactRequests(newRequests)
         }
 
     }
@@ -151,7 +162,7 @@ class ContactManager: NSObject {
     func allContactIds() -> [Int] {
 
         var allIds = [Int]()
-        for contact in ContactManager.contactList {
+        for contact in ContactManager.contactSet {
             allIds.append(contact.contactId)
         }
         return allIds
@@ -160,7 +171,7 @@ class ContactManager: NSObject {
 
     @objc func clearContacts() {
 
-        ContactManager.contactList.removeAll()
+        ContactManager.contactSet.removeAll()
         ContactManager.contactMap.removeAll()
         ContactManager.contactIdMap.removeAll()
         ContactManager.initialized = false
@@ -181,13 +192,13 @@ class ContactManager: NSObject {
                     ContactManager.contactMap.removeValue(forKey: publicId)
                     let messageDatabase = MessagesDatabase()
                     messageDatabase.clearMessages(contactId)
-                    var newList = [Contact]()
-                    for contact in ContactManager.contactList {
+                    var newSet = Set<Contact>()
+                    for contact in ContactManager.contactSet {
                         if contact.publicId != publicId {
-                            newList.append(contact)
+                            newSet.insert(contact)
                         }
                     }
-                    ContactManager.contactList = newList
+                    ContactManager.contactSet = newSet
                     NotificationCenter.default.post(name: Notifications.ContactDeleted, object: publicId, userInfo: nil)
                     NotificationCenter.default.post(name: Notifications.MessagesUpdated, object: nil)
                 }
@@ -235,10 +246,40 @@ class ContactManager: NSObject {
 
     }
 
-    @objc func getContactList() -> [Contact] {
-        return ContactManager.contactList
+    @objc func getRequestStatus(retry: Bool, publicId: String?) {
+        
+        var pending = [String]()
+        if retry {
+            pending.append(publicId!)
+        }
+        else {
+            for contact in ContactManager.contactSet {
+                if contact.status == "pending" {
+                    pending.append(contact.publicId)
+                }
+            }
+        }
+        
+        var request = [String: Any]()
+        request["method"] = "GetRequestStatus"
+        request["requestedIds"] = pending
+        let updateTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
+            if let serverContacts = response["contacts"] as? [[AnyHashable: Any]] {
+                if serverContacts.count > 0 {
+                    let updated = self.updateContacts(serverContacts)
+                    NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updated)
+                    print("\(updated.count) contacts updated")
+                }
+                else if retry {
+                    self.requestContact(publicId: publicId!, nickname: nil, retry: true)
+                }
+            }
+        })
+        updateTask.errorTitle = "Contact Error"
+        updateTask.sendRequest(request)
+        
     }
-
+    
     @objc func getPendingRequests() {
 
         var request = [String: Any]()
@@ -258,10 +299,7 @@ class ContactManager: NSObject {
                 }
             }
             else {
-                var info = [AnyHashable: Any]()
-                info["title"] = "Contact Error"
-                info["message"] = "Invalid response to get requests"
-                NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+                self.alertPresenter.errorAlert(title: "Contact Error", message: "Invalid server response")
             }
         })
         getTask.errorTitle = "Contact Error"
@@ -272,7 +310,7 @@ class ContactManager: NSObject {
     func mapContacts() {
         
         ContactManager.contactMap.removeAll()
-        for contact in ContactManager.contactList {
+        for contact in ContactManager.contactSet {
             ContactManager.contactMap[contact.publicId] = contact
             ContactManager.contactIdMap[contact.contactId] = contact
         }
@@ -303,10 +341,7 @@ class ContactManager: NSObject {
         request["method"] = "RequestContact"
         request["id"] = publicId
         if ContactManager.contactMap[publicId] != nil && !retry {
-            var info = [AnyHashable: Any]()
-            info["title"] = "Contact Error"
-            info["message"] = "This contact already exists in your contact list"
-            NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+            alertPresenter.errorAlert(title: "ContactError", message: "This contact already exists in your contact list")
         }
         else {
             let reqTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
@@ -328,7 +363,7 @@ class ContactManager: NSObject {
     func searchContacts(_ fragment:String) -> [Contact] {
 
         var result = [Contact]()
-        for contact in ContactManager.contactList {
+        for contact in ContactManager.contactSet {
             let pCompare = contact.publicId.uppercased()
             if (pCompare.contains(fragment)) {
                 result.append(contact)
@@ -381,15 +416,11 @@ class ContactManager: NSObject {
         
     }
     
-    func updateContact(_ contact: Contact) {
+    func updateContact(_ update: Contact) {
 
-        contactDatabase.update([contact])
-        ContactManager.contactMap[contact.publicId] = contact
-        for index in 0..<ContactManager.contactList.count {
-            if ContactManager.contactList[index].publicId == contact.publicId {
-                ContactManager.contactList[index] = contact
-            }
-        }
+        contactDatabase.update([update])
+        ContactManager.contactMap[update.publicId] = update
+        ContactManager.contactSet.update(with: update)
 
     }
 
@@ -398,58 +429,33 @@ class ContactManager: NSObject {
         var updates = [Contact]()
 
         for serverContact in serverContacts {
-            let publicId = serverContact["publicId"] as? String ?? ""
-            if let contact = ContactManager.contactMap[publicId] {
-                contact.status = serverContact["status"] as! String
-                contact.timestamp = (serverContact["timestamp"] as! NSNumber).int64Value
-                let authData = serverContact["authData"] as! String
-                contact.authData = Data(base64Encoded: authData)
-                let nonce = serverContact["nonce"] as! String
-                contact.nonce = Data(base64Encoded: nonce)
-                let keys = serverContact["messageKeys"] as! [String]
-                var messageKeys = [Data]()
-                for key in keys {
-                    messageKeys.append(Data(base64Encoded: key)!)
+            let status = serverContact["status"] as! String
+            if status == "accepted" {
+                let publicId = serverContact["publicId"] as! String
+                if let contact = ContactManager.contactMap[publicId] {
+                    contact.status = serverContact["status"] as! String
+                    contact.timestamp = (serverContact["timestamp"] as! NSNumber).int64Value
+                    
+                    let authData = serverContact["authData"] as! String
+                    contact.authData = Data(base64Encoded: authData)
+                    let nonce = serverContact["nonce"] as! String
+                    contact.nonce = Data(base64Encoded: nonce)
+                    let keys = serverContact["messageKeys"] as! [String]
+                    var messageKeys = [Data]()
+                    for key in keys {
+                        messageKeys.append(Data(base64Encoded: key)!)
+                    }
+                    contact.messageKeys = messageKeys
+                    updates.append(contact)
                 }
-                contact.messageKeys = messageKeys
-                updates.append(contact)
-            }
-            else {
-                var info = [AnyHashable: Any]()
-                info["title"] = "Contact Error"
-                info["message"] = "Updated contact not found"
-                NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+                else {
+                    alertPresenter.errorAlert(title: "Contact Error", message: "Updated contact not found")
+                }
             }
         }
         contactDatabase.update(updates)
         return updates
 
-    }
-
-    @objc func updatePendingContacts() {
-
-        var pending = [String]()
-        for contact in ContactManager.contactList {
-            if contact.status == "pending" {
-                pending.append(contact.publicId)
-            }
-        }
-
-        var request = [String: Any]()
-        request["method"] = "UpdatePendingContacts"
-        request["pending"] = pending
-        let updateTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
-            if let serverContacts = response["contacts"] as? [[AnyHashable: Any]] {
-                if serverContacts.count > 0 {
-                    let updated = self.updateContacts(serverContacts)
-                    NotificationCenter.default.post(name: Notifications.PendingContactsUpdated, object: updated)
-                    print("\(updated.count) contacts updated")
-                }
-            }
-        })
-        updateTask.errorTitle = "Contact Error"
-        updateTask.sendRequest(request)
-        
     }
 
 }
@@ -474,11 +480,7 @@ extension ContactManager {
             deleteContact(publicId)
         }
         else {
-            let alertColor = UIColor.flatSand
-            RKDropdownAlert.title("Delete Contact Error", message: "That nickname doesn't exist",
-                                  backgroundColor: alertColor,
-                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                  time: 2, delegate: nil)
+            alertPresenter.errorAlert(title: "Delete Contact Error", message: "That nickname doesn't exist")
         }
 
     }

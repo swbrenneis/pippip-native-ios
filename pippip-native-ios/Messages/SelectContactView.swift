@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import RKDropdownAlert
 
 class SelectContactView: UIView {
 

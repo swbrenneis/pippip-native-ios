@@ -8,16 +8,16 @@
 
 import Chatto
 import ChattoAdditions
-import RKDropdownAlert
 import ChameleonFramework
 
-class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
+class ChattoViewController: BaseChatViewController {
 
     @objc var contact: Contact?
     var selectView: SelectContactView?
     var chatInputPresenter: BasicChatInputBarPresenter!
     var dataSource: ChattoDataSource!
     var messageManager = MessageManager()
+    var alertPresenter = AlertPresenter()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +39,7 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        alertPresenter.present = true
         if contact != nil {
             dataSource =
                 ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
@@ -55,24 +56,15 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
             self.view.addSubview(self.selectView!)
         }
         
-//        localAuth.visible = true
-/*
-        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
-                                               name: Notifications.AppResumed, object: nil)
-*/
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                name: Notifications.AppSuspended, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
-                                               name: Notifications.PresentAlert, object: nil)
 
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-//        localAuth.visible = false
-        NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
+        alertPresenter.present = true
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
         
     }
@@ -200,26 +192,4 @@ class ChattoViewController: BaseChatViewController, RKDropdownAlertDelegate {
         
     }
 
-    @objc func presentAlert(_ notification: Notification) {
-        
-        let userInfo = notification.userInfo!
-        let title = userInfo["title"] as? String
-        let message = userInfo["message"] as? String
-        DispatchQueue.main.async {
-            let alertColor = UIColor.flatSand
-            RKDropdownAlert.title(title, message: message, backgroundColor: alertColor,
-                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                  time: 2, delegate: self)
-        }
-        
-    }
-    
-    func dropdownAlertWasTapped(_ alert: RKDropdownAlert!) -> Bool {
-        return true
-    }
-    
-    func dropdownAlertWasDismissed() -> Bool {
-        return true
-    }
-    
 }

@@ -9,7 +9,6 @@
 import UIKit
 import FrostedSidebar
 import ChameleonFramework
-import RKDropdownAlert
 import LocalAuthentication
 import Sheriff
 
@@ -85,11 +84,15 @@ class MessagesViewController: UIViewController {
             self.signOut()
         }
 
+        var rightBarItems = [UIBarButtonItem]()
         let image = UIImage(named: "hamburgermenu")
         let hamburger = UIBarButtonItem(image: image, style: .plain, target: self,
                                         action: #selector(showSidebar(_:)))
-        var rightBarItems = [UIBarButtonItem]()
         rightBarItems.append(hamburger)
+        #if targetEnvironment(simulator)
+        let pollButton = UIBarButtonItem(title: "Poll", style: .plain, target: self, action: #selector(pollServer(_ :)))
+        rightBarItems.append(pollButton)
+        #endif
         self.navigationItem.rightBarButtonItems = rightBarItems
         var leftBarItems = [UIBarButtonItem]()
         let composeImage = UIImage(named: "compose-small")?.withRenderingMode(.alwaysOriginal)
@@ -139,6 +142,8 @@ class MessagesViewController: UIViewController {
         else if sessionState.authenticated {
             getMostRecentMessages()
             tableView.reloadData()
+            let requests = contactManager.pendingRequests
+            contactBadge.badgeValue = requests.count
         }
         else {
             localAuth.visible = true
@@ -168,6 +173,12 @@ class MessagesViewController: UIViewController {
 
     }
 
+    #if targetEnvironment(simulator)
+    @objc func pollServer(_ sender: Any) {
+        ApplicationSingleton.instance().accountSession.doUpdates()
+    }
+    #endif
+
     @objc func showContacts(_ item: Any) {
 
         self.navigationController?.pushViewController(self.contactsView, animated: true)
@@ -191,7 +202,7 @@ class MessagesViewController: UIViewController {
     func getMostRecentMessages() {
 
         previews.removeAll()
-        let contactList = contactManager.getContactList()
+        let contactList = contactManager.contactList
         for contact in contactList {
             let conversation = ConversationCache.getConversation(contact.contactId)
             if let message = conversation.mostRecentMessage() {
@@ -212,9 +223,11 @@ class MessagesViewController: UIViewController {
     @objc func newSession(_ notification: Notification) {
 
         getMostRecentMessages()
+        let requests = contactManager.pendingRequests
         DispatchQueue.main.async {
             self.tableView.reloadData()
             self.localAuth.visible = false
+            self.contactBadge.badgeValue = requests.count
         }
 
     }
@@ -229,10 +242,10 @@ class MessagesViewController: UIViewController {
     }
 
     @objc func requestsUpdated(_ notification: Notification) {
-        
-        guard let requestCount = notification.object as? Int else { return }
+
+        let requests = contactManager.pendingRequests
         DispatchQueue.main.async {
-            let badgeCount = self.contactBadge.badgeValue + requestCount
+            let badgeCount = requests.count
             self.contactBadge.badgeValue = badgeCount
         }
         

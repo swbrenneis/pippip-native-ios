@@ -27,6 +27,7 @@ class PendingRequestCell: ExpandingTableCell {
     override func setLightTheme() {
         
         nicknameLabel.textColor = PippipTheme.lightTextColor
+        publicIdLabel.textColor = PippipTheme.lightTextColor
         super.setLightTheme()
         
     }
@@ -34,6 +35,7 @@ class PendingRequestCell: ExpandingTableCell {
     override func setMediumTheme() {
         
         nicknameLabel.textColor = PippipTheme.mediumTextColor
+        publicIdLabel.textColor = PippipTheme.mediumTextColor
         super.setMediumTheme()
         
     }
@@ -41,6 +43,7 @@ class PendingRequestCell: ExpandingTableCell {
     override func setDarkTheme() {
         
         nicknameLabel.textColor = PippipTheme.darkTextColor
+        publicIdLabel.textColor = PippipTheme.darkTextColor
         super.setDarkTheme()
         
     }

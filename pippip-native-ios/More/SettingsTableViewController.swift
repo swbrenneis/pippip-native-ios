@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import RKDropdownAlert
 import ChameleonFramework
 
 class SettingsTableViewController: UITableViewController {
