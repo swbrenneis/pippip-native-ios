@@ -7,12 +7,31 @@
 //
 
 import UIKit
+import AudioToolbox
 
 @objc class MessageManager: NSObject {
+
+    static var sendSoundId: SystemSoundID = 0
+    static var receiveSoundId: SystemSoundID = 0
+    static var initialized = false
 
     var messageDatabase = MessagesDatabase()
     var contactManager = ContactManager()
     var config = Configurator()
+
+    override init() {
+
+        if !MessageManager.initialized {
+            MessageManager.initialized = true
+            if let sendUrl = Bundle.main.url(forResource: "iphone_send_sms", withExtension: "mp3") {
+                AudioServicesCreateSystemSoundID(sendUrl as CFURL, &MessageManager.sendSoundId)
+            }
+            if let receiveUrl = Bundle.main.url(forResource: "iphone_receive_sms", withExtension: "mp3") {
+                AudioServicesCreateSystemSoundID(receiveUrl as CFURL, &MessageManager.receiveSoundId)
+            }
+        }
+        
+    }
 
     func acknowledgeMessages(_ textMessages:[TextMessage]) {
 
@@ -121,7 +140,6 @@ import UIKit
                     }
                 }
                 if !textMessages.isEmpty {
-                    //self.addTextMessages(textMessages)
                     self.acknowledgeMessages(textMessages)
                 }
             }
@@ -150,20 +168,7 @@ import UIKit
         return messageDatabase.mostRecentTextMessage(contactId);
 
     }
-/*
-    @objc func mostRecentMessages() -> [TextMessage] {
 
-        var messages = [TextMessage]()
-        let contactIds = contactManager.allContactIds()
-        for contactId in contactIds {
-            if let message = messageDatabase.mostRecentTextMessage(contactId) {
-                messages.append(message)
-            }
-        }
-        return messages
-
-    }
-*/
     func scrubCleartext() {
         
         let messageIds = messageDatabase.allMessageIds();
@@ -190,6 +195,9 @@ import UIKit
                 textMessage.timestamp = ts.int64Value
                 textMessage.acknowledged = true
                 self.messageDatabase.update(textMessage)
+                DispatchQueue.main.async {
+                    AudioServicesPlaySystemSound(MessageManager.sendSoundId)
+                }
             }
         })
         let contact = contactManager.getContactById(textMessage.contactId)

@@ -15,8 +15,8 @@ class SlidingMessageWindow: NSObject {
     var windowSize: Int
     var windowPos: Int
     var window: [TextMessage]
-    var items: [ChatItemProtocol]
-    var suspendedItems: [ChatItemProtocol]?
+    var items: [PippipTextMessageModel]
+    //var suspendedItems: [ChatItemProtocol]?
 
     init(conversation: Conversation, windowSize: Int) {
 
@@ -25,7 +25,7 @@ class SlidingMessageWindow: NSObject {
 
         windowPos = max(0, conversation.messageCount - windowSize)
         window = conversation.getMessages(pos: windowPos, count: windowSize)
-        items = [ChatItemProtocol]()
+        items = [PippipTextMessageModel]()
         for textMessage in window {
             items.append(PippipTextMessageModel(textMessage: textMessage))
         }
@@ -61,23 +61,29 @@ class SlidingMessageWindow: NSObject {
 
     }
 
-    func newMessages() {
+    func newMessages() -> Bool {
 
         let newMessages = conversation.newMessages
-        for message in newMessages {
-            items.append(PippipTextMessageModel(textMessage: message))
+        if newMessages.count > 0 {
+            for message in newMessages {
+                items.append(PippipTextMessageModel(textMessage: message))
+            }
+            window.append(contentsOf: newMessages)
+            conversation.markMessagesRead(newMessages)
+            return true
         }
-        window.append(contentsOf: newMessages)
-        conversation.markMessagesRead(newMessages)
+        else {
+            return false
+        }
 
     }
-
+/*
     func resume() {
 
         items = suspendedItems!
 
     }
-
+*/
     func slideDown() {
 
         if canSlideDown() {
@@ -93,7 +99,7 @@ class SlidingMessageWindow: NSObject {
             windowPos = max(0, windowPos - windowSize)
             let newSize = min(windowSize, conversation.messageCount - window.count)
             var newWindow = conversation.getMessages(pos: windowPos, count: newSize)
-            var newItems = [ChatItemProtocol]()
+            var newItems = [PippipTextMessageModel]()
             for message in newWindow {
                 newItems.append(PippipTextMessageModel(textMessage: message))
             }
@@ -104,14 +110,14 @@ class SlidingMessageWindow: NSObject {
         }
 
     }
-
+/*
     func suspend() {
 
         suspendedItems = items
         items.removeAll()
     
     }
-
+*/
     func updateChatItem(_ textMessage: TextMessage) {
 
         for index in 0..<window.count {

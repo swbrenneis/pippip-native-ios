@@ -8,6 +8,7 @@
 
 import Chatto
 import ChattoAdditions
+import AudioToolbox
 
 class ChattoDataSource: ChatDataSourceProtocol {
 
@@ -24,6 +25,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
     var chatItems: [ChatItemProtocol] {
         return slidingWindow.items
     }
+    var visible = false
     var delegate: ChatDataSourceDelegateProtocol?
     var slidingWindow: SlidingMessageWindow
 
@@ -35,10 +37,10 @@ class ChattoDataSource: ChatDataSourceProtocol {
                                                name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(cleartextAvailable(_:)),
                                                name: Notifications.CleartextAvailable, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
+/*        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
                                                name: Notifications.AppResumed, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
-                                               name: Notifications.AppSuspended, object: nil)
+                                               name: Notifications.AppSuspended, object: nil) */
 
     }
 
@@ -76,8 +78,14 @@ class ChattoDataSource: ChatDataSourceProtocol {
     @objc func newMessages(_ notification: Notification) {
 
         DispatchQueue.main.async {
-            self.slidingWindow.newMessages()
-            self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
+            if self.slidingWindow.newMessages() {
+                self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
+                if self.visible {
+                    DispatchQueue.main.async {
+                        AudioServicesPlaySystemSound(MessageManager.receiveSoundId)
+                    }
+                }
+            }
         }
         
     }
@@ -92,7 +100,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
         }
 
     }
-
+/*
     @objc func appResumed(_ notification: Notification) {
 
         DispatchQueue.main.async {
@@ -110,5 +118,5 @@ class ChattoDataSource: ChatDataSourceProtocol {
         }
 
     }
-
+*/
 }

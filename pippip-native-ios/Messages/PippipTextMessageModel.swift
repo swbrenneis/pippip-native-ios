@@ -13,10 +13,12 @@ class PippipTextMessageModel: TextMessageModel<PippipMessageModel> {
 
     var message: Message
     var messageText = "Processing..."
+    var pippipMessageModel: PippipMessageModel
 
     init(textMessage: TextMessage) {
 
         message = textMessage
+        pippipMessageModel = PippipMessageModel(textMessage)
         if textMessage.cleartext != nil {
             messageText = textMessage.cleartext!
         }
@@ -29,7 +31,19 @@ class PippipTextMessageModel: TextMessageModel<PippipMessageModel> {
                 textMessage.decrypt(noNotify: false)
             }
         }
-        super.init(messageModel: PippipMessageModel(textMessage), text: messageText)
+        super.init(messageModel: pippipMessageModel, text: messageText)
+
+    }
+
+    func messageSent() {
+
+        pippipMessageModel.status = .success
+
+    }
+
+    func sendFailed() {
+
+        pippipMessageModel.status = .failed
 
     }
 

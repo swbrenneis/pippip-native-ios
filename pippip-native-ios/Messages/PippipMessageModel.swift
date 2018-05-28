@@ -26,7 +26,7 @@ class PippipMessageModel: MessageModelProtocol {
         senderId = contact.displayName
         isIncoming = !message.originating
         date = Date(timeIntervalSince1970: Double(message.timestamp) / 1000)
-        status = .success
+        status = .sending
         type = "text-message-type"
         uid = "\(message.messageId)"
 

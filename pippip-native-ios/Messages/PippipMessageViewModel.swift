@@ -24,13 +24,23 @@ class PippipMessageViewModel: MessageViewModelProtocol {
         decorationAttributes = BaseMessageDecorationAttributes()
         isIncoming = model.isIncoming
         isUserInteractionEnabled = false
-        isShowingFailedIcon = false
+        isShowingFailedIcon = model.status == .failed
         let formatter = DateFormatter()
         formatter.timeStyle = .medium
         formatter .dateStyle = .medium
         date = formatter.string(from: model.date)
-        status = .success
         avatarImage = Observable(UIImage(named: "avatar-user-small"))
+        switch model.status {
+        case .sending:
+            status = .sending
+            break
+        case .success:
+            status = .success
+            break
+        case .failed:
+            status = .failed
+            break
+        }
 
     }
 

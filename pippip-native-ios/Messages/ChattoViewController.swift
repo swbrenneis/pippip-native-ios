@@ -15,7 +15,7 @@ class ChattoViewController: BaseChatViewController {
     @objc var contact: Contact?
     var selectView: SelectContactView?
     var chatInputPresenter: BasicChatInputBarPresenter!
-    var dataSource: ChattoDataSource!
+    var dataSource: ChattoDataSource?
     var messageManager = MessageManager()
     var alertPresenter = AlertPresenter()
 
@@ -55,7 +55,8 @@ class ChattoViewController: BaseChatViewController {
             selectView!.center = self.view.center
             self.view.addSubview(self.selectView!)
         }
-        
+        dataSource?.visible = true
+
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                name: Notifications.AppSuspended, object: nil)
 
@@ -64,7 +65,8 @@ class ChattoViewController: BaseChatViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        alertPresenter.present = true
+        alertPresenter.present = false
+        dataSource?.visible = false
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
         
     }
@@ -97,7 +99,7 @@ class ChattoViewController: BaseChatViewController {
             do {
                 let conversation = ConversationCache.getConversation(contactId)
                 try conversation.sendMessage(textMessage)
-                self?.dataSource.addTextMessage(textMessage)
+                self?.dataSource?.addTextMessage(textMessage)
             }
             catch {
                 // TODO: Show alert
@@ -106,15 +108,7 @@ class ChattoViewController: BaseChatViewController {
         }
         return item
     }
-/*
-    private func createPhotoInputItem() -> PhotosChatInputItem {
-        let item = PhotosChatInputItem(presentingController: self)
-        item.photoInputHandler = { [weak self] image in
-            // Your handling logic
-        }
-        return item
-    }
-*/
+
     override func createPresenterBuilders() -> [ChatItemType : [ChatItemPresenterBuilderProtocol]] {
 
         let textMessagePresenter = TextMessagePresenterBuilder(
@@ -135,7 +129,7 @@ class ChattoViewController: BaseChatViewController {
     
     @objc func clearMessages(_ item: Any) {
 
-        self.dataSource.clearMessages()
+        self.dataSource?.clearMessages()
         
         var items = [UIBarButtonItem]()
         let editItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editMessages(_:)))
@@ -156,22 +150,7 @@ class ChattoViewController: BaseChatViewController {
         self.navigationItem.rightBarButtonItems = items
         
     }
-/*
-    @objc func appResumed(_ notification: Notification) {
-        
-        if suspended {
-            suspended = false
-            if let info = notification.userInfo {
-                authView?.suspendedTime = (info["suspendedTime"] as! NSNumber).intValue
-            }
-            DispatchQueue.main.async {
-                self.present(self.authView!, animated: true, completion: nil)
-            }
-            
-        }
-        
-    }
-*/
+
     @objc func appSuspended(_ notification: Notification) {
 
         DispatchQueue.main.async {
@@ -185,6 +164,7 @@ class ChattoViewController: BaseChatViewController {
         contact = notification.object as? Contact
         dataSource =
             ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
+        dataSource?.visible = true
         DispatchQueue.main.async {
             self.chatDataSource = self.dataSource
             self.navigationItem.title = self.contact!.displayName
