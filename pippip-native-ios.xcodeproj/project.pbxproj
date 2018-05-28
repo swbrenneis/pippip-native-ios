@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		344BAD4BA2839C4607732E00 /* Pods_pippip_native_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EAF080C88C70EE3FD9244478 /* Pods_pippip_native_ios.framework */; };
-		550007B62077A80200103882 /* BaseExpandingTableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550007B52077A80200103882 /* BaseExpandingTableModel.swift */; };
 		550007BC2078203B00103882 /* EnclaveTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550007BB2078203B00103882 /* EnclaveTask.swift */; };
 		55006BA720B48BA80040C2DD /* Configurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55006BA620B48BA80040C2DD /* Configurator.swift */; };
 		55006BAB20B9889B0040C2DD /* ContactDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55006BAA20B9889B0040C2DD /* ContactDetailCell.swift */; };
@@ -33,8 +32,6 @@
 		5527BAB41F8D58D300C40D05 /* RESTSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB31F8D58D300C40D05 /* RESTSession.m */; };
 		5527BAB81F8DB81B00C40D05 /* NewAccountResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB71F8DB81A00C40D05 /* NewAccountResponse.m */; };
 		55316C8B206AD21800EB1AF7 /* PendingRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55316C8A206AD21800EB1AF7 /* PendingRequestCell.swift */; };
-		55316C90206B32F700EB1AF7 /* ExpandingTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55316C8F206B32F700EB1AF7 /* ExpandingTableView.swift */; };
-		55316C94206B33A300EB1AF7 /* ExpandingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55316C93206B33A300EB1AF7 /* ExpandingTableViewCell.swift */; };
 		5536A6832067559400B7E6D8 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A6822067559400B7E6D8 /* Notifications.swift */; };
 		5536A68B206831B400B7E6D8 /* SwiftConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A68A206831B400B7E6D8 /* SwiftConfigurator.swift */; };
 		5536A68D206897D200B7E6D8 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A68C206897D200B7E6D8 /* ContactsViewController.swift */; };
@@ -80,7 +77,6 @@
 		5592A5971F8BBB4400F08BF5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5592A5951F8BBB4400F08BF5 /* LaunchScreen.storyboard */; };
 		5592A59A1F8BBB4500F08BF5 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5991F8BBB4500F08BF5 /* main.mm */; };
 		5592A5A41F8BBB4500F08BF5 /* pippip_native_iosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5A31F8BBB4500F08BF5 /* pippip_native_iosTests.m */; };
-		55A734AF206EC0FC00D31AD6 /* ExpandingTableModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A734AE206EC0FC00D31AD6 /* ExpandingTableModelProtocol.swift */; };
 		55AA54DA1FA14B1E00A7026B /* ByteArrayInputStream.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA54C61FA14B1D00A7026B /* ByteArrayInputStream.cc */; };
 		55AA54DB1FA14B1E00A7026B /* ByteArrayOutputStream.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA54CA1FA14B1D00A7026B /* ByteArrayOutputStream.cc */; };
 		55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA54CC1FA14B1D00A7026B /* Unsigned16.cc */; };
@@ -162,7 +158,6 @@
 		55FD018C20B0CA120028435E /* MultiCellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD018B20B0CA120028435E /* MultiCellProtocol.swift */; };
 		55FD018E20B0D1930028435E /* SetNicknameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD018D20B0D1930028435E /* SetNicknameCell.swift */; };
 		55FD019020B102510028435E /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD018F20B102510028435E /* AlertPresenter.swift */; };
-		55FD019220B2F3EC0028435E /* ExpandingTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD019120B2F3EC0028435E /* ExpandingTableCell.swift */; };
 		AB0F2126D201B71442A7B29F /* Pods_pippip_native_iosTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D45A36A5745F6B3DF862F12 /* Pods_pippip_native_iosTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -192,7 +187,6 @@
 /* Begin PBXFileReference section */
 		192F741F7B0115DDA516D72E /* Pods-pippip-native-iosTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pippip-native-iosTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-pippip-native-iosTests/Pods-pippip-native-iosTests.release.xcconfig"; sourceTree = "<group>"; };
 		4FD6FDE140DF1C87A98B2C7C /* Pods-pippip-native-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pippip-native-ios.release.xcconfig"; path = "Pods/Target Support Files/Pods-pippip-native-ios/Pods-pippip-native-ios.release.xcconfig"; sourceTree = "<group>"; };
-		550007B52077A80200103882 /* BaseExpandingTableModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseExpandingTableModel.swift; sourceTree = "<group>"; };
 		550007BB2078203B00103882 /* EnclaveTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnclaveTask.swift; sourceTree = "<group>"; };
 		55006BA620B48BA80040C2DD /* Configurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configurator.swift; sourceTree = "<group>"; };
 		55006BAA20B9889B0040C2DD /* ContactDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailCell.swift; sourceTree = "<group>"; };
@@ -229,8 +223,6 @@
 		5527BAB61F8DB81A00C40D05 /* NewAccountResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountResponse.h; sourceTree = "<group>"; };
 		5527BAB71F8DB81A00C40D05 /* NewAccountResponse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountResponse.m; sourceTree = "<group>"; };
 		55316C8A206AD21800EB1AF7 /* PendingRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingRequestCell.swift; sourceTree = "<group>"; };
-		55316C8F206B32F700EB1AF7 /* ExpandingTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandingTableView.swift; sourceTree = "<group>"; };
-		55316C93206B33A300EB1AF7 /* ExpandingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandingTableViewCell.swift; sourceTree = "<group>"; };
 		5536A6822067559400B7E6D8 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		5536A68A206831B400B7E6D8 /* SwiftConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftConfigurator.swift; sourceTree = "<group>"; };
 		5536A68C206897D200B7E6D8 /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
@@ -292,7 +284,6 @@
 		5592A59F1F8BBB4500F08BF5 /* pippip-native-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pippip-native-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5592A5A31F8BBB4500F08BF5 /* pippip_native_iosTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = pippip_native_iosTests.m; sourceTree = "<group>"; };
 		5592A5A51F8BBB4500F08BF5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		55A734AE206EC0FC00D31AD6 /* ExpandingTableModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandingTableModelProtocol.swift; sourceTree = "<group>"; };
 		55AA54C11FA14B1D00A7026B /* BadParameterException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BadParameterException.h; sourceTree = "<group>"; };
 		55AA54C21FA14B1D00A7026B /* OutOfRangeException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutOfRangeException.h; sourceTree = "<group>"; };
 		55AA54C31FA14B1D00A7026B /* Unsigned64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unsigned64.h; sourceTree = "<group>"; };
@@ -457,7 +448,6 @@
 		55FD018B20B0CA120028435E /* MultiCellProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiCellProtocol.swift; sourceTree = "<group>"; };
 		55FD018D20B0D1930028435E /* SetNicknameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetNicknameCell.swift; sourceTree = "<group>"; };
 		55FD018F20B102510028435E /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
-		55FD019120B2F3EC0028435E /* ExpandingTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandingTableCell.swift; sourceTree = "<group>"; };
 		5601D2975F6170FB85CE94D6 /* Pods-pippip-native-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pippip-native-ios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pippip-native-ios/Pods-pippip-native-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		654663B39B017346F8ACE361 /* Pods-pippip-native-iosTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pippip-native-iosTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pippip-native-iosTests/Pods-pippip-native-iosTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7D45A36A5745F6B3DF862F12 /* Pods_pippip_native_iosTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_pippip_native_iosTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -503,11 +493,6 @@
 			children = (
 				55A734B6206ECEEB00D31AD6 /* Nibs */,
 				55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */,
-				550007B52077A80200103882 /* BaseExpandingTableModel.swift */,
-				55FD019120B2F3EC0028435E /* ExpandingTableCell.swift */,
-				55A734AE206EC0FC00D31AD6 /* ExpandingTableModelProtocol.swift */,
-				55316C8F206B32F700EB1AF7 /* ExpandingTableView.swift */,
-				55316C93206B33A300EB1AF7 /* ExpandingTableViewCell.swift */,
 				55E970B020B07D14008C2F39 /* PippipTableViewCell.swift */,
 				55E970B220B07DAE008C2F39 /* PippipTheme.swift */,
 			);
@@ -1129,7 +1114,6 @@
 				55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */,
 				55AA554C1FA14D7100A7026B /* DigestBase.cc in Sources */,
 				55B17DAF20A1492600DA16DE /* MessagesViewController.swift in Sources */,
-				55FD019220B2F3EC0028435E /* ExpandingTableCell.swift in Sources */,
 				55E029322093AAC00074B97F /* ChattoViewController.swift in Sources */,
 				557C2B5F2093C5530069336D /* PippipTextMessageViewModel.swift in Sources */,
 				55579E512024C21F00131A54 /* DatabaseContact.m in Sources */,
@@ -1145,7 +1129,6 @@
 				551051082020BC36000A313E /* DatabaseMessage.m in Sources */,
 				55E7593E20674DAE009BAA1C /* WhitelistViewController.swift in Sources */,
 				55B3911F1FE17383004DAFF7 /* EnclaveResponse.m in Sources */,
-				55316C94206B33A300EB1AF7 /* ExpandingTableViewCell.swift in Sources */,
 				5586B88E2064951000641514 /* ParameterGenerator.swift in Sources */,
 				551050FF201F8840000A313E /* MessagesDatabase.m in Sources */,
 				5516978F20994A01002BB4C1 /* MessagesHeadingCell.swift in Sources */,
@@ -1153,7 +1136,6 @@
 				554D01CE207DA4C000C19373 /* CleartextMessagesCell.swift in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
 				557C2B592093B8360069336D /* PippipTextMessageModel.swift in Sources */,
-				55316C90206B32F700EB1AF7 /* ExpandingTableView.swift in Sources */,
 				557C2B692093F5F50069336D /* TextMessageDecorator.swift in Sources */,
 				55666649201B7C9000051ED2 /* LoggingErrorDelegate.m in Sources */,
 				55AA55581FA14D7100A7026B /* HMAC.cc in Sources */,
@@ -1223,7 +1205,6 @@
 				5586B88C206493D000641514 /* HexCodec.m in Sources */,
 				5592A59A1F8BBB4500F08BF5 /* main.mm in Sources */,
 				5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */,
-				55A734AF206EC0FC00D31AD6 /* ExpandingTableModelProtocol.swift in Sources */,
 				55AA55651FA14D7100A7026B /* Random.cc in Sources */,
 				55FB2F662032375A005E3730 /* AccountConfig.m in Sources */,
 				55E970A320AAE05E008C2F39 /* ClientAuthChallenge.swift in Sources */,
@@ -1248,7 +1229,6 @@
 				55666646201A68AF00051ED2 /* AccountSession.m in Sources */,
 				55AA55501FA14D7100A7026B /* PSSmgf1.cc in Sources */,
 				55AA55531FA14D7100A7026B /* CCSecureRandom.cc in Sources */,
-				550007B62077A80200103882 /* BaseExpandingTableModel.swift in Sources */,
 				55FA87451FD5CA4F00FB96C0 /* AuthenticationResponse.m in Sources */,
 				55AA55601FA14D7100A7026B /* IosSecureRandom.cc in Sources */,
 				55B0DBBA2048962400F6B29B /* CopyableLabel.m in Sources */,

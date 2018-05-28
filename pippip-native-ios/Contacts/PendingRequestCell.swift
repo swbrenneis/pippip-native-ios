@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PendingRequestCell: ExpandingTableCell {
+class PendingRequestCell: PippipTableViewCell {
 
     @IBOutlet weak var nicknameLabel: UILabel!
     @IBOutlet weak var publicIdLabel: UILabel!
