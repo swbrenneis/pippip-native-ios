@@ -6,6 +6,7 @@
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
+#import "pippip_native_ios-Swift.h"
 #import "AppDelegate.h"
 #import "ApplicationSingleton.h"
 #import "TargetConditionals.h"

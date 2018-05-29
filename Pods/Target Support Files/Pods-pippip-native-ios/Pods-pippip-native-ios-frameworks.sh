@@ -143,22 +143,28 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/AlamofireObjectMapper/AlamofireObjectMapper.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Chatto/Chatto.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ChattoAdditions/ChattoAdditions.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/DataCompression/DataCompression.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/FrostedSidebar/FrostedSidebar.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PMAlertController/PMAlertController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Sheriff/Sheriff.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/AlamofireObjectMapper/AlamofireObjectMapper.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Chatto/Chatto.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ChattoAdditions/ChattoAdditions.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/DataCompression/DataCompression.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/FrostedSidebar/FrostedSidebar.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PMAlertController/PMAlertController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm/Realm.framework"

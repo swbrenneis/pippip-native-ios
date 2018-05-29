@@ -24,6 +24,7 @@ class AuthView: UIView {
     var accountName = AccountManager.accountName()
     var viewController: UIViewController!
     var authenticator = Authenticator()
+    var swiftAuthenticator = SwiftAuthenticator()
     var alertPresenter = AlertPresenter()
 
     override init(frame: CGRect) {
@@ -159,7 +160,7 @@ class AuthView: UIView {
         let hud = MBProgressHUD.showAdded(to: self, animated: true)
         hud.mode = .annularDeterminate;
         hud.label.text = "Authenticating...";
-        authenticator.authenticate(self.accountName, withPassphrase: passphrase)
+        swiftAuthenticator.authenticate(accountName: self.accountName!, passphrase: passphrase)
         
     }
     

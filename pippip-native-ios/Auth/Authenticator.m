@@ -23,7 +23,8 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 {
     ProcessStep step;
     SessionState *sessionState;
-
+    SecommAPI *secommAPI;
+    AlertPresenter *alertPresenter;
 }
 
 @property (weak, nonatomic) RESTSession *session;
@@ -41,6 +42,8 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     errorDelegate = [[NotificationErrorDelegate alloc] initWithTitle:@"Authentication Error"];
     _session = [ApplicationSingleton instance].restSession;
     sessionState = [[SessionState alloc] init];
+    secommAPI = [[SecommAPI alloc] init];
+    alertPresenter = [[AlertPresenter alloc] init];
 
     return self;
     
@@ -48,6 +51,9 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 - (void)authenticate:(NSString*)accountName withPassphrase:(NSString *)passphrase {
 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector: @selector(sessionStarted:)
+                                                 name:SESSION_STARTED object:nil];
     NSError *error = nil;
     [self loadSessionState:accountName withPassphrase:passphrase withError:&error];
     NSMutableDictionary *info = [NSMutableDictionary dictionary];
@@ -55,11 +61,10 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"UpdateProgress" object:nil userInfo:info];
     if (error == nil) {
         step = REQUEST;
-        // Start the session.
-        [_session startSession:self];
+        [secommAPI startSession];
     }
     else {
-        [errorDelegate sessionError:@"Invalid passphrase"];
+        [alertPresenter errorAlertWithTitle:@"Sign In Error" message:@"Invalid Passphrase"];
     }
 
 }
@@ -129,6 +134,12 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
 
 }
 
+- (void)sessionStarted:(NSNotification*)notification {
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:SESSION_STARTED object:nil];
+
+}
+
 - (void)postComplete:(NSDictionary*)response {
     
     if (response != nil) {
@@ -187,7 +198,7 @@ typedef enum STEP { REQUEST, CHALLENGE, AUTHORIZED, LOGOUT } ProcessStep;
             CKPEMCodec *pem = [[CKPEMCodec alloc] init];
             sessionState.serverPublicKey = [pem decodePublicKey:serverPublicKeyPEM];
             step = REQUEST;
-            postPacket = [[AuthenticationRequest alloc] init];
+            postPacket = [[AuthenticationRequestPacket alloc] init];
             [_session queuePost:self];
             NSMutableDictionary *info = [NSMutableDictionary dictionary];
             info[@"progress"] = [NSNumber numberWithFloat:0.4];

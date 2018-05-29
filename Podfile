@@ -16,6 +16,7 @@ target 'pippip-native-ios' do
   pod 'Chatto', '= 3.3.1'
   pod 'ChattoAdditions', '= 3.3.1'
   pod 'Sheriff'
+  pod 'AlamofireObjectMapper', '~> 5.0'
 
   target 'pippip-native-iosTests' do
     inherit! :search_paths

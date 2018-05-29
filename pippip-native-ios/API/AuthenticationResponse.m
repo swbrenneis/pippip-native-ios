@@ -6,8 +6,8 @@
 //  Copyright © 2017 seComm. All rights reserved.
 //
 
-#import "AuthenticationResponse.h"
 #import "pippip_native_ios-Swift.h"
+#import "AuthenticationResponse.h"
 #import "CKRSACodec.h"
 
 @interface AuthenticationResponse () {

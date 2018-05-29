@@ -39,6 +39,7 @@ class MessagesViewController: UIViewController {
         super.viewDidLoad()
 
         PippipTheme.setTheme()
+        SecommAPI.initializeAPI()
 
         self.view.backgroundColor = PippipTheme.viewColor
         self.navigationController?.navigationBar.barTintColor = PippipTheme.navBarColor

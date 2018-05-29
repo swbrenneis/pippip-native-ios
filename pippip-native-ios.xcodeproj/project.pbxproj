@@ -27,6 +27,8 @@
 		55206DAD20755E1500B0B246 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */; };
 		55206DB12076A5EA00B0B246 /* MessageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DB02076A5EA00B0B246 /* MessageManager.swift */; };
 		55206DB32076AC2000B0B246 /* RequestProcessProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DB22076AC2000B0B246 /* RequestProcessProtocol.swift */; };
+		55245F4120BCC9A100E6ECB6 /* APIObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55245F4020BCC9A100E6ECB6 /* APIObjects.swift */; };
+		55245F4320BCD62D00E6ECB6 /* SwiftAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55245F4220BCD62D00E6ECB6 /* SwiftAuthenticator.swift */; };
 		5527BAA51F8D0D1200C40D05 /* NewAccountCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */; };
 		5527BAB11F8D4B1D00C40D05 /* NewAccountRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB01F8D4B1D00C40D05 /* NewAccountRequest.m */; };
 		5527BAB41F8D58D300C40D05 /* RESTSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 5527BAB31F8D58D300C40D05 /* RESTSession.m */; };
@@ -136,11 +138,13 @@
 		55E06BF820BC6EA20034C652 /* iphone_receive_sms.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 55E06BF620BC6EA20034C652 /* iphone_receive_sms.mp3 */; };
 		55E06BF920BC6EA20034C652 /* iphone_send_sms.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 55E06BF720BC6EA20034C652 /* iphone_send_sms.mp3 */; };
 		55E06BFB20BC6FCD0034C652 /* pippip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 55E06BFA20BC6FCC0034C652 /* pippip.mp3 */; };
+		55E06BFD20BC961D0034C652 /* SecommAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E06BFC20BC961D0034C652 /* SecommAPI.swift */; };
+		55E06BFF20BC9B210034C652 /* ApplicationInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E06BFE20BC9B210034C652 /* ApplicationInitializer.swift */; };
 		55E7593E20674DAE009BAA1C /* WhitelistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E7593D20674DAE009BAA1C /* WhitelistViewController.swift */; };
 		55E9709F20AA7EBD008C2F39 /* PostPacketProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E9709E20AA7EBD008C2F39 /* PostPacketProtocol.swift */; };
 		55E970A120AA82F7008C2F39 /* EnclaveRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970A020AA82F7008C2F39 /* EnclaveRequest.swift */; };
 		55E970A320AAE05E008C2F39 /* ClientAuthChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970A220AAE05E008C2F39 /* ClientAuthChallenge.swift */; };
-		55E970A520AAEF49008C2F39 /* AuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970A420AAEF49008C2F39 /* AuthenticationRequest.swift */; };
+		55E970A520AAEF49008C2F39 /* AuthenticationRequestPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970A420AAEF49008C2F39 /* AuthenticationRequestPacket.swift */; };
 		55E970A720AB07C6008C2F39 /* Logout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970A620AB07C6008C2F39 /* Logout.swift */; };
 		55E970A920AE28F0008C2F39 /* AuthView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E970A820AE28F0008C2F39 /* AuthView.xib */; };
 		55E970AB20AE2C11008C2F39 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970AA20AE2C11008C2F39 /* AuthView.swift */; };
@@ -215,6 +219,8 @@
 		55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
 		55206DB02076A5EA00B0B246 /* MessageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageManager.swift; sourceTree = "<group>"; };
 		55206DB22076AC2000B0B246 /* RequestProcessProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestProcessProtocol.swift; sourceTree = "<group>"; };
+		55245F4020BCC9A100E6ECB6 /* APIObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIObjects.swift; sourceTree = "<group>"; };
+		55245F4220BCD62D00E6ECB6 /* SwiftAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftAuthenticator.swift; sourceTree = "<group>"; };
 		5527BAA31F8D0D1200C40D05 /* NewAccountCreator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewAccountCreator.h; sourceTree = "<group>"; };
 		5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewAccountCreator.m; sourceTree = "<group>"; };
 		5527BAA61F8D36BA00C40D05 /* RESTResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RESTResponse.h; sourceTree = "<group>"; };
@@ -421,11 +427,13 @@
 		55E06BF620BC6EA20034C652 /* iphone_receive_sms.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = iphone_receive_sms.mp3; sourceTree = "<group>"; };
 		55E06BF720BC6EA20034C652 /* iphone_send_sms.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = iphone_send_sms.mp3; sourceTree = "<group>"; };
 		55E06BFA20BC6FCC0034C652 /* pippip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = pippip.mp3; sourceTree = "<group>"; };
+		55E06BFC20BC961D0034C652 /* SecommAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecommAPI.swift; sourceTree = "<group>"; };
+		55E06BFE20BC9B210034C652 /* ApplicationInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationInitializer.swift; sourceTree = "<group>"; };
 		55E7593D20674DAE009BAA1C /* WhitelistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhitelistViewController.swift; sourceTree = "<group>"; };
 		55E9709E20AA7EBD008C2F39 /* PostPacketProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostPacketProtocol.swift; sourceTree = "<group>"; };
 		55E970A020AA82F7008C2F39 /* EnclaveRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnclaveRequest.swift; sourceTree = "<group>"; };
 		55E970A220AAE05E008C2F39 /* ClientAuthChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientAuthChallenge.swift; sourceTree = "<group>"; };
-		55E970A420AAEF49008C2F39 /* AuthenticationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRequest.swift; sourceTree = "<group>"; };
+		55E970A420AAEF49008C2F39 /* AuthenticationRequestPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRequestPacket.swift; sourceTree = "<group>"; };
 		55E970A620AB07C6008C2F39 /* Logout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logout.swift; sourceTree = "<group>"; };
 		55E970A820AE28F0008C2F39 /* AuthView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthView.xib; sourceTree = "<group>"; };
 		55E970AA20AE2C11008C2F39 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
@@ -514,6 +522,8 @@
 				5527BAA31F8D0D1200C40D05 /* NewAccountCreator.h */,
 				5527BAA41F8D0D1200C40D05 /* NewAccountCreator.m */,
 				55E970AC20AE6927008C2F39 /* LocalAuthenticator.swift */,
+				55245F4220BCD62D00E6ECB6 /* SwiftAuthenticator.swift */,
+				554D01C3207C0CEC00C19373 /* UserVault.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -530,6 +540,7 @@
 				55666644201A68AF00051ED2 /* AccountSession.h */,
 				55666645201A68AF00051ED2 /* AccountSession.m */,
 				55FD018F20B102510028435E /* AlertPresenter.swift */,
+				55E06BFE20BC9B210034C652 /* ApplicationInitializer.swift */,
 				557CE56F203A61DB008AF8CF /* ApplicationSingleton.h */,
 				557CE570203A61DB008AF8CF /* ApplicationSingleton.m */,
 				5592334920667094008AEEAE /* AsyncNotifier.swift */,
@@ -557,7 +568,6 @@
 				5586B88D2064951000641514 /* ParameterGenerator.swift */,
 				554D01C1207BE35400C19373 /* SessionState.swift */,
 				5586B8862064882B00641514 /* SessionStateActual.swift */,
-				554D01C3207C0CEC00C19373 /* UserVault.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -623,7 +633,8 @@
 		55579E5D202764EF00131A54 /* API */ = {
 			isa = PBXGroup;
 			children = (
-				55E970A420AAEF49008C2F39 /* AuthenticationRequest.swift */,
+				55245F4020BCC9A100E6ECB6 /* APIObjects.swift */,
+				55E970A420AAEF49008C2F39 /* AuthenticationRequestPacket.swift */,
 				55FA87431FD5CA4F00FB96C0 /* AuthenticationResponse.h */,
 				55FA87441FD5CA4F00FB96C0 /* AuthenticationResponse.m */,
 				55E970A220AAE05E008C2F39 /* ClientAuthChallenge.swift */,
@@ -648,6 +659,7 @@
 				5527BAA61F8D36BA00C40D05 /* RESTResponse.h */,
 				5527BAB21F8D58D300C40D05 /* RESTSession.h */,
 				5527BAB31F8D58D300C40D05 /* RESTSession.m */,
+				55E06BFC20BC961D0034C652 /* SecommAPI.swift */,
 				55FA87491FD5E5AC00FB96C0 /* ServerAuthChallenge.h */,
 				55FA874A1FD5E5AC00FB96C0 /* ServerAuthChallenge.m */,
 				55DB7F431FD8692C00B4D262 /* ServerAuthorized.h */,
@@ -1077,11 +1089,14 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-pippip-native-ios/Pods-pippip-native-ios-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/AlamofireObjectMapper/AlamofireObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
 				"${BUILT_PRODUCTS_DIR}/Chatto/Chatto.framework",
 				"${BUILT_PRODUCTS_DIR}/ChattoAdditions/ChattoAdditions.framework",
 				"${BUILT_PRODUCTS_DIR}/DataCompression/DataCompression.framework",
 				"${BUILT_PRODUCTS_DIR}/FrostedSidebar/FrostedSidebar.framework",
+				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/PMAlertController/PMAlertController.framework",
 				"${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
@@ -1089,11 +1104,14 @@
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChameleonFramework.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Chatto.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChattoAdditions.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DataCompression.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FrostedSidebar.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PMAlertController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RKDropdownAlert.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
@@ -1171,6 +1189,7 @@
 				5500D16D2074104A0016AC71 /* AccountDeleter.m in Sources */,
 				55AA54E01FA14B1E00A7026B /* Unsigned32.cc in Sources */,
 				550007BC2078203B00103882 /* EnclaveTask.swift in Sources */,
+				55E06BFD20BC961D0034C652 /* SecommAPI.swift in Sources */,
 				554D01C6207C54A900C19373 /* LocalPasswordCell.swift in Sources */,
 				55AA54FE1FA14C1300A7026B /* CKSecureRandom.mm in Sources */,
 				55FA874E1FD5F10500FB96C0 /* CKHMAC.mm in Sources */,
@@ -1209,12 +1228,13 @@
 				5527BAB81F8DB81B00C40D05 /* NewAccountResponse.m in Sources */,
 				5586B8852064826000641514 /* EditWhitelistCell.swift in Sources */,
 				5536A6832067559400B7E6D8 /* Notifications.swift in Sources */,
-				55E970A520AAEF49008C2F39 /* AuthenticationRequest.swift in Sources */,
+				55E970A520AAEF49008C2F39 /* AuthenticationRequestPacket.swift in Sources */,
 				55AA55661FA14D7100A7026B /* Base64.cc in Sources */,
 				55AA54FF1FA14C1300A7026B /* CKRSAPrivateKey.m in Sources */,
 				55AA54DF1FA14B1E00A7026B /* Int32.cc in Sources */,
 				554D01C4207C0CEC00C19373 /* UserVault.swift in Sources */,
 				55AA554E1FA14D7100A7026B /* GCM.cc in Sources */,
+				55E06BFF20BC9B210034C652 /* ApplicationInitializer.swift in Sources */,
 				5586B882206428A400641514 /* PublicIdCell.swift in Sources */,
 				557C2B72209657FD0069336D /* ConversationCache.swift in Sources */,
 				5536A68D206897D200B7E6D8 /* ContactsViewController.swift in Sources */,
@@ -1266,8 +1286,10 @@
 				55AA54DA1FA14B1E00A7026B /* ByteArrayInputStream.cc in Sources */,
 				557CE571203A61DB008AF8CF /* ApplicationSingleton.m in Sources */,
 				55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */,
+				55245F4320BCD62D00E6ECB6 /* SwiftAuthenticator.swift in Sources */,
 				55AA55561FA14D7100A7026B /* PEMCodec.cc in Sources */,
 				55006BAE20BA3F250040C2DD /* DatabaseContactRequest.m in Sources */,
+				55245F4120BCC9A100E6ECB6 /* APIObjects.swift in Sources */,
 				557C2B6E20961DB10069336D /* SortedArray.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

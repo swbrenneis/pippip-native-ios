@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AuthenticationRequest: NSObject, PostPacketProtocol {
+class AuthenticationRequestPacket: NSObject, PostPacketProtocol {
 
     var sessionState = SessionState()
     var restPath: String {
