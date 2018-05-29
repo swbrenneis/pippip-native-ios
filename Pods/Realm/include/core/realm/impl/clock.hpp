@@ -18,32 +18,37 @@
  *
  **************************************************************************/
 
-#ifndef REALM_IMPL_CLAMPED_HEX_DUMP_HPP
-#define REALM_IMPL_CLAMPED_HEX_DUMP_HPP
+#ifndef REALM_IMPL_CLOCK_HPP
+#define REALM_IMPL_CLOCK_HPP
 
-#include <realm/util/hex_dump.hpp>
-#include <realm/binary_data.hpp>
+#include <cstdint>
+#include <chrono>
+
+#include <realm/sync/protocol.hpp>
 
 namespace realm {
 namespace _impl {
 
-/// Limit the amount of dumped data to 1024 bytes. For use in connection with
-/// logging.
-inline std::string clamped_hex_dump(BinaryData blob, std::size_t max_size = 1024)
+inline sync::milliseconds_type realtime_clock_now() noexcept
 {
-    bool was_clipped = false;
-    std::size_t size_2 = blob.size();
-    if (size_2 > max_size) {
-        size_2 = max_size;
-        was_clipped = true;
-    }
-    std::string str = util::hex_dump(blob.data(), size_2); // Throws
-    if (was_clipped)
-        str += "..."; // Throws
-    return str;
+    using clock = std::chrono::system_clock;
+    auto time_since_epoch = clock::now().time_since_epoch();
+    auto millis_since_epoch =
+        std::chrono::duration_cast<std::chrono::milliseconds>(time_since_epoch).count();
+    return sync::milliseconds_type(millis_since_epoch);
+}
+
+
+inline sync::milliseconds_type monotonic_clock_now() noexcept
+{
+    using clock = std::chrono::steady_clock;
+    auto time_since_epoch = clock::now().time_since_epoch();
+    auto millis_since_epoch =
+        std::chrono::duration_cast<std::chrono::milliseconds>(time_since_epoch).count();
+    return sync::milliseconds_type(millis_since_epoch);
 }
 
 } // namespace _impl
 } // namespace realm
 
-#endif // REALM_IMPL_CLAMPED_HEX_DUMP_HPP
+#endif // REALM_IMPL_CLOCK_HPP

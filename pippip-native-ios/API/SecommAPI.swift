@@ -48,8 +48,9 @@ class SecommAPI: NSObject {
         
         let process = SecommAPI.apiState.currentProcess!
         let resource = SecommAPI.apiState.hostPath + process.postPacket!.restPath
+        let postPacket = SecommAPI.apiState.currentProcess!.postPacket
         if let url = URL(string: resource) {
-            var urlRequest = URLRequest(url: url)
+            var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: postPacket?.restTimeout)
             urlRequest.httpMethod = HTTPMethod.post.rawValue
             urlRequest.setValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")

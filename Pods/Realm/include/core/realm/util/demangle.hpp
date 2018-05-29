@@ -17,33 +17,38 @@
  * from Realm Incorporated.
  *
  **************************************************************************/
+#ifndef REALM_UTIL_DEMANGLE_HPP
+#define REALM_UTIL_DEMANGLE_HPP
 
-#ifndef REALM_IMPL_CLAMPED_HEX_DUMP_HPP
-#define REALM_IMPL_CLAMPED_HEX_DUMP_HPP
-
-#include <realm/util/hex_dump.hpp>
-#include <realm/binary_data.hpp>
+#include <typeinfo>
+#include <string>
 
 namespace realm {
-namespace _impl {
+namespace util {
 
-/// Limit the amount of dumped data to 1024 bytes. For use in connection with
-/// logging.
-inline std::string clamped_hex_dump(BinaryData blob, std::size_t max_size = 1024)
+
+/// Demangle the specified C++ ABI identifier.
+///
+/// See for example
+/// http://gcc.gnu.org/onlinedocs/libstdc++/latest-doxygen/namespaceabi.html
+std::string demangle(const std::string&);
+
+
+/// Get the demangled name of the specified type.
+template<class T> inline std::string get_type_name()
 {
-    bool was_clipped = false;
-    std::size_t size_2 = blob.size();
-    if (size_2 > max_size) {
-        size_2 = max_size;
-        was_clipped = true;
-    }
-    std::string str = util::hex_dump(blob.data(), size_2); // Throws
-    if (was_clipped)
-        str += "..."; // Throws
-    return str;
+    return demangle(typeid(T).name());
 }
 
-} // namespace _impl
+
+/// Get the demangled name of the type of the specified argument.
+template<class T> inline std::string get_type_name(const T& v)
+{
+    return demangle(typeid(v).name());
+}
+
+
+} // namespace util
 } // namespace realm
 
-#endif // REALM_IMPL_CLAMPED_HEX_DUMP_HPP
+#endif // REALM_UTIL_DEMANGLE_HPP
