@@ -104,7 +104,7 @@ import AudioToolbox
         for messageId in messageIds {
             let textMessage = messageDatabase.getTextMessage(messageId.intValue)
             textMessage.decrypt(noNotify: true)   // No notification
-            messageDatabase.update(textMessage)
+            messageDatabase.updateCleartext(textMessage)
         }
 
     }

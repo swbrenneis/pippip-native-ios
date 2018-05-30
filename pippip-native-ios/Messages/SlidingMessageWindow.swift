@@ -16,7 +16,13 @@ class SlidingMessageWindow: NSObject {
     var windowPos: Int
     var window: [TextMessage]
     var items: [PippipTextMessageModel]
-    //var suspendedItems: [ChatItemProtocol]?
+    var visible: Bool = false {
+        didSet {
+            if visible {
+                conversation.markMessagesRead(window)
+            }
+        }
+    }
 
     init(conversation: Conversation, windowSize: Int) {
 
@@ -69,7 +75,9 @@ class SlidingMessageWindow: NSObject {
                 items.append(PippipTextMessageModel(textMessage: message))
             }
             window.append(contentsOf: newMessages)
-            conversation.markMessagesRead(newMessages)
+            if visible {
+                conversation.markMessagesRead(newMessages)
+            }
             return true
         }
         else {
@@ -77,13 +85,7 @@ class SlidingMessageWindow: NSObject {
         }
 
     }
-/*
-    func resume() {
 
-        items = suspendedItems!
-
-    }
-*/
     func slideDown() {
 
         if canSlideDown() {

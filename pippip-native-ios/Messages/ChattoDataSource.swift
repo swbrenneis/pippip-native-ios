@@ -25,7 +25,11 @@ class ChattoDataSource: ChatDataSourceProtocol {
     var chatItems: [ChatItemProtocol] {
         return slidingWindow.items
     }
-    var visible = false
+    var visible: Bool = false {
+        didSet {
+            slidingWindow.visible = visible
+        }
+    }
     var delegate: ChatDataSourceDelegateProtocol?
     var slidingWindow: SlidingMessageWindow
 

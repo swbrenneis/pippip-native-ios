@@ -254,7 +254,7 @@
     
 }
 
-- (void)updateTextMessage:(TextMessage *)message {
+- (void)updateCleartext:(TextMessage *)message {
 
     if (config.storeCleartextMessages) {
         RLMRealm *realm = [RLMRealm defaultRealm];

@@ -27,6 +27,9 @@ class PippipMessageModel: MessageModelProtocol {
         isIncoming = !message.originating
         date = Date(timeIntervalSince1970: Double(message.timestamp) / 1000)
         status = .sending
+        if message.acknowledged || !message.originating {
+            status = .success
+        }
         type = "text-message-type"
         uid = "\(message.messageId)"
 
