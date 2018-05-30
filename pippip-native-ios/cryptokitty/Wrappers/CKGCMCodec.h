@@ -12,9 +12,9 @@
 
 - (instancetype)initWithData:(NSData*)data;
 
-- (void)decrypt:(NSData*)key withAuthData:(NSData*)authData withError:(NSError**)error;
+- (void)decrypt:(NSData*)key withAuthData:(NSData*)authData error:(NSError**)error;
 
-- (NSData*)encrypt:(NSData*)key withAuthData:(NSData*)authData withError:(NSError**)error;
+- (NSData*)encrypt:(NSData*)key withAuthData:(NSData*)authData error:(NSError**)error;
 
 - (NSData*)getBlock;
 

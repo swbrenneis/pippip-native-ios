@@ -12,18 +12,18 @@
 
 @interface CKRSACodec : NSObject
 
-- (instancetype)initWithData:(NSData*)data;
+- (instancetype _Nonnull)initWithData:(NSData*_Nonnull)data;
 
-- (void)decrypt:(CKRSAPrivateKey*)key withError:(NSError**) error;
+- (void)decrypt:(CKRSAPrivateKey*_Nonnull)key error:(NSError*_Nullable*_Nonnull)error;
 
-- (NSData*)encrypt:(CKRSAPublicKey*)key;
+- (NSData*_Nonnull)encrypt:(CKRSAPublicKey*_Nonnull)key;
 
-- (NSData*)getBlock;
+- (NSData*_Nonnull)getBlock;
 
-- (NSString*)getString;
+- (NSString*_Nonnull)getString;
 
-- (void)putBlock:(NSData*)block;
+- (void)putBlock:(NSData*_Nonnull)block;
 
-- (void)putString:(NSString*)str;
+- (void)putString:(NSString*_Nonnull)str;
 
 @end

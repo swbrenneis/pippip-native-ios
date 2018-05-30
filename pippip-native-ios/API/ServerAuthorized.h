@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ServerAuthorized : NSObject<PostPacketProtocol>
+@interface xServerAuthorized : NSObject
 
 @end

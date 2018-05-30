@@ -8,10 +8,9 @@
 
 import UIKit
 
-class Logout: NSObject, PostPacketProtocol {
+class Logout: NSObject, APIRequestProtocol {
 
-    var sessionState = SessionState()
-    var restPath: String {
+    var path: String  {
         if AccountManager.production() {
             return "/authenticator/logout"
         }
@@ -19,13 +18,26 @@ class Logout: NSObject, PostPacketProtocol {
             return "/logout"
         }
     }
-    var restTimeout: Double = 10.0
+    var timeout: Double = 10.0
+    var sessionId: Int32?
+    var authToken: Int64?
 
-    var restPacket: [String : Any] {
-        var packet = [String: Any]()
-        packet["sessionId"] = sessionState.sessionId
-        packet["authToken"] = sessionState.authToken
-        return packet
+    var sessionState = SessionState()
+
+    override init() {
+        sessionId = sessionState.sessionId
+        authToken = sessionState.authToken
+        super.init()
+    }
+
+    required init?(map: Map) {
+        
+    }
+    
+    func mapping(map: Map) {
+
+        sessionId <- map["sessionId"]
+        authToken <- map["authToken"]
 
     }
 

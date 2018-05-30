@@ -41,7 +41,7 @@
     delete gcmCodec;
 }
 
-- (void) decrypt:(NSData *)key withAuthData:(NSData *)authData withError:(NSError *__autoreleasing *)error {
+- (void) decrypt:(NSData *)key withAuthData:(NSData *)authData error:(NSError **)error {
 
     try {
         coder::ByteArray ckKey(reinterpret_cast<const uint8_t*>(key.bytes), key.length);
@@ -57,7 +57,7 @@
     
 }
 
-- (NSData*) encrypt:(NSData *)key withAuthData:(NSData *)authData withError:(NSError**)error {
+- (NSData*) encrypt:(NSData *)key withAuthData:(NSData *)authData error:(NSError**)error {
 
     try {
         coder::ByteArray ckKey(reinterpret_cast<const uint8_t*>(key.bytes), key.length);

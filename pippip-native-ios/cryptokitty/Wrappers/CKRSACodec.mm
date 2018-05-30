@@ -40,7 +40,7 @@
     delete rsaCodec;
 }
 
-- (void)decrypt:(CKRSAPrivateKey *)key withError:(NSError**)error {
+- (void)decrypt:(CKRSAPrivateKey *)key error:(NSError**)error {
 
     try {
         rsaCodec->decrypt(*reinterpret_cast<RSAPrivateKey*>(key.privateKey));

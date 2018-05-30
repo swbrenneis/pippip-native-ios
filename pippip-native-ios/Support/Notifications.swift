@@ -24,6 +24,7 @@ struct Notifications {
     static let NicknameMatched = NSNotification.Name("NicknameMatched")
     static let PolicyChanged = NSNotification.Name("PolicyChanged")
     static let PolicyUpdated = NSNotification.Name("PolicyUpdated")
+    static let PostComplete = NSNotification.Name("PostComplete")
     static let PresentAlert = NSNotification.Name("PresentAlert")
     static let MessagesUpdated = NSNotification.Name("MessagesUpdated")
     static let NewSession = NSNotification.Name("NewSession")

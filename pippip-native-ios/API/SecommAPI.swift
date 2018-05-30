@@ -9,13 +9,12 @@
 import UIKit
 import Alamofire
 import AlamofireObjectMapper
+import ObjectMapper
 
 struct APIState {
     
     var hostPath: String = ""
     var sessionPath: String = ""
-    var processes = [RequestProcessProtocol]()
-    var currentProcess: RequestProcessProtocol?
     var postLock = NSLock()
     var sessionActive = false
 
@@ -44,54 +43,67 @@ class SecommAPI: NSObject {
 
     }
 
-    func doPost() {
-        
-        let process = SecommAPI.apiState.currentProcess!
-        let resource = SecommAPI.apiState.hostPath + process.postPacket!.restPath
-        let postPacket = SecommAPI.apiState.currentProcess!.postPacket
+    func doPost<ResponseT: Mappable>(responseType: ResponseT.Type, request: APIRequestProtocol) {
+
+        guard SecommAPI.apiState.sessionActive else { return }
+
+        SecommAPI.apiState.postLock.lock()
+        let resource = SecommAPI.apiState.hostPath + request.path
         if let url = URL(string: resource) {
-            var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: postPacket?.restTimeout)
+            var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData,
+                                        timeoutInterval: request.timeout)
             urlRequest.httpMethod = HTTPMethod.post.rawValue
             urlRequest.setValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+            urlRequest.httpBody = request.toJSONString()?.data(using: .utf8, allowLossyConversion: false)
+            Alamofire.request(urlRequest).responseObject { (response: DataResponse<ResponseT>) in
+                if response.error != nil {
+                    self.alertPresenter.errorAlert(title: "Request Error", message: "Unable to send request")
+                    print("API post failure: \(response.error!)")
+                }
+                else if let postResponse = response.result.value {
+                    NotificationCenter.default.post(name: Notifications.PostComplete, object: postResponse, userInfo: nil)
+                }
+                else {
+                    print("Invalid server response in doPost")
+                    self.alertPresenter.errorAlert(title: "Request Error", message: "Invalid response from the server")
+                }
+            }
         }
         else {
             print("Invalid resource: \(resource)")
         }
 
-    }
-
-    func queuePost(_ process: RequestProcessProtocol) {
-
-        if SecommAPI.apiState.sessionActive {
-            SecommAPI.apiState.postLock.lock()
-            SecommAPI.apiState.processes.append(process)
-            if SecommAPI.apiState.processes.count == 1 {
-                SecommAPI.apiState.currentProcess = process
-                doPost()
-            }
-            defer {
-                SecommAPI.apiState.postLock.unlock()
-            }
+        defer {
+            SecommAPI.apiState.postLock.unlock()
         }
 
     }
 
-    @objc func startSession() {
+    func startSession() {
 
         let resource = SecommAPI.apiState.hostPath + SecommAPI.apiState.sessionPath
-        Alamofire.request(resource, method: .post).responseObject { (response: DataResponse<SessionResponse>) in
-            if response.error != nil {
-                self.alertPresenter.errorAlert(title: "Session Error", message: "Unable to establish session with server")
-                print("API session request failure: \(response.error!)")
+        if let url = URL(string: resource) {
+            var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30.0)
+            urlRequest.httpMethod = HTTPMethod.get.rawValue
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+            Alamofire.request(urlRequest).responseObject { (response: DataResponse<SessionResponse>) in
+                if response.error != nil {
+                    self.alertPresenter.errorAlert(title: "Session Error", message: "Unable to establish session with server")
+                    print("API session request failure: \(response.error!)")
+                }
+                else if let sessionResponse = response.result.value {
+                    SecommAPI.apiState.sessionActive = true
+                    NotificationCenter.default.post(name: Notifications.SessionStarted, object: sessionResponse, userInfo: nil)
+                }
+                else {
+                    print("Invalid server response in startSession")
+                    self.alertPresenter.errorAlert(title: "Session Error", message: "Invalid response from the server")
+                }
             }
-            else if let sessionResponse = response.result.value {
-                NotificationCenter.default.post(name: Notifications.SessionStarted, object: sessionResponse, userInfo: nil)
-            }
-            else {
-                print("Invalid server response in startSession")
-                self.alertPresenter.errorAlert(title: "Session Error", message: "Invalid response from the server")
-            }
+        }
+        else {
+            print("Invalid resource: \(resource)")
         }
 
     }

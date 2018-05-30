@@ -12,7 +12,7 @@
 #import "AccountManager.h"
 #import "CKRSACodec.h"
 
-@interface ServerAuthorized ()
+@interface xServerAuthorized ()
 {
     
     SessionState *sessionState;
@@ -21,7 +21,7 @@
 
 @end
 
-@implementation ServerAuthorized
+@implementation xServerAuthorized
 
 - (instancetype)init {
     self = [super init];

@@ -15,7 +15,7 @@ class SessionStateActual: NSObject {
     
     // Server parameters
     var sessionId: Int32
-    var authToken: UInt64
+    var authToken: Int64
     var accountRandom: Data?
     var serverPublicKey: CKRSAPublicKey?
     

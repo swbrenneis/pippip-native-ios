@@ -10,14 +10,14 @@
 
 @interface CKHMAC : NSObject
 
-- (instancetype) initWithSHA256;
+- (instancetype _Nonnull) initWithSHA256;
 
-- (BOOL) authenticate:(NSData*)message;
+- (BOOL) authenticate:(NSData*_Nonnull)message;
 
-- (NSData*) getHMAC;
+- (NSData*_Nonnull) getHMAC;
 
-- (void) setKey:(NSData*)key;
+- (void) setKey:(NSData*_Nonnull)key;
 
-- (void) setMessage:(NSData*)message;
+- (void) setMessage:(NSData*_Nonnull)message;
 
 @end

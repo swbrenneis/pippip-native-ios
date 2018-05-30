@@ -7,9 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "RESTResponse.h"
 
-@interface EnclaveResponse : NSObject<RESTResponse>
+@interface EnclaveResponse : NSObject
 
 - (NSDictionary*)getResponse;
 
