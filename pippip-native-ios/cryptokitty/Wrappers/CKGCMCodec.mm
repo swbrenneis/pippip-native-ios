@@ -41,23 +41,25 @@
     delete gcmCodec;
 }
 
-- (void) decrypt:(NSData *)key withAuthData:(NSData *)authData error:(NSError **)error {
+- (BOOL) decrypt:(NSData *)key withAuthData:(NSData *)authData error:(NSError **)error {
 
     try {
         coder::ByteArray ckKey(reinterpret_cast<const uint8_t*>(key.bytes), key.length);
         coder::ByteArray ckAd(reinterpret_cast<const uint8_t*>(authData.bytes), authData.length);
         gcmCodec->decrypt(ckKey, ckAd);
+        return YES;
     }
     catch (EncodingException& e) {
         NSDictionary *errorDictionary = @{ NSLocalizedDescriptionKey : [NSString stringWithUTF8String:e.what()] };
         *error = [NSError errorWithDomain:[[NSBundle mainBundle] bundleIdentifier]
                                      code:GCM_DECRYPTION_ERROR
                                  userInfo:errorDictionary];
+        return NO;
     }
     
 }
 
-- (NSData*) encrypt:(NSData *)key withAuthData:(NSData *)authData error:(NSError**)error {
+- (NSData*) encrypt:(NSData *)key withAuthData:(NSData *)authData {
 
     try {
         coder::ByteArray ckKey(reinterpret_cast<const uint8_t*>(key.bytes), key.length);
@@ -69,10 +71,7 @@
                                              freeWhenDone:YES];
     }
     catch (EncodingException& e) {
-        NSDictionary *errorDictionary = @{ NSLocalizedDescriptionKey : [NSString stringWithUTF8String:e.what()] };
-        *error = [NSError errorWithDomain:[[NSBundle mainBundle] bundleIdentifier]
-                                     code:GCM_ENCRYPTION_ERROR
-                                 userInfo:errorDictionary];
+        _lastError = [NSString stringWithUTF8String:e.what()];
         return nil;
     }
 

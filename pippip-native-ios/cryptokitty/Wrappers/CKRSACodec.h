@@ -14,7 +14,7 @@
 
 - (instancetype _Nonnull)initWithData:(NSData*_Nonnull)data;
 
-- (void)decrypt:(CKRSAPrivateKey*_Nonnull)key error:(NSError*_Nullable*_Nonnull)error;
+- (BOOL)decrypt:(CKRSAPrivateKey*_Nonnull)key error:(NSError*_Nullable*_Nonnull)error;
 
 - (NSData*_Nonnull)encrypt:(CKRSAPublicKey*_Nonnull)key;
 

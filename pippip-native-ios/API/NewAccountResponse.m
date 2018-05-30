@@ -10,13 +10,13 @@
 #import "pippip_native_ios-Swift.h"
 #import "CKRSACodec.h"
 
-@interface NewAccountResponse ()
+@interface xNewAccountResponse ()
 {
     SessionState *sessionState;
 }
 @end
 
-@implementation NewAccountResponse
+@implementation xNewAccountResponse
 
 - (instancetype)init {
     self = [super init];

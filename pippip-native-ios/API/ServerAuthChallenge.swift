@@ -12,6 +12,8 @@ import ObjectMapper
 class ServerAuthChallenge: NSObject, APIResponseProtocol {
 
     var error: String?
+    var sessionId: Int32?
+    var authToken: Int64?
     var hmac: String?
     var signature: String?
 
@@ -19,6 +21,9 @@ class ServerAuthChallenge: NSObject, APIResponseProtocol {
     var sessionState = SessionState()
 
     required init?(map: Map) {
+        if map.JSON["sessionId"] == nil {
+            return nil
+        }
         if map.JSON["hmac"] == nil {
             return nil
         }
@@ -29,6 +34,7 @@ class ServerAuthChallenge: NSObject, APIResponseProtocol {
     
     func mapping(map: Map) {
 
+        sessionId <- map["sessionId"]
         error <- map["error"]
         hmac <- map["hmac"]
         signature <- map["signature"]

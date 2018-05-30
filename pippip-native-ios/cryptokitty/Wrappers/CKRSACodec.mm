@@ -40,16 +40,18 @@
     delete rsaCodec;
 }
 
-- (void)decrypt:(CKRSAPrivateKey *)key error:(NSError**)error {
+- (BOOL)decrypt:(CKRSAPrivateKey *)key error:(NSError**)error {
 
     try {
         rsaCodec->decrypt(*reinterpret_cast<RSAPrivateKey*>(key.privateKey));
+        return YES;
     }
     catch (EncodingException& e) {
         NSDictionary *errorDictionary = @{ NSLocalizedDescriptionKey : [NSString stringWithUTF8String:e.what()] };
         *error = [NSError errorWithDomain:[[NSBundle mainBundle] bundleIdentifier]
                                      code:RSA_DECRYPTION_ERROR
                                  userInfo:errorDictionary];
+        return NO;
     }
 
 }

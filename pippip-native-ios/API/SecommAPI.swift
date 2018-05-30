@@ -17,6 +17,7 @@ struct APIState {
     var sessionPath: String = ""
     var postLock = NSLock()
     var sessionActive = false
+    var postId: Int = 0
 
 }
 
@@ -43,9 +44,10 @@ class SecommAPI: NSObject {
 
     }
 
-    func doPost<ResponseT: Mappable>(responseType: ResponseT.Type, request: APIRequestProtocol) {
+    @discardableResult
+    func doPost<ResponseT: Mappable>(responseType: ResponseT.Type, request: APIRequestProtocol) -> Int {
 
-        guard SecommAPI.apiState.sessionActive else { return }
+        guard SecommAPI.apiState.sessionActive else { return -1 }
 
         SecommAPI.apiState.postLock.lock()
         let resource = SecommAPI.apiState.hostPath + request.path
@@ -56,12 +58,15 @@ class SecommAPI: NSObject {
             urlRequest.setValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
             urlRequest.httpBody = request.toJSONString()?.data(using: .utf8, allowLossyConversion: false)
+            SecommAPI.apiState.postId += 1
+            let postId = SecommAPI.apiState.postId
             Alamofire.request(urlRequest).responseObject { (response: DataResponse<ResponseT>) in
                 if response.error != nil {
                     self.alertPresenter.errorAlert(title: "Request Error", message: "Unable to send request")
                     print("API post failure: \(response.error!)")
                 }
-                else if let postResponse = response.result.value {
+                else if var postResponse = response.result.value as? APIResponseProtocol {
+                    postResponse.postId = postId
                     NotificationCenter.default.post(name: Notifications.PostComplete, object: postResponse, userInfo: nil)
                 }
                 else {
@@ -69,6 +74,7 @@ class SecommAPI: NSObject {
                     self.alertPresenter.errorAlert(title: "Request Error", message: "Invalid response from the server")
                 }
             }
+            return postId
         }
         else {
             print("Invalid resource: \(resource)")
@@ -77,6 +83,8 @@ class SecommAPI: NSObject {
         defer {
             SecommAPI.apiState.postLock.unlock()
         }
+
+        return -1
 
     }
 

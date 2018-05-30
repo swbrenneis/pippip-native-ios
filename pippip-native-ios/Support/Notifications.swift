@@ -18,6 +18,7 @@ struct Notifications {
     static let ContactDeleted = NSNotification.Name("ContactDeleted")
     static let ContactRequested = NSNotification.Name("ContactRequested")
     static let ContactSelected = NSNotification.Name("ContactSelected")
+    static let EnclaveRequestComplete = NSNotification.Name("EnclaveRequestComplete")
     static let FriendAdded = NSNotification.Name("FriendAdded")
     static let FriendDeleted = NSNotification.Name("FriendDeleted")
     static let NewMessages = NSNotification.Name("NewMessages")

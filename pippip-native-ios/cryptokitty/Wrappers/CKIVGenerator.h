@@ -10,7 +10,7 @@
 
 @interface CKIVGenerator : NSObject
 
-- (NSData*)generate:(NSInteger)counter withNonce:(NSData*)nonce;
+- (NSData*_Nonnull)generate:(NSInteger)counter withNonce:(NSData*_Nonnull)nonce;
 
 @end
 

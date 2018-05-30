@@ -9,6 +9,19 @@
 import Foundation
 import ObjectMapper
 
+class RequestError: Error {
+    
+    var error: String
+    var localizedDescription: String {
+        return error
+    }
+    
+    init(error: String) {
+        self.error = error
+    }
+    
+}
+
 protocol APIRequestProtocol: Mappable {
 
     var path: String { get }

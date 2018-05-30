@@ -9,13 +9,13 @@
 #import "NewAccountFinal.h"
 #import "pippip_native_ios-Swift.h"
 
-@interface NewAccountFinal ()
+@interface xNewAccountFinal ()
 {
     SessionState *sessionState;
 }
 @end
 
-@implementation NewAccountFinal
+@implementation xNewAccountFinal
 
 - (instancetype)init {
     self = [super init];

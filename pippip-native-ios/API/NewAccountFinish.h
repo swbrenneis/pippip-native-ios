@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NewAccountFinish : NSObject <PostPacketProtocol>
+@interface xNewAccountFinish : NSObject <PostPacketProtocol>
 
 @end

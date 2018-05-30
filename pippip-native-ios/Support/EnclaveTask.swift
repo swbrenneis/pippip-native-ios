@@ -8,52 +8,54 @@
 
 import UIKit
 
-class EnclaveTask: NSObject, RequestProcessProtocol {
+class EnclaveTask: NSObject {
 
-    var postPacket: PostPacketProtocol?
-    var errorDelegate: ErrorDelegate
-    var completion: ([AnyHashable: Any]) -> Void
-    var errorTitle : String? {
-        didSet {
-            errorDelegate = NotificationErrorDelegate(title: errorTitle!)
-        }
-    }
+    var completion: (String) -> Void
+    var errorTitle: String?
+    var postId: Int
+    var secommAPI = SecommAPI()
+    var alertPresenter = AlertPresenter()
 
-    init(_ completion: @escaping ([AnyHashable: Any]) -> Void) {
+    init(_ completion: @escaping (String) -> Void) {
 
-        errorDelegate = NotificationErrorDelegate(title: "Unknown")
         self.completion = completion
+        postId = -1
 
         super.init()
 
     }
 
-    func sessionComplete(_ response: [AnyHashable : Any]?) {
-        // Nothing to do
-    }
+    @objc func postComplete(_ notification: Notification) {
 
-    func postComplete(_ response: [AnyHashable : Any]?) {
-
-        if let _ = response {
-            let enclaveResponse = EnclaveResponse()
-            if enclaveResponse.processResponse(response, errorDelegate: errorDelegate) {
-                completion(enclaveResponse.getResponse())
+        guard let response = notification.object as? EnclaveResponse else { return }
+        if response.postId == postId {
+            NotificationCenter.default.removeObserver(self, name: Notifications.PostComplete, object: nil)
+            
+            DispatchQueue.global().async {
+                do {
+                    try response.processResponse()
+                    NotificationCenter.default.post(name: Notifications.EnclaveRequestComplete, object: response.json!)
+                }
+                catch {
+                    print("Enclave request error: \(error)")
+                }
             }
         }
+        
     }
 
-    func sendRequest(_ request: [String: Any]) {
+    func sendRequest(_ request: APIRequestProtocol) {
 
         do {
-            let session = ApplicationSingleton.instance().restSession
             let enclaveRequest = EnclaveRequest()
             try enclaveRequest.setRequest(request)
-            postPacket = enclaveRequest
-            session?.queuePost(self)
+            NotificationCenter.default.addObserver(self, selector: #selector(postComplete(_:)),
+                                                   name: Notifications.PostComplete, object: nil)
+            postId = secommAPI.doPost(responseType: EnclaveResponse.self, request: request)
         }
         catch {
             print("Error sending enclave request: \(error)")
-            errorDelegate.requestError("Failed to send request")
+            alertPresenter.errorAlert(title: errorTitle!, message: "Unable to create request")
         }
         
     }

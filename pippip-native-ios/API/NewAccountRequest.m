@@ -10,13 +10,13 @@
 #import "NewAccountRequest.h"
 #import "AccountManager.h"
 
-@interface NewAccountRequest ()
+@interface xNewAccountRequest ()
 {
     SessionState *sessionState;
 }
 @end
 
-@implementation NewAccountRequest
+@implementation xNewAccountRequest
 
 - (instancetype)init {
     self = [super init];

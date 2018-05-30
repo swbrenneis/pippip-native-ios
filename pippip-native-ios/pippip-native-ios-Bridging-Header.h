@@ -22,7 +22,6 @@
 #import "MessagesDatabase.h"
 #import "AccountDeleter.h"
 #import "DatabaseMessage.h"
-#import "EnclaveResponse.h"
 #import "AccountManager.h"
 #import "AccountConfig.h"
 #import "AccountSession.h"

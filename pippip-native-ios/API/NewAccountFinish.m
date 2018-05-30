@@ -12,14 +12,14 @@
 #import "AccountManager.h"
 #import "CKRSACodec.h"
 
-@interface NewAccountFinish ()
+@interface xNewAccountFinish ()
 {
     SessionState *sessionState;
 }
 
 @end
 
-@implementation NewAccountFinish
+@implementation xNewAccountFinish
 
 - (instancetype)init {
     self = [super init];

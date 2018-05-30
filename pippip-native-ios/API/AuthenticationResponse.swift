@@ -12,20 +12,28 @@ import ObjectMapper
 class AuthenticationResponse: NSObject, APIResponseProtocol {
     
     var error: String?
+    var sessionId: Int32?
+    var authToken: Int64?
     var data: String?
 
     var alertPresenter = AlertPresenter()
     var sessionState = SessionState()
 
     required init?(map: Map) {
+        if map.JSON["sessionId"] == nil {
+            return nil
+        }
         if map.JSON["data"] == nil {
             return nil
         }
     }
 
     func mapping(map: Map) {
+
+        sessionId <- map["sessionId"]
         error <- map["error"]
         data <- map["data"]
+
     }
     
     func processResponse() throws {
@@ -37,7 +45,7 @@ class AuthenticationResponse: NSObject, APIResponseProtocol {
 
         if let encoded = Data(base64Encoded: data!) {
             let codec = CKRSACodec(data: encoded)
-            try codec.decrypt(sessionState.userPrivateKey)
+            try codec.decrypt(sessionState.userPrivateKey!)
             sessionState.serverAuthRandom = codec.getBlock()
         }
         else {

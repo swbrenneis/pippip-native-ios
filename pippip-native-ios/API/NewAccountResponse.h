@@ -9,6 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "RESTResponse.h"
 
-@interface NewAccountResponse : NSObject <RESTResponse>
+@interface xNewAccountResponse : NSObject <RESTResponse>
 
 @end
