@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SwiftAuthenticator: NSObject {
+class Authenticator: NSObject {
 
     var alertPresenter = AlertPresenter()
     var secommAPI = SecommAPI()
