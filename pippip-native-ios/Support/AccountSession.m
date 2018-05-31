@@ -86,6 +86,11 @@
         NSMutableDictionary *info = [NSMutableDictionary dictionary];
         info[@"suspendedTime"] = [NSNumber numberWithInteger:suspendedTime];
         [AsyncNotifier notifyWithName:APP_RESUMED object:nil userInfo:info];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([UIApplication sharedApplication].applicationIconBadgeNumber > 0) {
+                [self doUpdates];
+            }
+        });
     }
 
 }

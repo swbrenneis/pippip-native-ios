@@ -34,6 +34,7 @@ class MessagesViewController: UIViewController {
     var alertPresenter = AlertPresenter()
     var contactBarButton: UIBarButtonItem!
     var contactBadge = GIBadgeView()
+    var chatPushed = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -126,7 +127,12 @@ class MessagesViewController: UIViewController {
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
-        localAuth.listening = true
+        if chatPushed {
+            chatPushed = false
+        }
+        else {
+            localAuth.listening = true
+        }
 
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
@@ -155,7 +161,9 @@ class MessagesViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
-        localAuth.listening = false
+        if !chatPushed {
+            localAuth.listening = false
+        }
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.ThumbprintComplete, object: nil)
 
@@ -377,6 +385,7 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
         let contactId = previews[indexPath.item].contactId
         let viewController = ChattoViewController()
         viewController.contact = contactManager.getContactById(contactId)
+        chatPushed = true
         self.navigationController?.pushViewController(viewController, animated: true)
 
     }
