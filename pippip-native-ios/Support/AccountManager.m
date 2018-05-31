@@ -30,7 +30,7 @@ static NSString *acctName = nil;
 }
 
 + (BOOL)production {
-    return false;
+    return true;
 }
 
 - (void)loadAccount {
