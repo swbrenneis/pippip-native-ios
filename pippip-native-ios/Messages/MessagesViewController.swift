@@ -228,6 +228,19 @@ class MessagesViewController: UIViewController {
 
     }
 
+    // Notifications
+    
+    @objc func newMessages(_ notification: Notification) {
+
+        if !chatPushed {
+            getMostRecentMessages()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+        
+    }
+    
     @objc func newSession(_ notification: Notification) {
 
         getMostRecentMessages()
@@ -238,15 +251,6 @@ class MessagesViewController: UIViewController {
             self.contactBadge.badgeValue = requests.count
         }
 
-    }
-    
-    @objc func newMessages(_ notification: Notification) {
-
-        getMostRecentMessages()
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-        
     }
 
     @objc func requestsUpdated(_ notification: Notification) {

@@ -60,7 +60,7 @@ import AudioToolbox
                 textMessage.acknowledged = true
             }
             self.addTextMessages(textMessages)
-            NotificationCenter.default.post(name: Notifications.NewMessages, object: textMessages.count)
+            NotificationCenter.default.post(name: Notifications.NewMessages, object: textMessages)
         })
         messageTask.errorTitle = "Message Error"
         messageTask.sendRequest(request)
@@ -73,19 +73,8 @@ import AudioToolbox
     private func addTextMessages(_ textMessages: [TextMessage]) {
 
         messageDatabase.add(textMessages)
-        let ids = contactManager.allContactIds()
-        for contactId in ids {
-            var newMessages = [TextMessage]()
-            for textMessage in textMessages {
-                if textMessage.contactId == contactId {
-                    newMessages.append(textMessage)
-                }
-            }
-            if !newMessages.isEmpty {
-                ConversationCache.getConversation(contactId).addTextMessages(newMessages)
-            }
-        }
-        
+        ConversationCache.newMessages(textMessages)
+
     }
 
     @objc func allMessages() -> [TextMessage] {
@@ -197,6 +186,8 @@ import AudioToolbox
                 self.messageDatabase.update(textMessage)
                 DispatchQueue.main.async {
                     AudioServicesPlaySystemSound(MessageManager.sendSoundId)
+                    NotificationCenter.default.post(name: Notifications.MessageSent, object: textMessage.messageId,
+                                                    userInfo: nil)
                 }
             }
         })

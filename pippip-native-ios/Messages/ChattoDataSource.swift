@@ -39,12 +39,10 @@ class ChattoDataSource: ChatDataSourceProtocol {
 
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(messageSent(_:)),
+                                               name: Notifications.MessageSent, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(cleartextAvailable(_:)),
                                                name: Notifications.CleartextAvailable, object: nil)
-/*        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
-                                               name: Notifications.AppResumed, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
-                                               name: Notifications.AppSuspended, object: nil) */
 
     }
 
@@ -79,24 +77,34 @@ class ChattoDataSource: ChatDataSourceProtocol {
 
     }
 
+    // Notifications
+    
+    // This is sent from the main thread
+    @objc func messageSent(_ notification: Notification) {
+
+        assert(Thread.isMainThread, "Message sent notification must be sent from main thread")
+        guard let messageId = notification.object as? Int64 else { return }
+        slidingWindow.messageSent(messageId)
+        delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
+
+    }
+
     @objc func newMessages(_ notification: Notification) {
 
+        guard let textMessages = notification.object as? [TextMessage]else { return }
         DispatchQueue.main.async {
-            if self.slidingWindow.newMessages() {
+            if self.visible && self.slidingWindow.newMessages(textMessages) {
                 self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
-                if self.visible {
-                    DispatchQueue.main.async {
-                        AudioServicesPlaySystemSound(MessageManager.receiveSoundId)
-                    }
-                }
+                AudioServicesPlaySystemSound(MessageManager.receiveSoundId)
             }
         }
-        
+
     }
 
     @objc func cleartextAvailable(_ notification: Notification) {
 
-        if let textMessage = notification.object as? TextMessage {
+        guard  let textMessage = notification.object as? TextMessage else { return }
+        if visible {
             DispatchQueue.main.async {
                 self.slidingWindow.updateChatItem(textMessage)
                 self.delegate?.chatDataSourceDidUpdate(self, updateType: .reload)
@@ -104,23 +112,5 @@ class ChattoDataSource: ChatDataSourceProtocol {
         }
 
     }
-/*
-    @objc func appResumed(_ notification: Notification) {
 
-        DispatchQueue.main.async {
-            self.slidingWindow.resume()
-            self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
-        }
-
-    }
-
-    @objc func appSuspended(_ notification: Notification) {
-
-        DispatchQueue.main.async {
-            self.slidingWindow.suspend()
-            self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
-        }
-
-    }
-*/
 }

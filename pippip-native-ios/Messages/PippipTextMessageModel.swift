@@ -35,17 +35,5 @@ class PippipTextMessageModel: TextMessageModel<PippipMessageModel> {
 
     }
 
-    func messageSent() {
-
-        pippipMessageModel.status = .success
-
-    }
-
-    func sendFailed() {
-
-        pippipMessageModel.status = .failed
-
-    }
-
 }
 

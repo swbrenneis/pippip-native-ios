@@ -8,11 +8,11 @@
 
 import UIKit
 
-@objc class ConversationCache: NSObject {
+class ConversationCache: NSObject {
 
     private static var conversations = [Int: Conversation]()
     
-    @objc static func getConversation(_ contactId: Int) -> Conversation {
+    static func getConversation(_ contactId: Int) -> Conversation {
 
         if let conversation = ConversationCache.conversations[contactId] {
             return conversation
@@ -30,6 +30,19 @@ import UIKit
     @objc static func clearCache() {
 
         ConversationCache.conversations.removeAll()
+
+    }
+
+    static func newMessages(_ textMessages: [TextMessage]) {
+
+        for textMessage in textMessages {
+            if let conversation = ConversationCache.conversations[textMessage.contactId] {
+                conversation.addTextMessage(textMessage)
+            }
+            else {
+                print("Invalid contact ID \(textMessage.contactId)")
+            }
+        }
 
     }
 

@@ -56,27 +56,40 @@ class SlidingMessageWindow: NSObject {
         conversation.clearMessages()
         windowPos = 0
         window.removeAll()
+        items.removeAll()
 
     }
 
     func insertMessage(_ textMessage: TextMessage) {
 
-        conversation.addTextMessages([textMessage])
+        conversation.addTextMessage(textMessage)
         window.append(textMessage)
         items.append(PippipTextMessageModel(textMessage: textMessage))
 
     }
 
-    func newMessages() -> Bool {
+    func messageSent(_ messageId: Int64) {
 
-        let newMessages = conversation.newMessages
-        if newMessages.count > 0 {
-            for message in newMessages {
+        for index in 0..<items.count {
+            if items[index].message.messageId == messageId {
+                if let textMessage = conversation.getMessage(messageId: messageId) {
+                    items[index] = PippipTextMessageModel(textMessage: textMessage)
+                }
+            }
+        }
+
+    }
+
+    func newMessages(_ textMessages: [TextMessage]) -> Bool {
+
+        let filtered = conversation.filterMessages(textMessages)
+        if !filtered.isEmpty {
+            for message in filtered {
                 items.append(PippipTextMessageModel(textMessage: message))
             }
-            window.append(contentsOf: newMessages)
+            window.append(contentsOf: filtered)
             if visible {
-                conversation.markMessagesRead(newMessages)
+                conversation.markMessagesRead(filtered)
             }
             return true
         }

@@ -23,17 +23,11 @@ class Conversation: NSObject {
     })
     private var messageMap = [Int64: TextMessage]()
     private var timestampSet = Set<Int64>()
-    private var mostRecent: TextMessage?
+    //private var mostRecent: TextMessage?
     private var pos: Int = Int.max
-    private var incoming = [TextMessage]()
 
     var messageCount: Int {
         return messageManager.getMessageCount(contact.contactId)
-    }
-    var newMessages: [TextMessage] {
-        let messages = incoming
-        incoming.removeAll()
-        return messages
     }
 
     init(_ contact: Contact) {
@@ -51,35 +45,24 @@ class Conversation: NSObject {
 
     }
 
-    /*
-     * Incoming text messages
-     */
-    func addTextMessages(_ textMessages: [TextMessage]) {
-
-        for textMessage in textMessages {
-            if messageMap[textMessage.messageId] == nil {
-                messageList.insert(textMessage)
-                messageMap[textMessage.messageId] = textMessage
-                // Duplicate timestamps mess with the collection view
-                while timestampSet.contains(textMessage.timestamp) {
-                    textMessage.timestamp += 1
-                }
-                timestampSet.insert(textMessage.timestamp)
-                if mostRecent == nil {
-                    mostRecent = textMessage
-                }
-                else if textMessage.timestamp > mostRecent!.timestamp {
-                    mostRecent = textMessage
-                }
-                if !textMessage.originating {
-                    incoming.append(textMessage)
-                }
+    func addTextMessage(_ textMessage: TextMessage) {
+        
+        if messageMap[textMessage.messageId] == nil {
+            messageList.insert(textMessage)
+            messageMap[textMessage.messageId] = textMessage
+            /*
+            if mostRecent == nil {
+                mostRecent = textMessage
             }
-            else {
-                print("Duplicate messageId \(textMessage.messageId)")
+            else if textMessage.timestamp > mostRecent!.timestamp {
+                mostRecent = textMessage
             }
+ */
         }
-
+        else {
+            print("Duplicate messageId \(textMessage.messageId)")
+        }
+        
     }
 
     func clearMessages() {
@@ -87,7 +70,7 @@ class Conversation: NSObject {
         messageList.removeAll()
         messageMap.removeAll()
         timestampSet.removeAll()
-        mostRecent = nil
+//        mostRecent = nil
         messageManager.clearMessages(contact.contactId)
 
     }
@@ -99,11 +82,17 @@ class Conversation: NSObject {
             if let index = messageList.index(of: message) {
                 messageList.remove(at: index)
             }
-            if message.messageId == mostRecent?.messageId {
-                mostRecent = nil
-            }
+//            if message.messageId == mostRecent?.messageId {
+//                mostRecent = nil
+//            }
             messageManager.deleteMessage(messageId)
         }
+
+    }
+
+    func getMessage(messageId: Int64) -> TextMessage? {
+
+        return messageMap[messageId]
 
     }
 
@@ -155,16 +144,28 @@ class Conversation: NSObject {
             if !message.read {
                 message.read = true
                 // Most recent message may be a different instance.
-                if mostRecent?.messageId == message.messageId {
-                    mostRecent?.read = true
-                }
+//                if mostRecent?.messageId == message.messageId {
+//                    mostRecent?.read = true
+//                }
                 messageManager.markMessageRead(message.messageId)
             }
         }
     
     }
 
-    @objc func mostRecentMessage() -> TextMessage? {
+    func filterMessages(_ textMessages: [TextMessage]) -> [TextMessage] {
+
+        var filtered = [TextMessage]()
+        for textMessage in textMessages {
+            if textMessage.contactId == contact.contactId {
+                filtered.append(textMessage)
+            }
+        }
+        return filtered
+
+    }
+
+    func mostRecentMessage() -> TextMessage? {
 
         if messageList.isEmpty {
             if let textMessage = messageManager.mostRecentMessage(contact.contactId) {
@@ -204,7 +205,7 @@ class Conversation: NSObject {
         let messageId = try messageManager.sendMessage(textMessage, retry: false)
         messageList.insert(textMessage)
         messageMap[messageId] = textMessage
-        mostRecent = textMessage
+        // mostRecent = textMessage
 
     }
 
