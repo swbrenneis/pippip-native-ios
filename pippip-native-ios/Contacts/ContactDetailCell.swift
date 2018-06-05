@@ -107,7 +107,7 @@ class ContactDetailCell: PippipTableViewCell {
     
     @IBAction func resendRequest(_ sender: Any) {
 
-        contactManager.getRequestStatus(retry: true, publicId: publicId)
+        contactManager.requestContact(publicId: publicId, nickname: nil, retry: true)
         alertPresenter.infoAlert(title: "Contact Request Sent", message: "The request was sent to this contact")
 
     }

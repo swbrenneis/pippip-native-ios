@@ -24,7 +24,7 @@ class AuthView: UIView {
     var accountName = AccountManager.accountName()
     var viewController: UIViewController!
     var authenticator = Authenticator()
-    var swiftAuthenticator = SwiftAuthenticator()
+    var newAccountCreator = NewAccountCreator()
     var alertPresenter = AlertPresenter()
 
     override init(frame: CGRect) {
@@ -50,6 +50,9 @@ class AuthView: UIView {
         if accountName != nil {
             authButton.setTitle("Sign In", for: .normal)
         }
+
+        NotificationCenter.default.addObserver(self, selector: #selector(accountDeleted(_:)),
+                                               name: Notifications.AccountDeleted, object: nil)
 
     }
 
@@ -160,7 +163,7 @@ class AuthView: UIView {
         let hud = MBProgressHUD.showAdded(to: self, animated: true)
         hud.mode = .annularDeterminate;
         hud.label.text = "Authenticating...";
-        swiftAuthenticator.authenticate(accountName: self.accountName!, passphrase: passphrase)
+        authenticator.authenticate(accountName: self.accountName!, passphrase: passphrase)
         
     }
     
@@ -173,8 +176,7 @@ class AuthView: UIView {
         let hud = MBProgressHUD.showAdded(to: self, animated: true)
         hud.mode = .annularDeterminate;
         hud.label.text = "Creating...";
-        let newAccountCreator = NewAccountCreator()
-        newAccountCreator.createAccount(self.accountName, withPassphrase: passphrase)
+        newAccountCreator.createAccount(accountName: self.accountName!, passphrase: passphrase)
         
     }
     
@@ -186,6 +188,15 @@ class AuthView: UIView {
             MBProgressHUD.hide(for: self, animated: true)
             NotificationCenter.default.post(name: Notifications.NewSession, object: nil)
             self.removeFromSuperview()
+            self.authButton.setTitle("Sign In", for: .normal)
+        }
+        
+    }
+
+    @objc func accountDeleted(_ notification: Notification) {
+
+        DispatchQueue.main.async {
+            self.authButton.setTitle("Create New Account", for: .normal)
         }
         
     }

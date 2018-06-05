@@ -23,11 +23,11 @@ struct ContactRequest: Hashable {
 
     }
 
-    init?(serverRequest: [AnyHashable: Any]) {
+    init?(request: [String: String]) {
 
-        guard let puid = serverRequest["publicId"] as? String else { return nil }
+        guard let puid = request["publicId"] else { return nil }
         publicId = puid
-        nickname = serverRequest["nickname"] as? String
+        nickname = request["nickname"]
 
     }
 
@@ -70,7 +70,7 @@ class ContactManager: NSObject {
             }
             let requests = contactDatabase.getContactRequests()
             for request in requests {
-                if let contactRequest = ContactRequest(serverRequest: request) {
+                if let contactRequest = ContactRequest(request: request) {
                     ContactManager.requestSet.insert(contactRequest)
                 }
             }
@@ -81,21 +81,16 @@ class ContactManager: NSObject {
 
     func acknowledgeRequest(contactRequest: ContactRequest, response: String) {
 
-        var request = [String: Any]()
-        request["method"] = "AcknowledgeRequest"
-        request["id"] = contactRequest.publicId
-        request["response"] = response
-        let ackTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
-            if let serverContact = response["acknowledged"] as? [AnyHashable: Any],
-                let acknowledged = ContactRequest(serverRequest: serverContact),
-                acknowledged == contactRequest,
-                let contact = Contact(serverContact: serverContact) {
-                contact.nickname = contactRequest.nickname
-                self.addContact(contact)
+        let request = AcknowledgeRequest(id: contactRequest.publicId, response: response)
+        let ackTask = EnclaveTask<AcknowledgeRequestResponse>({ (response: AcknowledgeRequestResponse) -> Void in
+            if let acknowledged = Contact(serverContact: response.acknowledged!),
+                acknowledged.publicId == contactRequest.publicId {
+                acknowledged.nickname = contactRequest.nickname
+                self.addContact(acknowledged)
                 ContactManager.requestSet.remove(contactRequest)
-                self.contactDatabase.deleteContactRequest(contact.publicId)
+                self.contactDatabase.deleteContactRequest(acknowledged.publicId)
                 DispatchQueue.global().async {
-                    NotificationCenter.default.post(name: Notifications.RequestAcknowledged, object: contact)
+                    NotificationCenter.default.post(name: Notifications.RequestAcknowledged, object: acknowledged)
                 }
             }
             else {
@@ -127,12 +122,15 @@ class ContactManager: NSObject {
 
         let found = config.whitelistIndexOf(publicId)
         if found == NSNotFound {
-            var request = [String: Any]()
-            request["method"] = "UpdateWhitelist"
-            request["id"] = publicId
-            request["action"] = "add"
-            let addTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
-                NotificationCenter.default.post(name: Notifications.FriendAdded, object: nil, userInfo: response)
+            let request = UpdateWhitelistRequest(id: publicId, action: "add")
+            let addTask = EnclaveTask<UpdateWhitelistResponse>({ (response: UpdateWhitelistResponse) -> Void in
+                if  response.action == "add", response.result == "added" || response.result == "exists" {
+                    NotificationCenter.default.post(name: Notifications.FriendAdded, object: response)
+                }
+                else {
+                    self.alertPresenter.errorAlert(title: "Friends List Error",
+                                                   message: "Invalid response from server")
+                }
             })
             addTask.errorTitle = "Friends List Error"
             addTask.sendRequest(request)
@@ -144,11 +142,11 @@ class ContactManager: NSObject {
 
     }
 
-    func addRequests(_ requests: [[AnyHashable: Any]]) {
+    func addRequests(_ requests: [[String: String]]) {
 
-        var newRequests = [[AnyHashable: Any]]()
+        var newRequests = [[String: String]]()
         for request in requests {
-            if let contactRequest = ContactRequest(serverRequest: request) {
+            if let contactRequest = ContactRequest(request: request) {
                 ContactManager.requestSet.insert(contactRequest)
                 newRequests.append(request)
             }
@@ -180,28 +178,25 @@ class ContactManager: NSObject {
 
     func deleteContact(_ publicId: String) {
         
-        var request = [String: Any]()
-        request["method"] = "DeleteContact"
-        request["publicId"] = publicId
-        let deleteTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
-            if let publicId = response["publicId"] as? String {
-                // If there are duplicates in the database, this will prevent crashes
-                // However, duplicates will require two separate deletes
-                if let contactId = ContactManager.contactMap[publicId]?.contactId {
-                    self.contactDatabase.deleteContact(contactId)
-                    ContactManager.contactMap.removeValue(forKey: publicId)
-                    let messageDatabase = MessagesDatabase()
-                    messageDatabase.clearMessages(contactId)
-                    var newSet = Set<Contact>()
-                    for contact in ContactManager.contactSet {
-                        if contact.publicId != publicId {
-                            newSet.insert(contact)
-                        }
+        let request = DeleteContactRequest(publicId: publicId)
+        let deleteTask = EnclaveTask<DeleteContactResponse>({ (response: DeleteContactResponse) -> Void in
+            // If there are duplicates in the database, this will prevent crashes
+            // However, duplicates will require two separate deletes
+            if let contactId = ContactManager.contactMap[response.publicId!]?.contactId,
+                response.result == "deleted" {
+                self.contactDatabase.deleteContact(contactId)
+                ContactManager.contactMap.removeValue(forKey: publicId)
+                let messageDatabase = MessagesDatabase()
+                messageDatabase.clearMessages(contactId)
+                var newSet = Set<Contact>()
+                for contact in ContactManager.contactSet {
+                    if contact.publicId != publicId {
+                        newSet.insert(contact)
                     }
-                    ContactManager.contactSet = newSet
-                    NotificationCenter.default.post(name: Notifications.ContactDeleted, object: publicId, userInfo: nil)
-                    NotificationCenter.default.post(name: Notifications.MessagesUpdated, object: nil)
                 }
+                ContactManager.contactSet = newSet
+                NotificationCenter.default.post(name: Notifications.ContactDeleted, object: publicId)
+                NotificationCenter.default.post(name: Notifications.MessagesUpdated, object: nil)
             }
         })
         deleteTask.errorTitle = "Contact Error"
@@ -211,15 +206,18 @@ class ContactManager: NSObject {
 
     func deleteFriend(_ publicId: String) {
 
-        var request = [String: Any]()
-        request["method"] = "UpdateWhitelist"
-        request["id"] = publicId
-        request["action"] = "delete"
-        let deleteTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
-                NotificationCenter.default.post(name: Notifications.FriendDeleted, object: nil, userInfo: response)
+        let request = UpdateWhitelistRequest(id: publicId, action: "delete")
+        let addTask = EnclaveTask<UpdateWhitelistResponse>({ (response: UpdateWhitelistResponse) -> Void in
+            if  response.action == "delete", response.result == "deleted" || response.result == "not found" {
+                NotificationCenter.default.post(name: Notifications.FriendDeleted, object: nil)
+            }
+            else {
+                self.alertPresenter.errorAlert(title: "Friends List Error",
+                                               message: "Invalid response from server")
+            }
         })
-        deleteTask.errorTitle = "Friends List Error"
-        deleteTask.sendRequest(request)
+        addTask.errorTitle = "Friends List Error"
+        addTask.sendRequest(request)
 
     }
     
@@ -246,6 +244,27 @@ class ContactManager: NSObject {
 
     }
 
+    @objc func getPendingRequests() {
+        
+        let request = GetPendingRequests()
+        let getTask = EnclaveTask<GetPendingRequestsResponse>({ (response: GetPendingRequestsResponse) -> Void in
+            print("\(response.requests!.count) pending requests returned")
+            if response.requests!.count > 0 {
+                self.addRequests(response.requests!)
+            }
+            else {
+                ContactManager.requestSet.removeAll()
+            }
+            DispatchQueue.global().async {
+                NotificationCenter.default.post(name: Notifications.RequestsUpdated,
+                                                object: ContactManager.requestSet.count)
+            }
+        })
+        getTask.errorTitle = "Contact Error"
+        getTask.sendRequest(request)
+        
+    }
+    
     @objc func getRequestStatus(retry: Bool, publicId: String?) {
         
         var pending = [String]()
@@ -260,50 +279,19 @@ class ContactManager: NSObject {
             }
         }
         
-        var request = [String: Any]()
-        request["method"] = "GetRequestStatus"
-        request["requestedIds"] = pending
-        let updateTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
-            if let serverContacts = response["contacts"] as? [[AnyHashable: Any]] {
-                if serverContacts.count > 0 {
-                    let updated = self.updateContacts(serverContacts)
-                    NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updated)
-                    print("\(updated.count) contacts updated")
-                }
-                else if retry {
-                    self.requestContact(publicId: publicId!, nickname: nil, retry: true)
-                }
+        let request = GetRequestStatusRequest(requestedIds: pending)
+        let updateTask = EnclaveTask<GetRequestStatusResponse>({ (response: GetRequestStatusResponse) -> Void in
+            if response.contacts!.count > 0 {
+                let updated = self.updateContacts(response.contacts!)
+                NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updated)
+                print("\(updated.count) contacts updated")
+            }
+            else if retry {
+                self.requestContact(publicId: publicId!, nickname: nil, retry: true)
             }
         })
         updateTask.errorTitle = "Contact Error"
         updateTask.sendRequest(request)
-        
-    }
-    
-    @objc func getPendingRequests() {
-
-        var request = [String: Any]()
-        request["method"] = "GetPendingRequests"
-        let getTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
-            if let requests = response["requests"] as? [[AnyHashable: Any]] {
-                print("\(requests.count) pending requests returned")
-                if requests.count > 0 {
-                    self.addRequests(requests)
-                }
-                else {
-                    ContactManager.requestSet.removeAll()
-                }
-                DispatchQueue.global().async {
-                    NotificationCenter.default.post(name: Notifications.RequestsUpdated,
-                                                    object: ContactManager.requestSet.count)
-                }
-            }
-            else {
-                self.alertPresenter.errorAlert(title: "Contact Error", message: "Invalid server response")
-            }
-        })
-        getTask.errorTitle = "Contact Error"
-        getTask.sendRequest(request)
         
     }
 
@@ -319,16 +307,9 @@ class ContactManager: NSObject {
     
     @objc func matchNickname(nickname: String?, publicId: String?) {
 
-        var request = [String: Any]()
-        request["method"] = "MatchNickname"
-        if (nickname != nil) {
-            request["nickname"] = nickname
-        }
-        if (publicId != nil) {
-            request["publicId"] = publicId
-        }
-        let matchTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
-            NotificationCenter.default.post(name: Notifications.NicknameMatched, object: nil, userInfo: response)
+        let request = MatchNicknameRequest(publicId: publicId, nickname: nickname)
+        let matchTask = EnclaveTask<MatchNicknameResponse>({ (response: MatchNicknameResponse) -> Void in
+            NotificationCenter.default.post(name: Notifications.NicknameMatched, object: response)
         })
         matchTask.errorTitle = "Nickname Error"
         matchTask.sendRequest(request)
@@ -337,19 +318,17 @@ class ContactManager: NSObject {
 
     func requestContact(publicId: String, nickname: String?, retry: Bool) {
 
-        var request = [String: Any]()
-        request["method"] = "RequestContact"
-        request["id"] = publicId
+        let request = RequestContactRequest(id: publicId, retry: retry)
         if ContactManager.contactMap[publicId] != nil && !retry {
             alertPresenter.errorAlert(title: "ContactError", message: "This contact already exists in your contact list")
         }
         else {
-            let reqTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
+            let reqTask = EnclaveTask<RequestContactResponse>({ (response: RequestContactResponse) -> Void in
                 if !retry {
                     let contact = Contact()
-                    contact.publicId = response["requestedContactId"] as! String
+                    contact.publicId = response.requestedContactId!
                     contact.nickname = nickname
-                    contact.status = response["result"] as! String
+                    contact.status = response.result!
                     self.addContact(contact)
                     NotificationCenter.default.post(name: Notifications.ContactRequested, object: contact)
                 }
@@ -381,11 +360,9 @@ class ContactManager: NSObject {
 
     @objc func setContactPolicy(_ policy: String) {
         
-        var request = [String: Any]()
-        request["method"] = "SetContactPolicy"
-        request["policy"] = policy
-        let setTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
-            NotificationCenter.default.post(name: Notifications.PolicyUpdated, object: nil, userInfo: response)
+        let request = SetContactPolicyRequest(policy: policy)
+        let setTask = EnclaveTask<SetContactPolicyResponse>({ (response: SetContactPolicyResponse) -> Void in
+            NotificationCenter.default.post(name: Notifications.PolicyUpdated, object: response)
         })
         setTask.errorTitle = "Policy Error"
         setTask.sendRequest(request)
@@ -394,22 +371,9 @@ class ContactManager: NSObject {
 
     @objc func updateNickname(newNickname: String?, oldNickname: String?) {
 
-        var request = [String: Any]()
-        request["method"] = "SetNickname"
-        if (oldNickname != nil) {
-            request["oldNickname"] = oldNickname
-        }
-        else {
-            request["oldNickname"] = ""
-        }
-        if (newNickname != nil) {
-            request["newNickname"] = newNickname
-        }
-        else {
-            request["newNickname"] = ""
-        }
-        let setTask = EnclaveTask({ (response: [AnyHashable: Any]) -> Void in
-            NotificationCenter.default.post(name: Notifications.NicknameUpdated, object: nil, userInfo: response)
+        let request = SetNicknameRequest(oldNickname: oldNickname ?? "", newNickname: newNickname ?? "")
+        let setTask = EnclaveTask<SetNicknameResponse>({ (response: SetNicknameResponse) -> Void in
+            NotificationCenter.default.post(name: Notifications.NicknameUpdated, object: response)
         })
         setTask.errorTitle = "Nickname Error"
         setTask.sendRequest(request)
@@ -424,25 +388,19 @@ class ContactManager: NSObject {
 
     }
 
-    func updateContacts(_ serverContacts: [[AnyHashable: Any]]) -> [Contact] {
+    func updateContacts(_ serverContacts: [ServerContact]) -> [Contact] {
 
         var updates = [Contact]()
 
         for serverContact in serverContacts {
-            let status = serverContact["status"] as! String
-            if status == "accepted" {
-                let publicId = serverContact["publicId"] as! String
-                if let contact = ContactManager.contactMap[publicId] {
-                    contact.status = serverContact["status"] as! String
-                    contact.timestamp = (serverContact["timestamp"] as! NSNumber).int64Value
-                    
-                    let authData = serverContact["authData"] as! String
-                    contact.authData = Data(base64Encoded: authData)
-                    let nonce = serverContact["nonce"] as! String
-                    contact.nonce = Data(base64Encoded: nonce)
-                    let keys = serverContact["messageKeys"] as! [String]
+            if serverContact.status == "accepted" {
+                if let contact = ContactManager.contactMap[serverContact.publicId!] {
+                    contact.status = serverContact.status!
+                    contact.timestamp = Int64(serverContact.timestamp!)
+                    contact.authData = Data(base64Encoded: serverContact.authData!)
+                    contact.nonce = Data(base64Encoded: serverContact.nonce!)
                     var messageKeys = [Data]()
-                    for key in keys {
+                    for key in serverContact.messageKeys! {
                         messageKeys.append(Data(base64Encoded: key)!)
                     }
                     contact.messageKeys = messageKeys
@@ -475,9 +433,9 @@ extension ContactManager {
     @objc func nicknameMatched(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
-        if let info = notification.userInfo,
-            let publicId = info["publicId"] as? String {
-            deleteContact(publicId)
+        guard let response = notification.object as? MatchNicknameResponse else { return }
+        if response.result == "found" {
+            deleteContact(response.publicId!)
         }
         else {
             alertPresenter.errorAlert(title: "Delete Contact Error", message: "That nickname doesn't exist")

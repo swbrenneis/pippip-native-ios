@@ -7,7 +7,44 @@
 //
 
 import UIKit
+import ObjectMapper
 
 class NewAccountFinal: NSObject, APIResponseProtocol {
+    
+    var error: String?
+    var sessionId: Int32?
+    var authToken: Int64?
+    var postId: Int = 0
+
+    var alertPresenter = AlertPresenter()
+    var sessionState = SessionState()
+    
+    required init?(map: Map) {
+        if map.JSON["sessionId"] == nil {
+            return nil
+        }
+        if map.JSON["authToken"] == nil {
+            return nil
+        }
+    }
+    
+    func mapping(map: Map) {
+
+        sessionId <- map["sessionId"]
+        error <- map["error"]
+        authToken <- map["authToken"]
+        
+    }
+    
+    func processResponse() throws {
+
+        if error != nil {
+            alertPresenter.errorAlert(title: "New Account Error", message: error!)
+            throw ResponseError(error: error!)
+        }
+        sessionState.authToken = authToken!
+        
+    }
+    
 
 }

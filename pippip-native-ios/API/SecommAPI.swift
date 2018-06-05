@@ -45,11 +45,56 @@ class SecommAPI: NSObject {
     }
 
     @discardableResult
-    func doPost<ResponseT: Mappable>(responseType: ResponseT.Type, request: APIRequestProtocol) -> Int {
+    func doPost<ObserverT: PostObserverProtocol>(observer: ObserverT) -> Int {
+
+        guard SecommAPI.apiState.sessionActive else { return -1 }
+        
+        SecommAPI.apiState.postLock.lock()
+        var postId = -1
+        let resource = SecommAPI.apiState.hostPath + observer.request.path
+        if let url = URL(string: resource) {
+            var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData,
+                                        timeoutInterval: observer.request.timeout)
+            urlRequest.httpMethod = HTTPMethod.post.rawValue
+            urlRequest.setValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+            urlRequest.httpBody = observer.request.toJSONString()?.data(using: .utf8, allowLossyConversion: false)
+            SecommAPI.apiState.postId += 1
+            postId = SecommAPI.apiState.postId
+            Alamofire.request(urlRequest).responseObject { (response: DataResponse<ObserverT.ResponseT>) in
+                if response.error != nil {
+                    observer.postError(response.error!)
+                    print("API post failure: \(response.error!)")
+                }
+                else if var postResponse = response.result.value {
+                    postResponse.postId = postId
+                    observer.postComplete(postResponse)
+                }
+                else {
+                    print("Invalid server response in doPost")
+                    self.alertPresenter.errorAlert(title: "Request Error", message: "Invalid response from the server")
+                }
+            }
+        }
+        else {
+            print("Invalid resource: \(resource)")
+        }
+
+        defer {
+            SecommAPI.apiState.postLock.unlock()
+        }
+        
+        return postId
+
+    }
+
+    @discardableResult
+    func doxPost<ResponseT: Mappable>(responseType: ResponseT.Type, request: APIRequestProtocol) -> Int {
 
         guard SecommAPI.apiState.sessionActive else { return -1 }
 
         SecommAPI.apiState.postLock.lock()
+        var postId = -1
         let resource = SecommAPI.apiState.hostPath + request.path
         if let url = URL(string: resource) {
             var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData,
@@ -59,7 +104,7 @@ class SecommAPI: NSObject {
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
             urlRequest.httpBody = request.toJSONString()?.data(using: .utf8, allowLossyConversion: false)
             SecommAPI.apiState.postId += 1
-            let postId = SecommAPI.apiState.postId
+            postId = SecommAPI.apiState.postId
             Alamofire.request(urlRequest).responseObject { (response: DataResponse<ResponseT>) in
                 if response.error != nil {
                     self.alertPresenter.errorAlert(title: "Request Error", message: "Unable to send request")
@@ -74,7 +119,6 @@ class SecommAPI: NSObject {
                     self.alertPresenter.errorAlert(title: "Request Error", message: "Invalid response from the server")
                 }
             }
-            return postId
         }
         else {
             print("Invalid resource: \(resource)")
@@ -84,7 +128,7 @@ class SecommAPI: NSObject {
             SecommAPI.apiState.postLock.unlock()
         }
 
-        return -1
+        return postId
 
     }
 

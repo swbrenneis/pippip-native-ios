@@ -30,6 +30,7 @@ class ServerAuthorized: NSObject, APIRequestProtocol {
 
     override init() {
 
+        sessionId = sessionState.sessionId
         let codec = CKRSACodec()
         codec.putBlock(sessionState.enclaveKey!)
         let encoded = codec.encrypt(sessionState.serverPublicKey!)

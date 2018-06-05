@@ -14,6 +14,7 @@ class ClientAuthorized: NSObject, APIResponseProtocol {
     var error: String?
     var sessionId: Int32?
     var authToken: Int64?
+    var postId: Int = 0
 
     var alertPresenter = AlertPresenter()
     var sessionState = SessionState()
@@ -36,7 +37,7 @@ class ClientAuthorized: NSObject, APIResponseProtocol {
     }
     
     func processResponse() throws {
-        
+
         if error != nil {
             alertPresenter.errorAlert(title: "Authentication Error", message: error!)
             throw ResponseError(error: error!)

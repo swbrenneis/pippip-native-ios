@@ -30,6 +30,7 @@ struct Notifications {
     static let MessagesUpdated = NSNotification.Name("MessagesUpdated")
     static let NewSession = NSNotification.Name("NewSession")
     static let NicknameUpdated = NSNotification.Name("NicknameUpdated")
+    static let ParametersGenerated = NSNotification.Name("ParametersGenerated")
     static let RequestAcknowledged = NSNotification.Name("RequestsAcknowledged")
     static let RequestStatusUpdated = NSNotification.Name("RequestStatusUpdated")
     static let RequestsUpdated = NSNotification.Name("RequestsUpdated")

@@ -33,7 +33,7 @@ class TextMessage: Message {
 
     }
     
-    override init(serverMessage: [AnyHashable : Any]) {
+    override init(serverMessage: ServerMessage) {
 
         super.init(serverMessage: serverMessage)
 
@@ -113,15 +113,20 @@ class TextMessage: Message {
         let codec = CKGCMCodec()
         codec.setIV(iv)
         if cleartext!.utf8.count > 500 {
-            codec.putBlock(compress(cleartext!))
+            guard let compressedData = compress(cleartext!) else { throw CryptoError(error: "Compression failed") }
+            codec.putBlock(compressedData)
             compressed = true
         }
         else {
             codec.put(cleartext!)
             compressed = false
         }
-        try ciphertext = codec.encrypt(contact.messageKeys![keyIndex], withAuthData: contact.authData)
-        
+        ciphertext = codec.encrypt(contact.messageKeys![keyIndex], withAuthData: contact.authData!)
+        if ciphertext == nil {
+            throw CryptoError(error: codec.lastError!)
+            
+        }
+
     }
 
 }

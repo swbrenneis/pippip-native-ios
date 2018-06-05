@@ -152,17 +152,16 @@ class WhitelistViewController: UIViewController {
 
     }
 
-    @objc func friendAdded(_ : Notification) {
+    @objc func friendAdded(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
-
         let entity = Entity(publicId: publicId, nickname: nickname)
         config.addWhitelistEntry(entity)
         DispatchQueue.main.async {
             self.tableView.insertRows(at: [IndexPath(row: self.config.whitelist.count-1, section: 0)],
                                       with: .left)
             self.alertPresenter.successAlert(title: "Friend Added",
-                                            message: "This friend has been added to your friends list")
+                                             message: "This friend has been added to your friends list")
         }
 
     }
@@ -181,10 +180,9 @@ class WhitelistViewController: UIViewController {
     @objc func nicknameMatched(_ notification: Notification) {
         
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
-
-        let info = notification.userInfo!
-        if let puid = info["publicId"] as? String {
-            publicId = puid
+        guard let response = notification.object as? MatchNicknameResponse else { return }
+        if response.result == "found" {
+            publicId = response.publicId!
             if !contactManager.addFriend(self.publicId) {
                 alertPresenter.errorAlert(title: "Add Friend Error", message: "You already added that friend")
             }

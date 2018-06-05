@@ -8,7 +8,6 @@
 
 #import "pippip_native_ios-Swift.h"
 #import "MessagesDatabase.h"
-#import "ApplicationSingleton.h"
 #import "DatabaseMessage.h"
 #import "CKIVGenerator.h"
 #import "CKGCMCodec.h"

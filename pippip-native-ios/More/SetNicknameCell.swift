@@ -79,36 +79,33 @@ class SetNicknameCell: PippipTableViewCell, MultiCellProtocol {
     @objc func nicknameMatched(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
-        if let info = notification.userInfo {
-            if info["publicId"] == nil {
-                NotificationCenter.default.addObserver(self, selector: #selector(nicknameUpdated(_:)),
-                                                       name: Notifications.NicknameUpdated, object: nil)
-                DispatchQueue.main.async {
-                    self.setNicknameButton.isHidden = true
-                    self.contactManager.updateNickname(newNickname: self.nicknameTextField.text,
-                                                       oldNickname: self.currentNickname)
-                }
-            }
-            else {
-                alertPresenter.errorAlert(title: "Nickname Error",
-                                          message: "This nickname is in use, please choose another nickname")
+        guard let response = notification.object as? MatchNicknameResponse else { return }
+        if response.result == "not found" {
+            NotificationCenter.default.addObserver(self, selector: #selector(nicknameUpdated(_:)),
+                                                   name: Notifications.NicknameUpdated, object: nil)
+            DispatchQueue.main.async {
+                self.setNicknameButton.isHidden = true
+                self.contactManager.updateNickname(newNickname: self.nicknameTextField.text,
+                                                   oldNickname: self.currentNickname)
             }
         }
-
+        else {
+            alertPresenter.errorAlert(title: "Nickname Error",
+                                      message: "This nickname is in use, please choose another nickname")
+        }
     }
 
     @objc func nicknameUpdated(_ notification: Notification) {
     
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameUpdated, object: nil)
-        guard let info = notification.userInfo else { return }
-        guard let result = info["result"] as? String else { return }
-        if result == "deleted" {
+        guard let response = notification.object as? SetNicknameResponse else { return }
+        if response.result == "deleted" {
             currentNickname = nil
         }
         else {
             currentNickname = pendingNickname
         }
-        config.nickname = currentNickname!
+        config.nickname = currentNickname
 
         var message: String
         if currentNickname != nil {

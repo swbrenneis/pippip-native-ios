@@ -27,7 +27,12 @@ class EnclaveRequest: NSObject, APIRequestProtocol {
     var sessionState = SessionState()
 
     override init() {
+
+        sessionId = sessionState.sessionId
+        authToken = sessionState.authToken
+
         super.init()
+
     }
 
     required init?(map: Map) {
@@ -40,7 +45,7 @@ class EnclaveRequest: NSObject, APIRequestProtocol {
         request <- map["request"]
     }
     
-    func setRequest(_ enclaveRequest: Mappable) throws {
+    func setRequest(_ enclaveRequest: EnclaveRequestProtocol) throws {
 
         if let json = enclaveRequest.toJSONString() {
             let codec = CKGCMCodec()

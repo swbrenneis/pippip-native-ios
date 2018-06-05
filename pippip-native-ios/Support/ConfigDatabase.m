@@ -8,7 +8,6 @@
 
 #import "pippip_native_ios-Swift.h"
 #import "ConfigDatabase.h"
-#import "ApplicationSingleton.h"
 #import "AccountConfig.h"
 #import "AccountManager.h"
 #import "CKGCMCodec.h"
@@ -29,7 +28,6 @@
     self = [super init];
 
     _whitelist = [NSMutableArray array];
-    _whitelist = _whitelist;
     //idMap = [NSMutableDictionary dictionary];
     keyIndexes = [NSMutableDictionary dictionary];
     sessionState = [[SessionState alloc] init];
@@ -62,7 +60,7 @@
     if (config.whitelist != nil) {
         CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:config.whitelist];
         NSError *error = nil;
-        [codec decrypt:sessionState.contactsKey withAuthData:sessionState.authData withError:&error];
+        [codec decrypt:sessionState.contactsKey withAuthData:sessionState.authData error:&error];
         if (error == nil) {
             NSInteger count = [codec getInt];
             while (_whitelist.count < count) {
@@ -115,17 +113,14 @@
             [codec putString:nickname];
             [codec putString:publicId];
         }
-        NSError *error = nil;
-        NSData *encoded = [codec encrypt:sessionState.contactsKey
-                            withAuthData:sessionState.authData
-                               withError:&error];
-        if (error == nil) {
+        NSData *encoded = [codec encrypt:sessionState.contactsKey withAuthData:sessionState.authData];
+        if (encoded != nil) {
             [realm beginWriteTransaction];
             config.whitelist = encoded;
             [realm commitWriteTransaction];
         }
         else {
-            NSLog(@"Error while encoding whitelist: %@", error.localizedDescription);
+            NSLog(@"Error while encoding whitelist: %@", codec.lastError);
         }
     }
     else {

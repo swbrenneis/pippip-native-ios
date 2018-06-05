@@ -22,7 +22,7 @@
 
 - (NSArray<Contact*>*_Nonnull)getContactList;
 
-- (NSArray<NSDictionary*>*_Nonnull)getContactRequests;
+- (NSArray<NSDictionary<NSString*, NSString*>*>*_Nonnull)getContactRequests;
 
 - (void)updateContacts:(NSArray<Contact*>*_Nonnull)contacts;
 

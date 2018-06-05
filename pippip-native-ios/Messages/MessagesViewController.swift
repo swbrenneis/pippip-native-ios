@@ -176,7 +176,7 @@ class MessagesViewController: UIViewController {
 
     #if targetEnvironment(simulator)
     @objc func pollServer(_ sender: Any) {
-        ApplicationSingleton.instance().accountSession.doUpdates()
+        ApplicationInitializer.accountSession.doUpdates()
     }
     #endif
 

@@ -35,29 +35,26 @@ import Foundation
         let vaultData = try Data(contentsOf: vaultUrl)
 
         let digest = CKSHA256()
-        let authData = passphrase.data(using: .utf8)
-        let vaultKey = digest?.digest(authData!)
+        guard let authData = passphrase.data(using: .utf8)
+            else { throw CryptoError(error: "Invalid passphrase encoding") }
+        let vaultKey = digest.digest(authData)
         
-        let codec = CKGCMCodec(data: vaultData)!
-        var error: NSError? = nil
-        codec.decrypt(vaultKey, withAuthData: authData, withError: &error)
+        let codec = CKGCMCodec(data: vaultData)
+        try codec.decrypt(vaultKey, withAuthData: authData)
         
-        return error == nil
+        return true
 
     }
 
     @objc func decode(_ vaultData: Data, passphrase: String) throws {
 
         let digest = CKSHA256()
-        let authData = passphrase.data(using: .utf8)
-        let vaultKey = digest?.digest(authData!)
+        guard let authData = passphrase.data(using: .utf8)
+            else { throw CryptoError(error: "Invalid passphrase encoding") }
+        let vaultKey = digest.digest(authData)
 
-        let codec = CKGCMCodec(data: vaultData)!
-        var error: NSError? = nil
-        codec.decrypt(vaultKey, withAuthData: authData, withError: &error)
-        if error != nil {
-            throw error!
-        }
+        let codec = CKGCMCodec(data: vaultData)
+        try codec.decrypt(vaultKey, withAuthData: authData)
 
         sessionState.publicId = codec.getString()
         sessionState.accountRandom = codec.getBlock()
@@ -78,21 +75,24 @@ import Foundation
     @objc func encode(_ passphrase: String) throws -> Data {
 
         let digest = CKSHA256()
-        let authData = passphrase.data(using: .utf8)
-        let vaultKey = digest?.digest(authData!)
+        guard let authData = passphrase.data(using: .utf8)
+            else { throw CryptoError(error: "Invalid passphrase encoding") }
+        let vaultKey = digest.digest(authData)
 
         let codec = CKGCMCodec()
-        codec.put(sessionState.publicId)
-        codec.putBlock(sessionState.accountRandom)
-        codec.putBlock(sessionState.genpass)
-        codec.putBlock(sessionState.svpswSalt)
-        codec.putBlock(sessionState.authData)
-        codec.putBlock(sessionState.enclaveKey)
-        codec.putBlock(sessionState.contactsKey)
-        codec.put(sessionState.userPrivateKeyPEM)
-        codec.put(sessionState.userPublicKeyPEM)
+        codec.put(sessionState.publicId!)
+        codec.putBlock(sessionState.accountRandom!)
+        codec.putBlock(sessionState.genpass!)
+        codec.putBlock(sessionState.svpswSalt!)
+        codec.putBlock(sessionState.authData!)
+        codec.putBlock(sessionState.enclaveKey!)
+        codec.putBlock(sessionState.contactsKey!)
+        codec.put(sessionState.userPrivateKeyPEM!)
+        codec.put(sessionState.userPublicKeyPEM!)
 
-        return try codec.encrypt(vaultKey, withAuthData: authData)
+        guard let encoded = codec.encrypt(vaultKey, withAuthData: authData)
+            else { throw CryptoError(error: codec.lastError!)}
+        return encoded
 
     }
 

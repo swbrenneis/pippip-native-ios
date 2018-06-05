@@ -16,6 +16,7 @@ class ServerAuthChallenge: NSObject, APIResponseProtocol {
     var authToken: Int64?
     var hmac: String?
     var signature: String?
+    var postId: Int = 0
 
     var alertPresenter = AlertPresenter()
     var sessionState = SessionState()
@@ -24,11 +25,13 @@ class ServerAuthChallenge: NSObject, APIResponseProtocol {
         if map.JSON["sessionId"] == nil {
             return nil
         }
-        if map.JSON["hmac"] == nil {
-            return nil
-        }
-        if map.JSON["signature"] == nil {
-            return nil
+        if map.JSON["error"] == nil {
+            if map.JSON["hmac"] == nil {
+                return nil
+            }
+            if map.JSON["signature"] == nil {
+                return nil
+            }
         }
     }
     
@@ -99,12 +102,12 @@ class ServerAuthChallenge: NSObject, APIResponseProtocol {
         message.append(sessionState.accountRandom!)
         
         let digest = CKSHA256()
-        var hash = digest!.digest(message)!
+        var hash = digest.digest(message)
         count -= 32
         while count > 0 {
             var ctx = Data(message)
             ctx.append(hash)
-            hash = digest!.digest(ctx)
+            hash = digest.digest(ctx)
             count -= Int32(32 + message.count)
         }
         return hash

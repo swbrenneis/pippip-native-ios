@@ -41,7 +41,7 @@ class Configurator: NSObject {
             database.setContactPolicy(newValue)
         }
     }
-    @objc var nickname: String {
+    @objc var nickname: String? {
         get {
             let config = database.getConfig()
             return config.nickname

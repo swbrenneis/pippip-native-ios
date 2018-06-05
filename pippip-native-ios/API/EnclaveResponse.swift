@@ -28,7 +28,7 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
         if map.JSON["authToken"] == nil {
             return nil
         }
-        if map.JSON["response"] == nil {
+        if map.JSON["error"] == nil && map.JSON["response"] == nil {
             return nil
         }
     }

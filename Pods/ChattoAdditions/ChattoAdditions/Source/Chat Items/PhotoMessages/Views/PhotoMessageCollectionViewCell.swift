@@ -44,7 +44,7 @@ public final class PhotoMessageCollectionViewCell: BaseMessageCollectionViewCell
         }
     }
 
-    public var photoMessageViewModel: PhotoMessageViewModelProtocol! {
+    var photoMessageViewModel: PhotoMessageViewModelProtocol! {
         didSet {
             self.messageViewModel = self.photoMessageViewModel
             self.bubbleView.photoMessageViewModel = self.photoMessageViewModel

@@ -12,7 +12,7 @@
 
 + (NSString*_Nullable)accountName;
 
-+ (void)accountName:(NSString*_Nonnull)name;
++ (void)accountName:(NSString*_Nullable)name;
 
 + (BOOL)production;
 

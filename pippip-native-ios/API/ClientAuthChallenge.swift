@@ -79,12 +79,12 @@ class ClientAuthChallenge: NSObject, APIRequestProtocol {
         message.append(sessionState.accountRandom!)
 
         let digest = CKSHA256()
-        var hash = digest!.digest(message)!
+        var hash = digest.digest(message)
         count -= 32
         while count > 0 {
             var ctx = Data(message)
             ctx.append(hash)
-            hash = digest!.digest(ctx)
+            hash = digest.digest(ctx)
             count -= Int32(32 + message.count)
         }
         return hash

@@ -10,16 +10,16 @@
 
 @interface CKSHA256 : NSObject
 
-- (instancetype) init;
+- (instancetype _Nonnull) init;
 
 - (void) dealloc;
 
-- (NSData*) digest;
+- (NSData*_Nonnull) digest;
 
-- (NSData*) digest:(NSData*)data;
+- (NSData*_Nonnull) digest:(NSData*_Nonnull)data;
 
 - (void) reset;
 
-- (void) update:(NSData*)data;
+- (void) update:(NSData*_Nonnull)data;
 
 @end

@@ -32,27 +32,30 @@ class Authenticator: NSObject {
     }
 
     func doAuthorized() {
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(authorizedComplete(_:)),
-                                               name: Notifications.PostComplete, object: nil)
-        let authorized = ServerAuthorized()
-        secommAPI.doPost(responseType: ClientAuthorized.self, request: authorized)
+
+        secommAPI.doPost(observer: PostObserver(request: ServerAuthorized(),
+                                                postComplete: self.authorizedComplete,
+                                                postError: self.authorizedError))
 
     }
 
     func doChallenge() {
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(authChallengeComplete(_:)),
-                                               name: Notifications.PostComplete, object: nil)
-        let authChallenge = ClientAuthChallenge()
-        secommAPI.doPost(responseType: ServerAuthChallenge.self, request: authChallenge)
 
+        secommAPI.doPost(observer: PostObserver(request: ClientAuthChallenge(),
+                                                postComplete: self.authChallengeComplete,
+                                                postError: self.authChallengeError))
+        
     }
 
-    func logout() {
+    @objc func logout() {
 
-        let logout = Logout()
-        secommAPI.doPost(responseType: NullResponse.self, request: logout)
+        secommAPI.doPost(observer: PostObserver(request: Logout(),
+                                                postComplete: self.logoutComplete,
+                                                postError: self.logoutError))
+        sessionState.authenticated = false
+        DispatchQueue.global().async {
+            NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
+        }
 
     }
 
@@ -75,25 +78,22 @@ class Authenticator: NSObject {
     }
 
     func requestAuth() {
-
-        NotificationCenter.default.addObserver(self, selector: #selector(authRequestComplete(_:)),
-                                               name: Notifications.PostComplete, object: nil)
-        let authRequest = AuthenticationRequest()
-        secommAPI.doPost(responseType: AuthenticationResponse.self, request: authRequest)
-
+        
+        secommAPI.doPost(observer: PostObserver(request: AuthenticationRequest(),
+                                                postComplete: self.authRequestComplete,
+                                                postError: self.authRequestError))
+        
     }
 
-    // Notifications
+    // Observer functions
 
-    @objc func authChallengeComplete(_ notification: Notification) {
+    func authChallengeComplete(_ authChallenge: ServerAuthChallenge) {
         
-        guard let authChallenge = notification.object as? ServerAuthChallenge else { return }
-        NotificationCenter.default.removeObserver(self, name: Notifications.PostComplete, object: nil)
         var info = [AnyHashable: Any]()
         info["progress"] = 0.8
         NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
 
-        DispatchQueue.global().async {
+        DispatchQueue.global(qos: .userInitiated).async {
             do {
                 try authChallenge.processResponse()
                 self.doAuthorized()
@@ -105,10 +105,12 @@ class Authenticator: NSObject {
         
     }
 
-    @objc func authorizedComplete(_ notification: Notification) {
+    func authChallengeError(_ error: Error) {
+        print("Authentication challenge error: \(error)")
+    }
+    
+    func authorizedComplete(_ authorized: ClientAuthorized) {
         
-        guard let authorized = notification.object as? ClientAuthorized else { return }
-        NotificationCenter.default.removeObserver(self, name: Notifications.PostComplete, object: nil)
         var info = [AnyHashable: Any]()
         info["progress"] = 1.0
         NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
@@ -121,17 +123,20 @@ class Authenticator: NSObject {
         catch {
             print("Authentication request error: \(error)")
         }
+
     }
 
-    @objc func authRequestComplete(_ notification: Notification) {
+    func authorizedError(_ error: Error) {
+        print("Authorization error: \(error)")
+    }
 
-        guard let authResponse = notification.object as? AuthenticationResponse else { return }
-        NotificationCenter.default.removeObserver(self, name: Notifications.PostComplete, object: nil)
+    func authRequestComplete(_ authResponse: AuthenticationResponse) {
+
         var info = [AnyHashable: Any]()
         info["progress"] = 0.6
         NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
 
-        DispatchQueue.global().async {
+        DispatchQueue.global(qos: .userInitiated).async {
             do {
                 try authResponse.processResponse()
                 self.doChallenge()
@@ -143,8 +148,20 @@ class Authenticator: NSObject {
 
     }
 
+    func authRequestError(_ error: Error) {
+        print("Authentication request error: \(error)")
+    }
+
+    func logoutComplete(_ response: NullResponse) {
+        // Nothing to do here
+    }
+
+    func logoutError(_ error: Error) {
+        // Nothing to do here
+    }
+
     @objc func sessionStarted(_ notification: Notification) {
-        
+
         NotificationCenter.default.removeObserver(self, name: Notifications.SessionStarted, object: nil)
         guard let sessionResponse = notification.object as? SessionResponse else { return }
         if sessionResponse.error != nil {
@@ -162,7 +179,7 @@ class Authenticator: NSObject {
                 self.requestAuth()
             }
         }
-        
+
     }
     
 }

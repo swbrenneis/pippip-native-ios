@@ -11,7 +11,6 @@
 #import "CKGCMCodec.h"
 #import "DatabaseContact.h"
 #import "DatabaseContactRequest.h"
-#import "ApplicationSingleton.h"
 #import "Notifications.h"
 #import <Realm/Realm.h>
 
@@ -71,7 +70,7 @@
 
     CKGCMCodec *codec = [[CKGCMCodec alloc] initWithData:encoded];
     NSError *error = nil;
-    [codec decrypt:sessionState.contactsKey withAuthData:sessionState.authData withError:&error];
+    [codec decrypt:sessionState.contactsKey withAuthData:sessionState.authData error:&error];
     if (error != nil) {
         NSLog(@"Contact encoding error: %@", [error localizedDescription]);
         return nil;
@@ -169,8 +168,8 @@
     }
 
     NSError *error = nil;
-    NSData *encoded = [codec encrypt:sessionState.contactsKey withAuthData:sessionState.authData withError:&error];
-    if (error != nil) {
+    NSData *encoded = [codec encrypt:sessionState.contactsKey withAuthData:sessionState.authData];
+    if (encoded == nil) {
         NSLog(@"Error while encrypting contact: %@", error.localizedDescription);
     }
     return encoded;
@@ -211,7 +210,7 @@
 
 }
 
-- (NSArray<NSDictionary*>*)getContactRequests {
+- (NSArray<NSDictionary<NSString*, NSString*>*>*_Nonnull)getContactRequests {
 
     NSMutableArray<NSDictionary*> *requests = [NSMutableArray array];
     RLMResults<DatabaseContactRequest*> *dbRequests = [DatabaseContactRequest allObjects];

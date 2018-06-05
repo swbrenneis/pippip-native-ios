@@ -15,16 +15,19 @@ class AuthenticationResponse: NSObject, APIResponseProtocol {
     var sessionId: Int32?
     var authToken: Int64?
     var data: String?
+    var postId: Int = 0
 
     var alertPresenter = AlertPresenter()
     var sessionState = SessionState()
 
     required init?(map: Map) {
-        if map.JSON["sessionId"] == nil {
-            return nil
-        }
-        if map.JSON["data"] == nil {
-            return nil
+        if map.JSON["error"] == nil {
+            if map.JSON["sessionId"] == nil {
+                return nil
+            }
+            if map.JSON["data"] == nil {
+                return nil
+            }
         }
     }
 
