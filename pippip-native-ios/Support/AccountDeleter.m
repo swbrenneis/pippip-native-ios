@@ -8,7 +8,7 @@
 
 #import "pippip_native_ios-Swift.h"
 #import "AccountDeleter.h"
-#import "Authenticator.h"
+#import "AccountManager.h"
 #import <Realm/Realm.h>
 
 @implementation AccountDeleter
@@ -19,6 +19,7 @@
 
     Authenticator *auth = [[Authenticator alloc] init];
     [auth logout];
+    [AccountManager accountName: nil];
 
     NSFileManager *manager = [NSFileManager defaultManager];
     RLMRealmConfiguration *config = [RLMRealmConfiguration defaultConfiguration];

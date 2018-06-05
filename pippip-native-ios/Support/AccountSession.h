@@ -11,7 +11,7 @@
 
 @interface AccountSession : NSObject <UNUserNotificationCenterDelegate>
 
-@property (nonatomic) NSData *deviceToken;
+@property (nonatomic) NSData *_Nullable deviceToken;
 
 - (void)doUpdates;
 

@@ -62,6 +62,8 @@ class SettingsTableViewController: UITableViewController {
                                                name: Notifications.PolicyChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(thumbprintComplete(_:)),
                                                name: Notifications.ThumbprintComplete, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(accountDeleted(_:)),
+                                               name: Notifications.AccountDeleted, object: nil)
 
     }
 
@@ -72,22 +74,31 @@ class SettingsTableViewController: UITableViewController {
         alertPresenter.present = false
         NotificationCenter.default.removeObserver(self, name: Notifications.PolicyChanged, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.ThumbprintComplete, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.AccountDeleted, object: nil)
+
+    }
+
+    @objc func accountDeleted(_ notification: Notification) {
+
+        DispatchQueue.main.async {
+            self.navigationController?.popViewController(animated: true)
+        }
 
     }
 
     @objc func policyChanged(_ notification: Notification) {
 
-        guard let info = notification.userInfo else { return }
-        guard let policy = info["policy"] as? String else { return }
-        if policy == "public" {
-            cellItems[0]?.removeLast()
-            tableView.deleteRows(at: [IndexPath(row: cellItems[0]!.count, section: 0)], with: .right)
+        guard let policy = notification.object as? String else { return }
+        DispatchQueue.main.async {
+            if policy == "public" {
+                self.cellItems[0]?.removeLast()
+                self.tableView.deleteRows(at: [IndexPath(row: self.cellItems[0]!.count, section: 0)], with: .right)
+            }
+            else {
+                self.cellItems[0]?.append(EditWhitelistCell.cellItem)
+                self.tableView.insertRows(at: [IndexPath(row: self.cellItems[0]!.count-1, section: 0)], with: .left)
+            }
         }
-        else {
-            cellItems[0]?.append(EditWhitelistCell.cellItem)
-            tableView.insertRows(at: [IndexPath(row: cellItems[0]!.count-1, section: 0)], with: .left)
-        }
-
 
     }
 

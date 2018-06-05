@@ -68,25 +68,19 @@ struct Entity {
 
     }
     
-    @objc init?(serverContact: [AnyHashable: Any]) {
+    @objc init?(serverContact: ServerContact) {
 
-        guard let puid = serverContact["publicId"] as? String else { return nil }
-        publicId = puid
+        publicId = serverContact.publicId!
         let contactManager = ContactManager()
         contactId = contactManager.getContactId(publicId)
-        guard let stat = serverContact["status"] as? String else { return nil }
-        status = stat
+        status = serverContact.status!
         currentIndex = 0
         currentSequence = 1
-        guard let ts = serverContact["timestamp"] as? NSNumber else { return nil }
-        timestamp = ts.int64Value
-        guard let ad = serverContact["authData"] as? String else { return nil }
-        authData = Data(base64Encoded: ad)
-        guard let n = serverContact["nonce"] as? String else { return nil }
-        nonce = Data(base64Encoded: n)
-        guard let keys = serverContact["messageKeys"] as? [String] else { return nil }
+        timestamp = Int64(serverContact.timestamp!)
+        authData = Data(base64Encoded: serverContact.authData!)
+        nonce = Data(base64Encoded: serverContact.nonce!)
         messageKeys = [Data]()
-        for key in keys {
+        for key in serverContact.messageKeys! {
             messageKeys?.append(Data(base64Encoded: key)!)
         }
         

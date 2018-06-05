@@ -12,10 +12,10 @@
 
 @interface CKSignature : NSObject
 
-- (instancetype) initWithSHA256;
+- (instancetype _Nonnull) initWithSHA256;
 
-- (NSData*) sign:(CKRSAPrivateKey*)key withMessage:(NSData*)message;
+- (NSData*_Nonnull) sign:(CKRSAPrivateKey*_Nonnull)key withMessage:(NSData*)message;
 
-- (BOOL) verify:(CKRSAPublicKey*)key withMessage:(NSData*)message withSignature:(NSData*)signature;
+- (BOOL) verify:(CKRSAPublicKey*_Nonnull)key withMessage:(NSData*_Nonnull)message withSignature:(NSData*_Nonnull)signature;
 
 @end

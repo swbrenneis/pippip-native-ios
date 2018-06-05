@@ -33,7 +33,7 @@ class TextMessage: Message {
 
     }
     
-    override init(serverMessage: [AnyHashable : Any]) {
+    override init(serverMessage: ServerMessage) {
 
         super.init(serverMessage: serverMessage)
 
@@ -62,24 +62,24 @@ class TextMessage: Message {
             guard let _ = ciphertext else { return }
             if let contact = contactManager.getContactById(contactId) {
                 let ivGen = CKIVGenerator()
-                let iv = ivGen.generate(Int(sequence), withNonce: contact.nonce)
-                let codec = CKGCMCodec(data: ciphertext)!
+                let iv = ivGen.generate(Int(sequence), withNonce: contact.nonce!)
+                let codec = CKGCMCodec(data: ciphertext!)
                 codec.setIV(iv)
-                var error: NSError? = nil
-                codec.decrypt(contact.messageKeys![keyIndex], withAuthData: contact.authData,
-                              withError: &error)
-                if let _ = error {
-                    let message = error?.debugDescription ?? "Unknown"
-                    print("Error decrypting message - \(message)")
+                do {
+                    try codec.decrypt(contact.messageKeys![keyIndex], withAuthData: contact.authData!)
+                    if compressed {
+                        let block = codec.getBlock()
+                        self.cleartext = decompress(block)
+                        print("Compressed size \(block.count)")
+                        print("Cleartext length \(self.cleartext!.utf8.count)")
+                    }
+                    else {
+                        self.cleartext = codec.getString()
+                    }
                 }
-                else if compressed {
-                    let block = codec.getBlock()!
-                    self.cleartext = decompress(block)
-                    print("Compressed size \(block.count)")
-                    print("Cleartext length \(self.cleartext!.utf8.count)")
-                }
-                else {
-                    self.cleartext = codec.getString()
+                catch {
+                    print("Error decrypting message - \(error)")
+                    cleartext = "Encryption error"
                 }
             }
             else {
@@ -109,19 +109,24 @@ class TextMessage: Message {
 
         let contact = contactManager.getContactById(contactId)!
         let ivGen = CKIVGenerator()
-        let iv = ivGen.generate(Int(sequence), withNonce: contact.nonce)
+        let iv = ivGen.generate(Int(sequence), withNonce: contact.nonce!)
         let codec = CKGCMCodec()
         codec.setIV(iv)
         if cleartext!.utf8.count > 500 {
-            codec.putBlock(compress(cleartext!))
+            guard let compressedData = compress(cleartext!) else { throw CryptoError(error: "Compression failed") }
+            codec.putBlock(compressedData)
             compressed = true
         }
         else {
-            codec.put(cleartext)
+            codec.put(cleartext!)
             compressed = false
         }
-        try ciphertext = codec.encrypt(contact.messageKeys![keyIndex], withAuthData: contact.authData)
-        
+        ciphertext = codec.encrypt(contact.messageKeys![keyIndex], withAuthData: contact.authData!)
+        if ciphertext == nil {
+            throw CryptoError(error: codec.lastError!)
+            
+        }
+
     }
 
 }

@@ -9,7 +9,6 @@
 #import "pippip_native_ios-Swift.h"
 
 #import "AccountSession.h"
-#import "ApplicationSingleton.h"
 #import "Notifications.h"
 #import "MessagesDatabase.h"
 

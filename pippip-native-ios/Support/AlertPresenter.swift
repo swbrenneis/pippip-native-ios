@@ -24,7 +24,7 @@ class AlertPresenter: NSObject {
         }
     }
 
-    func infoAlert(title: String, message: String) {
+    @objc func infoAlert(title: String, message: String) {
         
         var info = [AnyHashable: Any]()
         info["title"] = title
@@ -34,7 +34,7 @@ class AlertPresenter: NSObject {
         
     }
     
-    func errorAlert(title: String, message: String) {
+    @objc func errorAlert(title: String, message: String) {
         
         var info = [AnyHashable: Any]()
         info["title"] = title
@@ -44,7 +44,7 @@ class AlertPresenter: NSObject {
         
     }
     
-    func successAlert(title: String, message: String) {
+    @objc func successAlert(title: String, message: String) {
         
         var info = [AnyHashable: Any]()
         info["title"] = title

@@ -211,10 +211,10 @@ class ContactsViewController: UIViewController {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
 
-        let info = notification.userInfo!
-        if let puid = info["publicId"] as? String {
-            publicId = puid
-            nickname = info["nickname"] as? String ?? ""
+        guard let response = notification.object as? MatchNicknameResponse else { return }
+        if response.result == "found" {
+            publicId = response.publicId!
+            nickname = response.nickname!
             contactManager.requestContact(publicId: publicId, nickname: nickname, retry: false)
         }
         else {

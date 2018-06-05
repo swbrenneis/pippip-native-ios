@@ -39,7 +39,7 @@ class SessionState: NSObject {
             SessionState.actual.authData = newValue
         }
     }
-    @objc var authToken: UInt64 {
+    @objc var authToken: Int64 {
         get {
             return SessionState.actual.authToken
         }

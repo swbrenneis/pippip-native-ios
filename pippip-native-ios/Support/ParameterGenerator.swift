@@ -12,7 +12,7 @@ import Foundation
 
     private var sessionState = SessionState()
 
-    @objc func generateParameters(_ accountName: String) {
+    func generateParameters(_ accountName: String) {
 
         let rnd: CKSecureRandom = CKSecureRandom()
         
@@ -24,7 +24,7 @@ import Foundation
         
         // Create GCM authentication data.
         let digest: CKSHA256 = CKSHA256()
-        sessionState.authData = digest.digest(sessionState.genpass)
+        sessionState.authData = digest.digest(sessionState.genpass!)
         
         // Create the message AES block cipher key.
         var keyRandom = rnd.nextBytes(32)
@@ -53,6 +53,8 @@ import Foundation
         let seData = "secomm.org".data(using: String.Encoding.utf8)
         sha1.update(seData)
         sessionState.publicId = HexCodec.hexString(sha1.digest())
+
+        NotificationCenter.default.post(name: Notifications.ParametersGenerated, object: nil)
 
     }
 

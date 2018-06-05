@@ -10,24 +10,26 @@
 
 @interface CKGCMCodec : NSObject
 
-- (instancetype)initWithData:(NSData*)data;
+@property (nonatomic) NSString *_Nullable lastError;
 
-- (void)decrypt:(NSData*)key withAuthData:(NSData*)authData withError:(NSError**)error;
+- (instancetype _Nonnull)initWithData:(NSData*_Nonnull)data;
 
-- (NSData*)encrypt:(NSData*)key withAuthData:(NSData*)authData withError:(NSError**)error;
+- (BOOL)decrypt:(NSData*_Nonnull)key withAuthData:(NSData*_Nonnull)authData error:(NSError*_Nullable*_Nonnull)error;
 
-- (NSData*)getBlock;
+- (NSData*_Nullable)encrypt:(NSData*_Nonnull)key withAuthData:(NSData*_Nonnull)authData;
+
+- (NSData*_Nonnull)getBlock;
 
 - (NSInteger)getInt;
 
-- (NSString*)getString;
+- (NSString*_Nonnull)getString;
 
-- (void)putBlock:(NSData*)block;
+- (void)putBlock:(NSData*_Nonnull)block;
 
 - (void)putInt:(NSInteger)number;
 
-- (void)putString:(NSString*)str;
+- (void)putString:(NSString*_Nonnull)str;
 
-- (void)setIV:(NSData*)iv;
+- (void)setIV:(NSData*_Nonnull)iv;
 
 @end

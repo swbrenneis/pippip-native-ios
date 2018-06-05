@@ -7,11 +7,11 @@
 //
 
 import UIKit
+import ObjectMapper
 
-class AuthenticationRequest: NSObject, PostPacketProtocol {
+class AuthenticationRequest: NSObject, APIRequestProtocol {
 
-    var sessionState = SessionState()
-    var restPath: String {
+    var path: String {
         if AccountManager.production() {
             return "/authenticator/authentication-request"
         }
@@ -20,24 +20,36 @@ class AuthenticationRequest: NSObject, PostPacketProtocol {
         }
     }
 
-    var restTimeout: Double = 20.0
+    var timeout: Double = 10.0
+    var data: String?
+    var sessionId: Int32?
+    var authToken: Int64?
 
-    var restPacket: [String : Any] {
+    var sessionState = SessionState()
 
-        var packet = [String: Any]()
-        packet["sessionId"] = sessionState.sessionId
+    override init() {
 
+        sessionId = sessionState.sessionId
         let rnd = CKSecureRandom()
         sessionState.clientAuthRandom = rnd.nextBytes(32)
         let codec = CKRSACodec()
-        codec.put(sessionState.publicId)
-        codec.putBlock(sessionState.accountRandom)
+        codec.put(sessionState.publicId!)
+        codec.putBlock(sessionState.accountRandom!)
         codec.putBlock(sessionState.svpswSalt!)
         codec.putBlock(sessionState.clientAuthRandom!)
-        packet["data"] = codec.encrypt(sessionState.serverPublicKey!).base64EncodedString()
+        data = codec.encrypt(sessionState.serverPublicKey!).base64EncodedString()
 
-        return packet
+        super.init()
 
     }
 
+    required init?(map: Map) {
+        
+    }
+
+    func mapping(map: Map) {
+        sessionId <- map["sessionId"]
+        data <- map["data"]
+    }
+    
 }

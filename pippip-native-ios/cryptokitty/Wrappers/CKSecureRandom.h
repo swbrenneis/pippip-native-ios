@@ -10,7 +10,7 @@
 
 @interface CKSecureRandom : NSObject
 
-- (NSData*) nextBytes:(int)count;
+- (NSData*_Nonnull) nextBytes:(int)count;
 
 - (int32_t) nextInt;
 

@@ -7,12 +7,11 @@
 //
 
 import UIKit
+import ObjectMapper
 
-class ClientAuthChallenge: NSObject, PostPacketProtocol {
+class ClientAuthChallenge: NSObject, APIRequestProtocol {
 
-    var sessionState = SessionState()
-
-    var restPath: String {
+    var path: String {
         if AccountManager.production() {
             return "/authenticator/authentication-challenge"
         }
@@ -20,34 +19,47 @@ class ClientAuthChallenge: NSObject, PostPacketProtocol {
             return "/authentication-challenge"
         }
     }
+    var timeout: Double = 10.0
+    var sessionId: Int32?
+    var authToken: Int64?
+    var hmac: String?
+    var signature: String?
+    
+    var sessionState = SessionState()
 
-    var restTimeout: Double = 10.0
+    override init() {
+        super.init()
 
-    var restPacket: [String : Any] {
-
-        var packet = [String: Any]()
-        packet["sessionId"] = sessionState.sessionId
-
-        let hmac = getHMAC()
-        packet["hmac"] = hmac.base64EncodedString()
-
+        sessionId = sessionState.sessionId
+        let hmacData = getHMAC()
+        hmac = hmacData.base64EncodedString()
         let sig = CKSignature(sha256: ())
-        let signature = sig!.sign(sessionState.userPrivateKey!, withMessage: hmac)
-        packet["signature"] = signature!.base64EncodedString()
+        let sigData = sig.sign(sessionState.userPrivateKey!, withMessage: hmacData)
+        signature = sigData.base64EncodedString()
 
-        return packet
+    }
+
+    required init?(map: Map) {
+        
+    }
+
+    func mapping(map: Map) {
+
+        sessionId <- map["sessionId"]
+        hmac <- map["hmac"]
+        signature <- map["signature"]
 
     }
 
     func getHMAC() -> Data {
 
-        let hmac = CKHMAC(sha256: ())
-        hmac!.setKey(s2k())
+        let hmac256 = CKHMAC(sha256: ())
+        hmac256.setKey(s2k())
         var message = Data()
         message.append(sessionState.clientAuthRandom!)
         message.append("secomm server".data(using: .utf8)!)
-        hmac!.setMessage(message)
-        return hmac!.getHMAC()
+        hmac256.setMessage(message)
+        return hmac256.getHMAC()
 
     }
 
@@ -67,12 +79,12 @@ class ClientAuthChallenge: NSObject, PostPacketProtocol {
         message.append(sessionState.accountRandom!)
 
         let digest = CKSHA256()
-        var hash = digest!.digest(message)!
+        var hash = digest.digest(message)
         count -= 32
         while count > 0 {
             var ctx = Data(message)
             ctx.append(hash)
-            hash = digest!.digest(ctx)
+            hash = digest.digest(ctx)
             count -= Int32(32 + message.count)
         }
         return hash

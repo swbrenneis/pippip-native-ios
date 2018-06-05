@@ -7,13 +7,11 @@
 //
 
 import Foundation
+import ObjectMapper
 
-class EnclaveRequest: NSObject, PostPacketProtocol {
+class EnclaveRequest: NSObject, APIRequestProtocol {
 
-    var sessionState = SessionState()
-    private var packet = [String: Any]()
-
-    var restPath: String {
+    var path: String {
         if AccountManager.production() {
             return "/enclave/enclave-request"
         }
@@ -21,23 +19,47 @@ class EnclaveRequest: NSObject, PostPacketProtocol {
             return "/enclave-request"
         }
     }
-    var restTimeout: Double = 10.0
+    var timeout: Double = 10.0
+    var sessionId: Int32?
+    var authToken: Int64?
+    var request: String?
 
-    var restPacket: [String : Any] {
-        packet["sessionId"] = sessionState.sessionId
-        packet["authToken"] = sessionState.authToken
-        return packet
+    var sessionState = SessionState()
+
+    override init() {
+
+        sessionId = sessionState.sessionId
+        authToken = sessionState.authToken
+
+        super.init()
+
     }
 
-    func setRequest(_ request: [String: Any]) throws {
+    required init?(map: Map) {
+        
+    }
 
-        let jsonData = try JSONSerialization.data(withJSONObject: request, options: [])
-        let json = String(data: jsonData, encoding: .utf8)
+    func mapping(map: Map) {
+        sessionId <- map["sessionId"]
+        authToken <- map["authToken"]
+        request <- map["request"]
+    }
+    
+    func setRequest(_ enclaveRequest: EnclaveRequestProtocol) throws {
 
-        let codec = CKGCMCodec()
-        codec.put(json)
-        let encoded = try codec.encrypt(sessionState.enclaveKey, withAuthData: sessionState.authData)
-        packet["request"] = encoded.base64EncodedString()
+        if let json = enclaveRequest.toJSONString() {
+            let codec = CKGCMCodec()
+            codec.put(json)
+            if let encoded = codec.encrypt(sessionState.enclaveKey!, withAuthData: sessionState.authData!) {
+                request = encoded.base64EncodedString()
+            }
+            else {
+                throw RequestError(error: codec.lastError!)
+            }
+        }
+        else {
+            throw RequestError(error: "Unable to encode request")
+        }
 
     }
 

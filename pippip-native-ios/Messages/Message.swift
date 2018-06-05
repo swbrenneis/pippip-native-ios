@@ -28,26 +28,16 @@ import UIKit
     var config = Configurator()
     var contactManager = ContactManager()
 
-    init(serverMessage: [AnyHashable: Any]) {
+    init(serverMessage: ServerMessage) {
 
-        let b64 = serverMessage["body"] as! String
-        ciphertext = Data(base64Encoded: b64)
-        let publicId = serverMessage["fromId"] as! String
-        contactId = contactManager.getContactId(publicId)
-        let ki = serverMessage["keyIndex"] as! NSNumber
-        keyIndex = ki.intValue
-        messageType = serverMessage["messageType"] as! String
+        ciphertext = Data(base64Encoded: serverMessage.body!)
+        contactId = contactManager.getContactId(serverMessage.fromId!)
+        keyIndex = serverMessage.keyIndex!
+        messageType = serverMessage.messageType!
         originating = false
-        let sq = serverMessage["sequence"] as! NSNumber
-        sequence = sq.int64Value
-        let ts = serverMessage["timestamp"] as! NSNumber
-        timestamp = ts.int64Value
-        if let comp = serverMessage["compressed"] as? NSNumber {
-            compressed = comp.boolValue
-        }
-        else {
-            compressed = false
-        }
+        sequence = Int64(serverMessage.sequence!)
+        timestamp = Int64(serverMessage.timestamp!)
+        compressed = serverMessage.compressed!
         version = Message.currentVersion
 
     }
@@ -85,15 +75,15 @@ import UIKit
 
     }
 
-    func encodeForServer(publicId: String) -> [String: Any] {
+    func encodeForServer(publicId: String) -> ServerMessage {
 
-        var serverMessage = [String: Any]()
-        serverMessage["toId"] = publicId
-        serverMessage["sequence"] = sequence
-        serverMessage["keyIndex"] = keyIndex
-        serverMessage["messageType"] = messageType
-        serverMessage["compressed"] = compressed
-        serverMessage["body"] = ciphertext?.base64EncodedString()
+        let serverMessage = ServerMessage()
+        serverMessage.toId = publicId
+        serverMessage.sequence = Int(sequence)
+        serverMessage.keyIndex = keyIndex
+        serverMessage.messageType = messageType
+        serverMessage.compressed = compressed
+        serverMessage.body = ciphertext?.base64EncodedString()
         return serverMessage
 
     }

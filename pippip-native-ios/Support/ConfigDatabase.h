@@ -32,7 +32,7 @@
 
 - (void)setContactPolicy:(nonnull NSString*)policy;
 
-- (void)setNickname:(nonnull NSString*)nickname;
+- (void)setNickname:(nullable NSString*)nickname;
 
 // - (BOOL)storeCleartextMessages;
 

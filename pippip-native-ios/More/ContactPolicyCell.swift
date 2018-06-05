@@ -52,17 +52,14 @@ class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
 
     @objc func policyUpdated(_ notification: Notification) {
 
-        guard let info = notification.userInfo else { return }
-        if let result = info["result"] as? String {
+        guard let response = notification.object as? SetContactPolicyResponse else { return }
+        if (response.result == "policySet") {
+            self.currentPolicy = self.selectedPolicy
+            self.config.contactPolicy = self.currentPolicy
+            var info = [AnyHashable: Any]()
+            info["policy"] = self.currentPolicy
+            NotificationCenter.default.post(name: Notifications.PolicyChanged, object: response.policy)
             DispatchQueue.main.async {
-                if (result == "policySet") {
-                    self.currentPolicy = self.selectedPolicy
-                    self.config.contactPolicy = self.currentPolicy
-                    var info = [AnyHashable: Any]()
-                    info["policy"] = self.currentPolicy
-                    NotificationCenter.default.post(name: Notifications.PolicyChanged, object: nil,
-                                                    userInfo: info)
-                }
                 self.resetCell()
             }
         }
