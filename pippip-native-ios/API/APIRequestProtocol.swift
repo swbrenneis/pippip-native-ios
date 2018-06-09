@@ -9,7 +9,7 @@
 import Foundation
 import ObjectMapper
 
-class RequestError: Error {
+class APIRequestError: Error {
     
     var error: String
     var localizedDescription: String {

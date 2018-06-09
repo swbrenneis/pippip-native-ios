@@ -50,14 +50,6 @@ class Conversation: NSObject {
         if messageMap[textMessage.messageId] == nil {
             messageList.insert(textMessage)
             messageMap[textMessage.messageId] = textMessage
-            /*
-            if mostRecent == nil {
-                mostRecent = textMessage
-            }
-            else if textMessage.timestamp > mostRecent!.timestamp {
-                mostRecent = textMessage
-            }
- */
         }
         else {
             print("Duplicate messageId \(textMessage.messageId)")
@@ -90,6 +82,29 @@ class Conversation: NSObject {
 
     }
 
+    func filterMessages(_ textMessages: [TextMessage]) -> [TextMessage] {
+        
+        var filtered = [TextMessage]()
+        for textMessage in textMessages {
+            if textMessage.contactId == contact.contactId {
+                filtered.append(textMessage)
+            }
+        }
+        return filtered
+        
+    }
+    
+    func findMessageText(_ fragment: String) -> TextMessage? {
+        
+        for textMessage in messageList {
+            if let _ = textMessage.cleartext?.uppercased().range(of: fragment.uppercased()) {
+                return textMessage
+            }
+        }
+        return nil
+        
+    }
+    
     func getMessage(messageId: Int64) -> TextMessage? {
 
         return messageMap[messageId]
@@ -153,15 +168,11 @@ class Conversation: NSObject {
     
     }
 
-    func filterMessages(_ textMessages: [TextMessage]) -> [TextMessage] {
+    func messageFailed(_ messageId: Int64) {
 
-        var filtered = [TextMessage]()
-        for textMessage in textMessages {
-            if textMessage.contactId == contact.contactId {
-                filtered.append(textMessage)
-            }
-        }
-        return filtered
+        guard let message = messageMap[messageId] else { return }
+        message.failed = true
+        messageManager.updateMessage(message)
 
     }
 
@@ -177,17 +188,15 @@ class Conversation: NSObject {
 
     }
 
-    func findMessageText(_ fragment: String) -> TextMessage? {
-        
-        for textMessage in messageList {
-            if let _ = textMessage.cleartext?.uppercased().range(of: fragment.uppercased()) {
-                return textMessage
-            }
-        }
-        return nil
-        
+    func retryTextMessage(_ messageId: Int64) {
+
+        guard let textMessage = messageMap[messageId] else { return }
+        textMessage.failed = false
+        messageManager.updateMessage(textMessage)
+        messageManager.sendMessage(textMessage, retry: true)
+
     }
-    
+
     func searchMessages(_ fragment: String) -> Bool {
         
         for textMessage in messageList {
@@ -202,6 +211,8 @@ class Conversation: NSObject {
     func sendMessage(_ textMessage: TextMessage) throws {
 
         textMessage.read = true
+        try textMessage.encrypt()
+        textMessage.timestamp = Int64(Date().timeIntervalSince1970 * 1000)
         let messageId = try messageManager.sendMessage(textMessage, retry: false)
         messageList.insert(textMessage)
         messageMap[messageId] = textMessage

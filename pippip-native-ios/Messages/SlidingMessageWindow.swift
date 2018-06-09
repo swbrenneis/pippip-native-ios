@@ -68,6 +68,19 @@ class SlidingMessageWindow: NSObject {
 
     }
 
+    func messageFailed(_ messageId: Int64) {
+
+        for index in 0..<items.count {
+            if items[index].message.messageId == messageId {
+                conversation.messageFailed(messageId)
+                if let textMessage = conversation.getMessage(messageId: messageId) {
+                    items[index] = PippipTextMessageModel(textMessage: textMessage)
+                }
+            }
+        }
+        
+    }
+
     func messageSent(_ messageId: Int64) {
 
         for index in 0..<items.count {
@@ -96,6 +109,18 @@ class SlidingMessageWindow: NSObject {
         else {
             return false
         }
+
+    }
+
+    func retryTextMessage(_ textMessage: TextMessage) {
+
+        textMessage.failed = false
+        for index in 0..<items.count {
+            if items[index].message.messageId == textMessage.messageId {
+                items[index] = PippipTextMessageModel(textMessage: textMessage)
+            }
+        }
+        conversation.retryTextMessage(textMessage.messageId)
 
     }
 

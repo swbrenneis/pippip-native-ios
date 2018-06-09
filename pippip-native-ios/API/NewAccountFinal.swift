@@ -40,7 +40,7 @@ class NewAccountFinal: NSObject, APIResponseProtocol {
 
         if error != nil {
             alertPresenter.errorAlert(title: "New Account Error", message: error!)
-            throw ResponseError(error: error!)
+            throw APIResponseError(errorString: error!)
         }
         sessionState.authToken = authToken!
         

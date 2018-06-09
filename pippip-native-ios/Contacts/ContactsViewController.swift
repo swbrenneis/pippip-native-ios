@@ -430,7 +430,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
                    forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {
-            contactManager.deleteContact(contactList[indexPath.row].publicId)
+            contactManager.deleteContact(publicId: contactList[indexPath.row].publicId)
         }
         
     }

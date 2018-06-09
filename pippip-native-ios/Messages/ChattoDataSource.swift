@@ -39,6 +39,8 @@ class ChattoDataSource: ChatDataSourceProtocol {
 
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(messageFailed(_:)),
+                                               name: Notifications.MessageFailed, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(messageSent(_:)),
                                                name: Notifications.MessageSent, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(cleartextAvailable(_:)),
@@ -77,8 +79,26 @@ class ChattoDataSource: ChatDataSourceProtocol {
 
     }
 
+    func retryTextMessage(_ textMessage: TextMessage) {
+
+        DispatchQueue.main.async {
+            self.slidingWindow.retryTextMessage(textMessage)
+            self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
+        }
+
+    }
+
     // Notifications
-    
+
+    @objc func messageFailed(_ notification: Notification) {
+
+        assert(Thread.isMainThread, "Message failed notification must be sent from main thread")
+        guard let textMessage = notification.object as? TextMessage else { return }
+        slidingWindow.messageFailed(textMessage.messageId)
+        delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
+
+    }
+
     // This is sent from the main thread
     @objc func messageSent(_ notification: Notification) {
 
@@ -95,7 +115,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
         DispatchQueue.main.async {
             if self.visible && self.slidingWindow.newMessages(textMessages) {
                 self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
-                AudioServicesPlaySystemSound(MessageManager.receiveSoundId)
+                AudioServicesPlaySystemSound(ChattoViewController.receiveSoundId)
             }
         }
 

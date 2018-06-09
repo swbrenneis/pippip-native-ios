@@ -9,15 +9,15 @@
 import Foundation
 import ObjectMapper
 
-class ResponseError: Error {
+enum ResponseErrors { case timedout, invalidServerResponse, invalidSession, invalidAuthToken, invalidRequest }
 
-    var error: String
-    var localizedDescription: String {
-        return error
-    }
+class APIResponseError: Error {
 
-    init(error: String) {
-        self.error = error
+    var errorString: String?
+    var error: ResponseErrors?
+    
+    init(errorString: String) {
+        self.errorString = errorString
     }
 
 }

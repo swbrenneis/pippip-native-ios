@@ -45,12 +45,15 @@ class ContactManager: NSObject {
     static private var requestSet = Set<ContactRequest>()
     static private var initialized = false
 
-    var contactDatabase: ContactDatabase
+    var contactDatabase = ContactDatabase()
+    var sessionState = SessionState()
     var config = Configurator()
     var pendingRequests: Set<ContactRequest> {
+        loadContacts()
         return ContactManager.requestSet
     }
     var contactList: [Contact] {
+        loadContacts()
         return Array(ContactManager.contactSet)
     }
     var alertPresenter = AlertPresenter()
@@ -61,43 +64,14 @@ class ContactManager: NSObject {
 
         super.init()
 
-        let sessionState = SessionState()
-        if (sessionState.authenticated && !ContactManager.initialized) {
-            ContactManager.initialized = true
-            let list = contactDatabase.getContactList()
-            for contact in list {
-                ContactManager.contactSet.insert(contact)
-            }
-            let requests = contactDatabase.getContactRequests()
-            for request in requests {
-                if let contactRequest = ContactRequest(request: request) {
-                    ContactManager.requestSet.insert(contactRequest)
-                }
-            }
-            mapContacts()
-        }
         
     }
 
     func acknowledgeRequest(contactRequest: ContactRequest, response: String) {
 
         let request = AcknowledgeRequest(id: contactRequest.publicId, response: response)
-        let ackTask = EnclaveTask<AcknowledgeRequestResponse>({ (response: AcknowledgeRequestResponse) -> Void in
-            if let acknowledged = Contact(serverContact: response.acknowledged!),
-                acknowledged.publicId == contactRequest.publicId {
-                acknowledged.nickname = contactRequest.nickname
-                self.addContact(acknowledged)
-                ContactManager.requestSet.remove(contactRequest)
-                self.contactDatabase.deleteContactRequest(acknowledged.publicId)
-                DispatchQueue.global().async {
-                    NotificationCenter.default.post(name: Notifications.RequestAcknowledged, object: acknowledged)
-                }
-            }
-            else {
-                self.alertPresenter.errorAlert(title: "Contact Error",
-                                               message: "Invalid response to acknowledgement")
-            }
-        })
+        let delegate = AcknowledgeRequestDelegate(request: request, contactRequest: contactRequest)
+        let ackTask = EnclaveTask<AcknowledgeRequest, AcknowledgeRequestResponse>(delegate: delegate)
         ackTask.errorTitle = "Contact Error"
         ackTask.sendRequest(request)
 
@@ -123,15 +97,8 @@ class ContactManager: NSObject {
         let found = config.whitelistIndexOf(publicId)
         if found == NSNotFound {
             let request = UpdateWhitelistRequest(id: publicId, action: "add")
-            let addTask = EnclaveTask<UpdateWhitelistResponse>({ (response: UpdateWhitelistResponse) -> Void in
-                if  response.action == "add", response.result == "added" || response.result == "exists" {
-                    NotificationCenter.default.post(name: Notifications.FriendAdded, object: response)
-                }
-                else {
-                    self.alertPresenter.errorAlert(title: "Friends List Error",
-                                                   message: "Invalid response from server")
-                }
-            })
+            let delegate = UpdateWhitelistDelegate(request: request, updateType: .addFriend)
+            let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>(delegate: delegate)
             addTask.errorTitle = "Friends List Error"
             addTask.sendRequest(request)
             return true
@@ -176,58 +143,54 @@ class ContactManager: NSObject {
 
     }
 
-    func deleteContact(_ publicId: String) {
+    func clearRequests() {
+
+        ContactManager.requestSet.removeAll()
+
+    }
+
+    func deleteContact(publicId: String) {
         
         let request = DeleteContactRequest(publicId: publicId)
-        let deleteTask = EnclaveTask<DeleteContactResponse>({ (response: DeleteContactResponse) -> Void in
-            // If there are duplicates in the database, this will prevent crashes
-            // However, duplicates will require two separate deletes
-            if let contactId = ContactManager.contactMap[response.publicId!]?.contactId,
-                response.result == "deleted" {
-                self.contactDatabase.deleteContact(contactId)
-                ContactManager.contactMap.removeValue(forKey: publicId)
-                let messageDatabase = MessagesDatabase()
-                messageDatabase.clearMessages(contactId)
-                var newSet = Set<Contact>()
-                for contact in ContactManager.contactSet {
-                    if contact.publicId != publicId {
-                        newSet.insert(contact)
-                    }
-                }
-                ContactManager.contactSet = newSet
-                NotificationCenter.default.post(name: Notifications.ContactDeleted, object: publicId)
-                NotificationCenter.default.post(name: Notifications.MessagesUpdated, object: nil)
-            }
-        })
+        let delegate = DeleteContactDelegate(request: request)
+        let deleteTask = EnclaveTask<DeleteContactRequest, DeleteContactResponse>(delegate: delegate)
         deleteTask.errorTitle = "Contact Error"
         deleteTask.sendRequest(request)
         
     }
 
+    func deleteContact(contact: Contact) {
+        
+        self.contactDatabase.deleteContact(contact.contactId)
+        ContactManager.contactMap.removeValue(forKey: contact.publicId)
+        ContactManager.contactSet.remove(contact)
+
+    }
+    
+    func deleteContactRequest(_ contactRequest: ContactRequest) {
+        
+        ContactManager.requestSet.remove(contactRequest)
+        self.contactDatabase.deleteContactRequest(contactRequest.publicId)
+
+    }
+
     func deleteFriend(_ publicId: String) {
 
         let request = UpdateWhitelistRequest(id: publicId, action: "delete")
-        let addTask = EnclaveTask<UpdateWhitelistResponse>({ (response: UpdateWhitelistResponse) -> Void in
-            if  response.action == "delete", response.result == "deleted" || response.result == "not found" {
-                NotificationCenter.default.post(name: Notifications.FriendDeleted, object: nil)
-            }
-            else {
-                self.alertPresenter.errorAlert(title: "Friends List Error",
-                                               message: "Invalid response from server")
-            }
-        })
+        let delegate = UpdateWhitelistDelegate(request: request, updateType: .deleteFriend)
+        let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>(delegate: delegate)
         addTask.errorTitle = "Friends List Error"
         addTask.sendRequest(request)
 
     }
     
-    @objc func getContact(_ publicId: String) -> Contact? {
+    @objc func getContact(publicId: String) -> Contact? {
 
         return ContactManager.contactMap[publicId]
 
     }
 
-    @objc func getContactById(_ contactId: Int) -> Contact? {
+    @objc func getContact(contactId: Int) -> Contact? {
 
         return ContactManager.contactIdMap[contactId]
 
@@ -247,29 +210,18 @@ class ContactManager: NSObject {
     @objc func getPendingRequests() {
         
         let request = GetPendingRequests()
-        let getTask = EnclaveTask<GetPendingRequestsResponse>({ (response: GetPendingRequestsResponse) -> Void in
-            print("\(response.requests!.count) pending requests returned")
-            if response.requests!.count > 0 {
-                self.addRequests(response.requests!)
-            }
-            else {
-                ContactManager.requestSet.removeAll()
-            }
-            DispatchQueue.global().async {
-                NotificationCenter.default.post(name: Notifications.RequestsUpdated,
-                                                object: ContactManager.requestSet.count)
-            }
-        })
+        let delegate = GetPendingRequestsDelegate(request: request)
+        let getTask = EnclaveTask<GetPendingRequests, GetPendingRequestsResponse>(delegate: delegate)
         getTask.errorTitle = "Contact Error"
         getTask.sendRequest(request)
         
     }
     
-    @objc func getRequestStatus(retry: Bool, publicId: String?) {
+    @objc func getRequestStatus(retry: Bool, publicId: String) {
         
         var pending = [String]()
         if retry {
-            pending.append(publicId!)
+            pending.append(publicId)
         }
         else {
             for contact in ContactManager.contactSet {
@@ -280,19 +232,30 @@ class ContactManager: NSObject {
         }
         
         let request = GetRequestStatusRequest(requestedIds: pending)
-        let updateTask = EnclaveTask<GetRequestStatusResponse>({ (response: GetRequestStatusResponse) -> Void in
-            if response.contacts!.count > 0 {
-                let updated = self.updateContacts(response.contacts!)
-                NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updated)
-                print("\(updated.count) contacts updated")
-            }
-            else if retry {
-                self.requestContact(publicId: publicId!, nickname: nil, retry: true)
-            }
-        })
+        let delegate = GetRequestStatusDelegate(request: request, publicId: publicId, retry: retry)
+        let updateTask = EnclaveTask<GetRequestStatusRequest, GetRequestStatusResponse>(delegate: delegate)
         updateTask.errorTitle = "Contact Error"
         updateTask.sendRequest(request)
         
+    }
+
+    func loadContacts() {
+
+        if (sessionState.authenticated && !ContactManager.initialized) {
+            ContactManager.initialized = true
+            let list = contactDatabase.getContactList()
+            for contact in list {
+                ContactManager.contactSet.insert(contact)
+            }
+            let requests = contactDatabase.getContactRequests()
+            for request in requests {
+                if let contactRequest = ContactRequest(request: request) {
+                    ContactManager.requestSet.insert(contactRequest)
+                }
+            }
+            mapContacts()
+        }
+
     }
 
     func mapContacts() {
@@ -308,9 +271,8 @@ class ContactManager: NSObject {
     @objc func matchNickname(nickname: String?, publicId: String?) {
 
         let request = MatchNicknameRequest(publicId: publicId, nickname: nickname)
-        let matchTask = EnclaveTask<MatchNicknameResponse>({ (response: MatchNicknameResponse) -> Void in
-            NotificationCenter.default.post(name: Notifications.NicknameMatched, object: response)
-        })
+        let delegate = MatchNicknameDelegate(request: request)
+        let matchTask = EnclaveTask<MatchNicknameRequest, MatchNicknameResponse>(delegate: delegate)
         matchTask.errorTitle = "Nickname Error"
         matchTask.sendRequest(request)
         
@@ -318,21 +280,13 @@ class ContactManager: NSObject {
 
     func requestContact(publicId: String, nickname: String?, retry: Bool) {
 
-        let request = RequestContactRequest(id: publicId, retry: retry)
         if ContactManager.contactMap[publicId] != nil && !retry {
             alertPresenter.errorAlert(title: "ContactError", message: "This contact already exists in your contact list")
         }
         else {
-            let reqTask = EnclaveTask<RequestContactResponse>({ (response: RequestContactResponse) -> Void in
-                if !retry {
-                    let contact = Contact()
-                    contact.publicId = response.requestedContactId!
-                    contact.nickname = nickname
-                    contact.status = response.result!
-                    self.addContact(contact)
-                    NotificationCenter.default.post(name: Notifications.ContactRequested, object: contact)
-                }
-            })
+            let request = RequestContactRequest(id: publicId, retry: retry)
+            let delegate = RequestContactDelegate(request: request, retry: retry, nickname: nickname)
+            let reqTask = EnclaveTask<RequestContactRequest, RequestContactResponse>(delegate: delegate)
             reqTask.errorTitle = "Contact Error"
             reqTask.sendRequest(request)
         }
@@ -361,25 +315,13 @@ class ContactManager: NSObject {
     @objc func setContactPolicy(_ policy: String) {
         
         let request = SetContactPolicyRequest(policy: policy)
-        let setTask = EnclaveTask<SetContactPolicyResponse>({ (response: SetContactPolicyResponse) -> Void in
-            NotificationCenter.default.post(name: Notifications.PolicyUpdated, object: response)
-        })
+        let delegate = SetContactPolicyDelegate(request: request)
+        let setTask = EnclaveTask<SetContactPolicyRequest, SetContactPolicyResponse>(delegate: delegate)
         setTask.errorTitle = "Policy Error"
         setTask.sendRequest(request)
         
     }
 
-    @objc func updateNickname(newNickname: String?, oldNickname: String?) {
-
-        let request = SetNicknameRequest(oldNickname: oldNickname ?? "", newNickname: newNickname ?? "")
-        let setTask = EnclaveTask<SetNicknameResponse>({ (response: SetNicknameResponse) -> Void in
-            NotificationCenter.default.post(name: Notifications.NicknameUpdated, object: response)
-        })
-        setTask.errorTitle = "Nickname Error"
-        setTask.sendRequest(request)
-        
-    }
-    
     func updateContact(_ update: Contact) {
 
         contactDatabase.update([update])
@@ -416,6 +358,16 @@ class ContactManager: NSObject {
 
     }
 
+    @objc func updateNickname(newNickname: String?, oldNickname: String?) {
+
+        let request = SetNicknameRequest(oldNickname: oldNickname ?? "", newNickname: newNickname ?? "")
+        let delegate = SetNicknameDelegate(request: request)
+        let setTask = EnclaveTask<SetNicknameRequest, SetNicknameResponse>(delegate: delegate)
+        setTask.errorTitle = "Nickname Error"
+        setTask.sendRequest(request)
+        
+    }
+    
 }
 
 // Debug only
@@ -435,7 +387,7 @@ extension ContactManager {
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
         guard let response = notification.object as? MatchNicknameResponse else { return }
         if response.result == "found" {
-            deleteContact(response.publicId!)
+            deleteContact(publicId: response.publicId!)
         }
         else {
             alertPresenter.errorAlert(title: "Delete Contact Error", message: "That nickname doesn't exist")

@@ -33,25 +33,25 @@ class Authenticator: NSObject {
 
     func doAuthorized() {
 
-        secommAPI.doPost(observer: PostObserver(request: ServerAuthorized(),
-                                                postComplete: self.authorizedComplete,
-                                                postError: self.authorizedError))
+        secommAPI.queuePost(delegate: APIResponseDelegate(request: ServerAuthorized(),
+                                                          responseComplete: self.authorizedComplete,
+                                                          responseError: self.authorizedError))
 
     }
 
     func doChallenge() {
 
-        secommAPI.doPost(observer: PostObserver(request: ClientAuthChallenge(),
-                                                postComplete: self.authChallengeComplete,
-                                                postError: self.authChallengeError))
+        secommAPI.queuePost(delegate: APIResponseDelegate(request: ClientAuthChallenge(),
+                                                          responseComplete: self.authChallengeComplete,
+                                                          responseError: self.authChallengeError))
         
     }
 
     @objc func logout() {
 
-        secommAPI.doPost(observer: PostObserver(request: Logout(),
-                                                postComplete: self.logoutComplete,
-                                                postError: self.logoutError))
+        secommAPI.queuePost(delegate: APIResponseDelegate(request: Logout(),
+                                                          responseComplete: self.logoutComplete,
+                                                          responseError: self.logoutError))
         sessionState.authenticated = false
         DispatchQueue.global().async {
             NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
@@ -78,10 +78,10 @@ class Authenticator: NSObject {
     }
 
     func requestAuth() {
-        
-        secommAPI.doPost(observer: PostObserver(request: AuthenticationRequest(),
-                                                postComplete: self.authRequestComplete,
-                                                postError: self.authRequestError))
+
+        secommAPI.queuePost(delegate: APIResponseDelegate(request: AuthenticationRequest(),
+                                                          responseComplete: self.authRequestComplete,
+                                                          responseError: self.authRequestError))
         
     }
 
@@ -105,8 +105,8 @@ class Authenticator: NSObject {
         
     }
 
-    func authChallengeError(_ error: Error) {
-        print("Authentication challenge error: \(error)")
+    func authChallengeError(_ error: APIResponseError) {
+        print("Authentication challenge error: \(error.errorString!)")
     }
     
     func authorizedComplete(_ authorized: ClientAuthorized) {
@@ -126,8 +126,8 @@ class Authenticator: NSObject {
 
     }
 
-    func authorizedError(_ error: Error) {
-        print("Authorization error: \(error)")
+    func authorizedError(_ error: APIResponseError) {
+        print("Authorization error: \(error.errorString!)")
     }
 
     func authRequestComplete(_ authResponse: AuthenticationResponse) {
@@ -148,15 +148,15 @@ class Authenticator: NSObject {
 
     }
 
-    func authRequestError(_ error: Error) {
-        print("Authentication request error: \(error)")
+    func authRequestError(_ error: APIResponseError) {
+        print("Authentication request error: \(error.errorString!)")
     }
 
     func logoutComplete(_ response: NullResponse) {
         // Nothing to do here
     }
 
-    func logoutError(_ error: Error) {
+    func logoutError(_ error: APIResponseError) {
         // Nothing to do here
     }
 

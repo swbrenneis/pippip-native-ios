@@ -58,17 +58,17 @@ class NewAccountCreator: NSObject {
 
     func doFinish() {
 
-        secommAPI.doPost(observer: PostObserver(request: NewAccountFinish(),
-                                                postComplete: self.accountFinishComplete,
-                                                postError: self.accountFinishError))
+        secommAPI.queuePost(delegate: APIResponseDelegate(request: NewAccountFinish(),
+                                                          responseComplete: self.accountFinishComplete,
+                                                          responseError: self.accountFinishError))
         
     }
 
     func requestNewAccount() {
 
-        secommAPI.doPost(observer: PostObserver(request: NewAccountRequest(),
-                                                postComplete: self.accountRequestComplete,
-                                                postError: self.accountRequestError))
+        secommAPI.queuePost(delegate: APIResponseDelegate(request: NewAccountRequest(),
+                                                          responseComplete: self.accountRequestComplete,
+                                                          responseError: self.accountRequestError))
         
     }
 
@@ -107,8 +107,8 @@ class NewAccountCreator: NSObject {
         
     }
 
-    func accountFinishError(_ error: Error) {
-        print("Account finish error: \(error)")
+    func accountFinishError(_ error: APIResponseError) {
+        print("Account finish error: \(error.errorString!)")
     }
 
     func accountRequestComplete(_ accountResponse: NewAccountResponse) {
@@ -129,8 +129,8 @@ class NewAccountCreator: NSObject {
         
     }
 
-    func accountRequestError(_ error: Error) {
-        print("Account request error: \(error)")
+    func accountRequestError(_ error: APIResponseError) {
+        print("Account request error: \(error.errorString!)")
     }
 
     // Notifications

@@ -7,12 +7,9 @@
 //
 
 import UIKit
-import AudioToolbox
 
 @objc class MessageManager: NSObject {
 
-    static var sendSoundId: SystemSoundID = 0
-    static var receiveSoundId: SystemSoundID = 0
     static var initialized = false
 
     var messageDatabase = MessagesDatabase()
@@ -20,26 +17,12 @@ import AudioToolbox
     var config = Configurator()
     var alertPresenter = AlertPresenter()
 
-    override init() {
-
-        if !MessageManager.initialized {
-            MessageManager.initialized = true
-            if let sendUrl = Bundle.main.url(forResource: "iphone_send_sms", withExtension: "mp3") {
-                AudioServicesCreateSystemSoundID(sendUrl as CFURL, &MessageManager.sendSoundId)
-            }
-            if let receiveUrl = Bundle.main.url(forResource: "iphone_receive_sms", withExtension: "mp3") {
-                AudioServicesCreateSystemSoundID(receiveUrl as CFURL, &MessageManager.receiveSoundId)
-            }
-        }
-        
-    }
-
-    func acknowledgeMessages(_ textMessages:[TextMessage]) {
+    func acknowledgeMessages(_ textMessages: [TextMessage]) {
 
         var triplets = [Triplet]()
         for textMessage in textMessages {
             if (textMessage.contactId != NSNotFound) {
-                let contact = contactManager.getContactById(textMessage.contactId)!
+                let contact = contactManager.getContact(contactId: textMessage.contactId)!
                 let triplet = Triplet(publicId: contact.publicId, sequence: Int(textMessage.sequence),
                                       timestamp: Int(textMessage.timestamp))
                 triplets.append(triplet)
@@ -48,16 +31,10 @@ import AudioToolbox
                 print("Contact for ID \(textMessage.contactId) not found")
             }
         }
+
         let request = AcknowledgeMessagesRequest(messages: triplets)
-        let messageTask = EnclaveTask<AcknowledgeMessagesResponse>(
-        { (response: AcknowledgeMessagesResponse) -> Void in
-            print("Messages acknowledged, \(response.exceptions!.count) exceptions")
-            for textMessage in textMessages {
-                textMessage.acknowledged = true
-            }
-            self.addTextMessages(textMessages)
-            NotificationCenter.default.post(name: Notifications.NewMessages, object: textMessages)
-        })
+        let delegate = AcknowledgeMessagesDelegate(request: request, textMessages: textMessages)
+        let messageTask = EnclaveTask<AcknowledgeMessagesRequest, AcknowledgeMessagesResponse>(delegate: delegate)
         messageTask.errorTitle = "Message Error"
         messageTask.sendRequest(request)
 
@@ -66,7 +43,7 @@ import AudioToolbox
     /*
      * Adds incoming messages to the database and to their conversations
      */
-    private func addTextMessages(_ textMessages: [TextMessage]) {
+    func addTextMessages(_ textMessages: [TextMessage]) {
 
         messageDatabase.add(textMessages)
         ConversationCache.newMessages(textMessages)
@@ -109,24 +86,8 @@ import AudioToolbox
     @objc func getNewMessages() {
 
         let request = GetMessagesRequest()
-        let messageTask = EnclaveTask<GetMessagesResponse>({ (response: GetMessagesResponse) -> Void in
-            print("\(response.messages!.count) new messages returned")
-            var textMessages = [TextMessage]()
-            for message in response.messages! {
-                if let contact = self.contactManager.getContact(message.fromId!) {
-                    if contact.status == "accepted" {
-                        let textMessage = TextMessage(serverMessage: message)
-                        textMessages.append(textMessage)
-                    }
-                }
-                else {
-                    print("Invalid message sender: \(message.fromId!)")
-                }
-            }
-            if !textMessages.isEmpty {
-                self.acknowledgeMessages(textMessages)
-            }
-        })
+        let delegate = GetMessagesDelegate(request: request)
+        let messageTask = EnclaveTask<GetMessagesRequest, GetMessagesResponse>(delegate: delegate)
         messageTask.errorTitle = "Message Error"
         messageTask.sendRequest(request)
 
@@ -164,25 +125,17 @@ import AudioToolbox
     }
 
     @discardableResult
-    func sendMessage(_ textMessage: TextMessage, retry: Bool) throws -> Int64 {
+    func sendMessage(_ textMessage: TextMessage, retry: Bool) -> Int64 {
 
         if (!retry) {
-            try textMessage.encrypt()
-            textMessage.timestamp = Int64(Date().timeIntervalSince1970 * 1000)
             messageDatabase.add(textMessage)
         }
         let messageId = textMessage.messageId
 
-        let contact = contactManager.getContactById(textMessage.contactId)!
+        let contact = contactManager.getContact(contactId: textMessage.contactId)!
         let request = SendMessageRequest(message: textMessage.encodeForServer(publicId: contact.publicId))
-        let enclaveTask = EnclaveTask<SendMessageResponse>({ (response: SendMessageResponse) -> Void in
-            textMessage.timestamp = Int64(response.timestamp!)
-            textMessage.acknowledged = true
-            self.messageDatabase.update(textMessage)
-            DispatchQueue.main.async {
-                AudioServicesPlaySystemSound(MessageManager.sendSoundId)
-            }
-        })
+        let delegate = SendMessageDelegate(request: request, textMessage: textMessage)
+        let enclaveTask = EnclaveTask<SendMessageRequest ,SendMessageResponse>(delegate: delegate)
         enclaveTask.errorTitle = "Message Error"
         enclaveTask.sendRequest(request)
         return messageId

@@ -11,7 +11,7 @@ import ChattoAdditions
 
 class PippipTextMessageModel: TextMessageModel<PippipMessageModel> {
 
-    var message: Message
+    var message: TextMessage
     var messageText = "Processing..."
     var pippipMessageModel: PippipMessageModel
 

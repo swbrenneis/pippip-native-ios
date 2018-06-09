@@ -21,13 +21,16 @@ class PippipMessageModel: MessageModelProtocol {
     init(_ message: Message) {
 
         let contactManager = ContactManager()
-        let contact = contactManager.getContactById(message.contactId)!
+        let contact = contactManager.getContact(contactId: message.contactId)!
 
         senderId = contact.displayName
         isIncoming = !message.originating
         date = Date(timeIntervalSince1970: Double(message.timestamp) / 1000)
         status = .sending
-        if message.acknowledged || !message.originating {
+        if message.failed {
+            status = .failed
+        }
+        else if message.acknowledged || !message.originating {
             status = .success
         }
         type = "text-message-type"

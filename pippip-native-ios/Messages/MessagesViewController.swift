@@ -369,7 +369,7 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
         let message = previews[indexPath.item]
         // This is code necessary to allow for a bug that stores a message before the contact
         // has been accepted. It can be removed when general beta begins.
-        if let contact = contactManager.getContactById(message.contactId) {
+        if let contact = contactManager.getContact(contactId: message.contactId) {
             if contact.status == "accepted" {
                 cell.configure(textMessage: message)
             }
@@ -389,7 +389,7 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
         self.view.endEditing(true)
         let contactId = previews[indexPath.item].contactId
         let viewController = ChattoViewController()
-        viewController.contact = contactManager.getContactById(contactId)
+        viewController.contact = contactManager.getContact(contactId: contactId)
         chatPushed = true
         self.navigationController?.pushViewController(viewController, animated: true)
 

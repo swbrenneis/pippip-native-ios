@@ -43,7 +43,7 @@ class PreviewCell: PippipTableViewCell {
             NotificationCenter.default.addObserver(self, selector: #selector(cleartextAvailable(_:)),
                                                    name: Notifications.CleartextAvailable, object: nil)
             self.textMessage = textMessage
-            let contact = contactManager.getContactById(textMessage.contactId)
+            let contact = contactManager.getContact(contactId: textMessage.contactId)
             senderLabel.text = contact?.displayName
             timestampLabel.text = convertTimestamp(textMessage.timestamp) + " >"
             if textMessage.ciphertext!.count < 100 {

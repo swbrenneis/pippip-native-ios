@@ -244,6 +244,7 @@
         [realm beginWriteTransaction];
         dbMessage.acknowledged = message.acknowledged;
         dbMessage.read = message.read;
+        dbMessage.failed = message.failed;
         dbMessage.timestamp = message.timestamp;
         [realm commitWriteTransaction];
     }

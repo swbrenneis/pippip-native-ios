@@ -23,5 +23,6 @@
 @property BOOL acknowledged;
 @property BOOL sent;
 @property BOOL compressed;
+@property BOOL failed;
 
 @end

@@ -54,11 +54,11 @@ class EnclaveRequest: NSObject, APIRequestProtocol {
                 request = encoded.base64EncodedString()
             }
             else {
-                throw RequestError(error: codec.lastError!)
+                throw EnclaveResponseError(errorString: codec.lastError!)
             }
         }
         else {
-            throw RequestError(error: "Unable to encode request")
+            throw EnclaveResponseError(errorString: "Unable to encode request")
         }
 
     }

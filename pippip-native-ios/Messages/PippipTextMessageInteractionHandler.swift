@@ -16,7 +16,10 @@ class PippipTextMessageInteractionHandler: BaseMessageInteractionHandlerProtocol
     }
 
     func userDidTapOnFailIcon(viewModel: TextMessageViewModel<PippipTextMessageModel>, failIconView: UIView) {
-        
+
+        let message = viewModel.textMessage.message
+        NotificationCenter.default.post(name: Notifications.RetryMessage, object: message)
+
     }
 
     func userDidTapOnAvatar(viewModel: TextMessageViewModel<PippipTextMessageModel>) {

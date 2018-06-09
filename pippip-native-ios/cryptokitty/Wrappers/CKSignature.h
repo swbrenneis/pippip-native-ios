@@ -14,7 +14,7 @@
 
 - (instancetype _Nonnull) initWithSHA256;
 
-- (NSData*_Nonnull) sign:(CKRSAPrivateKey*_Nonnull)key withMessage:(NSData*)message;
+- (NSData*_Nonnull) sign:(CKRSAPrivateKey*_Nonnull)key withMessage:(NSData*_Nonnull)message;
 
 - (BOOL) verify:(CKRSAPublicKey*_Nonnull)key withMessage:(NSData*_Nonnull)message withSignature:(NSData*_Nonnull)signature;
 

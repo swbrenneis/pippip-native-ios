@@ -24,6 +24,7 @@ import UIKit
     @objc var sequence: Int64 = 0
     @objc var timestamp: Int64 = 0
     @objc var compressed = false
+    @objc var failed = false
 
     var config = Configurator()
     var contactManager = ContactManager()
@@ -71,6 +72,7 @@ import UIKit
         sequence = Int64(dbMessage.sequence)
         timestamp = Int64(dbMessage.timestamp)
         compressed = dbMessage.compressed
+        failed = dbMessage.failed
         version = dbMessage.version
 
     }
@@ -102,6 +104,7 @@ import UIKit
         dbMessage.keyIndex = keyIndex
         dbMessage.timestamp = Int(timestamp)
         dbMessage.compressed = compressed
+        dbMessage.failed = failed
         dbMessage.version = version
 
         return dbMessage

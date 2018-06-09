@@ -9,10 +9,13 @@
 import Chatto
 import ChattoAdditions
 import ChameleonFramework
+import AudioToolbox
 
 class ChattoViewController: BaseChatViewController {
 
-    @objc var contact: Contact?
+    static var receiveSoundId: SystemSoundID = 0
+
+    var contact: Contact?
     var selectView: SelectContactView?
     var chatInputPresenter: BasicChatInputBarPresenter!
     var dataSource: ChattoDataSource?
@@ -30,6 +33,12 @@ class ChattoViewController: BaseChatViewController {
         let editItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editMessages(_:)))
         items.append(editItem)
         self.navigationItem.rightBarButtonItems = items
+
+        if ChattoViewController.receiveSoundId == 0 {
+            if let receiveUrl = Bundle.main.url(forResource: "iphone_receive_sms", withExtension: "mp3") {
+                AudioServicesCreateSystemSoundID(receiveUrl as CFURL, &ChattoViewController.receiveSoundId)
+            }
+        }
 
         NotificationCenter.default.addObserver(self, selector: #selector(contactSelected(_:)),
                                                name: Notifications.ContactSelected, object: nil)
@@ -59,6 +68,8 @@ class ChattoViewController: BaseChatViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                name: Notifications.AppSuspended, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(retryMessage(_:)),
+                                               name: Notifications.RetryMessage, object: nil)
 
     }
 
@@ -67,8 +78,10 @@ class ChattoViewController: BaseChatViewController {
 
         alertPresenter.present = false
         dataSource?.visible = false
+
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
-        
+        NotificationCenter.default.removeObserver(self, name: Notifications.RetryMessage, object: nil)
+
     }
     
     override func createChatInputView() -> UIView {
@@ -118,6 +131,37 @@ class ChattoViewController: BaseChatViewController {
 
     }
 
+    // Notifications
+    
+    @objc func appSuspended(_ notification: Notification) {
+        
+        DispatchQueue.main.async {
+            self.navigationController?.popViewController(animated: true)
+        }
+        
+    }
+    
+    @objc func contactSelected(_ notification: Notification) {
+        
+        contact = notification.object as? Contact
+        dataSource =
+            ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
+        dataSource?.visible = true
+        DispatchQueue.main.async {
+            self.chatDataSource = self.dataSource
+            self.navigationItem.title = self.contact!.displayName
+        }
+        
+    }
+    
+    @objc func retryMessage(_ notification: Notification) {
+
+        guard let textMessage = notification.object as? TextMessage else { return }
+        dataSource?.retryTextMessage(textMessage)
+
+    }
+
+    // UI actions
     @objc func cancelEdit(_ item: Any) {
         
         var items = [UIBarButtonItem]()
@@ -148,27 +192,6 @@ class ChattoViewController: BaseChatViewController {
                                         target: self, action: #selector(clearMessages(_:)))
         items.append(clearItem)
         self.navigationItem.rightBarButtonItems = items
-        
-    }
-
-    @objc func appSuspended(_ notification: Notification) {
-
-        DispatchQueue.main.async {
-            self.navigationController?.popViewController(animated: true)
-        }
-
-    }
-
-    @objc func contactSelected(_ notification: Notification) {
-        
-        contact = notification.object as? Contact
-        dataSource =
-            ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
-        dataSource?.visible = true
-        DispatchQueue.main.async {
-            self.chatDataSource = self.dataSource
-            self.navigationItem.title = self.contact!.displayName
-        }
         
     }
 

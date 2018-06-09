@@ -19,7 +19,7 @@ class ConversationCache: NSObject {
         }
         else {
             let contactManager = ContactManager()
-            let contact = contactManager.getContactById(contactId)!
+            let contact = contactManager.getContact(contactId: contactId)!
             let newConversation = Conversation(contact)
             ConversationCache.conversations[contactId] = newConversation
             return newConversation

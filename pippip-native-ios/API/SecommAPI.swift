@@ -11,6 +11,12 @@ import Alamofire
 import AlamofireObjectMapper
 import ObjectMapper
 
+struct APIPost {
+
+    var ready: (SecommAPI) -> Void
+
+}
+
 struct APIState {
     
     var hostPath: String = ""
@@ -18,6 +24,7 @@ struct APIState {
     var postLock = NSLock()
     var sessionActive = false
     var postId: Int = 0
+    var postQueue = [APIPost]()
 
 }
 
@@ -44,91 +51,61 @@ class SecommAPI: NSObject {
 
     }
 
-    @discardableResult
-    func doPost<ObserverT: PostObserverProtocol>(observer: ObserverT) -> Int {
+    func doPost<DelegateT: APIResponseDelegateProtocol>(delegate: DelegateT) {
 
-        guard SecommAPI.apiState.sessionActive else { return -1 }
-        
-        SecommAPI.apiState.postLock.lock()
-        var postId = -1
-        let resource = SecommAPI.apiState.hostPath + observer.request.path
+        guard SecommAPI.apiState.sessionActive else { return }
+
+        let resource = SecommAPI.apiState.hostPath + delegate.request.path
         if let url = URL(string: resource) {
             var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData,
-                                        timeoutInterval: observer.request.timeout)
+                                        timeoutInterval: delegate.request.timeout)
             urlRequest.httpMethod = HTTPMethod.post.rawValue
             urlRequest.setValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
-            urlRequest.httpBody = observer.request.toJSONString()?.data(using: .utf8, allowLossyConversion: false)
-            SecommAPI.apiState.postId += 1
-            postId = SecommAPI.apiState.postId
-            Alamofire.request(urlRequest).responseObject { (response: DataResponse<ObserverT.ResponseT>) in
+            urlRequest.httpBody = delegate.request.toJSONString()?.data(using: .utf8, allowLossyConversion: false)
+            Alamofire.request(urlRequest).responseObject { (response: DataResponse<DelegateT.ResponseT>) in
                 if response.error != nil {
-                    observer.postError(response.error!)
+                    let responseError = APIResponseError(errorString: response.error!.localizedDescription)
+                    delegate.responseError(responseError)
                     print("API post failure: \(response.error!)")
                 }
-                else if var postResponse = response.result.value {
-                    postResponse.postId = postId
-                    observer.postComplete(postResponse)
+                else if let postResponse = response.result.value {
+                    delegate.responseComplete(postResponse)
                 }
                 else {
-                    print("Invalid server response in doPost")
-                    self.alertPresenter.errorAlert(title: "Request Error", message: "Invalid response from the server")
+                    let responseError = APIResponseError(errorString: "Invalid server response")
+                    delegate.responseError(responseError)
+                }
+                DispatchQueue.global().async {
+                    self.nextPost()
                 }
             }
         }
         else {
             print("Invalid resource: \(resource)")
         }
-
-        defer {
-            SecommAPI.apiState.postLock.unlock()
-        }
-        
-        return postId
 
     }
 
-    @discardableResult
-    func doxPost<ResponseT: Mappable>(responseType: ResponseT.Type, request: APIRequestProtocol) -> Int {
-
-        guard SecommAPI.apiState.sessionActive else { return -1 }
+    func nextPost() {
 
         SecommAPI.apiState.postLock.lock()
-        var postId = -1
-        let resource = SecommAPI.apiState.hostPath + request.path
-        if let url = URL(string: resource) {
-            var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData,
-                                        timeoutInterval: request.timeout)
-            urlRequest.httpMethod = HTTPMethod.post.rawValue
-            urlRequest.setValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
-            urlRequest.httpBody = request.toJSONString()?.data(using: .utf8, allowLossyConversion: false)
-            SecommAPI.apiState.postId += 1
-            postId = SecommAPI.apiState.postId
-            Alamofire.request(urlRequest).responseObject { (response: DataResponse<ResponseT>) in
-                if response.error != nil {
-                    self.alertPresenter.errorAlert(title: "Request Error", message: "Unable to send request")
-                    print("API post failure: \(response.error!)")
-                }
-                else if var postResponse = response.result.value as? APIResponseProtocol {
-                    postResponse.postId = postId
-                    NotificationCenter.default.post(name: Notifications.PostComplete, object: postResponse, userInfo: nil)
-                }
-                else {
-                    print("Invalid server response in doPost")
-                    self.alertPresenter.errorAlert(title: "Request Error", message: "Invalid response from the server")
-                }
-            }
-        }
-        else {
-            print("Invalid resource: \(resource)")
-        }
+        SecommAPI.apiState.postQueue.remove(at: 0)
+        SecommAPI.apiState.postQueue.first?.ready(self)
+        SecommAPI.apiState.postLock.unlock()
 
-        defer {
+    }
+
+    func queuePost<DelegateT: APIResponseDelegateProtocol>(delegate: DelegateT) {
+
+        if SecommAPI.apiState.sessionActive {
+            SecommAPI.apiState.postLock.lock()
+            SecommAPI.apiState.postQueue.append(APIPost(ready: delegate.ready))
+            if SecommAPI.apiState.postQueue.count == 1 {
+                SecommAPI.apiState.postQueue.first?.ready(self)
+            }
             SecommAPI.apiState.postLock.unlock()
         }
-
-        return postId
 
     }
 
