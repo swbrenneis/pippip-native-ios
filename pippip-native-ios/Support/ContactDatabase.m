@@ -40,6 +40,7 @@
 
     // Add the contact to the database.
     DatabaseContact *dbContact = [[DatabaseContact alloc] init];
+    dbContact.version = contact.version;
     dbContact.contactId = contact.contactId;
     dbContact.encoded = encoded;
     RLMRealm *realm = [RLMRealm defaultRealm];
@@ -82,8 +83,8 @@
     if (nickname.length > 0) {  // Zero length nicknames are nil in the Contact object
         contact.nickname = nickname;
     }
-    contact.timestamp = [codec getInt];
-    NSInteger count = [codec getInt];
+    contact.timestamp = [codec getLong];
+    NSInteger count = [codec getLong];
     if (count > 0) {
         NSMutableArray *messageKeys = [NSMutableArray array];
         while (messageKeys.count < count) {
@@ -93,8 +94,8 @@
         contact.messageKeys = messageKeys;
         contact.authData = [codec getBlock];
         contact.nonce = [codec getBlock];
-        contact.currentIndex = [codec getInt];
-        contact.currentSequence = [codec getInt];
+        contact.currentIndex = [codec getLong];
+        contact.currentSequence = [codec getLong];
     }
 
     return contact;
@@ -151,20 +152,20 @@
     else {
         [codec putString:@""];
     }
-    [codec putInt:contact.timestamp];
+    [codec putLong:contact.timestamp];
     NSArray *messageKeys = contact.messageKeys;
     if (messageKeys != nil) {
-        [codec putInt:messageKeys.count];
+        [codec putLong:messageKeys.count];
         for (NSData *key in messageKeys) {
             [codec putBlock:key];
         }
         [codec putBlock:contact.authData];
         [codec putBlock:contact.nonce];
-        [codec putInt:contact.currentIndex];
-        [codec putInt:contact.currentSequence];
+        [codec putLong:contact.currentIndex];
+        [codec putLong:contact.currentSequence];
     }
     else {
-        [codec putInt:0];
+        [codec putLong:0];
     }
 
     NSError *error = nil;
@@ -185,6 +186,8 @@
         if (contacts.count > 0) {
             DatabaseContact *dbContact = [contacts firstObject];
             contact = [self decodeContact:dbContact.encoded withContactId:contactId];
+            contact.contactId = contactId;
+            contact.version = dbContact.version;
         }
     }
     return contact;
@@ -201,6 +204,7 @@
         if (dbContact.contactId > 0) {
             Contact *contact = [self decodeContact:dbContact.encoded withContactId:contactId];
             contact.contactId = contactId;
+            contact.version = dbContact.version;
             if (contact != nil) {
                 [indexed addObject:contact];
             }

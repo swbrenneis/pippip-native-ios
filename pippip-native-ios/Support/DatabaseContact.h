@@ -10,6 +10,7 @@
 
 @interface DatabaseContact : RLMObject
 
+@property float version;
 @property NSInteger contactId;
 @property NSData *encoded;
 

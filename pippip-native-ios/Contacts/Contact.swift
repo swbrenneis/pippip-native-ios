@@ -17,6 +17,9 @@ struct Entity {
 
 @objc class Contact: NSObject {
 
+    static let currentVersion: Float = 1.0
+
+    @objc var version: Float
     @objc var contactId: Int
     @objc var publicId: String
     @objc var nickname: String?
@@ -44,6 +47,7 @@ struct Entity {
 
     @objc override init() {
 
+        version = Contact.currentVersion
         contactId = 0
         publicId = ""
         status = ""
@@ -57,6 +61,7 @@ struct Entity {
     
     @objc init(contactId: Int) {
 
+        version = Contact.currentVersion
         self.contactId = contactId
         publicId = ""
         status = ""
@@ -70,6 +75,7 @@ struct Entity {
     
     @objc init?(serverContact: ServerContact) {
 
+        version = Contact.currentVersion
         publicId = serverContact.publicId!
         let contactManager = ContactManager()
         contactId = contactManager.getContactId(publicId)

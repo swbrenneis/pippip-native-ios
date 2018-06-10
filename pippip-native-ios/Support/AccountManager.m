@@ -105,9 +105,9 @@ static NSString *acctName = nil;
     config.fileURL = [[[config.fileURL URLByDeletingLastPathComponent]
                        URLByAppendingPathComponent:acctName]
                       URLByAppendingPathExtension:@"realm"];
-    config.schemaVersion = 10;
+    config.schemaVersion = 12;
     config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
-        if (oldSchemaVersion < 10) {
+        if (oldSchemaVersion < 12) {
             // No migration necessary
         }
     };

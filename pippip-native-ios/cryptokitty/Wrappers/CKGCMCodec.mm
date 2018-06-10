@@ -87,12 +87,20 @@
     
 }
 
-- (NSInteger)getInt {
+- (int32_t)getInt {
+    
+    int32_t number;
+    *gcmCodec >> number;
+    return number;
+    
+}
 
+- (int64_t)getLong {
+    
     int64_t number;
     *gcmCodec >> number;
     return number;
-
+    
 }
 
 - (NSString*)getString {
@@ -114,10 +122,16 @@
     
 }
 
-- (void)putInt:(NSInteger)number {
+- (void)putInt:(int32_t)number {
+    
+    *gcmCodec << number;
+    
+}
 
-    *gcmCodec << static_cast<int64_t>(number);
-
+- (void)putLong:(int64_t)number {
+    
+    *gcmCodec << number;
+    
 }
 
 - (void)putString:(NSString *)str {

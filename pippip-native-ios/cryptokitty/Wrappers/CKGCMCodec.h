@@ -20,13 +20,17 @@
 
 - (NSData*_Nonnull)getBlock;
 
-- (NSInteger)getInt;
+- (int32_t)getInt;
+
+- (int64_t)getLong;
 
 - (NSString*_Nonnull)getString;
 
 - (void)putBlock:(NSData*_Nonnull)block;
 
-- (void)putInt:(NSInteger)number;
+- (void)putInt:(int32_t)number;
+
+- (void)putLong:(int64_t)number;
 
 - (void)putString:(NSString*_Nonnull)str;
 

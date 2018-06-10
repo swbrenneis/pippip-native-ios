@@ -64,7 +64,6 @@
 		55245F4320BCD62D00E6ECB6 /* Authenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55245F4220BCD62D00E6ECB6 /* Authenticator.swift */; };
 		55316C8B206AD21800EB1AF7 /* PendingRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55316C8A206AD21800EB1AF7 /* PendingRequestCell.swift */; };
 		5536A6832067559400B7E6D8 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A6822067559400B7E6D8 /* Notifications.swift */; };
-		5536A68B206831B400B7E6D8 /* SwiftConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A68A206831B400B7E6D8 /* SwiftConfigurator.swift */; };
 		5536A68D206897D200B7E6D8 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A68C206897D200B7E6D8 /* ContactsViewController.swift */; };
 		553789982002C2B20043BCF4 /* ContactDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 553789972002C2B20043BCF4 /* ContactDatabase.m */; };
 		553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55AA556D1FA1527C00A7026B /* libgmp.a */; };
@@ -293,7 +292,6 @@
 		55245F4220BCD62D00E6ECB6 /* Authenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authenticator.swift; sourceTree = "<group>"; };
 		55316C8A206AD21800EB1AF7 /* PendingRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingRequestCell.swift; sourceTree = "<group>"; };
 		5536A6822067559400B7E6D8 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
-		5536A68A206831B400B7E6D8 /* SwiftConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftConfigurator.swift; sourceTree = "<group>"; };
 		5536A68C206897D200B7E6D8 /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
 		553789962002C2B20043BCF4 /* ContactDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactDatabase.h; sourceTree = "<group>"; };
 		553789972002C2B20043BCF4 /* ContactDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContactDatabase.m; sourceTree = "<group>"; };
@@ -600,7 +598,6 @@
 				55FD018F20B102510028435E /* AlertPresenter.swift */,
 				55E06BFE20BC9B210034C652 /* ApplicationInitializer.swift */,
 				5592334920667094008AEEAE /* AsyncNotifier.swift */,
-				5536A68A206831B400B7E6D8 /* SwiftConfigurator.swift */,
 				55006BA620B48BA80040C2DD /* Configurator.swift */,
 				55FB2F67203245E1005E3730 /* ConfigDatabase.h */,
 				55FB2F68203245E1005E3730 /* ConfigDatabase.m */,
@@ -1293,7 +1290,6 @@
 				5511E9B620C1F49A0080C0DF /* AcknowledgeRequestResponse.swift in Sources */,
 				5511E9C020C2CE290080C0DF /* GetRequestStatusRequest.swift in Sources */,
 				55AA555A1FA14D7100A7026B /* PrivateKey.cc in Sources */,
-				5536A68B206831B400B7E6D8 /* SwiftConfigurator.swift in Sources */,
 				55206DAB20754A2500B0B246 /* SelectContactView.swift in Sources */,
 				5511E9BC20C2C4B20080C0DF /* DeleteContactRequest.swift in Sources */,
 				5511E9B020C1E66E0080C0DF /* EnclaveResponseProtocol.swift in Sources */,

@@ -62,7 +62,7 @@
         NSError *error = nil;
         [codec decrypt:sessionState.contactsKey withAuthData:sessionState.authData error:&error];
         if (error == nil) {
-            NSInteger count = [codec getInt];
+            NSInteger count = [codec getLong];
             while (_whitelist.count < count) {
                 NSMutableDictionary *entity = [NSMutableDictionary dictionary];
                 NSString *nickname = [codec getString];
@@ -103,7 +103,7 @@
     RLMRealm *realm = [RLMRealm defaultRealm];
     if (_whitelist.count > 0) {
         CKGCMCodec *codec = [[CKGCMCodec alloc] init];
-        [codec putInt:_whitelist.count];
+        [codec putLong:_whitelist.count];
         for (NSDictionary *entity in _whitelist) {
             NSString *nickname = entity[@"nickname"];
             if (nickname == nil) {
