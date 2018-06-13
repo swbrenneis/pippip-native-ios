@@ -244,6 +244,8 @@ class MessagesViewController: UIViewController {
     
     @objc func newSession(_ notification: Notification) {
 
+        let accountManager = AccountManager()
+        accountManager.loadConfig()
         getMostRecentMessages()
         let requests = contactManager.pendingRequests
         DispatchQueue.main.async {

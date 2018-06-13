@@ -11,10 +11,10 @@ import UIKit
 class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequestStatusResponse> {
 
     var contactManager = ContactManager()
-    var publicId: String
+    var publicId: String?
     var retry: Bool
 
-    init(request: GetRequestStatusRequest, publicId: String, retry: Bool) {
+    init(request: GetRequestStatusRequest, publicId: String?, retry: Bool) {
 
         self.publicId = publicId
         self.retry = retry
@@ -29,12 +29,17 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
     func getComplete(response: GetRequestStatusResponse) {
         
         if response.contacts!.count > 0 {
-            let updated = contactManager.updateContacts(response.contacts!)
-            NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updated)
-            print("\(updated.count) contacts updated")
+            do {
+                let updated = try contactManager.updateContacts(response.contacts!)
+                NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updated)
+                print("\(updated.count) contacts updated")
+            }
+            catch {
+                print("Error updating contacts: \(error)")
+            }
         }
         else if retry {
-            contactManager.requestContact(publicId: publicId, nickname: nil, retry: true)
+            contactManager.requestContact(publicId: publicId!, nickname: nil, retry: true)
         }
 
     }

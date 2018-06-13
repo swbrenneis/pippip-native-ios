@@ -12,7 +12,7 @@ import ObjectMapper
 class EnclaveRequest: NSObject, APIRequestProtocol {
 
     var path: String {
-        if AccountManager.production() {
+        if AccountManager.production {
             return "/enclave/enclave-request"
         }
         else {

@@ -12,7 +12,7 @@ import ObjectMapper
 class ServerAuthorized: NSObject, APIRequestProtocol {
     
     var path: String {
-        if AccountManager.production() {
+        if AccountManager.production {
             return "/authenticator/authorized";
         }
         else {

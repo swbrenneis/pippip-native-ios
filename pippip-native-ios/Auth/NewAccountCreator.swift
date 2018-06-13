@@ -42,7 +42,7 @@ class NewAccountCreator: NSObject {
 
     func createAccount(accountName: String, passphrase: String) {
 
-        AccountManager.accountName(accountName)
+        AccountManager.accountName = accountName
         self.passphrase = passphrase
         self.accountName = accountName
         DispatchQueue.global().async {

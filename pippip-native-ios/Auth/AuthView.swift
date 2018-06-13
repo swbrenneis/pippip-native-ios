@@ -21,7 +21,7 @@ class AuthView: UIView {
     @IBOutlet weak var logoTop: NSLayoutConstraint!
     @IBOutlet weak var secommLabel: UILabel!
 
-    var accountName = AccountManager.accountName()
+    var accountName = AccountManager.accountName
     var viewController: UIViewController!
     var authenticator = Authenticator()
     var newAccountCreator = NewAccountCreator()
@@ -45,8 +45,13 @@ class AuthView: UIView {
         contentView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
 
         let accountManager = AccountManager()
-        accountManager.loadAccount()
-        accountName = AccountManager.accountName()
+        do {
+            try accountManager.loadAccount()
+        }
+        catch {
+            print("Error loading account name: \(error)")
+        }
+        accountName = AccountManager.accountName
         if accountName != nil {
             authButton.setTitle("Sign In", for: .normal)
         }

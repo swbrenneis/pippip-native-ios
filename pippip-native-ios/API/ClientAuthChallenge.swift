@@ -12,7 +12,7 @@ import ObjectMapper
 class ClientAuthChallenge: NSObject, APIRequestProtocol {
 
     var path: String {
-        if AccountManager.production() {
+        if AccountManager.production {
             return "/authenticator/authentication-challenge"
         }
         else {

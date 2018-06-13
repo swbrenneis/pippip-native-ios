@@ -31,6 +31,7 @@ class AcknowledgeMessagesDelegate: EnclaveDelegate<AcknowledgeMessagesRequest, A
             textMessage.acknowledged = true
         }
         messageManager.addTextMessages(textMessages)
+        ConversationCache.newMessages(textMessages)
         NotificationCenter.default.post(name: Notifications.NewMessages, object: textMessages)
 
     }

@@ -27,7 +27,7 @@ class Conversation: NSObject {
     private var pos: Int = Int.max
 
     var messageCount: Int {
-        return messageManager.getMessageCount(contact.contactId)
+        return messageManager.getMessageCount(contactId: contact.contactId)
     }
 
     init(_ contact: Contact) {
@@ -63,7 +63,7 @@ class Conversation: NSObject {
         messageMap.removeAll()
         timestampSet.removeAll()
 //        mostRecent = nil
-        messageManager.clearMessages(contact.contactId)
+        messageManager.clearMessages(contactId: contact.contactId)
 
     }
 
@@ -77,7 +77,7 @@ class Conversation: NSObject {
 //            if message.messageId == mostRecent?.messageId {
 //                mostRecent = nil
 //            }
-            messageManager.deleteMessage(messageId)
+            messageManager.deleteMessage(messageId: messageId)
         }
 
     }
@@ -162,7 +162,7 @@ class Conversation: NSObject {
 //                if mostRecent?.messageId == message.messageId {
 //                    mostRecent?.read = true
 //                }
-                messageManager.markMessageRead(message.messageId)
+                messageManager.markMessageRead(messageId: message.messageId)
             }
         }
     
@@ -179,7 +179,7 @@ class Conversation: NSObject {
     func mostRecentMessage() -> TextMessage? {
 
         if messageList.isEmpty {
-            if let textMessage = messageManager.mostRecentMessage(contact.contactId) {
+            if let textMessage = messageManager.mostRecentMessage(contactId: contact.contactId) {
                 messageList.insert(textMessage)
                 messageMap[textMessage.messageId] = textMessage
             }
@@ -193,7 +193,7 @@ class Conversation: NSObject {
         guard let textMessage = messageMap[messageId] else { return }
         textMessage.failed = false
         messageManager.updateMessage(textMessage)
-        messageManager.sendMessage(textMessage, retry: true)
+        messageManager.sendMessage(textMessage: textMessage, retry: true)
 
     }
 
@@ -213,7 +213,7 @@ class Conversation: NSObject {
         textMessage.read = true
         try textMessage.encrypt()
         textMessage.timestamp = Int64(Date().timeIntervalSince1970 * 1000)
-        let messageId = try messageManager.sendMessage(textMessage, retry: false)
+        let messageId = messageManager.sendMessage(textMessage: textMessage, retry: false)
         messageList.insert(textMessage)
         messageMap[messageId] = textMessage
         // mostRecent = textMessage

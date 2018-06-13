@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RealmSwift
 
 struct ContactRequest: Hashable {
 
@@ -45,7 +46,6 @@ class ContactManager: NSObject {
     static private var requestSet = Set<ContactRequest>()
     static private var initialized = false
 
-    var contactDatabase = ContactDatabase()
     var sessionState = SessionState()
     var config = Configurator()
     var pendingRequests: Set<ContactRequest> {
@@ -56,17 +56,7 @@ class ContactManager: NSObject {
         loadContacts()
         return Array(ContactManager.contactSet)
     }
-    var alertPresenter = AlertPresenter()
  
-    override init() {
-
-        contactDatabase = ContactDatabase()
-
-        super.init()
-
-        
-    }
-
     func acknowledgeRequest(contactRequest: ContactRequest, response: String) {
 
         let request = AcknowledgeRequest(id: contactRequest.publicId, response: response)
@@ -80,16 +70,31 @@ class ContactManager: NSObject {
     func addContact(_ contact: Contact) {
 
         if ContactManager.contactMap[contact.publicId] != nil {
-            alertPresenter.errorAlert(title: "Contact Error", message: "Attempted to add duplicate contact")
+            print("Duplicate contact: \(contact.displayName)")
+//            alertPresenter.errorAlert(title: "Contact Error", message: "Attempted to add duplicate contact")
         }
         else {
             contact.contactId = config.newContactId()
-            contactDatabase.add(contact)
             ContactManager.contactMap[contact.publicId] = contact
             ContactManager.contactIdMap[contact.contactId] = contact
             ContactManager.contactSet.insert(contact)
         }
-        
+
+        do {
+            let encoded = try encodeContact(contact)
+            let dbContact = DatabaseContact()
+            dbContact.version = contact.version
+            dbContact.contactId = contact.contactId
+            dbContact.encoded = encoded
+            let realm = try Realm()
+            try realm.write {
+                realm.add(dbContact)
+            }
+        }
+        catch {
+            print("Error adding contact: \(error)")
+        }
+
     }
     
     func addFriend(_ publicId:String) -> Bool {
@@ -111,15 +116,17 @@ class ContactManager: NSObject {
 
     func addRequests(_ requests: [[String: String]]) {
 
-        var newRequests = [[String: String]]()
+        var newRequests = [ContactRequest]()
         for request in requests {
             if let contactRequest = ContactRequest(request: request) {
-                ContactManager.requestSet.insert(contactRequest)
-                newRequests.append(request)
+                let result = ContactManager.requestSet.insert(contactRequest)
+                if result.inserted {
+                    newRequests.append(contactRequest)
+                }
             }
         }
         if !newRequests.isEmpty {
-            contactDatabase.addContactRequests(newRequests)
+            addContactRequests(newRequests)
         }
 
     }
@@ -134,7 +141,7 @@ class ContactManager: NSObject {
 
     }
 
-    @objc func clearContacts() {
+    func clearContacts() {
 
         ContactManager.contactSet.removeAll()
         ContactManager.contactMap.removeAll()
@@ -160,17 +167,30 @@ class ContactManager: NSObject {
     }
 
     func deleteContact(contact: Contact) {
-        
-        self.contactDatabase.deleteContact(contact.contactId)
+
         ContactManager.contactMap.removeValue(forKey: contact.publicId)
         ContactManager.contactSet.remove(contact)
 
+        let realm = try! Realm()
+        if let dbContact = realm.objects(DatabaseContact.self).filter("contactId = %ld", contact.contactId).first {
+            try! realm.write {
+                realm.delete(dbContact)
+            }
+        }
+        
     }
     
     func deleteContactRequest(_ contactRequest: ContactRequest) {
         
         ContactManager.requestSet.remove(contactRequest)
-        self.contactDatabase.deleteContactRequest(contactRequest.publicId)
+    
+        let realm = try! Realm()
+        if let dbRequest = realm.objects(DatabaseContactRequest.self).filter("publicId = %@",
+                                                                             contactRequest.publicId).first {
+            try! realm.write {
+                realm.delete(dbRequest)
+            }
+        }
 
     }
 
@@ -184,13 +204,13 @@ class ContactManager: NSObject {
 
     }
     
-    @objc func getContact(publicId: String) -> Contact? {
+    func getContact(publicId: String) -> Contact? {
 
         return ContactManager.contactMap[publicId]
 
     }
 
-    @objc func getContact(contactId: Int) -> Contact? {
+    func getContact(contactId: Int) -> Contact? {
 
         return ContactManager.contactIdMap[contactId]
 
@@ -217,11 +237,11 @@ class ContactManager: NSObject {
         
     }
     
-    @objc func getRequestStatus(retry: Bool, publicId: String) {
+    func getRequestStatus(retry: Bool, publicId: String?) {
         
         var pending = [String]()
         if retry {
-            pending.append(publicId)
+            pending.append(publicId!)
         }
         else {
             for contact in ContactManager.contactSet {
@@ -242,16 +262,23 @@ class ContactManager: NSObject {
     func loadContacts() {
 
         if (sessionState.authenticated && !ContactManager.initialized) {
+            let realm = try! Realm()
             ContactManager.initialized = true
-            let list = contactDatabase.getContactList()
-            for contact in list {
-                ContactManager.contactSet.insert(contact)
-            }
-            let requests = contactDatabase.getContactRequests()
-            for request in requests {
-                if let contactRequest = ContactRequest(request: request) {
-                    ContactManager.requestSet.insert(contactRequest)
+            let dbContacts = realm.objects(DatabaseContact.self)
+            for dbContact in dbContacts {
+                do {
+                    let contact = try decodeContact(dbContact.encoded!)
+                    contact.contactId = dbContact.contactId
+                    contact.version = dbContact.version
+                    ContactManager.contactSet.insert(contact)
                 }
+                catch {
+                    print("Error decoding contact: \(error)")
+                }
+            }
+            let requests = realm.objects(DatabaseContactRequest.self)
+            for request in requests {
+                ContactManager.requestSet.insert(ContactRequest(publicId: request.publicId, nickname: request.nickname))
             }
             mapContacts()
         }
@@ -268,7 +295,7 @@ class ContactManager: NSObject {
         
     }
     
-    @objc func matchNickname(nickname: String?, publicId: String?) {
+    func matchNickname(nickname: String?, publicId: String?) {
 
         let request = MatchNicknameRequest(publicId: publicId, nickname: nickname)
         let delegate = MatchNicknameDelegate(request: request)
@@ -278,17 +305,23 @@ class ContactManager: NSObject {
         
     }
 
-    func requestContact(publicId: String, nickname: String?, retry: Bool) {
+    @discardableResult
+    func requestContact(publicId: String, nickname: String?, retry: Bool) -> Bool {
 
-        if ContactManager.contactMap[publicId] != nil && !retry {
-            alertPresenter.errorAlert(title: "ContactError", message: "This contact already exists in your contact list")
-        }
-        else {
+//        if ContactManager.contactMap[publicId] != nil && !retry {
+//            alertPresenter.errorAlert(title: "ContactError", message: "This contact already exists in your contact list")
+//        }
+//        else {
+        if ContactManager.contactMap[publicId] == nil || retry {
             let request = RequestContactRequest(id: publicId, retry: retry)
             let delegate = RequestContactDelegate(request: request, retry: retry, nickname: nickname)
             let reqTask = EnclaveTask<RequestContactRequest, RequestContactResponse>(delegate: delegate)
             reqTask.errorTitle = "Contact Error"
             reqTask.sendRequest(request)
+            return true
+        }
+        else {
+            return false
         }
         
     }
@@ -312,7 +345,7 @@ class ContactManager: NSObject {
 
     }
 
-    @objc func setContactPolicy(_ policy: String) {
+    func setContactPolicy(_ policy: String) {
         
         let request = SetContactPolicyRequest(policy: policy)
         let delegate = SetContactPolicyDelegate(request: request)
@@ -322,15 +355,15 @@ class ContactManager: NSObject {
         
     }
 
-    func updateContact(_ update: Contact) {
+    func updateContact(_ update: Contact) throws {
 
-        contactDatabase.update([update])
         ContactManager.contactMap[update.publicId] = update
         ContactManager.contactSet.update(with: update)
+        try updateContacts([update])
 
     }
 
-    func updateContacts(_ serverContacts: [ServerContact]) -> [Contact] {
+    func updateContacts(_ serverContacts: [ServerContact]) throws -> [Contact] {
 
         var updates = [Contact]()
 
@@ -349,16 +382,17 @@ class ContactManager: NSObject {
                     updates.append(contact)
                 }
                 else {
-                    alertPresenter.errorAlert(title: "Contact Error", message: "Updated contact not found")
+                    print("Updated contact not found")
+                    // alertPresenter.errorAlert(title: "Contact Error", message: "Updated contact not found")
                 }
             }
         }
-        contactDatabase.update(updates)
+        try updateContacts(updates)
         return updates
 
     }
 
-    @objc func updateNickname(newNickname: String?, oldNickname: String?) {
+    func updateNickname(newNickname: String?, oldNickname: String?) {
 
         let request = SetNicknameRequest(oldNickname: oldNickname ?? "", newNickname: newNickname ?? "")
         let delegate = SetNicknameDelegate(request: request)
@@ -368,6 +402,98 @@ class ContactManager: NSObject {
         
     }
     
+}
+
+// Database and encoding functions
+extension ContactManager {
+
+    func addContactRequests(_ requests: [ContactRequest]) {
+
+        let realm = try! Realm()
+        for request in requests {
+            let dbRequest = DatabaseContactRequest()
+            dbRequest.publicId = request.publicId
+            dbRequest.nickname = request.nickname
+            try! realm.write {
+                realm.add(dbRequest)
+            }
+        }
+
+    }
+
+    func decodeContact(_ encoded: Data) throws -> Contact {
+
+        let codec = CKGCMCodec(data: encoded)
+        try codec.decrypt(sessionState.contactsKey!, withAuthData: sessionState.authData!)
+        let contact = Contact()
+        contact.publicId = codec.getString()
+        contact.status = codec.getString()
+        let nickname = codec.getString()
+        if nickname.utf8.count > 0 {
+            contact.nickname = nickname
+        }
+        contact.timestamp = codec.getLong()
+        let count = codec.getLong()
+        if count > 0 {
+            contact.messageKeys = [Data]()
+            while contact.messageKeys!.count < count {
+                contact.messageKeys!.append(codec.getBlock())
+            }
+            contact.authData = codec.getBlock()
+            contact.nonce = codec.getBlock()
+            contact.currentIndex = Int(codec.getLong())
+            contact.currentSequence = codec.getLong()
+        }
+
+        return contact
+    
+    }
+
+    func encodeContact(_ contact: Contact) throws -> Data {
+
+        let codec = CKGCMCodec()
+        codec.put(contact.publicId)
+        codec.put(contact.status)
+        codec.put(contact.nickname ?? "")
+        codec.putLong(contact.timestamp)
+        if contact.messageKeys != nil {
+            codec.putLong(Int64(contact.messageKeys!.count))
+            for key in contact.messageKeys! {
+                codec.putBlock(key)
+            }
+            codec.putBlock(contact.authData!)
+            codec.putBlock(contact.nonce!)
+            codec.putLong(Int64(contact.currentIndex))
+            codec.putLong(contact.currentSequence)
+        }
+        else {
+            codec.putLong(0)
+        }
+
+        let encoded = codec.encrypt(sessionState.contactsKey!, withAuthData: sessionState.authData!)
+        if encoded == nil {
+            throw CryptoError(error: codec.lastError!)
+        }
+        return encoded!
+
+    }
+
+    func updateContacts(_ contacts: [Contact]) throws {
+        
+        let realm = try! Realm()
+        for contact in contacts {
+            if let dbContact = realm.objects(DatabaseContact.self).filter("contactId = %ld", contact.contactId).first {
+                try! realm.write {
+                    dbContact.encoded = try encodeContact(contact)
+                }
+            }
+            else {
+                print("Contact \(contact.displayName) not found in database")
+            }
+        }
+
+    }
+
 }
 
 // Debug only
@@ -390,7 +516,8 @@ extension ContactManager {
             deleteContact(publicId: response.publicId!)
         }
         else {
-            alertPresenter.errorAlert(title: "Delete Contact Error", message: "That nickname doesn't exist")
+            print("Delete contact error: Nickname not found")
+            //alertPresenter.errorAlert(title: "Delete Contact Error", message: "That nickname doesn't exist")
         }
 
     }

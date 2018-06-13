@@ -8,23 +8,23 @@
 
 import UIKit
 
-@objc class Message: NSObject, Comparable {
+class Message: NSObject, Comparable {
 
     static let currentVersion: Float = 2.0
 
-    @objc var version: Float = 0
-    @objc var acknowledged = false
-    @objc var ciphertext: Data?
-    @objc var contactId: Int = 0
-    @objc var keyIndex: Int = 0
-    @objc var messageId: Int64 = 0
-    @objc var messageType = ""
-    @objc var originating = true
-    @objc var read = false
-    @objc var sequence: Int64 = 0
-    @objc var timestamp: Int64 = 0
-    @objc var compressed = false
-    @objc var failed = false
+    var version: Float = Message.currentVersion
+    var acknowledged = false
+    var ciphertext: Data?
+    var contactId: Int = 0
+    var keyIndex: Int = 0
+    var messageId: Int64 = 0
+    var messageType = ""
+    var originating = true
+    var read = false
+    var sequence: Int64 = 0
+    var timestamp: Int64 = 0
+    var compressed = false
+    var failed = false
 
     var config = Configurator()
     var contactManager = ContactManager()
@@ -39,11 +39,10 @@ import UIKit
         sequence = Int64(serverMessage.sequence!)
         timestamp = Int64(serverMessage.timestamp!)
         compressed = serverMessage.compressed!
-        version = Message.currentVersion
 
     }
 
-    init(contact: Contact) {
+    init?(contact: Contact) {
 
         contactId = contact.contactId
         keyIndex = contact.currentIndex + 1
@@ -55,19 +54,25 @@ import UIKit
         contact.currentSequence = sequence
 
         let contactManager = ContactManager()
-        contactManager.updateContact(contact)
+        do {
+            try contactManager.updateContact(contact)
+        }
+        catch {
+            print("Error updating contact: \(error)")
+            return nil
+        }
 
     }
 
-    @objc init(dbMessage: DatabaseMessage) {
+    init(dbMessage: DatabaseMessage) {
 
         acknowledged = dbMessage.acknowledged
-        ciphertext = dbMessage.message
+        ciphertext = dbMessage.ciphertext
         contactId = dbMessage.contactId
         keyIndex = dbMessage.keyIndex
         messageId = Int64(dbMessage.messageId)
         messageType = dbMessage.messageType
-        originating = dbMessage.sent
+        originating = dbMessage.originating
         read = dbMessage.read
         sequence = Int64(dbMessage.sequence)
         timestamp = Int64(dbMessage.timestamp)
@@ -94,15 +99,15 @@ import UIKit
 
         let dbMessage = DatabaseMessage()
         dbMessage.messageType = messageType
-        dbMessage.messageId = Int(messageId)
+        dbMessage.messageId = messageId
         dbMessage.contactId = contactId
-        dbMessage.message = ciphertext
+        dbMessage.ciphertext = ciphertext
         dbMessage.acknowledged = acknowledged
         dbMessage.read = read
-        dbMessage.sent = originating
-        dbMessage.sequence = Int(sequence)
+        dbMessage.originating = originating
+        dbMessage.sequence = sequence
         dbMessage.keyIndex = keyIndex
-        dbMessage.timestamp = Int(timestamp)
+        dbMessage.timestamp = timestamp
         dbMessage.compressed = compressed
         dbMessage.failed = failed
         dbMessage.version = version

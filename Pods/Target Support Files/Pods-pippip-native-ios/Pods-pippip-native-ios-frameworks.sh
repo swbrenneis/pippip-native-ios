@@ -154,6 +154,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PMAlertController/PMAlertController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm/Realm.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Sheriff/Sheriff.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
@@ -168,6 +169,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/PMAlertController/PMAlertController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm/Realm.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Sheriff/Sheriff.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then

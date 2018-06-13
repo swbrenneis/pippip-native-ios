@@ -36,7 +36,7 @@ class PreviewCell: PippipTableViewCell {
         // Configure the view for the selected state
     }
 
-    @objc func configure(textMessage: TextMessage) {
+    func configure(textMessage: TextMessage) {
 
         messageReadIndicator.isHidden = textMessage.read
         if self.textMessage == nil || self.textMessage?.messageId != textMessage.messageId {

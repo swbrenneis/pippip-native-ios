@@ -27,7 +27,7 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
         super.awakeFromNib()
         // Initialization code
         
-        localAuthSwitch.setOn(config.localAuth, animated: true)
+        localAuthSwitch.setOn(config.useLocalAuth, animated: true)
 
     }
 
@@ -39,7 +39,7 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
 
     @IBAction func localAuthChanged(_ sender: UISwitch) {
 
-        config.localAuth = sender.isOn
+        config.useLocalAuth = sender.isOn
 
     }
 }

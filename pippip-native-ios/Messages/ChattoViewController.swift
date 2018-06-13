@@ -107,17 +107,19 @@ class ChattoViewController: BaseChatViewController {
     private func createTextInputItem() -> TextChatInputItem {
         let item = TextChatInputItem()
         item.textInputHandler = { [weak self] text in
-            let textMessage = TextMessage(text: text, contact: (self?.contact)!)
-            let contactId = self?.contact?.contactId ?? 0
-            do {
-                let conversation = ConversationCache.getConversation(contactId)
-                try conversation.sendMessage(textMessage)
-                self?.dataSource?.addTextMessage(textMessage)
+            if let textMessage = TextMessage(text: text, contact: (self?.contact)!) {
+                let contactId = self?.contact?.contactId ?? 0
+                do {
+                    let conversation = ConversationCache.getConversation(contactId)
+                    try conversation.sendMessage(textMessage)
+                    self?.dataSource?.addTextMessage(textMessage)
+                }
+                catch {
+                    // TODO: Show alert
+                    print("\(error)")
+                }
             }
-            catch {
-                // TODO: Show alert
-                print("\(error)")
-            }
+            // TODO: report error
         }
         return item
     }

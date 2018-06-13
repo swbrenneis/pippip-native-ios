@@ -11,9 +11,9 @@ import DataCompression
 
 class TextMessage: Message {
 
-    @objc var cleartext: String?
+    var cleartext: String?
 
-    init(text: String, contact: Contact) {
+    init?(text: String, contact: Contact) {
 
         cleartext = text
 
@@ -25,7 +25,7 @@ class TextMessage: Message {
 
     }
 
-    @objc override init(dbMessage: DatabaseMessage) {
+    override init(dbMessage: DatabaseMessage) {
         
         cleartext = dbMessage.cleartext
         
@@ -56,7 +56,7 @@ class TextMessage: Message {
 
     }
 
-    @objc func decrypt(noNotify: Bool = false) {
+    func decrypt(noNotify: Bool = false) {
 
         if cleartext == nil {
             guard let _ = ciphertext else { return }
@@ -95,7 +95,7 @@ class TextMessage: Message {
 
     }
 
-    @objc override func encodeForDatabase() -> DatabaseMessage {
+    override func encodeForDatabase() -> DatabaseMessage {
 
         let dbMessage = super.encodeForDatabase()
         if config.storeCleartextMessages {
@@ -105,7 +105,7 @@ class TextMessage: Message {
 
     }
 
-    @objc func encrypt() throws {
+    func encrypt() throws {
 
         let contact = contactManager.getContact(contactId: contactId)!
         let ivGen = CKIVGenerator()

@@ -32,7 +32,12 @@ class WhitelistViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
 
-        config.loadWhitelist()
+        do {
+            try config.loadWhitelist()
+        }
+        catch {
+            print("Error loading whitelist: \(error)")
+        }
 
         localAuth = LocalAuthenticator(viewController: self, view: self.view)
 
@@ -156,23 +161,33 @@ class WhitelistViewController: UIViewController {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
         let entity = Entity(publicId: publicId, nickname: nickname)
-        config.addWhitelistEntry(entity)
-        DispatchQueue.main.async {
-            self.tableView.insertRows(at: [IndexPath(row: self.config.whitelist.count-1, section: 0)],
-                                      with: .left)
-            self.alertPresenter.successAlert(title: "Friend Added",
-                                             message: "This friend has been added to your friends list")
+        do {
+            try config.addWhitelistEntry(entity)
+            DispatchQueue.main.async {
+                self.tableView.insertRows(at: [IndexPath(row: self.config.whitelist.count-1, section: 0)],
+                                          with: .left)
+                self.alertPresenter.successAlert(title: "Friend Added",
+                                                 message: "This friend has been added to your friends list")
+            }
+        }
+        catch {
+            print("Error adding whitelist entry: \(error)")
         }
 
     }
 
     @objc func friendDeleted(_ notification:Notification) {
 
-        DispatchQueue.main.async {
-            let row = self.config.deleteWhitelistEntry(self.publicId)
-            self.tableView.deleteRows(at: [IndexPath(row: row, section: 0)], with: .top)
-            self.alertPresenter.successAlert(title: "Friend Deleted",
-                                             message: "This friend has been deleted from your list")
+        do {
+            let row = try config.deleteWhitelistEntry(self.publicId)
+            DispatchQueue.main.async {
+                self.tableView.deleteRows(at: [IndexPath(row: row, section: 0)], with: .top)
+                self.alertPresenter.successAlert(title: "Friend Deleted",
+                                                 message: "This friend has been deleted from your list")
+            }
+        }
+        catch {
+            print("Error deleting whitelist entry: \(error)")
         }
 
     }

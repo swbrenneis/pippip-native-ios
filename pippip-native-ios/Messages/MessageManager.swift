@@ -7,15 +7,12 @@
 //
 
 import UIKit
+import RealmSwift
 
-@objc class MessageManager: NSObject {
+class MessageManager: NSObject {
 
-    static var initialized = false
-
-    var messageDatabase = MessagesDatabase()
     var contactManager = ContactManager()
     var config = Configurator()
-    var alertPresenter = AlertPresenter()
 
     func acknowledgeMessages(_ textMessages: [TextMessage]) {
 
@@ -45,45 +42,85 @@ import UIKit
      */
     func addTextMessages(_ textMessages: [TextMessage]) {
 
-        messageDatabase.add(textMessages)
-        ConversationCache.newMessages(textMessages)
+        let realm = try! Realm()
+        for textMessage in textMessages {
+            if getIdFromTuple(contactId: textMessage.contactId,
+                              sequence: textMessage.sequence,
+                              timestamp: textMessage.timestamp) == Int64(NSNotFound) {
+                let dbMessage = textMessage.encodeForDatabase()
+                dbMessage.messageId = config.newMessageId()
+                try! realm.write {
+                    realm.add(dbMessage)
+                }
+            }
+            else {
+                print("Duplicate message ID")
+            }
+        }
 
     }
 
-    @objc func allMessages() -> [TextMessage] {
-        return messageDatabase.allTextMessages()
-    }
+    func clearMessages(contactId: Int) {
 
-    func clearMessages(_ contactId: Int) {
-        
-        messageDatabase.clearMessages(contactId)
+        let realm = try! Realm()
+        let messages = realm.objects(DatabaseMessage.self).filter("contactId = %ld", contactId)
+        try! realm.write {
+            realm.delete(messages)
+        }
         
     }
     
     func decryptAll() {
 
-        let messageIds = messageDatabase.allMessageIds();
-        for messageId in messageIds {
-            let textMessage = messageDatabase.getTextMessage(messageId.intValue)
+        let realm = try! Realm()
+        let dbMessages = realm.objects(DatabaseMessage.self)
+        for dbMessage in dbMessages {
+            let textMessage = TextMessage(dbMessage: dbMessage)
             textMessage.decrypt(noNotify: true)   // No notification
-            messageDatabase.updateCleartext(textMessage)
+            try! realm.write {
+                dbMessage.cleartext = textMessage.cleartext
+            }
         }
 
     }
 
-    func deleteMessage(_ messageId: Int64) {
-        
-        messageDatabase.deleteMessage(Int(messageId))
+    func deleteMessage(messageId: Int64) {
+
+        let realm = try! Realm()
+        if let dbMessage = realm.objects(DatabaseMessage.self).filter("messageId = %lld", messageId).first {
+            try! realm.write {
+                realm.delete(dbMessage)
+            }
+        }
+        else {
+            print("Message not found in database for deletion")
+        }
         
     }
 
-    func getMessageCount(_ contactId: Int) -> Int {
+    func getIdFromTuple(contactId: Int, sequence: Int64, timestamp: Int64) -> Int64 {
 
-        return messageDatabase.getMessageCount(contactId)
+        let realm = try! Realm()
+        let format = "contactId = %ld AND sequence = %lld AND timestamp = %lld"
+        if let dbMessage = realm.objects(DatabaseMessage.self).filter(format, contactId, sequence, timestamp).first {
+            return dbMessage.messageId
+        }
+        else {
+            return Int64(NSNotFound)
+
+        }
+
+    }
+    
+    func getMessageCount(contactId: Int) -> Int {
+
+        let realm = try! Realm()
+        let messages = realm.objects(DatabaseMessage.self).filter("contactId = %ld", contactId)
+        return messages.count
 
     }
 
-    @objc func getNewMessages() {
+    func getNewMessages() {
 
         let request = GetMessagesRequest()
         let delegate = GetMessagesDelegate(request: request)
@@ -95,40 +132,68 @@ import UIKit
 
     func getTextMessages(contactId: Int, pos: Int, count: Int) -> [TextMessage] {
 
-        return messageDatabase.getTextMessages(contactId, withPosition:pos, withCount:count)
+        var textMessages = [TextMessage]()
+        let realm = try! Realm()
+        let dbMessages = realm.objects(DatabaseMessage.self).filter("contactId = %ld", contactId)
+
+        if pos >= dbMessages.count {
+            return textMessages
+        }
+        var actual = count
+        if pos + count > dbMessages.count {
+            actual = dbMessages.count - pos
+        }
+        for index in 0..<actual {
+            textMessages.append(TextMessage(dbMessage: dbMessages[pos+index]))
+        }
+
+        return textMessages
 
     }
 
-    func markMessageRead(_ messageId: Int64) {
+    func markMessageRead(messageId: Int64) {
 
-        let message = messageDatabase.getMessage(Int(messageId))
-        message.read = true
-        messageDatabase.update(message)
+        let realm = try! Realm()
+        if let dbMessage = realm.objects(DatabaseMessage.self).filter("messageId = %ld", messageId).first {
+            try! realm.write {
+                dbMessage.read = true
+            }
+        }
 
     }
 
-    func mostRecentMessage(_ contactId: Int) -> TextMessage? {
+    func mostRecentMessage(contactId: Int) -> TextMessage? {
 
-        return messageDatabase.mostRecentTextMessage(contactId);
+        let realm = try! Realm()
+        let dbMessages = realm.objects(DatabaseMessage.self)
+                                .filter("contactId = %ld", contactId)
+                                .sorted(byKeyPath: "timestamp", ascending: false)
+        if !dbMessages.isEmpty {
+            return TextMessage(dbMessage: dbMessages.first!)
+        }
+        else {
+            return nil
+        }
 
     }
 
     func scrubCleartext() {
-        
-        let messageIds = messageDatabase.allMessageIds();
-        for messageId in messageIds {
-            let textMessage = messageDatabase.getTextMessage(messageId.intValue)
-            textMessage.cleartext = nil
-            messageDatabase.scrubCleartext(textMessage)
+
+        let realm = try! Realm()
+        let dbMessages = realm.objects(DatabaseMessage.self)
+        for dbMessage in dbMessages {
+            try! realm.write {
+                dbMessage.cleartext = nil
+            }
         }
         
     }
 
     @discardableResult
-    func sendMessage(_ textMessage: TextMessage, retry: Bool) -> Int64 {
+    func sendMessage(textMessage: TextMessage, retry: Bool) -> Int64 {
 
         if (!retry) {
-            messageDatabase.add(textMessage)
+            addTextMessages([textMessage])
         }
         let messageId = textMessage.messageId
 
@@ -144,7 +209,18 @@ import UIKit
 
     func updateMessage(_ message: Message) {
 
-        messageDatabase.update(message)
+        let realm = try! Realm()
+        if let dbMessage = realm.objects(DatabaseMessage.self).filter("messageId = %lld", message.messageId).first {
+            try! realm.write {
+                dbMessage.acknowledged = message.acknowledged
+                dbMessage.read = message.read
+                dbMessage.failed = message.failed
+                dbMessage.timestamp = message.timestamp
+            }
+        }
+        else {
+            print("Message not found in database for update")
+        }
 
     }
 

@@ -111,7 +111,7 @@ class LocalAuthenticator: NSObject {
             let info = notification.userInfo!
             let suspendedTime = info["suspendedTime"] as? Int ?? 0
             var localAuth = true
-            if !config.localAuth || suspendedTime > LocalAuthenticator.sessionTTL {
+            if !config.useLocalAuth || suspendedTime > LocalAuthenticator.sessionTTL {
                 localAuth = false
                 authenticator.logout()
             }

@@ -11,7 +11,6 @@
 #import "TargetConditionals.h"
 #import "Chameleon.h"
 #import "HexCodec.h"
-#import "AccountSession.h"
 
 @interface AppDelegate ()
 

@@ -63,7 +63,7 @@ class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
 
     func checkPassphrase() {
 
-        let accountName = AccountManager.accountName()
+        let accountName = AccountManager.accountName
         let alert = PMAlertController(title: "Delete Account",
                                       description: "Enter your passphrase",
                                       image: nil,
@@ -78,8 +78,8 @@ class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
                                       style: .default, action: { () in
                                         let passphrase = alert.textFields[0].text ?? ""
                                         do {
-                                            if try UserVault.validatePassphrase(passphrase)
-                                                && self.accountDeleter.deleteAccount(accountName) {
+                                            if try UserVault.validatePassphrase(passphrase) {
+                                                try self.accountDeleter.deleteAccount(accountName: accountName!)
                                                 self.alertPresenter.successAlert(title: "Account Deleted",
                                                                                  message: "This account has been deleted and you will now be logged out")
                                                 NotificationCenter.default.post(name: Notifications.AccountDeleted,
@@ -91,7 +91,7 @@ class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
                                             }
                                         }
                                         catch {
-                                            print(error)
+                                            print("Error while deleting account: \(error)")
                                         }
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))

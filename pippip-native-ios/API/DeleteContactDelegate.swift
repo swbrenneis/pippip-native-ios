@@ -28,7 +28,7 @@ class DeleteContactDelegate: EnclaveDelegate<DeleteContactRequest, DeleteContact
         if let contact = contactManager.getContact(publicId: response.publicId!),
             response.result == "deleted" {
             contactManager.deleteContact(contact: contact)
-            messageManager.clearMessages(contact.contactId)
+            messageManager.clearMessages(contactId: contact.contactId)
             NotificationCenter.default.post(name: Notifications.ContactDeleted, object: contact.publicId)
             NotificationCenter.default.post(name: Notifications.MessagesUpdated, object: nil)
         }

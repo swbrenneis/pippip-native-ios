@@ -26,8 +26,8 @@ class AcknowledgeRequestDelegate: EnclaveDelegate<AcknowledgeRequest, Acknowledg
 
     func ackComplete(response: AcknowledgeRequestResponse) {
 
-        if let acknowledged = Contact(serverContact: response.acknowledged!),
-            acknowledged.publicId == contactRequest.publicId {
+        let acknowledged = Contact(serverContact: response.acknowledged!)
+        if acknowledged.publicId == contactRequest.publicId {
             acknowledged.nickname = contactRequest.nickname
             contactManager.addContact(acknowledged)
             contactManager.deleteContactRequest(contactRequest)

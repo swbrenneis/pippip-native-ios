@@ -7,8 +7,27 @@
 //
 
 import UIKit
+import RealmSwift
+
+struct Entity {
+    
+    var publicId: String
+    var nickname: String?
+    
+    init() {
+        publicId = ""
+    }
+    
+    init(publicId: String, nickname: String?) {
+        self.publicId = publicId
+        self.nickname = nickname
+    }
+
+}
 
 class Configurator: NSObject {
+
+    static let currentVersion: Float = 2.0
 
     var whitelist: [Entity] {
         return privateWhitelist
@@ -16,96 +35,187 @@ class Configurator: NSObject {
     private var privateWhitelist = [Entity]()
     @objc var storeCleartextMessages: Bool {
         get {
-            let config = database.getConfig()
-            return config.cleartextMessages
+            let config = getConfig()
+            return config.storeCleartextMessages
         }
         set {
-            database.storeCleartextMessages(newValue)
+            let config = getConfig()
+            let realm = try! Realm()
+            try! realm.write {
+                config.storeCleartextMessages = newValue
+            }
         }
     }
-    var localAuth: Bool {
+    var useLocalAuth: Bool {
         get {
-            let config = database.getConfig()
-            return config.localAuth
+            let config = getConfig()
+            return config.useLocalAuth
         }
         set {
-            database.useLocalAuth(newValue)
+            let config = getConfig()
+            let realm = try! Realm()
+            try! realm.write {
+                config.useLocalAuth = newValue
+            }
         }
     }
     var contactPolicy: String {
         get {
-            let config = database.getConfig()
+            let config = getConfig()
             return config.contactPolicy
         }
         set {
-            database.setContactPolicy(newValue)
+            let config = getConfig()
+            let realm = try! Realm()
+            try! realm.write {
+                config.contactPolicy = newValue
+            }
         }
     }
     @objc var nickname: String? {
         get {
-            let config = database.getConfig()
+            let config = getConfig()
             return config.nickname
         }
         set {
-            database.setNickname(newValue)
+            let config = getConfig()
+            let realm = try! Realm()
+            try! realm.write {
+                config.nickname = newValue
+            }
         }
     }
-    var database = ConfigDatabase()
 
-    func addWhitelistEntry(_ entity: Entity) {
+    var sessionState = SessionState()
 
-        var entry = [AnyHashable: Any]()
-        entry["publicId"] = entity.publicId
-        if entity.nickname != nil
-        {
-            entry["nickname"] = entity.nickname
+    func addWhitelistEntry(_ entity: Entity) throws {
+
+        let config = getConfig()
+        if whitelist.isEmpty {
+            try decodeWhitelist(config)
         }
-        database.addWhitelistEntry(entry)
-        privateWhitelist.append(entity)
+        let index = whitelist.index(where: {(entry) -> Bool in
+            return entity.publicId == entry.publicId
+        })
+        if index == NSNotFound {
+            privateWhitelist.append(entity)
+            try encodeWhitelist(config)
+        }
         
     }
 
-    func deleteWhitelistEntry(_ publicId: String) -> Int {
-
-        database.deleteWhitelistEntry(publicId)
-
-        var index: Int = -1
-        for i in 0..<privateWhitelist.count {
-            if privateWhitelist[i].publicId == publicId {
-                index = i
+    func decodeWhitelist(_ config: AccountConfig) throws {
+        
+        let codec = CKGCMCodec(data: config.whitelist!)
+        try codec.decrypt(sessionState.contactsKey!, withAuthData: sessionState.authData!)
+        let count = codec.getLong()
+        while whitelist.count < count {
+            var entity = Entity()
+            let nickname = codec.getString()
+            if nickname.utf8.count > 0 {
+                entity.nickname = nickname
             }
+            entity.publicId = codec.getString()
+            privateWhitelist.append(entity)
         }
-        assert(index >= 0)
-        privateWhitelist.remove(at: index)
-        return index
+        
+    }
+    
+    func deleteWhitelistEntry(_ publicId: String) throws -> Int {
+
+        let config = getConfig()
+        if whitelist.isEmpty {
+            try decodeWhitelist(config)
+        }
+        if let index = whitelist.index(where: { (entry) -> Bool in
+            return publicId == entry.publicId
+        }) {
+            privateWhitelist.remove(at: index)
+            try encodeWhitelist(config)
+            return index
+        }
+        else {
+            print("Whitelist entry for \(publicId) not found")
+            return NSNotFound
+        }
 
     }
 
-    func loadWhitelist() {
+    func encodeWhitelist(_ config: AccountConfig) throws {
+        
+        let realm = try Realm()
+        if !whitelist.isEmpty {
+            let codec = CKGCMCodec()
+            codec.putLong(Int64(whitelist.count))
+            for entity in whitelist {
+                codec.put(entity.nickname ?? "")
+                codec.put(entity.publicId)
+            }
+            let encoded = codec.encrypt(sessionState.contactsKey!, withAuthData: sessionState.authData!)
+            if encoded == nil {
+                throw CryptoError(error: codec.lastError!)
+            }
+            try realm.write {
+                config.whitelist = encoded
+            }
+        }
+        else {
+            try realm.write {
+                config.whitelist = nil
+            }
+        }
+        
+    }
+
+    func getConfig() -> AccountConfig {
+        
+        let realm = try! Realm()
+        let config = realm.objects(AccountConfig.self).first!
+        return config
+        
+    }
+    func loadWhitelist() throws {
 
         privateWhitelist.removeAll()
-        database.loadWhitelist()
-        for dict in database.whitelist {
-            privateWhitelist.append(Entity(publicId: dict["publicId"] as! String,
-                                           nickname: dict["nickname"] as? String))
-        }
+        let config = getConfig()
+        guard let _ = config.whitelist else { return }
+        try decodeWhitelist(config)
+
     }
 
     func newContactId() ->Int {
 
-        return database.newContactId()
+        let config = getConfig()
+        let contactId = config.currentContactId
+        
+        let realm = try! Realm()
+        try! realm.write {
+            config.currentContactId = contactId + 1
+        }
+        
+        return contactId
 
     }
 
-    @objc func newMessageId() -> Int {
+    func newMessageId() -> Int64 {
 
-        return database.newMessageId()
+        let config = getConfig()
+        let messageId = config.currentMessageId
+        
+        let realm = try! Realm()
+        try! realm.write {
+            config.currentMessageId = messageId + 1
+        }
+        
+        return messageId
 
     }
 
-    func whitelistIndexOf(_ publicId: String) -> Int {
+    func whitelistIndexOf(_ publicId: String) -> Int? {
 
-        return database.whitelistIndex(of: publicId)
+        return privateWhitelist.index(where: {(entry) -> Bool in
+            return publicId == entry.publicId
+        })
 
     }
 
