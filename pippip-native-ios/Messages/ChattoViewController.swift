@@ -108,10 +108,14 @@ class ChattoViewController: BaseChatViewController {
         let item = TextChatInputItem()
         item.textInputHandler = { [weak self] text in
             if let textMessage = TextMessage(text: text, contact: (self?.contact)!) {
-                let contactId = self?.contact?.contactId ?? 0
+//                let contactId = self?.contact?.contactId ?? 0
                 do {
-                    let conversation = ConversationCache.getConversation(contactId)
-                    try conversation.sendMessage(textMessage)
+//                    let conversation = ConversationCache.getConversation(contactId)
+//                    try conversation.sendMessage(textMessage)
+                    textMessage.read = true
+                    try textMessage.encrypt()
+                    textMessage.timestamp = Int64(Date().timeIntervalSince1970 * 1000)
+                    self?.messageManager.sendMessage(textMessage: textMessage, retry: false)
                     self?.dataSource?.addTextMessage(textMessage)
                 }
                 catch {

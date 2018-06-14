@@ -47,7 +47,6 @@ class AccountManager: NSObject {
     func setDefaultConfig() {
         
         let config = AccountConfig()
-        config.accountName = AccountManager.accountName!
         do {
             let realm = try Realm()
             try realm.write {
@@ -69,12 +68,36 @@ class AccountManager: NSObject {
         realmConfig.migrationBlock = { (migration, oldSchemaVersion) in
             // Schema version 13 is Realm Swift
             if oldSchemaVersion < 13 {
+                migration.enumerateObjects(ofType: DatabaseContact.className()) { (oldObject, newObject) in
+                    newObject!["contactId"] = oldObject!["contactId"]
+                    newObject!["encoded"] = oldObject!["encoded"]
+                }
+                migration.enumerateObjects(ofType: DatabaseContactRequest.className()) { (oldObject, newObject) in
+                    newObject!["publicId"] = oldObject!["publicId"]
+                    newObject!["nickname"] = oldObject!["nickname"]
+                }
                 migration.enumerateObjects(ofType: DatabaseMessage.className()) { (oldObject, newObject) in
+                    newObject!["version"] = oldObject!["version"]
+                    newObject!["contactId"] = oldObject!["contactId"]
+                    newObject!["messageId"] = oldObject!["messageId"]
+                    newObject!["ciphertext"] = oldObject!["message"]
+                    newObject!["keyIndex"] = oldObject!["keyIndex"]
+                    newObject!["sequence"] = oldObject!["sequence"]
+                    newObject!["timestamp"] = oldObject!["timestamp"]
+                    newObject!["cleartext"] = oldObject!["cleartext"]
+                    newObject!["read"] = oldObject!["read"]
+                    newObject!["acknowledged"] = oldObject!["acknowledged"]
                     newObject!["originating"] = oldObject!["sent"]
+                    newObject!["compressed"] = oldObject!["compressed"]
+                    newObject!["failed"] = oldObject!["failed"]
                 }
                 migration.enumerateObjects(ofType: AccountConfig.className()) { (oldObject, newObject) in
-                    newObject!["currentContactId"] = oldObject!["contactId"]
+                    newObject!["version"] = oldObject!["version"]
+                    newObject!["nickname"] = oldObject!["nickname"]
+                    newObject!["contactPolicy"] = oldObject!["contactPolicy"]
                     newObject!["currentMessageId"] = oldObject!["messageId"]
+                    newObject!["currentContactId"] = oldObject!["contactId"]
+                    newObject!["whitelist"] = oldObject!["whitelist"]
                     newObject!["storeCleartextMessages"] = oldObject!["cleartextMessages"]
                     newObject!["useLocalAuth"] = oldObject!["localAuth"]
                 }

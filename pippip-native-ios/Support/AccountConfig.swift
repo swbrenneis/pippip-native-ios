@@ -11,7 +11,6 @@ import RealmSwift
 class AccountConfig: Object {
 
     @objc dynamic var version: Float = Configurator.currentVersion
-    @objc dynamic var accountName: String = ""
     @objc dynamic var nickname: String?
     @objc dynamic var contactPolicy: String = "whitelist"
     @objc dynamic var currentMessageId: Int64 = 0

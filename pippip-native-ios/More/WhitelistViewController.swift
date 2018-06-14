@@ -180,6 +180,7 @@ class WhitelistViewController: UIViewController {
 
         do {
             let row = try config.deleteWhitelistEntry(self.publicId)
+            assert(row != NSNotFound)
             DispatchQueue.main.async {
                 self.tableView.deleteRows(at: [IndexPath(row: row, section: 0)], with: .top)
                 self.alertPresenter.successAlert(title: "Friend Deleted",

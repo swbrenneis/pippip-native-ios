@@ -91,22 +91,18 @@ class Configurator: NSObject {
     func addWhitelistEntry(_ entity: Entity) throws {
 
         let config = getConfig()
-        if whitelist.isEmpty {
+        if privateWhitelist.isEmpty {
             try decodeWhitelist(config)
         }
-        let index = whitelist.index(where: {(entry) -> Bool in
-            return entity.publicId == entry.publicId
-        })
-        if index == NSNotFound {
-            privateWhitelist.append(entity)
-            try encodeWhitelist(config)
-        }
+        privateWhitelist.append(entity)
+        try encodeWhitelist(config)
         
     }
 
-    func decodeWhitelist(_ config: AccountConfig) throws {
+    func decodeWhitelist(_ dbConfig: AccountConfig) throws {
         
-        let codec = CKGCMCodec(data: config.whitelist!)
+        guard let dbWhitelist = dbConfig.whitelist else { return }
+        let codec = CKGCMCodec(data: dbWhitelist)
         try codec.decrypt(sessionState.contactsKey!, withAuthData: sessionState.authData!)
         let count = codec.getLong()
         while whitelist.count < count {

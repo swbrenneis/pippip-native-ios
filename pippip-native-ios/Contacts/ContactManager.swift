@@ -99,17 +99,16 @@ class ContactManager: NSObject {
     
     func addFriend(_ publicId:String) -> Bool {
 
-        let found = config.whitelistIndexOf(publicId)
-        if found == NSNotFound {
+        if let _ = config.whitelistIndexOf(publicId) {
+            return false
+        }
+        else {
             let request = UpdateWhitelistRequest(id: publicId, action: "add")
             let delegate = UpdateWhitelistDelegate(request: request, updateType: .addFriend)
             let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>(delegate: delegate)
             addTask.errorTitle = "Friends List Error"
             addTask.sendRequest(request)
             return true
-        }
-        else {
-            return false
         }
 
     }

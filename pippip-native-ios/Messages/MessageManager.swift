@@ -49,6 +49,7 @@ class MessageManager: NSObject {
                               timestamp: textMessage.timestamp) == Int64(NSNotFound) {
                 let dbMessage = textMessage.encodeForDatabase()
                 dbMessage.messageId = config.newMessageId()
+                textMessage.messageId = dbMessage.messageId
                 try! realm.write {
                     realm.add(dbMessage)
                 }
@@ -189,13 +190,11 @@ class MessageManager: NSObject {
         
     }
 
-    @discardableResult
-    func sendMessage(textMessage: TextMessage, retry: Bool) -> Int64 {
+    func sendMessage(textMessage: TextMessage, retry: Bool) {
 
         if (!retry) {
             addTextMessages([textMessage])
         }
-        let messageId = textMessage.messageId
 
         let contact = contactManager.getContact(contactId: textMessage.contactId)!
         let request = SendMessageRequest(message: textMessage.encodeForServer(publicId: contact.publicId))
@@ -203,7 +202,6 @@ class MessageManager: NSObject {
         let enclaveTask = EnclaveTask<SendMessageRequest ,SendMessageResponse>(delegate: delegate)
         enclaveTask.errorTitle = "Message Error"
         enclaveTask.sendRequest(request)
-        return messageId
 
     }
 
@@ -219,7 +217,7 @@ class MessageManager: NSObject {
             }
         }
         else {
-            print("Message not found in database for update")
+            print("Message ID \(message.messageId) not found in database for update")
         }
 
     }
