@@ -12,7 +12,7 @@ import ObjectMapper
 class NewAccountRequest: NSObject, APIRequestProtocol {
     
     var path: String {
-        if AccountManager.production {
+        if AccountSession.production {
             return "/authenticator/new-account-request"
         }
         else {

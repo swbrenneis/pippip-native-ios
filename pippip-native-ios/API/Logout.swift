@@ -12,7 +12,7 @@ import ObjectMapper
 class Logout: NSObject, APIRequestProtocol {
 
     var path: String  {
-        if AccountManager.production {
+        if AccountSession.production {
             return "/authenticator/logout"
         }
         else {

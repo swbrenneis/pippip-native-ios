@@ -28,8 +28,7 @@ class NewAccountCreator: NSObject {
 
         do {
             try storeVault()
-            let accountManager = AccountManager()
-            accountManager.setDefaultConfig()
+            ApplicationInitializer.accountSession.setDefaultConfig()
             sessionState.authenticated = true
             NotificationCenter.default.post(name: Notifications.Authenticated, object: nil)
         }
@@ -42,7 +41,7 @@ class NewAccountCreator: NSObject {
 
     func createAccount(accountName: String, passphrase: String) {
 
-        AccountManager.accountName = accountName
+        AccountSession.accountName = accountName
         self.passphrase = passphrase
         self.accountName = accountName
         DispatchQueue.global().async {
@@ -52,7 +51,6 @@ class NewAccountCreator: NSObject {
         var info = [AnyHashable: Any]()
         info["progress"] = 0.25
         NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
-        //secommAPI.startSession()
 
     }
 

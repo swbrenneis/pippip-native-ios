@@ -15,7 +15,7 @@ class AccountDeleter: NSObject {
         deleteNickname()
         let authenticator = Authenticator()
         authenticator.logout()
-        AccountManager.accountName = nil
+        AccountSession.accountName = nil
 
         let realmURL = Realm.Configuration.defaultConfiguration.fileURL!
         let realmURLs = [

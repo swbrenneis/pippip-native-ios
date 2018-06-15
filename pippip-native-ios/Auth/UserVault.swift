@@ -17,7 +17,7 @@ import Foundation
         let docsURLs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let docURL = docsURLs[0]
         let vaultsURL = docURL.appendingPathComponent("PippipVaults", isDirectory: true)
-        let vaultURL = vaultsURL.appendingPathComponent(AccountManager.accountName!)
+        let vaultURL = vaultsURL.appendingPathComponent(AccountSession.accountName!)
         let vaultData = try Data(contentsOf: vaultURL)
 
         try decode(vaultData, passphrase: oldPassphrase)
@@ -31,7 +31,7 @@ import Foundation
         let docsURLs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let docURL = docsURLs[0]
         let vaultsURL = docURL.appendingPathComponent("PippipVaults", isDirectory: true)
-        let vaultUrl = vaultsURL.appendingPathComponent(AccountManager.accountName!)
+        let vaultUrl = vaultsURL.appendingPathComponent(AccountSession.accountName!)
         let vaultData = try Data(contentsOf: vaultUrl)
 
         let digest = CKSHA256()

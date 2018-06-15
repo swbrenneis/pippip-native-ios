@@ -160,7 +160,6 @@
 		55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA554A1FA14D7100A7026B /* BigInteger.cc */; };
 		55B0DBBA2048962400F6B29B /* CopyableLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B0DBB92048962400F6B29B /* CopyableLabel.m */; };
 		55B17DAF20A1492600DA16DE /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B17DAE20A1492600DA16DE /* MessagesViewController.swift */; };
-		55BFD35D20CDCC0D0084C555 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD35C20CDCC0D0084C555 /* AccountManager.swift */; };
 		55BFD35F20CDCFB30084C555 /* AccountConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD35E20CDCFB30084C555 /* AccountConfig.swift */; };
 		55BFD36120CE14A80084C555 /* DatabaseContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36020CE14A80084C555 /* DatabaseContact.swift */; };
 		55BFD36320CEDDA40084C555 /* DatabaseContactRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36220CEDDA40084C555 /* DatabaseContactRequest.swift */; };
@@ -461,7 +460,6 @@
 		55B0DBB82048962400F6B29B /* CopyableLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CopyableLabel.h; sourceTree = "<group>"; };
 		55B0DBB92048962400F6B29B /* CopyableLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CopyableLabel.m; sourceTree = "<group>"; };
 		55B17DAE20A1492600DA16DE /* MessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
-		55BFD35C20CDCC0D0084C555 /* AccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
 		55BFD35E20CDCFB30084C555 /* AccountConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountConfig.swift; sourceTree = "<group>"; };
 		55BFD36020CE14A80084C555 /* DatabaseContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseContact.swift; sourceTree = "<group>"; };
 		55BFD36220CEDDA40084C555 /* DatabaseContactRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseContactRequest.swift; sourceTree = "<group>"; };
@@ -573,7 +571,6 @@
 			children = (
 				55BFD35E20CDCFB30084C555 /* AccountConfig.swift */,
 				55BFD36620D04C0D0084C555 /* AccountDeleter.swift */,
-				55BFD35C20CDCC0D0084C555 /* AccountManager.swift */,
 				55BFD36820D052FC0084C555 /* AccountSession.swift */,
 				55FD018F20B102510028435E /* AlertPresenter.swift */,
 				55E06BFE20BC9B210034C652 /* ApplicationInitializer.swift */,
@@ -1307,7 +1304,6 @@
 				55BFD35F20CDCFB30084C555 /* AccountConfig.swift in Sources */,
 				55AA55661FA14D7100A7026B /* Base64.cc in Sources */,
 				55AA54FF1FA14C1300A7026B /* CKRSAPrivateKey.m in Sources */,
-				55BFD35D20CDCC0D0084C555 /* AccountManager.swift in Sources */,
 				5511E9D820C3367F0080C0DF /* AcknowledgeMessagesRequest.swift in Sources */,
 				55721A1620C9956E008FE9F6 /* GetPendingRequestsDelegate.swift in Sources */,
 				55AA54DF1FA14B1E00A7026B /* Int32.cc in Sources */,

@@ -63,7 +63,7 @@ class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
 
     func checkPassphrase() {
 
-        let accountName = AccountManager.accountName
+        let accountName = AccountSession.accountName
         let alert = PMAlertController(title: "Delete Account",
                                       description: "Enter your passphrase",
                                       image: nil,

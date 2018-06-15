@@ -39,7 +39,7 @@ class SecommAPI: NSObject {
 
     static func initializeAPI() {
 
-        if AccountManager.production {
+        if AccountSession.production {
             SecommAPI.apiState.hostPath = "https://pippip.secomm.cc"
             SecommAPI.apiState.sessionPath = "/authenticator/session-request"
         }
