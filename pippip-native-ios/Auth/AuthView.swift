@@ -20,7 +20,7 @@ class AuthView: UIView {
     @IBOutlet weak var logoLeading: NSLayoutConstraint!
     @IBOutlet weak var logoTop: NSLayoutConstraint!
     @IBOutlet weak var secommLabel: UILabel!
-
+    
     var accountName = AccountSession.accountName
     var viewController: UIViewController!
     var authenticator = Authenticator()

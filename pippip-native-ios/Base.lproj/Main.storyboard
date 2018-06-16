@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BhA-xV-zTC">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Qgm-Jj-c6i">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -623,6 +624,85 @@
             </objects>
             <point key="canvasLocation" x="1348" y="-649.02548725637189"/>
         </scene>
+        <!--Auth View Controller-->
+        <scene sceneID="7Pl-WC-ZRk">
+            <objects>
+                <viewController id="Qgm-Jj-c6i" customClass="AuthViewController" customModule="pippip_native_ios" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="kNK-an-MJm">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pippip3" translatesAutoresizingMaskIntoConstraints="NO" id="5iF-rd-no8">
+                                <rect key="frame" x="55" y="70" width="265" height="199"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="5iF-rd-no8" secondAttribute="height" multiplier="1024:768" id="sRZ-Hf-c0r"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Vy-hB-X1h">
+                                <rect key="frame" x="86" y="314.5" width="203" height="38"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
+                                <state key="normal" title="Create New Account"/>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Version 1.0.4 2018061501" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AtH-2U-osO">
+                                <rect key="frame" x="120" y="574" width="135" height="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Powered By seComm" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nDU-R8-jrQ">
+                                <rect key="frame" x="132" y="603" width="111" height="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2l8-P8-qWa">
+                                <rect key="frame" x="117" y="448.5" width="141" height="30"/>
+                                <state key="normal" title="Help Me Get Started"/>
+                                <connections>
+                                    <segue destination="9ak-Ht-JaH" kind="presentation" id="lnC-TC-Sd1"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="2l8-P8-qWa" firstAttribute="top" secondItem="1Vy-hB-X1h" secondAttribute="bottom" constant="96" id="3Vs-OM-DSZ"/>
+                            <constraint firstItem="gii-MB-YQ7" firstAttribute="trailing" secondItem="5iF-rd-no8" secondAttribute="trailing" constant="55" id="6w0-zN-EzI"/>
+                            <constraint firstItem="nDU-R8-jrQ" firstAttribute="top" secondItem="AtH-2U-osO" secondAttribute="bottom" constant="15" id="BDQ-NT-Diu"/>
+                            <constraint firstItem="5iF-rd-no8" firstAttribute="top" secondItem="gii-MB-YQ7" secondAttribute="top" constant="50" id="MCk-gO-HVJ"/>
+                            <constraint firstItem="1Vy-hB-X1h" firstAttribute="centerX" secondItem="kNK-an-MJm" secondAttribute="centerX" id="NaT-V8-cwJ"/>
+                            <constraint firstItem="gii-MB-YQ7" firstAttribute="bottom" secondItem="nDU-R8-jrQ" secondAttribute="bottom" constant="50" id="UMO-eU-Njw"/>
+                            <constraint firstItem="1Vy-hB-X1h" firstAttribute="centerY" secondItem="kNK-an-MJm" secondAttribute="centerY" id="qsf-78-TDq"/>
+                            <constraint firstItem="5iF-rd-no8" firstAttribute="leading" secondItem="gii-MB-YQ7" secondAttribute="leading" constant="55" id="tkw-bw-LCY"/>
+                            <constraint firstItem="2l8-P8-qWa" firstAttribute="centerX" secondItem="kNK-an-MJm" secondAttribute="centerX" id="uiA-P1-IJR"/>
+                            <constraint firstItem="AtH-2U-osO" firstAttribute="centerX" secondItem="kNK-an-MJm" secondAttribute="centerX" id="xE7-Ec-YL6"/>
+                            <constraint firstItem="nDU-R8-jrQ" firstAttribute="centerX" secondItem="kNK-an-MJm" secondAttribute="centerX" id="xo8-NV-bIc"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="gii-MB-YQ7"/>
+                    </view>
+                    <connections>
+                        <outlet property="authButton" destination="1Vy-hB-X1h" id="smF-hK-Kni"/>
+                        <outlet property="logoImage" destination="5iF-rd-no8" id="aOa-44-d9P"/>
+                        <outlet property="logoLeading" destination="tkw-bw-LCY" id="e5e-d7-yFs"/>
+                        <outlet property="logoTop" destination="MCk-gO-HVJ" id="3M1-FS-tVI"/>
+                        <outlet property="logoTrailing" destination="6w0-zN-EzI" id="G5H-zh-YbU"/>
+                        <outlet property="quickstartButton" destination="2l8-P8-qWa" id="xhf-kA-zZX"/>
+                        <outlet property="secommLabel" destination="nDU-R8-jrQ" id="akk-ap-RD4"/>
+                        <outlet property="versionLabel" destination="AtH-2U-osO" id="MT3-BN-Jdf"/>
+                        <segue destination="BhA-xV-zTC" kind="show" identifier="AuthCompleteSegue" id="c4s-4F-kW1"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="AqU-Su-8iz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1007" y="-1436"/>
+        </scene>
+        <!--QSAuthView-->
+        <scene sceneID="kyX-qo-XAb">
+            <objects>
+                <viewControllerPlaceholder storyboardName="QuickStart" referencedIdentifier="QSAuthView" id="9ak-Ht-JaH" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Xa1-4j-HNg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1686" y="-1322"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="t6p-yp-DOv">
             <objects>
@@ -645,5 +725,6 @@
     <resources>
         <image name="avatar-user-small" width="60" height="60"/>
         <image name="bluedot" width="50" height="47"/>
+        <image name="pippip3" width="1024" height="760"/>
     </resources>
 </document>
