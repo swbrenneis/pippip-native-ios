@@ -21,6 +21,7 @@ class ChattoViewController: BaseChatViewController {
     var dataSource: ChattoDataSource?
     var messageManager = MessageManager()
     var alertPresenter = AlertPresenter()
+    var localAuth: LocalAuthenticator!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +41,8 @@ class ChattoViewController: BaseChatViewController {
             }
         }
 
+        localAuth = LocalAuthenticator(viewController: self, view: self.collectionView)
+
         NotificationCenter.default.addObserver(self, selector: #selector(contactSelected(_:)),
                                                name: Notifications.ContactSelected, object: nil)
 
@@ -49,6 +52,7 @@ class ChattoViewController: BaseChatViewController {
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
+        localAuth.listening = true
         if contact != nil {
             dataSource =
                 ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
@@ -70,6 +74,8 @@ class ChattoViewController: BaseChatViewController {
                                                name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(retryMessage(_:)),
                                                name: Notifications.RetryMessage, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(thumbprintComplete(_:)),
+                                               name: Notifications.ThumbprintComplete, object: nil)
 
     }
 
@@ -77,10 +83,12 @@ class ChattoViewController: BaseChatViewController {
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
+        localAuth.listening = false
         dataSource?.visible = false
 
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.RetryMessage, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.ThumbprintComplete, object: nil)
 
     }
     
@@ -108,10 +116,7 @@ class ChattoViewController: BaseChatViewController {
         let item = TextChatInputItem()
         item.textInputHandler = { [weak self] text in
             if let textMessage = TextMessage(text: text, contact: (self?.contact)!) {
-//                let contactId = self?.contact?.contactId ?? 0
                 do {
-//                    let conversation = ConversationCache.getConversation(contactId)
-//                    try conversation.sendMessage(textMessage)
                     textMessage.read = true
                     try textMessage.encrypt()
                     textMessage.timestamp = Int64(Date().timeIntervalSince1970 * 1000)
@@ -141,9 +146,9 @@ class ChattoViewController: BaseChatViewController {
     
     @objc func appSuspended(_ notification: Notification) {
         
-        DispatchQueue.main.async {
+/*        DispatchQueue.main.async {
             self.navigationController?.popViewController(animated: true)
-        }
+        } */
         
     }
     
@@ -167,6 +172,14 @@ class ChattoViewController: BaseChatViewController {
 
     }
 
+    @objc func thumbprintComplete(_ notification: Notification) {
+        
+        DispatchQueue.main.async {
+            self.localAuth.visible = false
+        }
+        
+    }
+    
     // UI actions
     @objc func cancelEdit(_ item: Any) {
         

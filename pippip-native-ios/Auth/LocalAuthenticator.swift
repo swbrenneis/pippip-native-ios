@@ -106,24 +106,24 @@ class LocalAuthenticator: NSObject {
 
     @objc func appResumed(_ notification: Notification) {
         
-        if suspended && sessionState.authenticated {
-            suspended = false
-            let info = notification.userInfo!
-            let suspendedTime = info["suspendedTime"] as? Int ?? 0
-            var localAuth = true
-            if !config.useLocalAuth || suspendedTime > LocalAuthenticator.sessionTTL {
-                localAuth = false
-                authenticator.logout()
-            }
-            
-            DispatchQueue.main.async {
-                if localAuth {
-                    self.doThumbprint()
+        DispatchQueue.main.async {
+            if self.suspended && self.sessionState.authenticated {
+                self.suspended = false
+                let info = notification.userInfo!
+                let suspendedTime = info["suspendedTime"] as? TimeInterval ?? 0
+                var localAuth = true
+                if !self.config.useLocalAuth || Int64(suspendedTime) > LocalAuthenticator.sessionTTL {
+                    localAuth = false
+                    self.authenticator.logout()
+                }
+                
+                DispatchQueue.main.async {
+                    if localAuth {
+                        self.doThumbprint()
+                    }
                 }
             }
-        }
-        else {
-            DispatchQueue.main.async {
+            else {
                 self.authView.authButton.isHidden = false
             }
         }
