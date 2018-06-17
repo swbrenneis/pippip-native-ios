@@ -118,7 +118,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
                     newObject!["acknowledged"] = oldObject!["acknowledged"]
                     newObject!["originating"] = oldObject!["sent"]
                     newObject!["compressed"] = oldObject!["compressed"]
-                    newObject!["failed"] = oldObject!["failed"]
+//                    newObject!["failed"] = oldObject!["failed"]
                 }
                 migration.enumerateObjects(ofType: AccountConfig.className()) { (oldObject, newObject) in
                     newObject!["version"] = oldObject!["version"]
