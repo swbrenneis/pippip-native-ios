@@ -642,6 +642,9 @@
                                 <rect key="frame" x="86" y="314.5" width="203" height="38"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
                                 <state key="normal" title="Create New Account"/>
+                                <connections>
+                                    <action selector="authSelected:" destination="Qgm-Jj-c6i" eventType="touchUpInside" id="zxC-jY-ae9"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Version 1.0.4 2018061501" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AtH-2U-osO">
                                 <rect key="frame" x="120" y="574" width="135" height="14"/>
@@ -656,7 +659,8 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2l8-P8-qWa">
-                                <rect key="frame" x="117" y="448.5" width="141" height="30"/>
+                                <rect key="frame" x="115.5" y="448.5" width="144" height="30"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                                 <state key="normal" title="Help Me Get Started"/>
                                 <connections>
                                     <segue destination="9ak-Ht-JaH" kind="presentation" id="lnC-TC-Sd1"/>
