@@ -37,6 +37,7 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
             }
         }
         if !textMessages.isEmpty {
+            messageManager.addTextMessages(textMessages)
             messageManager.acknowledgeMessages(textMessages)
         }
 

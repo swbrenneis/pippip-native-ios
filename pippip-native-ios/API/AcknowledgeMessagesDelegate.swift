@@ -29,8 +29,8 @@ class AcknowledgeMessagesDelegate: EnclaveDelegate<AcknowledgeMessagesRequest, A
         print("Messages acknowledged, \(response.exceptions!.count) exceptions")
         for textMessage in textMessages {
             textMessage.acknowledged = true
+            messageManager.updateMessage(textMessage)
         }
-        messageManager.addTextMessages(textMessages)
         ConversationCache.newMessages(textMessages)
         NotificationCenter.default.post(name: Notifications.NewMessages, object: textMessages)
 
