@@ -21,7 +21,7 @@ class ChattoViewController: BaseChatViewController {
     var dataSource: ChattoDataSource?
     var messageManager = MessageManager()
     var alertPresenter = AlertPresenter()
-    var localAuth: LocalAuthenticator!
+    var localAuth: LocalAuthenticator?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,8 +41,6 @@ class ChattoViewController: BaseChatViewController {
             }
         }
 
-        localAuth = LocalAuthenticator(viewController: self, view: self.collectionView)
-
         NotificationCenter.default.addObserver(self, selector: #selector(contactSelected(_:)),
                                                name: Notifications.ContactSelected, object: nil)
 
@@ -52,7 +50,10 @@ class ChattoViewController: BaseChatViewController {
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
-        localAuth.listening = true
+        if localAuth == nil {
+            localAuth = LocalAuthenticator(viewController: self, view: self.view)
+        }
+        localAuth?.listening = true
         if contact != nil {
             dataSource =
                 ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
@@ -83,7 +84,7 @@ class ChattoViewController: BaseChatViewController {
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
-        localAuth.listening = false
+        localAuth?.listening = false
         dataSource?.visible = false
 
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
@@ -175,7 +176,7 @@ class ChattoViewController: BaseChatViewController {
     @objc func thumbprintComplete(_ notification: Notification) {
         
         DispatchQueue.main.async {
-            self.localAuth.visible = false
+            self.localAuth?.visible = false
         }
         
     }

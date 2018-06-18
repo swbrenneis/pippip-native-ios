@@ -34,7 +34,6 @@ class MessagesViewController: UIViewController {
     var alertPresenter = AlertPresenter()
     var contactBarButton: UIBarButtonItem!
     var contactBadge = GIBadgeView()
-    var chatPushed = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,8 +111,6 @@ class MessagesViewController: UIViewController {
         tableView.dataSource = self
         messageSearch.delegate = self
 
-        NotificationCenter.default.addObserver(self, selector: #selector(newSession(_:)),
-                                               name: Notifications.NewSession, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestsUpdated(_:)),
                                                name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestAcknowledged(_:)),
@@ -125,33 +122,17 @@ class MessagesViewController: UIViewController {
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
-        if chatPushed {
-            chatPushed = false
-        }
-        else {
-            localAuth.listening = true
-        }
+        localAuth.listening = true
 
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(thumbprintComplete(_:)),
                                                name: Notifications.ThumbprintComplete, object: nil)
 
-        if accountDeleted {
-            previews.removeAll()
-            tableView.reloadData()
-            accountDeleted = false
-            localAuth.visible = true
-        }
-        else if sessionState.authenticated {
-            getMostRecentMessages()
-            tableView.reloadData()
-            let requests = contactManager.pendingRequests
-            contactBadge.badgeValue = requests.count
-        }
-        else {
-            localAuth.visible = true
-        }
+        getMostRecentMessages()
+        tableView.reloadData()
+        let requests = contactManager.pendingRequests
+        contactBadge.badgeValue = requests.count
 
     }
 
@@ -159,9 +140,8 @@ class MessagesViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
-        if !chatPushed {
-            localAuth.listening = false
-        }
+        localAuth.listening = false
+
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.ThumbprintComplete, object: nil)
 
@@ -230,26 +210,11 @@ class MessagesViewController: UIViewController {
     
     @objc func newMessages(_ notification: Notification) {
 
-        if !chatPushed {
-            getMostRecentMessages()
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-        
-    }
-    
-    @objc func newSession(_ notification: Notification) {
-
-        ApplicationInitializer.accountSession.loadConfig()
         getMostRecentMessages()
-        let requests = contactManager.pendingRequests
         DispatchQueue.main.async {
             self.tableView.reloadData()
-            self.localAuth.visible = false
-            self.contactBadge.badgeValue = requests.count
         }
-
+        
     }
 
     @objc func requestsUpdated(_ notification: Notification) {
@@ -388,7 +353,6 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
         let contactId = previews[indexPath.item].contactId
         let viewController = ChattoViewController()
         viewController.contact = contactManager.getContact(contactId: contactId)
-        chatPushed = true
         self.navigationController?.pushViewController(viewController, animated: true)
 
     }

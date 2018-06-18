@@ -72,6 +72,7 @@ class Authenticator: NSObject {
         }
         catch {
             print("Unable to open vault file: \(error)")
+            alertPresenter.errorAlert(title: "Sign In Error", message: "Invalid passphrase")
         }
         return false
 
