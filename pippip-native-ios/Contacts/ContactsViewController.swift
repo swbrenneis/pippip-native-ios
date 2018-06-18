@@ -20,8 +20,8 @@ class ContactsViewController: UIViewController {
     var config = Configurator()
     var sessionState = SessionState()
     var localAuth: LocalAuthenticator!
-    var nickname: String?
-    var publicId = ""
+    //var nickname: String?
+    //var publicId = ""
     var debugging = false
     var suspended = false
     var alertPresenter = AlertPresenter()
@@ -129,6 +129,30 @@ class ContactsViewController: UIViewController {
 
     }
 
+    func validateAndRequest(publicId: String?, nickname: String?) {
+        
+        if nickname == config.nickname || publicId == sessionState.publicId {
+            alertPresenter.errorAlert(title: "Add Contact Error", message: "Adding yourself is not allowed")
+        }
+        else if nickname != nil && nickname!.utf8.count > 0 {
+            self.contactManager.matchNickname(nickname: nickname, publicId: nil)
+        }
+        else if publicId != nil && publicId!.utf8.count > 0 {
+            let regex = try! NSRegularExpression(pattern: "[^A-Fa-f0-9]", options: [])
+            if let match = regex.firstMatch(in: publicId!,
+                                            options: [],
+                                            range: NSMakeRange(0, publicId!.utf8.count)) {
+                if match.numberOfRanges > 0 || publicId!.utf8.count < 40 {
+                    alertPresenter.errorAlert(title: "Contact Request Error", message: "Not a valid public ID")
+                }
+            }
+            else {
+                contactManager.requestContact(publicId: publicId!, nickname: nil, retry: false)
+            }
+        }
+
+    }
+
     @objc func editContacts(_ sender: Any) {
 
         tableView.setEditing(true, animated: true)
@@ -186,6 +210,7 @@ class ContactsViewController: UIViewController {
   
     }
 
+    // Debug only
     @objc func deleteContact(_ sender: Any) {
 
         let alert = PMAlertController(title: "Delete A Server Contact",
@@ -199,8 +224,7 @@ class ContactsViewController: UIViewController {
         })
         alert.addAction(PMAlertAction(title: "Delete",
                                       style: .default, action: { () in
-                                        self.nickname = alert.textFields[0].text ?? ""
-                                        self.contactManager.deleteServerContact(nickname: self.nickname!)
+                                        self.contactManager.deleteServerContact(nickname: alert.textFields[0].text ?? "")
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true, completion: nil)
@@ -213,9 +237,7 @@ class ContactsViewController: UIViewController {
 
         guard let response = notification.object as? MatchNicknameResponse else { return }
         if response.result == "found" {
-            publicId = response.publicId!
-            nickname = response.nickname!
-            contactManager.requestContact(publicId: publicId, nickname: nickname, retry: false)
+            contactManager.requestContact(publicId: response.publicId!, nickname: response.nickname, retry: false)
         }
         else {
             alertPresenter.errorAlert(title: "Add Contact Error", message: "That nickname doesn't exist")
@@ -288,19 +310,8 @@ class ContactsViewController: UIViewController {
         })
         alert.addAction(PMAlertAction(title: "Add Contact",
                                       style: .default, action: { () in
-                                        self.nickname = alert.textFields[0].text ?? ""
-                                        self.publicId = alert.textFields[1].text ?? ""
-                                        if self.nickname == self.config.nickname
-                                            || self.publicId == self.sessionState.publicId {
-                                            self.alertPresenter.errorAlert(title: "Add Contact Error",
-                                                                           message: "Adding yourself is not allowed")
-                                        }
-                                        else if self.nickname!.utf8.count > 0 {
-                                            self.contactManager.matchNickname(nickname: self.nickname, publicId: nil)
-                                        }
-                                        else if self.publicId.utf8.count > 0 {
-                                            self.contactManager.requestContact(publicId: self.publicId, nickname: nil, retry: false)
-                                        }
+                                        self.validateAndRequest(publicId: alert.textFields[1].text,
+                                                                nickname: alert.textFields[0].text)
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true, completion: nil)
