@@ -35,7 +35,7 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
                 }
             }
             catch let error as APIResponseError {
-                print("Enclave request error: \(error.error!)")
+                print("Enclave request error: \(error.error)")
             }
             catch {
                 print("Enclave request unknown error: \(error)")
@@ -45,8 +45,8 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
     }
 
     func postError(_ error: APIResponseError) {
-        print("Enclave request post error: \(error.errorString!)")
-        delegate?.requestError!(EnclaveResponseError(errorString: error.errorString!))
+        print("Enclave request post error: \(error.errorString)")
+        delegate?.requestError!(EnclaveResponseError(errorString: error.errorString))
     }
 
     func sendRequest(_ request: EnclaveRequestProtocol) {

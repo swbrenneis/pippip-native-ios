@@ -13,7 +13,7 @@ enum ResponseErrors { case timedout, invalidServerResponse, invalidSession, inva
 
 class APIResponseError: Error {
 
-    var errorString: String?
+    var errorString = "Unknown"
     var error: ResponseErrors?
     
     init(errorString: String) {

@@ -106,7 +106,7 @@ class NewAccountCreator: NSObject {
     }
 
     func accountFinishError(_ error: APIResponseError) {
-        print("Account finish error: \(error.errorString!)")
+        print("Account finish error: \(error.errorString)")
     }
 
     func accountRequestComplete(_ accountResponse: NewAccountResponse) {
@@ -128,7 +128,7 @@ class NewAccountCreator: NSObject {
     }
 
     func accountRequestError(_ error: APIResponseError) {
-        print("Account request error: \(error.errorString!)")
+        print("Account request error: \(error.errorString)")
     }
 
     // Notifications

@@ -106,7 +106,7 @@ class Authenticator: NSObject {
     }
 
     func authChallengeError(_ error: APIResponseError) {
-        print("Authentication challenge error: \(error.errorString!)")
+        print("Authentication challenge error: \(error.errorString)")
     }
     
     func authorizedComplete(_ authorized: ClientAuthorized) {
@@ -127,7 +127,7 @@ class Authenticator: NSObject {
     }
 
     func authorizedError(_ error: APIResponseError) {
-        print("Authorization error: \(error.errorString!)")
+        print("Authorization error: \(error.errorString)")
     }
 
     func authRequestComplete(_ authResponse: AuthenticationResponse) {
@@ -149,7 +149,7 @@ class Authenticator: NSObject {
     }
 
     func authRequestError(_ error: APIResponseError) {
-        print("Authentication request error: \(error.errorString!)")
+        print("Authentication request error: \(error.errorString)")
     }
 
     func logoutComplete(_ response: NullResponse) {
