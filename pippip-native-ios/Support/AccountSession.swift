@@ -75,6 +75,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     
     func setDefaultConfig() {
         
+        setRealmConfiguration()
         let config = AccountConfig()
         do {
             let realm = try Realm()

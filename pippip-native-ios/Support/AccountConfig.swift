@@ -12,7 +12,7 @@ class AccountConfig: Object {
 
     @objc dynamic var version: Float = Configurator.currentVersion
     @objc dynamic var nickname: String?
-    @objc dynamic var contactPolicy: String = "whitelist"
+    @objc dynamic var contactPolicy: String = "public"
     @objc dynamic var currentMessageId: Int64 = 0
     @objc dynamic var currentContactId: Int = 0
     @objc dynamic var whitelist: Data?

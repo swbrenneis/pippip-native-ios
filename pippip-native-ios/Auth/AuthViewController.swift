@@ -43,6 +43,7 @@ class AuthViewController: UIViewController {
         authButton.backgroundColor = .clear
         quickstartButton.setTitleColor(ContrastColorOf(backgroundColor, returnFlat: false), for: .normal)
         quickstartButton.backgroundColor = .clear
+        quickstartButton.isHidden = true
         versionLabel.textColor = UIColor.flatSand
         secommLabel.textColor = UIColor.flatSand
 
@@ -212,7 +213,6 @@ class AuthViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: Notifications.Authenticated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.UpdateProgress, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
-        ApplicationInitializer.accountSession.loadConfig()
         DispatchQueue.main.async {
             MBProgressHUD.hide(for: self.view, animated: true)
             NotificationCenter.default.post(name: Notifications.NewSession, object: nil)

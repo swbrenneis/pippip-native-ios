@@ -113,6 +113,12 @@
 		5592A5971F8BBB4400F08BF5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5592A5951F8BBB4400F08BF5 /* LaunchScreen.storyboard */; };
 		5592A59A1F8BBB4500F08BF5 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5991F8BBB4500F08BF5 /* main.mm */; };
 		5592A5A41F8BBB4500F08BF5 /* pippip_native_iosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5A31F8BBB4500F08BF5 /* pippip_native_iosTests.m */; };
+		5599913C20D82F1400D112FA /* QSGuideLarge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5599913B20D82F1400D112FA /* QSGuideLarge.swift */; };
+		5599913E20D82F2700D112FA /* QSGuideMedium.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5599913D20D82F2700D112FA /* QSGuideMedium.swift */; };
+		5599914020D82F3D00D112FA /* QSPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5599913F20D82F3D00D112FA /* QSPromptView.swift */; };
+		5599914220D82F6100D112FA /* QSGuideLarge.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5599914120D82F6100D112FA /* QSGuideLarge.xib */; };
+		5599914420D84A4600D112FA /* QSPromptView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5599914320D84A4600D112FA /* QSPromptView.xib */; };
+		5599914620D88D3400D112FA /* QSMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5599914520D88D3400D112FA /* QSMessageViewController.swift */; };
 		55AA54DA1FA14B1E00A7026B /* ByteArrayInputStream.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA54C61FA14B1D00A7026B /* ByteArrayInputStream.cc */; };
 		55AA54DB1FA14B1E00A7026B /* ByteArrayOutputStream.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA54CA1FA14B1D00A7026B /* ByteArrayOutputStream.cc */; };
 		55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA54CC1FA14B1D00A7026B /* Unsigned16.cc */; };
@@ -345,6 +351,12 @@
 		5592A59F1F8BBB4500F08BF5 /* pippip-native-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pippip-native-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5592A5A31F8BBB4500F08BF5 /* pippip_native_iosTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = pippip_native_iosTests.m; sourceTree = "<group>"; };
 		5592A5A51F8BBB4500F08BF5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5599913B20D82F1400D112FA /* QSGuideLarge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSGuideLarge.swift; sourceTree = "<group>"; };
+		5599913D20D82F2700D112FA /* QSGuideMedium.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSGuideMedium.swift; sourceTree = "<group>"; };
+		5599913F20D82F3D00D112FA /* QSPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSPromptView.swift; sourceTree = "<group>"; };
+		5599914120D82F6100D112FA /* QSGuideLarge.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QSGuideLarge.xib; sourceTree = "<group>"; };
+		5599914320D84A4600D112FA /* QSPromptView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QSPromptView.xib; sourceTree = "<group>"; };
+		5599914520D88D3400D112FA /* QSMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSMessageViewController.swift; sourceTree = "<group>"; };
 		55AA54C11FA14B1D00A7026B /* BadParameterException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BadParameterException.h; sourceTree = "<group>"; };
 		55AA54C21FA14B1D00A7026B /* OutOfRangeException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutOfRangeException.h; sourceTree = "<group>"; };
 		55AA54C31FA14B1D00A7026B /* Unsigned64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unsigned64.h; sourceTree = "<group>"; };
@@ -541,7 +553,12 @@
 		551DBDD420D48A37005D88D0 /* QuickStart */ = {
 			isa = PBXGroup;
 			children = (
+				5599913A20D82CFF00D112FA /* Nibs */,
 				551DBDD520D48AB3005D88D0 /* QSAuthViewController.swift */,
+				5599913B20D82F1400D112FA /* QSGuideLarge.swift */,
+				5599913D20D82F2700D112FA /* QSGuideMedium.swift */,
+				5599914520D88D3400D112FA /* QSMessageViewController.swift */,
+				5599913F20D82F3D00D112FA /* QSPromptView.swift */,
 			);
 			path = QuickStart;
 			sourceTree = "<group>";
@@ -816,6 +833,15 @@
 				5592A5A51F8BBB4500F08BF5 /* Info.plist */,
 			);
 			path = "pippip-native-iosTests";
+			sourceTree = "<group>";
+		};
+		5599913A20D82CFF00D112FA /* Nibs */ = {
+			isa = PBXGroup;
+			children = (
+				5599914120D82F6100D112FA /* QSGuideLarge.xib */,
+				5599914320D84A4600D112FA /* QSPromptView.xib */,
+			);
+			path = Nibs;
 			sourceTree = "<group>";
 		};
 		55A734B6206ECEEB00D31AD6 /* Nibs */ = {
@@ -1108,6 +1134,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5592A5971F8BBB4400F08BF5 /* LaunchScreen.storyboard in Resources */,
+				5599914220D82F6100D112FA /* QSGuideLarge.xib in Resources */,
+				5599914420D84A4600D112FA /* QSPromptView.xib in Resources */,
 				551DBDD320D40858005D88D0 /* QuickStart.storyboard in Resources */,
 				55206DA92075486000B0B246 /* SelectContactView.xib in Resources */,
 				55E06BF820BC6EA20034C652 /* iphone_receive_sms.mp3 in Resources */,
@@ -1255,6 +1283,7 @@
 				55FD018620B0C6CD0028435E /* SettingsTableViewController.swift in Sources */,
 				5586B8872064882B00641514 /* SessionStateActual.swift in Sources */,
 				5511E9AC20C1B6060080C0DF /* CryptoError.swift in Sources */,
+				5599914620D88D3400D112FA /* QSMessageViewController.swift in Sources */,
 				557C2B652093CE7C0069336D /* PippipTextMessageInteractionHandler.swift in Sources */,
 				55316C8B206AD21800EB1AF7 /* PendingRequestCell.swift in Sources */,
 				5592334A20667094008AEEAE /* AsyncNotifier.swift in Sources */,
@@ -1296,6 +1325,7 @@
 				55721A0A20C86876008FE9F6 /* EnclaveDelegate.swift in Sources */,
 				55AA555F1FA14D7100A7026B /* DERCodec.cc in Sources */,
 				55E970AD20AE6927008C2F39 /* LocalAuthenticator.swift in Sources */,
+				5599913C20D82F1400D112FA /* QSGuideLarge.swift in Sources */,
 				55AA55551FA14D7100A7026B /* SHA512.cc in Sources */,
 				5511E9B220C1EC830080C0DF /* ServerContact.swift in Sources */,
 				55AA54FA1FA14C1300A7026B /* CKPEMCodec.mm in Sources */,
@@ -1351,6 +1381,7 @@
 				55E970AB20AE2C11008C2F39 /* AuthView.swift in Sources */,
 				55AA55621FA14D7100A7026B /* RSAKeyPairGenerator.cc in Sources */,
 				557C2B70209635E00069336D /* SlidingMessageWindow.swift in Sources */,
+				5599913E20D82F2700D112FA /* QSGuideMedium.swift in Sources */,
 				55E970B120B07D14008C2F39 /* PippipTableViewCell.swift in Sources */,
 				55AA55631FA14D7100A7026B /* RSAPrivateCrtKey.cc in Sources */,
 				5511E9B820C1FF550080C0DF /* UpdateWhitelistRequest.swift in Sources */,
@@ -1381,6 +1412,7 @@
 				55FD018E20B0D1930028435E /* SetNicknameCell.swift in Sources */,
 				55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */,
 				55F7B58320BF36720083AE01 /* NewAccountRequest.swift in Sources */,
+				5599914020D82F3D00D112FA /* QSPromptView.swift in Sources */,
 				55FD018C20B0CA120028435E /* MultiCellProtocol.swift in Sources */,
 				55FD019020B102510028435E /* AlertPresenter.swift in Sources */,
 				5586B8942065190B00641514 /* NotificationErrorDelegate.swift in Sources */,
