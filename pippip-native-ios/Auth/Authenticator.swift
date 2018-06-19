@@ -118,10 +118,11 @@ class Authenticator: NSObject {
         do {
             try authorized.processResponse()
             sessionState.authenticated = true
+            ApplicationInitializer.accountSession.loadConfig()
             NotificationCenter.default.post(name: Notifications.Authenticated, object: nil)
         }
         catch {
-            print("Authentication request error: \(error)")
+            print("Authorization response error: \(error)")
         }
 
     }
