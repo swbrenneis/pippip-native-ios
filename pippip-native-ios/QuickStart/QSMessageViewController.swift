@@ -12,6 +12,7 @@ import ChameleonFramework
 class QSMessageViewController: UIViewController {
 
     @IBOutlet weak var backButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -22,7 +23,7 @@ class QSMessageViewController: UIViewController {
         let guideView = QSGuideLarge(frame: CGRect(x: 0, y: 0, width: 275, height: 220))
         guideView.guideLabel.text =
             "The message preview screen will be the first one you will see after creating a new account. " +
-            "Follow the prompts to find out what each part of this screen does."
+            "Follow the prompts to find out how to use each part of this screen."
         guideView.center = self.view.center
         self.view.addSubview(guideView)
 

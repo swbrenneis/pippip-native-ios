@@ -31,7 +31,6 @@ class SettingsTableViewController: UITableViewController {
         items.append(SetNicknameCell.cellItem)
         items.append(ContactPolicyCell.cellItem)
         items.append(LocalAuthCell.cellItem)
-        items.append(CleartextMessagesCell.cellItem)
         items.append(LocalPasswordCell.cellItem)
         let policy = config.contactPolicy
         if policy != "public" {
@@ -60,8 +59,8 @@ class SettingsTableViewController: UITableViewController {
         alertPresenter.present = true
         NotificationCenter.default.addObserver(self, selector: #selector(policyChanged(_:)),
                                                name: Notifications.PolicyChanged, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(thumbprintComplete(_:)),
-                                               name: Notifications.ThumbprintComplete, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
+                                               name: Notifications.LocalAuthComplete, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(accountDeleted(_:)),
                                                name: Notifications.AccountDeleted, object: nil)
 
@@ -73,7 +72,7 @@ class SettingsTableViewController: UITableViewController {
         localAuth.listening = false
         alertPresenter.present = false
         NotificationCenter.default.removeObserver(self, name: Notifications.PolicyChanged, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.ThumbprintComplete, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.LocalAuthComplete, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AccountDeleted, object: nil)
 
     }
@@ -102,7 +101,7 @@ class SettingsTableViewController: UITableViewController {
 
     }
 
-    @objc func thumbprintComplete(_ notification: Notification) {
+    @objc func localAuthComplete(_ notification: Notification) {
         
         DispatchQueue.main.async {
             self.localAuth.visible = false

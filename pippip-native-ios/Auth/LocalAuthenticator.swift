@@ -9,8 +9,9 @@
 import UIKit
 import ChameleonFramework
 import LocalAuthentication
+import DeviceKit
 
-class LocalAuthenticator: NSObject {
+class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
 
     @objc static var sessionTTL: Int64 = 0
 
@@ -28,8 +29,6 @@ class LocalAuthenticator: NSObject {
                                                        name: Notifications.AppResumed, object: nil)
                 NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                        name: Notifications.AppSuspended, object: nil)
-                NotificationCenter.default.addObserver(self, selector: #selector(sessionEnded(_:)),
-                                                       name: Notifications.SessionEnded, object: nil)
                 // Used to dismiss the HUD
                 NotificationCenter.default.addObserver(authView, selector: #selector(AuthView.presentAlert(_:)),
                                                        name: Notifications.PresentAlert, object: nil)
@@ -37,7 +36,6 @@ class LocalAuthenticator: NSObject {
             else {
                 NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
                 NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
-                NotificationCenter.default.removeObserver(self, name: Notifications.SessionEnded, object: nil)
                 NotificationCenter.default.removeObserver(authView, name: Notifications.PresentAlert, object: nil)
             }
         }
@@ -80,24 +78,35 @@ class LocalAuthenticator: NSObject {
 
         super.init()
 
+        authenticator.delegate = self
+
     }
 
     func doThumbprint() {
     
         assert(Thread.isMainThread)
+        
+        let device = Device()
+        var reason = "Please provide your thumbprint to open Pippip"
+        if device == .iPhoneX {
+            reason = "Please use face ID to open Pippip"
+        }
+
         let laContext = LAContext()
         var authError: NSError? = nil
         if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)) {
             laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
-                                     localizedReason: "Please provide your thumbprint to open Pippip", reply: { (success : Bool, error : Error? ) -> Void in
-                                        if (success) {
-                                            NotificationCenter.default.post(name: Notifications.ThumbprintComplete,
-                                                                            object: nil)
-                                        }
-                                        else {
-                                            print("Thumbprint authentication failed")
-                                            self.authenticator.logout()
-                                            self.authView.authButton.isHidden = false
+                                     localizedReason: reason, reply: { (success : Bool, error : Error? ) -> Void in
+                                        DispatchQueue.main.async {
+                                            if (success) {
+                                                NotificationCenter.default.post(name: Notifications.LocalAuthComplete,
+                                                                                object: nil)
+                                            }
+                                            else {
+                                                self.authenticator.logout()
+                                                guard let theError = error else { return }
+                                                print("Local authentication failed: \(theError)")
+                                            }
                                         }
             })
         }
@@ -109,10 +118,8 @@ class LocalAuthenticator: NSObject {
         DispatchQueue.main.async {
             if self.suspended && self.sessionState.authenticated {
                 self.suspended = false
-                let info = notification.userInfo!
-                let suspendedTime = info["suspendedTime"] as? TimeInterval ?? 0
                 var localAuth = true
-                if !self.config.useLocalAuth || Int64(suspendedTime) > LocalAuthenticator.sessionTTL {
+                if !self.config.useLocalAuth {
                     localAuth = false
                     self.authenticator.logout()
                 }
@@ -140,11 +147,23 @@ class LocalAuthenticator: NSObject {
         
     }
 
-    @objc func sessionEnded(_ notification: Notification) {
+    // Authentication delegate
+    
+    func authenticated() {
+        // Nothing to do
+    }
+    
+    func authenticationFailed(reason: String) {
+        // Nothing to do
+    }
 
+    func loggedOut() {
+
+        AsyncNotifier.notify(name: Notifications.SessionEnded)
         DispatchQueue.main.async {
             self.authView.authButton.isHidden = false
-            self.visible = true
+            self.viewController.navigationController?.performSegue(withIdentifier: "AuthViewSegue", sender: nil)
+            self.visible = false
         }
 
     }

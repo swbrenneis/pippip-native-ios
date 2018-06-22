@@ -12,7 +12,7 @@ import ChameleonFramework
 import LocalAuthentication
 import Sheriff
 
-class MessagesViewController: UIViewController {
+class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageSearch: UISearchBar!
@@ -53,6 +53,7 @@ class MessagesViewController: UIViewController {
         
         contactManager = ContactManager()
         localAuth = LocalAuthenticator(viewController: self, view: self.view)
+        authenticator.delegate = self
 
         // Do any additional setup after loading the view.
         let sidebarImages = [ UIImage(named: "contacts")!, UIImage(named: "compose")!,
@@ -126,8 +127,8 @@ class MessagesViewController: UIViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(thumbprintComplete(_:)),
-                                               name: Notifications.ThumbprintComplete, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
+                                               name: Notifications.LocalAuthComplete, object: nil)
 
         getMostRecentMessages()
         tableView.reloadData()
@@ -143,7 +144,7 @@ class MessagesViewController: UIViewController {
         localAuth.listening = false
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.ThumbprintComplete, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.LocalAuthComplete, object: nil)
 
     }
 
@@ -201,8 +202,7 @@ class MessagesViewController: UIViewController {
     func signOut() {
         
         previews.removeAll()
-        let auth = Authenticator()
-        auth.logout()
+        authenticator.logout()
 
     }
 
@@ -239,10 +239,29 @@ class MessagesViewController: UIViewController {
         
     }
     
-    @objc func thumbprintComplete(_ notification: Notification) {
+    @objc func localAuthComplete(_ notification: Notification) {
 
         DispatchQueue.main.async {
             self.localAuth.visible = false
+        }
+
+    }
+
+    // Authentication delegate
+    
+    func authenticated() {
+        // Nothing to do
+    }
+    
+    func authenticationFailed(reason: String) {
+        // Nothing to do
+    }
+
+    func loggedOut() {
+
+        AsyncNotifier.notify(name: Notifications.SessionEnded)
+        DispatchQueue.main.async {
+            self.navigationController?.performSegue(withIdentifier: "AuthViewSegue", sender: nil)
         }
 
     }

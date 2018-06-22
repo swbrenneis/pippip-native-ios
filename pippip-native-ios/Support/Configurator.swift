@@ -33,19 +33,6 @@ class Configurator: NSObject {
         return privateWhitelist
     }
     private var privateWhitelist = [Entity]()
-    @objc var storeCleartextMessages: Bool {
-        get {
-            let config = getConfig()
-            return config.storeCleartextMessages
-        }
-        set {
-            let config = getConfig()
-            let realm = try! Realm()
-            try! realm.write {
-                config.storeCleartextMessages = newValue
-            }
-        }
-    }
     var useLocalAuth: Bool {
         get {
             let config = getConfig()
@@ -72,7 +59,7 @@ class Configurator: NSObject {
             }
         }
     }
-    @objc var nickname: String? {
+    var nickname: String? {
         get {
             let config = getConfig()
             return config.nickname

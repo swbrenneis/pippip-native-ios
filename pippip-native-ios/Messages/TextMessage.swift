@@ -95,16 +95,6 @@ class TextMessage: Message {
 
     }
 
-    override func encodeForDatabase() -> DatabaseMessage {
-
-        let dbMessage = super.encodeForDatabase()
-        if config.storeCleartextMessages {
-            dbMessage.cleartext = cleartext
-        }
-        return dbMessage
-
-    }
-
     func encrypt() throws {
 
         let contact = contactManager.getContact(contactId: contactId)!

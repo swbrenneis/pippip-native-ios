@@ -10,7 +10,7 @@ import UIKit
 import PMAlertController
 import ChameleonFramework
 
-class AuthView: UIView {
+class AuthView: UIView, AuthenticationDelegateProtocol {
 
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var logoImage: UIImageView!
@@ -43,6 +43,8 @@ class AuthView: UIView {
         addSubview(contentView)
         contentView.frame = self.bounds
         contentView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        authenticator.delegate = self
+        newAccountCreator.delegate = self
 
     }
 
@@ -73,8 +75,6 @@ class AuthView: UIView {
 
     func doAuthenticate(_ passphrase: String) {
         
-        NotificationCenter.default.addObserver(self, selector: #selector(self.authenticated(_:)),
-                                               name: Notifications.Authenticated, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),
                                                name: Notifications.UpdateProgress, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.presentAlert(_:)),
@@ -86,19 +86,6 @@ class AuthView: UIView {
         
     }
     
-    @objc func authenticated(_ notification: Notification) {
-        
-        NotificationCenter.default.removeObserver(self, name: Notifications.Authenticated, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.UpdateProgress, object: nil)
-        DispatchQueue.main.async {
-            MBProgressHUD.hide(for: self, animated: true)
-            NotificationCenter.default.post(name: Notifications.NewSession, object: nil)
-            self.removeFromSuperview()
-            self.authButton.setTitle("Sign In", for: .normal)
-        }
-        
-    }
-
     // This is just used to dismiss the HUD
     @objc func presentAlert(_ notification: Notification) {
 
@@ -118,4 +105,28 @@ class AuthView: UIView {
         
     }
 
+    // Authentication delegate
+    func authenticated() {
+
+        NotificationCenter.default.removeObserver(self, name: Notifications.UpdateProgress, object: nil)
+        DispatchQueue.main.async {
+            MBProgressHUD.hide(for: self, animated: true)
+            NotificationCenter.default.post(name: Notifications.NewSession, object: nil)
+            self.removeFromSuperview()
+            self.authButton.setTitle("Sign In", for: .normal)
+        }
+        
+    }
+
+    func authenticationFailed(reason: String) {
+
+        alertPresenter.errorAlert(title: "Authentication Error",
+                                  message: "There was an error while signing in: \(reason)")
+
+    }
+
+    func loggedOut() {
+        // Nothing to do.
+    }
+    
 }

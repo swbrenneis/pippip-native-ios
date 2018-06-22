@@ -75,8 +75,8 @@ class ChattoViewController: BaseChatViewController {
                                                name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(retryMessage(_:)),
                                                name: Notifications.RetryMessage, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(thumbprintComplete(_:)),
-                                               name: Notifications.ThumbprintComplete, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
+                                               name: Notifications.LocalAuthComplete, object: nil)
 
     }
 
@@ -89,7 +89,7 @@ class ChattoViewController: BaseChatViewController {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.RetryMessage, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.ThumbprintComplete, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.LocalAuthComplete, object: nil)
 
     }
     
@@ -173,7 +173,7 @@ class ChattoViewController: BaseChatViewController {
 
     }
 
-    @objc func thumbprintComplete(_ notification: Notification) {
+    @objc func localAuthComplete(_ notification: Notification) {
         
         DispatchQueue.main.async {
             self.localAuth?.visible = false

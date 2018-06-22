@@ -10,7 +10,7 @@ import UIKit
 import ChameleonFramework
 import PMAlertController
 
-class AuthViewController: UIViewController {
+class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
 
     @IBOutlet weak var logoImage: UIImageView!
     @IBOutlet weak var logoTrailing: NSLayoutConstraint!
@@ -31,7 +31,9 @@ class AuthViewController: UIViewController {
 
         PippipTheme.setTheme()
         SecommAPI.initializeAPI()
-        
+
+        authenticator.delegate = self
+
         // Do any additional setup after loading the view.
         let bounds = self.view.bounds
         let logoWidth = bounds.width * 0.7
@@ -168,9 +170,7 @@ class AuthViewController: UIViewController {
     }
     
     func doAuthenticate(_ passphrase: String) {
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(self.authenticated(_:)),
-                                               name: Notifications.Authenticated, object: nil)
+
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),
                                                name: Notifications.UpdateProgress, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.presentAlert(_:)),
@@ -184,8 +184,6 @@ class AuthViewController: UIViewController {
     
     func doNewAccount(_ passphrase: String) {
         
-        NotificationCenter.default.addObserver(self, selector: #selector(self.authenticated(_:)),
-                                               name: Notifications.Authenticated, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),
                                                name: Notifications.UpdateProgress, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.presentAlert(_:)),
@@ -208,20 +206,6 @@ class AuthViewController: UIViewController {
 
     }
 
-    @objc func authenticated(_ notification: Notification) {
-        
-        NotificationCenter.default.removeObserver(self, name: Notifications.Authenticated, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.UpdateProgress, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
-        DispatchQueue.main.async {
-            MBProgressHUD.hide(for: self.view, animated: true)
-            NotificationCenter.default.post(name: Notifications.NewSession, object: nil)
-            self.authButton.setTitle("Sign In", for: .normal)
-            self.performSegue(withIdentifier: "AuthCompleteSegue", sender: nil)
-        }
-        
-    }
-    
     // This is just used to dismiss the HUD
     @objc func presentAlert(_ notification: Notification) {
         
@@ -240,10 +224,42 @@ class AuthViewController: UIViewController {
         }
         
     }
+
+    // Authentication delegate
     
-    /*
+    func authenticated() {
+        
+        NotificationCenter.default.removeObserver(self, name: Notifications.UpdateProgress, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
+        DispatchQueue.main.async {
+            MBProgressHUD.hide(for: self.view, animated: true)
+            NotificationCenter.default.post(name: Notifications.NewSession, object: nil)
+            self.authButton.setTitle("Sign In", for: .normal)
+            self.performSegue(withIdentifier: "AuthCompleteSegue", sender: nil)
+        }
+        
+    }
+    
+    func authenticationFailed(reason: String) {
+
+        alertPresenter.errorAlert(title: "Authentication Error",
+                                  message: "There was an error while signing in: \(reason)")
+        
+    }
+    
+    func loggedOut() {
+        // Nothing to do.
+    }
+
     // MARK: - Navigation
 
+    @IBAction func unwindToAuthView(sender: UIStoryboardSegue) {
+
+        print("Segue unwound to AuthViewController")
+
+    }
+
+    /*
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
