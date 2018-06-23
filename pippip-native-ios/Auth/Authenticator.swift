@@ -32,6 +32,14 @@ class Authenticator: NSObject {
 
     }
 
+    func reauthenticate() {
+
+        NotificationCenter.default.addObserver(self, selector: #selector(sessionStarted(_:)),
+                                               name: Notifications.SessionStarted, object: nil)
+        secommAPI.startSession()
+
+    }
+
     func doAuthorized() {
 
         secommAPI.queuePost(delegate: APIResponseDelegate(request: ServerAuthorized(),
@@ -107,8 +115,8 @@ class Authenticator: NSObject {
     }
 
     func authChallengeError(_ error: APIResponseError) {
-        print("Authentication challenge error: \(error.errorString)")
-        delegate?.authenticationFailed(reason: error.errorString)
+        print("Authentication challenge error: \(error.localizedDescription)")
+        delegate?.authenticationFailed(reason: error.localizedDescription)
     }
     
     func authorizedComplete(_ authorized: ClientAuthorized) {
@@ -131,8 +139,8 @@ class Authenticator: NSObject {
     }
 
     func authorizedError(_ error: APIResponseError) {
-        print("Authorization error: \(error.errorString)")
-        delegate?.authenticationFailed(reason: error.errorString)
+        print("Authorization error: \(error.localizedDescription)")
+        delegate?.authenticationFailed(reason: error.localizedDescription)
     }
 
     func authRequestComplete(_ authResponse: AuthenticationResponse) {
@@ -155,8 +163,8 @@ class Authenticator: NSObject {
     }
 
     func authRequestError(_ error: APIResponseError) {
-        print("Authentication request error: \(error.errorString)")
-        delegate?.authenticationFailed(reason: error.errorString)
+        print("Authentication request error: \(error.localizedDescription)")
+        delegate?.authenticationFailed(reason: error.localizedDescription)
     }
 
     func logoutComplete(_ response: NullResponse) {

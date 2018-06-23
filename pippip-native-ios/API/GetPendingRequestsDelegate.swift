@@ -33,8 +33,8 @@ class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPending
 
     }
 
-    func getError(error: EnclaveResponseError) {
-        print("Get pending requests error: \(error.errorString!)")
+    func getError(_ reason: String) {
+        print("Get pending requests error: \(reason)")
     }
 
 }

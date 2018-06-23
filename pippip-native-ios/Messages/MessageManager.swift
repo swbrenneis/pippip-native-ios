@@ -70,20 +70,6 @@ class MessageManager: NSObject {
         }
         
     }
-    
-    func decryptAll() {
-
-        let realm = try! Realm()
-        let dbMessages = realm.objects(DatabaseMessage.self)
-        for dbMessage in dbMessages {
-            let textMessage = TextMessage(dbMessage: dbMessage)
-            textMessage.decrypt(noNotify: true)   // No notification
-            try! realm.write {
-                dbMessage.cleartext = textMessage.cleartext
-            }
-        }
-
-    }
 
     func deleteMessage(messageId: Int64) {
 
@@ -176,18 +162,6 @@ class MessageManager: NSObject {
             return nil
         }
 
-    }
-
-    func scrubCleartext() {
-
-        let realm = try! Realm()
-        let dbMessages = realm.objects(DatabaseMessage.self)
-        for dbMessage in dbMessages {
-            try! realm.write {
-                dbMessage.cleartext = nil
-            }
-        }
-        
     }
 
     func sendMessage(textMessage: TextMessage, retry: Bool) {

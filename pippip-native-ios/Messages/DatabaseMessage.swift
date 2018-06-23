@@ -15,7 +15,6 @@ class DatabaseMessage: Object {
     @objc dynamic var messageId: Int64 = 0
     @objc dynamic var messageType: String = "user"
     @objc dynamic var ciphertext: Data?
-    @objc dynamic var cleartext: String?
     @objc dynamic var keyIndex: Int = 0
     @objc dynamic var sequence: Int64 = 0
     @objc dynamic var timestamp: Int64 = 0

@@ -26,17 +26,11 @@ class TextMessage: Message {
     }
 
     override init(dbMessage: DatabaseMessage) {
-        
-        cleartext = dbMessage.cleartext
-        
         super.init(dbMessage: dbMessage)
-
     }
-    
+
     override init(serverMessage: ServerMessage) {
-
         super.init(serverMessage: serverMessage)
-
     }
 
     func compress(_ text: String) -> Data? {

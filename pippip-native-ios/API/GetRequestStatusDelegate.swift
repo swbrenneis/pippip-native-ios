@@ -44,8 +44,8 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
 
     }
 
-    func getError(error: EnclaveResponseError) {
-        print("Get request status error: \(error.errorString!)")
+    func getError(_ reason: String) {
+        print("Get request status error: \(reason)")
     }
 
 }

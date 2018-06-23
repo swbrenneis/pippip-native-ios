@@ -94,10 +94,10 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         var realmConfig = Realm.Configuration()
         realmConfig.fileURL = realmConfig.fileURL?.deletingLastPathComponent()
             .appendingPathComponent("\(AccountSession.accountName!).realm")
-        realmConfig.schemaVersion = 13
+        realmConfig.schemaVersion = 14
         realmConfig.migrationBlock = { (migration, oldSchemaVersion) in
             // Schema version 13 is Realm Swift
-            if oldSchemaVersion < 13 {
+/*            if oldSchemaVersion < 13 {
                 migration.enumerateObjects(ofType: DatabaseContact.className()) { (oldObject, newObject) in
                     newObject!["contactId"] = oldObject!["contactId"]
                     newObject!["encoded"] = oldObject!["encoded"]
@@ -131,6 +131,9 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
                     newObject!["storeCleartextMessages"] = oldObject!["cleartextMessages"]
                     newObject!["useLocalAuth"] = oldObject!["localAuth"]
                 }
+            } */
+            if oldSchemaVersion < 14 {
+                // Nothing to do
             }
         }
         Realm.Configuration.defaultConfiguration = realmConfig
@@ -171,8 +174,8 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     @objc func sessionEnded(_ notification: Notification) {
 
         sessionActive = false
-        contactManager.clearContacts()
-        ConversationCache.clearCache()
+        //contactManager.clearContacts()
+        //ConversationCache.clearCache()
 
     }
 

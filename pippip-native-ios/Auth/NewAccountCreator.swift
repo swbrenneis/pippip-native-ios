@@ -109,8 +109,8 @@ class NewAccountCreator: NSObject {
     }
 
     func accountFinishError(_ error: APIResponseError) {
-        print("Account finish error: \(error.errorString)")
-        delegate?.authenticationFailed(reason: error.errorString)
+        print("Account finish error: \(error.localizedDescription)")
+        delegate?.authenticationFailed(reason: error.localizedDescription)
     }
 
     func accountRequestComplete(_ accountResponse: NewAccountResponse) {
@@ -133,8 +133,8 @@ class NewAccountCreator: NSObject {
     }
 
     func accountRequestError(_ error: APIResponseError) {
-        print("Account request error: \(error.errorString)")
-        delegate?.authenticationFailed(reason: error.errorString)
+        print("Account request error: \(error.localizedDescription)")
+        delegate?.authenticationFailed(reason: error.localizedDescription)
     }
 
     // Notifications

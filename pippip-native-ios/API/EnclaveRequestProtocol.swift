@@ -9,6 +9,19 @@
 import Foundation
 import ObjectMapper
 
+struct EnclaveRequestError: Error {
+
+    private var errorString = "Unknown"
+    var localizedDescription: String {
+        return errorString
+    }
+
+    init(errorString: String) {
+        self.errorString = errorString
+    }
+
+}
+
 protocol EnclaveRequestProtocol: Mappable {
 
     var method: String { get set }

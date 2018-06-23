@@ -11,13 +11,13 @@ import ObjectMapper
 
 class APIRequestError: Error {
     
-    var error: String
+    private var errorString: String
     var localizedDescription: String {
-        return error
+        return errorString
     }
     
-    init(error: String) {
-        self.error = error
+    init(errorString: String) {
+        self.errorString = errorString
     }
     
 }

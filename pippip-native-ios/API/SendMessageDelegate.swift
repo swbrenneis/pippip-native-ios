@@ -44,8 +44,8 @@ class SendMessageDelegate: EnclaveDelegate<SendMessageRequest, SendMessageRespon
 
     }
 
-    func sendError(error: EnclaveResponseError) {
-        print("Send message error: \(error.errorString!)")
+    func sendError(_ reason: String) {
+        print("Send message error: \(reason)")
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: Notifications.MessageFailed, object: self.textMessage)
         }

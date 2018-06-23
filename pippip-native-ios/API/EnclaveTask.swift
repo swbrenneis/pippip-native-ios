@@ -8,34 +8,45 @@
 
 import UIKit
 
-class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponseProtocol>: NSObject {
+class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponseProtocol>:
+        NSObject, AuthenticationDelegateProtocol {
 
     var delegate: EnclaveDelegate<RequestT, ResponseT>?
     var errorTitle: String?
     var secommAPI = SecommAPI()
     var alertPresenter = AlertPresenter()
+    var request: EnclaveRequestProtocol!
+    var authenticator = Authenticator()
 
     init(delegate: EnclaveDelegate<RequestT, ResponseT>) {
+
         self.delegate = delegate
         super.init()
+        
+        authenticator.delegate = self
+        
     }
 
-    func postComplete(_ response: EnclaveResponse) {
+    func responseComplete(_ response: EnclaveResponse) {
 
-        DispatchQueue.global(qos: .userInitiated).async {
+        if response.needsAuth! {
+            NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
+            authenticator.reauthenticate()
+        }
+        else {
             do {
                 try response.processResponse()
-                if let enclaveResponse = ResponseT(JSONString: response.json!) {
-                    self.delegate?.requestComplete!(enclaveResponse)
+                if let enclaveResponse = ResponseT(JSONString: response.json) {
+                    self.delegate?.requestComplete(enclaveResponse)
                 }
                 else {
                     print("Invalid JSON response from server")
-                    print(response.json!)
-                    self.delegate?.requestError!(EnclaveResponseError(errorString: "Invalid server response"))
+                    print(response.json)
+                    self.delegate?.responseError("Invalid response from the server")
                 }
             }
             catch let error as APIResponseError {
-                print("Enclave request error: \(error.error)")
+                print("Enclave response error: \(error.localizedDescription)")
             }
             catch {
                 print("Enclave request unknown error: \(error)")
@@ -44,25 +55,49 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
         
     }
 
-    func postError(_ error: APIResponseError) {
-        print("Enclave request post error: \(error.errorString)")
-        delegate?.requestError!(EnclaveResponseError(errorString: error.errorString))
+    func responseError(_ error: APIResponseError) {
+        print("Enclave response error: \(error.localizedDescription)")
+        delegate?.requestError(error.localizedDescription)
     }
 
     func sendRequest(_ request: EnclaveRequestProtocol) {
 
+        self.request = request
+        sendRequest()
+        
+    }
+    
+    func sendRequest() {
+        
         do {
             let enclaveRequest = EnclaveRequest()
             try enclaveRequest.setRequest(request)
             secommAPI.queuePost(delegate: APIResponseDelegate(request: enclaveRequest,
-                                                              responseComplete: self.postComplete,
-                                                              responseError: self.postError))
+                                                              responseComplete: self.responseComplete,
+                                                              responseError: self.responseError))
         }
         catch {
             print("Error sending enclave request: \(error)")
-            alertPresenter.errorAlert(title: errorTitle!, message: "Unable to create request")
+            delegate?.requestError("Unable to create request")
         }
         
+    }
+
+    // Authentication delegate
+    
+    func authenticated() {
+        
+        sendRequest()
+
+    }
+
+    func authenticationFailed(reason: String) {
+        print("Reauthentication failure: \(reason)")
+        delegate?.requestError("Couldn't authenticate session")
+    }
+
+    func loggedOut() {
+        // Nothing to do
     }
 
 }

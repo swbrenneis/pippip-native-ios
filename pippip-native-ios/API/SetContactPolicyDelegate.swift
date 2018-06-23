@@ -22,8 +22,8 @@ class SetContactPolicyDelegate: EnclaveDelegate<SetContactPolicyRequest, SetCont
         NotificationCenter.default.post(name: Notifications.PolicyUpdated, object: response)
     }
 
-    func setError(error: EnclaveResponseError) {
-        print("Set contact policy error: \(error.errorString!)")
+    func setError(_ reason: String) {
+        print("Set contact policy error: \(reason)")
     }
 
 }

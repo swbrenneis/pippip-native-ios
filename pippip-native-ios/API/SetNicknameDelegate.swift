@@ -22,8 +22,8 @@ class SetNicknameDelegate: EnclaveDelegate<SetNicknameRequest, SetNicknameRespon
         NotificationCenter.default.post(name: Notifications.NicknameUpdated, object: response)
     }
 
-    func setError(error: EnclaveResponseError) {
-        print("Set nickname error: \(error.errorString!)")
+    func setError(_ reason: String) {
+        print("Set nickname error: \(reason)")
     }
 
 }

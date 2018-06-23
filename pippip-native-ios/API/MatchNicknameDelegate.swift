@@ -22,8 +22,8 @@ class MatchNicknameDelegate: EnclaveDelegate<MatchNicknameRequest, MatchNickname
         NotificationCenter.default.post(name: Notifications.NicknameMatched, object: response)
     }
 
-    func matchError(error: EnclaveResponseError) {
-        print("Match nickname error: \(error.errorString!)")
+    func matchError(_ reason: String) {
+        print("Match nickname error: \(reason)")
     }
 
 }

@@ -38,13 +38,7 @@ class ContactDetailCell: PippipTableViewCell {
         displayNameLabel.text = contact.displayName
         statusImageView.image = UIImage(named: contact.status)
         if expanded {
-            if contact.nickname != nil {
-                publicIdLabel.text = contact.publicId
-                publicIdLabel.isHidden = false
-            }
-            else {
-                publicIdLabel.isHidden = true
-            }
+            publicIdLabel.text = contact.publicId
             setLastSeen(timestamp: contact.timestamp)
             lastSeenLabel.isHidden = false
             lastSeenTitle.isHidden = false
