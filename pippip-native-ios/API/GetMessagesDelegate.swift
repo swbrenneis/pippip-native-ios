@@ -43,8 +43,8 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
 
     }
 
-    func getError(error: EnclaveResponseError) {
-        print("Get messages error: \(error.errorString!)")
+    func getError(_ reason: String) {
+        print("Get messages error: \(reason)")
     }
 
 }

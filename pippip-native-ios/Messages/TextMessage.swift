@@ -26,17 +26,11 @@ class TextMessage: Message {
     }
 
     override init(dbMessage: DatabaseMessage) {
-        
-        cleartext = dbMessage.cleartext
-        
         super.init(dbMessage: dbMessage)
-
     }
-    
+
     override init(serverMessage: ServerMessage) {
-
         super.init(serverMessage: serverMessage)
-
     }
 
     func compress(_ text: String) -> Data? {
@@ -92,16 +86,6 @@ class TextMessage: Message {
         if !noNotify {
             NotificationCenter.default.post(name: Notifications.CleartextAvailable, object: self)
         }
-
-    }
-
-    override func encodeForDatabase() -> DatabaseMessage {
-
-        let dbMessage = super.encodeForDatabase()
-        if config.storeCleartextMessages {
-            dbMessage.cleartext = cleartext
-        }
-        return dbMessage
 
     }
 

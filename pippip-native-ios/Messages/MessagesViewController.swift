@@ -12,7 +12,7 @@ import ChameleonFramework
 import LocalAuthentication
 import Sheriff
 
-class MessagesViewController: UIViewController {
+class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageSearch: UISearchBar!
@@ -34,13 +34,9 @@ class MessagesViewController: UIViewController {
     var alertPresenter = AlertPresenter()
     var contactBarButton: UIBarButtonItem!
     var contactBadge = GIBadgeView()
-    var chatPushed = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        PippipTheme.setTheme()
-        SecommAPI.initializeAPI()
 
         self.view.backgroundColor = PippipTheme.viewColor
         self.navigationController?.navigationBar.barTintColor = PippipTheme.navBarColor
@@ -57,6 +53,7 @@ class MessagesViewController: UIViewController {
         
         contactManager = ContactManager()
         localAuth = LocalAuthenticator(viewController: self, view: self.view)
+        authenticator.delegate = self
 
         // Do any additional setup after loading the view.
         let sidebarImages = [ UIImage(named: "contacts")!, UIImage(named: "compose")!,
@@ -115,8 +112,6 @@ class MessagesViewController: UIViewController {
         tableView.dataSource = self
         messageSearch.delegate = self
 
-        NotificationCenter.default.addObserver(self, selector: #selector(newSession(_:)),
-                                               name: Notifications.NewSession, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestsUpdated(_:)),
                                                name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestAcknowledged(_:)),
@@ -128,33 +123,17 @@ class MessagesViewController: UIViewController {
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
-        if chatPushed {
-            chatPushed = false
-        }
-        else {
-            localAuth.listening = true
-        }
+        localAuth.listening = true
 
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(thumbprintComplete(_:)),
-                                               name: Notifications.ThumbprintComplete, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
+                                               name: Notifications.LocalAuthComplete, object: nil)
 
-        if accountDeleted {
-            previews.removeAll()
-            tableView.reloadData()
-            accountDeleted = false
-            localAuth.visible = true
-        }
-        else if sessionState.authenticated {
-            getMostRecentMessages()
-            tableView.reloadData()
-            let requests = contactManager.pendingRequests
-            contactBadge.badgeValue = requests.count
-        }
-        else {
-            localAuth.visible = true
-        }
+        getMostRecentMessages()
+        tableView.reloadData()
+        let requests = contactManager.pendingRequests
+        contactBadge.badgeValue = requests.count
 
     }
 
@@ -162,11 +141,10 @@ class MessagesViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
-        if !chatPushed {
-            localAuth.listening = false
-        }
+        localAuth.listening = false
+
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.ThumbprintComplete, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.LocalAuthComplete, object: nil)
 
     }
 
@@ -224,8 +202,7 @@ class MessagesViewController: UIViewController {
     func signOut() {
         
         previews.removeAll()
-        let auth = Authenticator()
-        auth.logout()
+        authenticator.logout()
 
     }
 
@@ -233,26 +210,11 @@ class MessagesViewController: UIViewController {
     
     @objc func newMessages(_ notification: Notification) {
 
-        if !chatPushed {
-            getMostRecentMessages()
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-        
-    }
-    
-    @objc func newSession(_ notification: Notification) {
-
-        ApplicationInitializer.accountSession.loadConfig()
         getMostRecentMessages()
-        let requests = contactManager.pendingRequests
         DispatchQueue.main.async {
             self.tableView.reloadData()
-            self.localAuth.visible = false
-            self.contactBadge.badgeValue = requests.count
         }
-
+        
     }
 
     @objc func requestsUpdated(_ notification: Notification) {
@@ -277,10 +239,29 @@ class MessagesViewController: UIViewController {
         
     }
     
-    @objc func thumbprintComplete(_ notification: Notification) {
+    @objc func localAuthComplete(_ notification: Notification) {
 
         DispatchQueue.main.async {
             self.localAuth.visible = false
+        }
+
+    }
+
+    // Authentication delegate
+    
+    func authenticated() {
+        // Nothing to do
+    }
+    
+    func authenticationFailed(reason: String) {
+        // Nothing to do
+    }
+
+    func loggedOut() {
+
+        AsyncNotifier.notify(name: Notifications.SessionEnded)
+        DispatchQueue.main.async {
+            self.navigationController?.performSegue(withIdentifier: "AuthViewSegue", sender: nil)
         }
 
     }
@@ -391,7 +372,6 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
         let contactId = previews[indexPath.item].contactId
         let viewController = ChattoViewController()
         viewController.contact = contactManager.getContact(contactId: contactId)
-        chatPushed = true
         self.navigationController?.pushViewController(viewController, animated: true)
 
     }

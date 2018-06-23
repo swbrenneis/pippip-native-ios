@@ -15,6 +15,7 @@ class NewAccountCreator: NSObject {
     var secommAPI = SecommAPI()
     var alertPresenter = AlertPresenter()
     var sessionState = SessionState()
+    var delegate: AuthenticationDelegateProtocol?
 
     override init() {
         super.init()
@@ -30,11 +31,12 @@ class NewAccountCreator: NSObject {
             try storeVault()
             ApplicationInitializer.accountSession.setDefaultConfig()
             sessionState.authenticated = true
-            NotificationCenter.default.post(name: Notifications.Authenticated, object: nil)
+            delegate?.authenticated()
         }
         catch {
             alertPresenter.errorAlert(title: "New Account Error", message: "Unable to store user vault")
             print("Store user vault error: \(error)")
+            delegate?.authenticationFailed(reason: error.localizedDescription)
         }
 
     }
@@ -100,13 +102,15 @@ class NewAccountCreator: NSObject {
             }
             catch {
                 print("New account finish error: \(error)")
+                self.delegate?.authenticationFailed(reason: error.localizedDescription)
             }
         }
         
     }
 
     func accountFinishError(_ error: APIResponseError) {
-        print("Account finish error: \(error.errorString)")
+        print("Account finish error: \(error.localizedDescription)")
+        delegate?.authenticationFailed(reason: error.localizedDescription)
     }
 
     func accountRequestComplete(_ accountResponse: NewAccountResponse) {
@@ -122,13 +126,15 @@ class NewAccountCreator: NSObject {
             }
             catch {
                 print("New account request error: \(error)")
+                self.delegate?.authenticationFailed(reason: error.localizedDescription)
             }
         }
         
     }
 
     func accountRequestError(_ error: APIResponseError) {
-        print("Account request error: \(error.errorString)")
+        print("Account request error: \(error.localizedDescription)")
+        delegate?.authenticationFailed(reason: error.localizedDescription)
     }
 
     // Notifications

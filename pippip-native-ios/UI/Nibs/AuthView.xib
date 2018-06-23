@@ -41,15 +41,15 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TF5-d6-lAQ">
-                    <rect key="frame" x="86" y="314.5" width="203" height="38"/>
+                    <rect key="frame" x="153.5" y="314.5" width="68" height="38"/>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
-                    <state key="normal" title="Create New Account"/>
+                    <state key="normal" title="Sign In"/>
                     <connections>
                         <action selector="authSelected:" destination="-1" eventType="touchUpInside" id="8PO-jT-9M3"/>
                     </connections>
                 </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Version 1.0.3 2018061802" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wDk-ZI-Lt8">
-                    <rect key="frame" x="119.5" y="575" width="136" height="13.5"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Version 1.0.4 2018062301" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wDk-ZI-Lt8">
+                    <rect key="frame" x="120.5" y="575" width="136" height="13.5"/>
                     <fontDescription key="fontDescription" type="system" pointSize="11"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>

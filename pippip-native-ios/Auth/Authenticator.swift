@@ -14,6 +14,7 @@ class Authenticator: NSObject {
     var secommAPI = SecommAPI()
     var userVault = UserVault()
     var sessionState = SessionState()
+    var delegate: AuthenticationDelegateProtocol?
     
     func authenticate(accountName: String, passphrase: String) {
 
@@ -28,6 +29,14 @@ class Authenticator: NSObject {
         else {
             alertPresenter.errorAlert(title: "Sign In Error", message: "Invalid Passphrase")
         }
+
+    }
+
+    func reauthenticate() {
+
+        NotificationCenter.default.addObserver(self, selector: #selector(sessionStarted(_:)),
+                                               name: Notifications.SessionStarted, object: nil)
+        secommAPI.startSession()
 
     }
 
@@ -53,9 +62,7 @@ class Authenticator: NSObject {
                                                           responseComplete: self.logoutComplete,
                                                           responseError: self.logoutError))
         sessionState.authenticated = false
-        DispatchQueue.global().async {
-            NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
-        }
+        delegate?.loggedOut()
 
     }
 
@@ -72,6 +79,7 @@ class Authenticator: NSObject {
         }
         catch {
             print("Unable to open vault file: \(error)")
+            alertPresenter.errorAlert(title: "Sign In Error", message: "Invalid passphrase")
         }
         return false
 
@@ -100,13 +108,15 @@ class Authenticator: NSObject {
             }
             catch {
                 print("Authentication challenge error: \(error)")
+                self.delegate?.authenticationFailed(reason: error.localizedDescription)
             }
         }
         
     }
 
     func authChallengeError(_ error: APIResponseError) {
-        print("Authentication challenge error: \(error.errorString)")
+        print("Authentication challenge error: \(error.localizedDescription)")
+        delegate?.authenticationFailed(reason: error.localizedDescription)
     }
     
     func authorizedComplete(_ authorized: ClientAuthorized) {
@@ -119,16 +129,18 @@ class Authenticator: NSObject {
             try authorized.processResponse()
             sessionState.authenticated = true
             ApplicationInitializer.accountSession.loadConfig()
-            NotificationCenter.default.post(name: Notifications.Authenticated, object: nil)
+            delegate?.authenticated()
         }
         catch {
             print("Authorization response error: \(error)")
+            delegate?.authenticationFailed(reason: error.localizedDescription)
         }
 
     }
 
     func authorizedError(_ error: APIResponseError) {
-        print("Authorization error: \(error.errorString)")
+        print("Authorization error: \(error.localizedDescription)")
+        delegate?.authenticationFailed(reason: error.localizedDescription)
     }
 
     func authRequestComplete(_ authResponse: AuthenticationResponse) {
@@ -144,13 +156,15 @@ class Authenticator: NSObject {
             }
             catch {
                 print("Authentication request error: \(error)")
+                self.delegate?.authenticationFailed(reason: error.localizedDescription)
             }
         }
 
     }
 
     func authRequestError(_ error: APIResponseError) {
-        print("Authentication request error: \(error.errorString)")
+        print("Authentication request error: \(error.localizedDescription)")
+        delegate?.authenticationFailed(reason: error.localizedDescription)
     }
 
     func logoutComplete(_ response: NullResponse) {
@@ -182,5 +196,5 @@ class Authenticator: NSObject {
         }
 
     }
-    
+
 }

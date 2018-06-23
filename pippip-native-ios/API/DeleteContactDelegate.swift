@@ -38,8 +38,8 @@ class DeleteContactDelegate: EnclaveDelegate<DeleteContactRequest, DeleteContact
 
     }
 
-    func deleteError(error: EnclaveResponseError) {
-        print("Delete contact error: \(error.errorString!)")
+    func deleteError(_ reason: String) {
+        print("Delete contact error: \(reason)")
     }
 
 }

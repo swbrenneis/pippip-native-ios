@@ -25,8 +25,8 @@ class PreviewCell: PippipTableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        NotificationCenter.default.addObserver(self, selector: #selector(sessionEnded(_:)),
-                                               name: Notifications.SessionEnded, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(sessionEnded(_:)),
+//                                               name: Notifications.SessionEnded, object: nil)
 
     }
 
@@ -112,10 +112,10 @@ class PreviewCell: PippipTableViewCell {
 
     }
 
-    @objc func sessionEnded(_ notification: Notification) {
-
-        textMessage = nil
-
-    }
+//    @objc func sessionEnded(_ notification: Notification) {
+//
+//        textMessage = nil
+//
+//    }
 
 }

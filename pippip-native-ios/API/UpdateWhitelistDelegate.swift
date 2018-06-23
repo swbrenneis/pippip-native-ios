@@ -48,8 +48,8 @@ class UpdateWhitelistDelegate: EnclaveDelegate<UpdateWhitelistRequest, UpdateWhi
  
     }
 
-    func updateError(error: EnclaveResponseError) {
-        print("Update whitelist error: \(error.errorString!)")
+    func updateError(_ reason: String) {
+        print("Update whitelist error: \(reason)")
     }
 
 }

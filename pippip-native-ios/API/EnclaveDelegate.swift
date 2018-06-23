@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+/*
 enum EnclaveErrors { case invalidServerResponse, invalidEncoding, timedOut }
 
 struct EnclaveResponseError: Error {
@@ -20,23 +20,25 @@ struct EnclaveResponseError: Error {
     }
 
 }
-
+*/
 protocol EnclaveDelegateProtocol {
 
     associatedtype RequestT
     associatedtype ResponseT
 
     var request: RequestT { get }
-    var requestComplete: ((ResponseT) -> Void)? { get }
-    var requestError: ((EnclaveResponseError) -> Void)? { get }
+    var requestComplete: ((ResponseT) -> Void) { get }
+    var requestError: ((String) -> Void) { get }
+    var responseError: ((String) -> Void) { get }
 
 }
 
 class EnclaveDelegate<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponseProtocol>: EnclaveDelegateProtocol {
     
     var request: RequestT
-    var requestComplete: ((ResponseT) -> Void)?
-    var requestError: ((EnclaveResponseError) -> Void)?
+    var requestComplete: ((ResponseT) -> Void) = { (ResponseT) in return }
+    var requestError: ((String) -> Void) = { (String) in return }
+    var responseError: ((String) -> Void) = { (String) in return }
 
     init(request: RequestT) {
         self.request = request

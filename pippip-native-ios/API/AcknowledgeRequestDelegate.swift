@@ -41,8 +41,8 @@ class AcknowledgeRequestDelegate: EnclaveDelegate<AcknowledgeRequest, Acknowledg
 
     }
     
-    func ackError(error: EnclaveResponseError) {
-        print("Acknowledge request error: \(error.errorString!)")
+    func ackError(_ reason: String) {
+        print("Acknowledge request error: \(reason)")
     }
 
 }

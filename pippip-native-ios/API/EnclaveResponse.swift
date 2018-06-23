@@ -15,8 +15,9 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
     var authToken: Int64?
     var error: String?
     var response: String?
+    var needsAuth: Bool?
     var postId: Int = 0
-    var json: String?
+    var json: String = ""
 
     let alertPresenter = AlertPresenter()
     let sessionState = SessionState()
@@ -28,8 +29,13 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
         if map.JSON["authToken"] == nil {
             return nil
         }
-        if map.JSON["error"] == nil && map.JSON["response"] == nil {
-            return nil
+        if map.JSON["error"] == nil {
+            if map.JSON["response"] == nil {
+                return nil
+            }
+            if map.JSON["needsAuth"] == nil {
+                return nil
+            }
         }
     }
     
@@ -39,6 +45,7 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
         authToken <- map["authToken"]
         error <- map["error"]
         response <- map["response"]
+        needsAuth <- map["needsAuth"]
 
     }
     

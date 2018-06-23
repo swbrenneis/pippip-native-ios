@@ -39,8 +39,8 @@ class RequestContactDelegate: EnclaveDelegate<RequestContactRequest, RequestCont
 
     }
     
-    func contactRequestError(error: EnclaveResponseError) {
-        print("Contact request error: \(error.errorString!)")
+    func contactRequestError(_ reason: String) {
+        print("Contact request error: \(reason)")
     }
 
 }
