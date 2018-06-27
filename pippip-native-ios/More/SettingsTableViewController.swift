@@ -28,7 +28,7 @@ class SettingsTableViewController: UITableViewController {
 
         var items = [MultiCellItemProtocol]()
         items.append(PublicIdCell.cellItem)
-        items.append(SetNicknameCell.cellItem)
+        items.append(DirectoryIdCell.cellItem)
         items.append(ContactPolicyCell.cellItem)
         items.append(LocalAuthCell.cellItem)
         items.append(LocalPasswordCell.cellItem)

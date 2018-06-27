@@ -16,7 +16,7 @@ class WhitelistViewController: UIViewController {
     @IBOutlet weak var tableBottom: NSLayoutConstraint!
     
     var config = Configurator()
-    var nickname = ""
+    var directoryId = ""
     var publicId = ""
     var contactManager = ContactManager()
     var sessionState = SessionState()
@@ -41,16 +41,16 @@ class WhitelistViewController: UIViewController {
 
         localAuth = LocalAuthenticator(viewController: self, view: self.view)
 
-        let addFriend = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addFriend(_:)))
-        rightBarItems.append(addFriend)
-        let editFriends = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editFriends(_:)))
-        rightBarItems.append(editFriends)
+        let addWhitelistEntry = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addWhitelistEntry(_:)))
+        rightBarItems.append(addWhitelistEntry)
+        let editWhitelist = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editWhitelist(_:)))
+        rightBarItems.append(editWhitelist)
         self.navigationItem.rightBarButtonItems = rightBarItems
 
-        NotificationCenter.default.addObserver(self, selector: #selector(friendDeleted(_:)),
-                                               name: Notifications.FriendDeleted, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(friendAdded(_:)),
-                                               name: Notifications.FriendAdded, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryDeleted(_:)),
+                                               name: Notifications.WhitelistEntryDeleted, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
+                                               name: Notifications.WhitelistEntryAdded, object: nil)
 
     }
 
@@ -77,19 +77,19 @@ class WhitelistViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    func checkSelfAdd(nickname: String?, publicId: String?) -> Bool {
+    func checkSelfAdd(directoryId: String?, publicId: String?) -> Bool {
         
-        if let nick = nickname {
-            let myNick = config.nickname
+        if let nick = directoryId {
+            let myNick = config.directoryId
             if myNick == nick {
-                alertPresenter.errorAlert(title: "Add Friend Error", message: "You can't add yourself")
+                alertPresenter.errorAlert(title: "Add Permitted Contact Error", message: "You can't add yourself")
                 return true
             }
         }
         if let puid = publicId {
             let myId = sessionState.publicId
             if myId == puid {
-                alertPresenter.errorAlert(title: "Add Friend Error", message: "You can't add yourself")
+                alertPresenter.errorAlert(title: "Add Permitted Contact Error", message: "You can't add yourself")
                 return true
             }
         }
@@ -97,17 +97,17 @@ class WhitelistViewController: UIViewController {
         
     }
     
-    @objc func addFriend(_ sender: Any) {
+    @objc func addWhitelistEntry(_ sender: Any) {
 
-        NotificationCenter.default.addObserver(self, selector: #selector(nicknameMatched(_:)),
-                                               name: Notifications.NicknameMatched, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
+                                               name: Notifications.DirectoryIdMatched, object: nil)
         
-        let alert = PMAlertController(title: "Add A New Friend",
-                                      description: "Enter a nickname or public ID",
+        let alert = PMAlertController(title: "Add A New Permitted Contact",
+                                      description: "Enter a directory ID or public ID",
                                       image: nil,
                                       style: PMAlertControllerStyle.alert)
         alert.addTextField({ (textField) in
-            textField?.placeholder = "Nickname"
+            textField?.placeholder = "Directory ID"
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
         })
@@ -116,18 +116,18 @@ class WhitelistViewController: UIViewController {
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
         })
-        alert.addAction(PMAlertAction(title: "Add Friend",
+        alert.addAction(PMAlertAction(title: "Add Permitted Contact",
                                       style: .default, action: { () in
-                                        self.nickname = alert.textFields[0].text ?? ""
+                                        self.directoryId = alert.textFields[0].text ?? ""
                                         self.publicId = alert.textFields[1].text ?? ""
-                                        if !self.checkSelfAdd(nickname: self.nickname, publicId: self.publicId) {
-                                            if self.nickname.utf8.count > 0 {
-                                                self.contactManager.matchNickname(nickname: self.nickname, publicId: nil)
+                                        if !self.checkSelfAdd(directoryId: self.directoryId, publicId: self.publicId) {
+                                            if self.directoryId.utf8.count > 0 {
+                                                self.contactManager.matchDirectoryId(directoryId: self.directoryId, publicId: nil)
                                             }
                                             else if self.publicId.utf8.count > 0 {
-                                                if !self.contactManager.addFriend(self.publicId) {
-                                                    self.alertPresenter.errorAlert(title: "Add Friend Error",
-                                                                                   message: "You already added that friend")
+                                                if !self.contactManager.addWhitelistEntry(self.publicId) {
+                                                    self.alertPresenter.errorAlert(title: "Add Permitted Contact Error",
+                                                                                   message: "You already added that contact")
                                                 }
                                             }
                                         }
@@ -137,37 +137,37 @@ class WhitelistViewController: UIViewController {
         
     }
 
-    @objc func editFriends(_ sender: Any) {
+    @objc func editWhitelist(_ sender: Any) {
 
         tableView.setEditing(true, animated: true)
         rightBarItems.removeLast()
-        let endEdit = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(endEditFriends(_:)))
+        let endEdit = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(endEditWhitelist(_:)))
         rightBarItems.append(endEdit)
         self.navigationItem.rightBarButtonItems = rightBarItems
 
     }
 
-    @objc func endEditFriends(_ sender: Any) {
+    @objc func endEditWhitelist(_ sender: Any) {
         
         tableView.setEditing(false, animated: true)
         rightBarItems.removeLast()
-        let editFriends = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editFriends(_:)))
-        rightBarItems.append(editFriends)
+        let editWhitelist = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editWhitelist(_:)))
+        rightBarItems.append(editWhitelist)
         self.navigationItem.rightBarButtonItems = rightBarItems
 
     }
 
-    @objc func friendAdded(_ notification: Notification) {
+    @objc func whitelistEntryAdded(_ notification: Notification) {
 
-        NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
-        let entity = Entity(publicId: publicId, nickname: nickname)
+        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
+        let entity = Entity(publicId: publicId, directoryId: directoryId)
         do {
             try config.addWhitelistEntry(entity)
             DispatchQueue.main.async {
                 self.tableView.insertRows(at: [IndexPath(row: self.config.whitelist.count-1, section: 0)],
                                           with: .left)
-                self.alertPresenter.successAlert(title: "Friend Added",
-                                                 message: "This friend has been added to your friends list")
+                self.alertPresenter.successAlert(title: "Permitted Contact Added",
+                                                 message: "This ID has been added to your permitted contacts list")
             }
         }
         catch {
@@ -176,15 +176,15 @@ class WhitelistViewController: UIViewController {
 
     }
 
-    @objc func friendDeleted(_ notification:Notification) {
+    @objc func whitelistEntryDeleted(_ notification:Notification) {
 
         do {
             let row = try config.deleteWhitelistEntry(self.publicId)
             assert(row != NSNotFound)
             DispatchQueue.main.async {
                 self.tableView.deleteRows(at: [IndexPath(row: row, section: 0)], with: .top)
-                self.alertPresenter.successAlert(title: "Friend Deleted",
-                                                 message: "This friend has been deleted from your list")
+                self.alertPresenter.successAlert(title: "Permitted Contact Deleted",
+                                                 message: "This ID has been deleted from your permitted contacts list")
             }
         }
         catch {
@@ -193,18 +193,18 @@ class WhitelistViewController: UIViewController {
 
     }
 
-    @objc func nicknameMatched(_ notification: Notification) {
+    @objc func directoryIdMatched(_ notification: Notification) {
         
-        NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
-        guard let response = notification.object as? MatchNicknameResponse else { return }
+        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
+        guard let response = notification.object as? MatchDirectoryIdResponse else { return }
         if response.result == "found" {
             publicId = response.publicId!
-            if !contactManager.addFriend(self.publicId) {
-                alertPresenter.errorAlert(title: "Add Friend Error", message: "You already added that friend")
+            if !contactManager.addWhitelistEntry(self.publicId) {
+                alertPresenter.errorAlert(title: "Add Permitted Contact Error", message: "You already added that ID")
             }
         }
         else {
-            alertPresenter.errorAlert(title: "Add Friend Error", message: "That nickname doesn't exist")
+            alertPresenter.errorAlert(title: "Add Permitted Contact Error", message: "That directory ID doesn't exist")
         }
 
     }
@@ -251,11 +251,11 @@ extension WhitelistViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FriendCell", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "WhitelistCell", for: indexPath)
             as? PippipTableViewCell else { return UITableViewCell() }
         let entity = config.whitelist[indexPath.row]
         cell.setMediumTheme()
-        cell.textLabel?.text = entity.nickname
+        cell.textLabel?.text = entity.directoryId
         cell.detailTextLabel?.text = entity.publicId
         return cell
 
@@ -278,7 +278,7 @@ extension WhitelistViewController: UITableViewDelegate, UITableViewDataSource {
 
         if editingStyle == .delete {
             publicId = config.whitelist[indexPath.row].publicId
-            contactManager.deleteFriend(publicId)
+            contactManager.deleteWhitelistEntry(publicId)
         }
 
     }

@@ -12,6 +12,7 @@ class AcknowledgeRequestDelegate: EnclaveDelegate<AcknowledgeRequest, Acknowledg
 
     var contactRequest: ContactRequest
     var contactManager = ContactManager()
+    var alertPresenter = AlertPresenter()
 
     init(request: RequestT, contactRequest: ContactRequest) {
         
@@ -20,7 +21,8 @@ class AcknowledgeRequestDelegate: EnclaveDelegate<AcknowledgeRequest, Acknowledg
         super.init(request: request)
 
         requestComplete = self.ackComplete
-        requestError = self.ackError
+        requestError = self.ackRequestError
+        responseError = self.ackResponseError
 
     }
 
@@ -28,7 +30,7 @@ class AcknowledgeRequestDelegate: EnclaveDelegate<AcknowledgeRequest, Acknowledg
 
         let acknowledged = Contact(serverContact: response.acknowledged!)
         if acknowledged.publicId == contactRequest.publicId {
-            acknowledged.nickname = contactRequest.nickname
+            acknowledged.directoryId = contactRequest.directoryId
             contactManager.addContact(acknowledged)
             contactManager.deleteContactRequest(contactRequest)
             DispatchQueue.global().async {
@@ -40,9 +42,14 @@ class AcknowledgeRequestDelegate: EnclaveDelegate<AcknowledgeRequest, Acknowledg
         }
 
     }
-    
-    func ackError(_ reason: String) {
+
+    func ackRequestError(_ reason: String) {
         print("Acknowledge request error: \(reason)")
     }
-
+    
+    func ackResponseError(_ reason: String) {
+        print("Acknowledge response error: \(reason)")
+        alertPresenter.errorAlert(title: "Contact Request Error", message: reason)
+    }
+    
 }

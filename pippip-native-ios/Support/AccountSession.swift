@@ -12,7 +12,7 @@ import RealmSwift
 
 class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
-    static let production = true
+    static let production = false
     static var accountName: String?
     
     @objc var deviceToken: Data?
@@ -94,7 +94,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         var realmConfig = Realm.Configuration()
         realmConfig.fileURL = realmConfig.fileURL?.deletingLastPathComponent()
             .appendingPathComponent("\(AccountSession.accountName!).realm")
-        realmConfig.schemaVersion = 14
+        realmConfig.schemaVersion = 15
         realmConfig.migrationBlock = { (migration, oldSchemaVersion) in
             // Schema version 13 is Realm Swift
 /*            if oldSchemaVersion < 13 {
@@ -132,8 +132,13 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
                     newObject!["useLocalAuth"] = oldObject!["localAuth"]
                 }
             } */
-            if oldSchemaVersion < 14 {
-                // Nothing to do
+            if oldSchemaVersion < 15 {
+                migration.enumerateObjects(ofType: AccountConfig.className()) { (oldObject, newObject) in
+                    newObject!["directoryId"] = oldObject!["nickname"]
+                }
+                migration.enumerateObjects(ofType: DatabaseContactRequest.className()) { (oldObject, newObject) in
+                    newObject!["directoryId"] = oldObject!["nickname"]
+                }
             }
         }
         Realm.Configuration.defaultConfiguration = realmConfig

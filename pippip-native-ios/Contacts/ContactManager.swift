@@ -11,16 +11,16 @@ import RealmSwift
 
 struct ContactRequest: Hashable {
 
-    var nickname: String?
+    var directoryId: String?
     var publicId: String
     var hashValue: Int {
         return publicId.hashValue
     }
 
-    init(publicId: String, nickname: String?) {
+    init(publicId: String, directoryId: String?) {
 
         self.publicId = publicId
-        self.nickname = nickname
+        self.directoryId = directoryId
 
     }
 
@@ -28,7 +28,7 @@ struct ContactRequest: Hashable {
 
         guard let puid = request["publicId"] else { return nil }
         publicId = puid
-        nickname = request["nickname"]
+        directoryId = request["directoryId"]
 
     }
 
@@ -97,16 +97,16 @@ class ContactManager: NSObject {
 
     }
     
-    func addFriend(_ publicId:String) -> Bool {
+    func addWhitelistEntry(_ publicId:String) -> Bool {
 
         if let _ = config.whitelistIndexOf(publicId) {
             return false
         }
         else {
             let request = UpdateWhitelistRequest(id: publicId, action: "add")
-            let delegate = UpdateWhitelistDelegate(request: request, updateType: .addFriend)
+            let delegate = UpdateWhitelistDelegate(request: request, updateType: .addEntry)
             let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>(delegate: delegate)
-            addTask.errorTitle = "Friends List Error"
+            addTask.errorTitle = "Permitted Contact List Error"
             addTask.sendRequest(request)
             return true
         }
@@ -193,12 +193,12 @@ class ContactManager: NSObject {
 
     }
 
-    func deleteFriend(_ publicId: String) {
+    func deleteWhitelistEntry(_ publicId: String) {
 
         let request = UpdateWhitelistRequest(id: publicId, action: "delete")
-        let delegate = UpdateWhitelistDelegate(request: request, updateType: .deleteFriend)
+        let delegate = UpdateWhitelistDelegate(request: request, updateType: .deleteEntry)
         let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>(delegate: delegate)
-        addTask.errorTitle = "Friends List Error"
+        addTask.errorTitle = "Permitted Contact List Error"
         addTask.sendRequest(request)
 
     }
@@ -277,7 +277,7 @@ class ContactManager: NSObject {
             }
             let requests = realm.objects(DatabaseContactRequest.self)
             for request in requests {
-                ContactManager.requestSet.insert(ContactRequest(publicId: request.publicId, nickname: request.nickname))
+                ContactManager.requestSet.insert(ContactRequest(publicId: request.publicId, directoryId: request.directoryId))
             }
             mapContacts()
         }
@@ -294,18 +294,18 @@ class ContactManager: NSObject {
         
     }
     
-    func matchNickname(nickname: String?, publicId: String?) {
+    func matchDirectoryId(directoryId: String?, publicId: String?) {
 
-        let request = MatchNicknameRequest(publicId: publicId, nickname: nickname)
-        let delegate = MatchNicknameDelegate(request: request)
-        let matchTask = EnclaveTask<MatchNicknameRequest, MatchNicknameResponse>(delegate: delegate)
-        matchTask.errorTitle = "Nickname Error"
+        let request = MatchDirectoryIdRequest(publicId: publicId, directoryId: directoryId)
+        let delegate = MatchDirectoryIdDelegate(request: request)
+        let matchTask = EnclaveTask<MatchDirectoryIdRequest, MatchDirectoryIdResponse>(delegate: delegate)
+        matchTask.errorTitle = "Directory ID Error"
         matchTask.sendRequest(request)
         
     }
 
     @discardableResult
-    func requestContact(publicId: String, nickname: String?, retry: Bool) -> Bool {
+    func requestContact(publicId: String, directoryId: String?, retry: Bool) -> Bool {
 
 //        if ContactManager.contactMap[publicId] != nil && !retry {
 //            alertPresenter.errorAlert(title: "ContactError", message: "This contact already exists in your contact list")
@@ -313,7 +313,7 @@ class ContactManager: NSObject {
 //        else {
         if ContactManager.contactMap[publicId] == nil || retry {
             let request = RequestContactRequest(id: publicId, retry: retry)
-            let delegate = RequestContactDelegate(request: request, retry: retry, nickname: nickname)
+            let delegate = RequestContactDelegate(request: request, retry: retry, directoryId: directoryId)
             let reqTask = EnclaveTask<RequestContactRequest, RequestContactResponse>(delegate: delegate)
             reqTask.errorTitle = "Contact Error"
             reqTask.sendRequest(request)
@@ -333,8 +333,8 @@ class ContactManager: NSObject {
             if (pCompare.contains(fragment)) {
                 result.append(contact)
             }
-            else if let nickname = contact.nickname {
-                let nCompare = nickname.uppercased()
+            else if let directoryId = contact.directoryId {
+                let nCompare = directoryId.uppercased()
                 if (nCompare.contains(fragment)) {
                     result.append(contact)
                 }
@@ -351,6 +351,22 @@ class ContactManager: NSObject {
         let setTask = EnclaveTask<SetContactPolicyRequest, SetContactPolicyResponse>(delegate: delegate)
         setTask.errorTitle = "Policy Error"
         setTask.sendRequest(request)
+        
+    }
+
+    func setDirectoryId(contactId: Int, directoryId: String?) {
+
+        guard let contact = ContactManager.contactIdMap[contactId] else { return }
+        contact.directoryId = directoryId
+        let realm = try! Realm()
+        if let dbContact = realm.objects(DatabaseContact.self).filter("contactId = %ld", contact.contactId).first {
+            try! realm.write {
+                dbContact.encoded = try encodeContact(contact)
+            }
+        }
+        else {
+            print("Contact \(contact.displayName) not found in database")
+        }
         
     }
 
@@ -391,12 +407,12 @@ class ContactManager: NSObject {
 
     }
 
-    func updateNickname(newNickname: String?, oldNickname: String?) {
+    func updateDirectoryId(newDirectoryId: String?, oldDirectoryId: String?) {
 
-        let request = SetNicknameRequest(oldNickname: oldNickname ?? "", newNickname: newNickname ?? "")
-        let delegate = SetNicknameDelegate(request: request)
-        let setTask = EnclaveTask<SetNicknameRequest, SetNicknameResponse>(delegate: delegate)
-        setTask.errorTitle = "Nickname Error"
+        let request = SetDirectoryIdRequest(oldDirectoryId: oldDirectoryId ?? "", newDirectoryId: newDirectoryId ?? "")
+        let delegate = SetDirectoryIdDelegate(request: request)
+        let setTask = EnclaveTask<SetDirectoryIdRequest, SetDirectoryIdResponse>(delegate: delegate)
+        setTask.errorTitle = "Directory ID Error"
         setTask.sendRequest(request)
         
     }
@@ -412,7 +428,7 @@ extension ContactManager {
         for request in requests {
             let dbRequest = DatabaseContactRequest()
             dbRequest.publicId = request.publicId
-            dbRequest.nickname = request.nickname
+            dbRequest.directoryId = request.directoryId
             try! realm.write {
                 realm.add(dbRequest)
             }
@@ -427,9 +443,9 @@ extension ContactManager {
         let contact = Contact()
         contact.publicId = codec.getString()
         contact.status = codec.getString()
-        let nickname = codec.getString()
-        if nickname.utf8.count > 0 {
-            contact.nickname = nickname
+        let directoryId = codec.getString()
+        if directoryId.utf8.count > 0 {
+            contact.directoryId = directoryId
         }
         contact.timestamp = codec.getLong()
         let count = codec.getLong()
@@ -453,7 +469,7 @@ extension ContactManager {
         let codec = CKGCMCodec()
         codec.put(contact.publicId)
         codec.put(contact.status)
-        codec.put(contact.nickname ?? "")
+        codec.put(contact.directoryId ?? "")
         codec.putLong(contact.timestamp)
         if contact.messageKeys != nil {
             codec.putLong(Int64(contact.messageKeys!.count))
@@ -498,25 +514,25 @@ extension ContactManager {
 // Debug only
 extension ContactManager {
 
-    func deleteServerContact(nickname: String) {
+    func deleteServerContact(directoryId: String) {
 
-        NotificationCenter.default.addObserver(self, selector: #selector(nicknameMatched(_:)),
-                                               name: Notifications.NicknameMatched, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
+                                               name: Notifications.DirectoryIdMatched, object: nil)
         
-        matchNickname(nickname: nickname, publicId: nil)
+        matchDirectoryId(directoryId: directoryId, publicId: nil)
 
     }
 
-    @objc func nicknameMatched(_ notification: Notification) {
+    @objc func directoryIdMatched(_ notification: Notification) {
 
-        NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
-        guard let response = notification.object as? MatchNicknameResponse else { return }
+        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
+        guard let response = notification.object as? MatchDirectoryIdResponse else { return }
         if response.result == "found" {
             deleteContact(publicId: response.publicId!)
         }
         else {
-            print("Delete contact error: Nickname not found")
-            //alertPresenter.errorAlert(title: "Delete Contact Error", message: "That nickname doesn't exist")
+            print("Delete contact error: Directory ID not found")
+            //alertPresenter.errorAlert(title: "Delete Contact Error", message: "That directory ID doesn't exist")
         }
 
     }

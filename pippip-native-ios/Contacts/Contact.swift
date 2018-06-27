@@ -15,11 +15,11 @@ class Contact: NSObject {
     var version: Float = Contact.currentVersion
     var contactId: Int = 0
     var publicId: String = ""
-    var nickname: String?
+    var directoryId: String?
     var displayName: String {
         get {
-            if nickname != nil {
-                return nickname!
+            if directoryId != nil {
+                return directoryId!
             }
             else {
                 let shortened = publicId.prefix(10) + "..."

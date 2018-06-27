@@ -81,8 +81,8 @@ class SelectContactView: UIView {
                 if publicId.contains(fragment) {
                     newList.append(contact)
                 }
-                else if let nickname = contact.nickname?.uppercased() {
-                    if nickname.contains(fragment) {
+                else if let directoryId = contact.directoryId?.uppercased() {
+                    if directoryId.contains(fragment) {
                         newList.append(contact)
                     }
                 }
@@ -116,11 +116,11 @@ extension SelectContactView: UITableViewDelegate, UITableViewDataSource {
         let selectCell = tableView.dequeueReusableCell(withIdentifier: "SelectContactCell") as? ContactTableViewCell
         let contact = contactList[indexPath.item]
         selectCell?.publicIdLabel.text = contact.publicId
-        if let nickname = contact.nickname {
-            selectCell?.nicknameLabel.text = nickname
+        if let directoryId = contact.directoryId {
+            selectCell?.directoryIdLabel.text = directoryId
         }
         else {
-            selectCell?.nicknameLabel.text = ""
+            selectCell?.directoryIdLabel.text = ""
         }
         return selectCell!
 

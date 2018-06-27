@@ -1,5 +1,5 @@
 //
-//  SetNicknameResponse.swift
+//  SetDirectoryIdResponse.swift
 //  pippip-native-ios
 //
 //  Created by Steve Brenneis on 6/2/18.
@@ -9,7 +9,7 @@
 import UIKit
 import ObjectMapper
 
-class SetNicknameResponse: NSObject, EnclaveResponseProtocol {
+class SetDirectoryIdResponse: NSObject, EnclaveResponseProtocol {
 
     var error: String?
     var result: String?

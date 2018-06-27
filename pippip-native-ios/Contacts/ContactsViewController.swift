@@ -20,8 +20,6 @@ class ContactsViewController: UIViewController {
     var config = Configurator()
     var sessionState = SessionState()
     var localAuth: LocalAuthenticator!
-    //var nickname: String?
-    //var publicId = ""
     var debugging = false
     var suspended = false
     var alertPresenter = AlertPresenter()
@@ -104,7 +102,7 @@ class ContactsViewController: UIViewController {
 
     func acknowledgeRequest(_ contactRequest: ContactRequest) {
 
-        let name = contactRequest.nickname ?? contactRequest.publicId
+        let name = contactRequest.directoryId ?? contactRequest.publicId
         let alert = PMAlertController(title: "New Contact Request",
                                       description: "New contact request from \(name)",
                                       image: nil,
@@ -129,13 +127,13 @@ class ContactsViewController: UIViewController {
 
     }
 
-    func validateAndRequest(publicId: String?, nickname: String?) {
+    func validateAndRequest(publicId: String?, directoryId: String?) {
         
-        if nickname == config.nickname || publicId == sessionState.publicId {
+        if directoryId == config.directoryId || publicId == sessionState.publicId {
             alertPresenter.errorAlert(title: "Add Contact Error", message: "Adding yourself is not allowed")
         }
-        else if nickname != nil && nickname!.utf8.count > 0 {
-            self.contactManager.matchNickname(nickname: nickname, publicId: nil)
+        else if directoryId != nil && directoryId!.utf8.count > 0 {
+            self.contactManager.matchDirectoryId(directoryId: directoryId, publicId: nil)
         }
         else if publicId != nil && publicId!.utf8.count > 0 {
             let regex = try! NSRegularExpression(pattern: "[^A-Fa-f0-9]", options: [])
@@ -147,7 +145,7 @@ class ContactsViewController: UIViewController {
                 }
             }
             else {
-                contactManager.requestContact(publicId: publicId!, nickname: nil, retry: false)
+                contactManager.requestContact(publicId: publicId!, directoryId: nil, retry: false)
             }
         }
 
@@ -196,7 +194,7 @@ class ContactsViewController: UIViewController {
 
     @objc func contactRequested(_ notification: Notification) {
 
-        NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
 
         DispatchQueue.main.async {
             guard let contact = notification.object as? Contact else { return }
@@ -214,33 +212,33 @@ class ContactsViewController: UIViewController {
     @objc func deleteContact(_ sender: Any) {
 
         let alert = PMAlertController(title: "Delete A Server Contact",
-                                      description: "Enter a nickname or public ID",
+                                      description: "Enter a directory ID or public ID",
                                       image: nil,
                                       style: PMAlertControllerStyle.alert)
         alert.addTextField({ (textField) in
-            textField?.placeholder = "Nickname"
+            textField?.placeholder = "Directory ID"
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
         })
         alert.addAction(PMAlertAction(title: "Delete",
                                       style: .default, action: { () in
-                                        self.contactManager.deleteServerContact(nickname: alert.textFields[0].text ?? "")
+                                        self.contactManager.deleteServerContact(directoryId: alert.textFields[0].text ?? "")
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true, completion: nil)
         
     }
 
-    @objc func nicknameMatched(_ notification: Notification) {
+    @objc func directoryIdMatched(_ notification: Notification) {
 
-        NotificationCenter.default.removeObserver(self, name: Notifications.NicknameMatched, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
 
-        guard let response = notification.object as? MatchNicknameResponse else { return }
+        guard let response = notification.object as? MatchDirectoryIdResponse else { return }
         if response.result == "found" {
-            contactManager.requestContact(publicId: response.publicId!, nickname: response.nickname, retry: false)
+            contactManager.requestContact(publicId: response.publicId!, directoryId: response.directoryId, retry: false)
         }
         else {
-            alertPresenter.errorAlert(title: "Add Contact Error", message: "That nickname doesn't exist")
+            alertPresenter.errorAlert(title: "Add Contact Error", message: "That directory ID doesn't exist")
         }
         
     }
@@ -291,15 +289,15 @@ class ContactsViewController: UIViewController {
 
     @objc func addContact(_ item: Any) {
 
-        NotificationCenter.default.addObserver(self, selector: #selector(nicknameMatched(_:)),
-                                               name: Notifications.NicknameMatched, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
+                                               name: Notifications.DirectoryIdMatched, object: nil)
 
         let alert = PMAlertController(title: "Add A New Contact",
-                                      description: "Enter a nickname or public ID",
+                                      description: "Enter a directory ID or public ID",
                                       image: nil,
                                       style: PMAlertControllerStyle.alert)
         alert.addTextField({ (textField) in
-            textField?.placeholder = "Nickname"
+            textField?.placeholder = "Directory ID"
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
         })
@@ -311,7 +309,7 @@ class ContactsViewController: UIViewController {
         alert.addAction(PMAlertAction(title: "Add Contact",
                                       style: .default, action: { () in
                                         self.validateAndRequest(publicId: alert.textFields[1].text,
-                                                                nickname: alert.textFields[0].text)
+                                                                directoryId: alert.textFields[0].text)
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true, completion: nil)
@@ -377,7 +375,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
                     as? PendingRequestCell else { return UITableViewCell() }
                 cell.setLightTheme()
                 let request = contactRequests[indexPath.row-1]
-                cell.nicknameLabel.text = request.nickname
+                cell.directoryIdLabel.text = request.directoryId
                 cell.publicIdLabel.text = request.publicId
                 return cell
             }

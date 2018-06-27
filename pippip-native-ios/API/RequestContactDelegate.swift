@@ -11,13 +11,13 @@ import UIKit
 class RequestContactDelegate: EnclaveDelegate<RequestContactRequest, RequestContactResponse> {
 
     var retry: Bool
-    var nickname: String?
+    var directoryId: String?
     var contactManager = ContactManager()
 
-    init(request: RequestContactRequest, retry: Bool, nickname: String?) {
+    init(request: RequestContactRequest, retry: Bool, directoryId: String?) {
         
         self.retry = retry
-        self.nickname = nickname
+        self.directoryId = directoryId
         
         super.init(request: request)
 
@@ -31,7 +31,7 @@ class RequestContactDelegate: EnclaveDelegate<RequestContactRequest, RequestCont
         if !retry {
             let contact = Contact()
             contact.publicId = response.requestedContactId!
-            contact.nickname = nickname
+            contact.directoryId = directoryId
             contact.status = response.result!
             contactManager.addContact(contact)
             NotificationCenter.default.post(name: Notifications.ContactRequested, object: contact)

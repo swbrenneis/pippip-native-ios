@@ -39,7 +39,7 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
             }
         }
         else if retry {
-            contactManager.requestContact(publicId: publicId!, nickname: nil, retry: true)
+            contactManager.requestContact(publicId: publicId!, directoryId: nil, retry: true)
         }
 
     }

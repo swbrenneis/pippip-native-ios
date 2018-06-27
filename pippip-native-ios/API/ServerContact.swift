@@ -12,7 +12,7 @@ import ObjectMapper
 class ServerContact: NSObject, Mappable {
     
     var publicId: String?
-    var nickname: String?
+    var directoryId: String?
     var status: String?
     var timestamp: Int?
     var authData: String?
@@ -34,7 +34,7 @@ class ServerContact: NSObject, Mappable {
     func mapping(map: Map) {
 
         publicId <- map["publicId"]
-        nickname <- map["nickname"]
+        directoryId <- map["directoryId"]
         status <- map["status"]
         timestamp <- map["timestamp"]
         authData <- map["authData"]

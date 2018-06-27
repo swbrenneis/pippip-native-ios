@@ -11,6 +11,6 @@ import RealmSwift
 class DatabaseContactRequest: Object {
 
     @objc dynamic var publicId: String = ""
-    @objc dynamic var nickname: String?
+    @objc dynamic var directoryId: String?
 
 }

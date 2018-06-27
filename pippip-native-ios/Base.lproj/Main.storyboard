@@ -49,8 +49,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="369" height="64.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nickname" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a4z-Ts-ok0">
-                                                    <rect key="frame" x="25" y="11" width="80" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Directory ID" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a4z-Ts-ok0">
+                                                    <rect key="frame" x="25" y="11" width="95.5" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -70,7 +70,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="nicknameLabel" destination="a4z-Ts-ok0" id="fHy-Hb-bZO"/>
+                                            <outlet property="directoryIdLabel" destination="a4z-Ts-ok0" id="fHy-Hb-bZO"/>
                                             <outlet property="publicIdLabel" destination="kZP-ex-ygM" id="5bR-ha-uDH"/>
                                         </connections>
                                     </tableViewCell>
@@ -81,12 +81,6 @@
                                             <rect key="frame" x="0.0" y="0.0" width="369" height="149.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Display Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DHD-88-IFV">
-                                                    <rect key="frame" x="25" y="19" width="109.5" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Public ID" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JRW-yI-9nd">
                                                     <rect key="frame" x="25" y="46" width="57" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -119,24 +113,42 @@
                                                         <constraint firstAttribute="height" constant="36" id="mLJ-Ll-DKv"/>
                                                     </constraints>
                                                 </imageView>
+                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="vxZ-Vk-RZw">
+                                                    <rect key="frame" x="25" y="11" width="203" height="30"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <nil key="textColor"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" smartDashesType="no"/>
+                                                </textField>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ryM-vt-4P6">
+                                                    <rect key="frame" x="25" y="16" width="203" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="JRW-yI-9nd" firstAttribute="top" secondItem="DHD-88-IFV" secondAttribute="bottom" constant="6" id="0RW-yM-ccE"/>
+                                                <constraint firstItem="JRW-yI-9nd" firstAttribute="leading" secondItem="U35-Wl-OvD" secondAttribute="leadingMargin" constant="10" id="CBg-si-cas"/>
                                                 <constraint firstItem="mnE-Td-dJ4" firstAttribute="top" secondItem="U35-Wl-OvD" secondAttribute="topMargin" id="Dc4-SI-thS"/>
+                                                <constraint firstItem="vxZ-Vk-RZw" firstAttribute="top" secondItem="U35-Wl-OvD" secondAttribute="topMargin" id="F21-rS-oT4"/>
+                                                <constraint firstItem="rNo-6w-Ae5" firstAttribute="leading" secondItem="U35-Wl-OvD" secondAttribute="leadingMargin" constant="10" id="JyI-NT-jja"/>
+                                                <constraint firstItem="ryM-vt-4P6" firstAttribute="trailing" secondItem="vxZ-Vk-RZw" secondAttribute="trailing" id="Lox-ti-EZ9"/>
                                                 <constraint firstItem="fbC-au-qRD" firstAttribute="top" secondItem="5CD-kM-rLY" secondAttribute="bottom" constant="10" id="QGG-Nh-i8S"/>
-                                                <constraint firstItem="mnE-Td-dJ4" firstAttribute="centerY" secondItem="DHD-88-IFV" secondAttribute="centerY" id="R8q-DZ-aJM"/>
-                                                <constraint firstItem="DHD-88-IFV" firstAttribute="leading" secondItem="U35-Wl-OvD" secondAttribute="leadingMargin" constant="10" id="Yct-8l-jia"/>
                                                 <constraint firstItem="5CD-kM-rLY" firstAttribute="leading" secondItem="rNo-6w-Ae5" secondAttribute="trailing" constant="8" id="ZLt-vj-6hh"/>
                                                 <constraint firstItem="mnE-Td-dJ4" firstAttribute="trailing" secondItem="U35-Wl-OvD" secondAttribute="trailingMargin" id="bC0-P0-bk2"/>
+                                                <constraint firstItem="ryM-vt-4P6" firstAttribute="leading" secondItem="vxZ-Vk-RZw" secondAttribute="leading" id="d2k-xJ-Swa"/>
                                                 <constraint firstItem="rNo-6w-Ae5" firstAttribute="top" secondItem="JRW-yI-9nd" secondAttribute="bottom" constant="6" id="dn8-bs-r8C"/>
+                                                <constraint firstItem="JRW-yI-9nd" firstAttribute="top" secondItem="vxZ-Vk-RZw" secondAttribute="bottom" constant="5" id="fyF-Sr-EED"/>
                                                 <constraint firstItem="5CD-kM-rLY" firstAttribute="centerY" secondItem="rNo-6w-Ae5" secondAttribute="centerY" id="hEV-pv-d5L"/>
-                                                <constraint firstItem="rNo-6w-Ae5" firstAttribute="leading" secondItem="DHD-88-IFV" secondAttribute="leading" id="sdL-FF-Cma"/>
+                                                <constraint firstItem="ryM-vt-4P6" firstAttribute="centerY" secondItem="vxZ-Vk-RZw" secondAttribute="centerY" id="qlm-eX-rYu"/>
+                                                <constraint firstItem="mnE-Td-dJ4" firstAttribute="leading" secondItem="vxZ-Vk-RZw" secondAttribute="trailing" constant="90" id="tYt-6Y-g8T"/>
                                                 <constraint firstItem="fbC-au-qRD" firstAttribute="centerX" secondItem="U35-Wl-OvD" secondAttribute="centerX" id="xyL-eQ-S96"/>
-                                                <constraint firstItem="JRW-yI-9nd" firstAttribute="leading" secondItem="DHD-88-IFV" secondAttribute="leading" id="yfV-QR-GwQ"/>
+                                                <constraint firstItem="vxZ-Vk-RZw" firstAttribute="leading" secondItem="U35-Wl-OvD" secondAttribute="leadingMargin" constant="10" id="zDB-dc-7hf"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="displayNameLabel" destination="DHD-88-IFV" id="m51-g8-eiU"/>
+                                            <outlet property="displayNameLabel" destination="ryM-vt-4P6" id="0O5-xv-oJn"/>
+                                            <outlet property="displayNameText" destination="vxZ-Vk-RZw" id="aKd-ma-40p"/>
                                             <outlet property="lastSeenLabel" destination="5CD-kM-rLY" id="Sy1-l5-ssv"/>
                                             <outlet property="lastSeenTitle" destination="rNo-6w-Ae5" id="mup-U4-ER3"/>
                                             <outlet property="publicIdLabel" destination="JRW-yI-9nd" id="ffl-3I-Z85"/>
@@ -202,8 +214,8 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="64.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Publicly Discoverable" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Jh-Ap-dvX">
-                                            <rect key="frame" x="16" y="22" width="163" height="21"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Publicly discoverable" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Jh-Ap-dvX">
+                                            <rect key="frame" x="16" y="22" width="161" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -226,7 +238,7 @@
                                     <outlet property="contactPolicySwitch" destination="Kev-9s-ljc" id="Aeb-AN-mx2"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="SetNicknameCell" rowHeight="74" id="cSf-AN-swi" customClass="SetNicknameCell" customModule="pippip_native_ios" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="DirectoryIdCell" rowHeight="74" id="cSf-AN-swi" customClass="DirectoryIdCell" customModule="pippip_native_ios" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="164.5" width="375" height="74"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="cSf-AN-swi" id="Rg3-LX-yTK">
@@ -245,7 +257,7 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
                                             <connections>
-                                                <action selector="nicknameChanged:" destination="cSf-AN-swi" eventType="editingChanged" id="0V2-GB-tZU"/>
+                                                <action selector="directoryIdChanged:" destination="cSf-AN-swi" eventType="editingChanged" id="RsY-rN-W1T"/>
                                             </connections>
                                         </textField>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KA6-Na-Q9T">
@@ -256,8 +268,7 @@
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="21"/>
                                             <state key="normal" title="Set"/>
                                             <connections>
-                                                <action selector="nicknameChanged:" destination="cSf-AN-swi" eventType="editingChanged" id="4A8-3F-utg"/>
-                                                <action selector="setNickname:" destination="cSf-AN-swi" eventType="touchUpInside" id="hRM-Wp-HE9"/>
+                                                <action selector="setDirectoyId:" destination="cSf-AN-swi" eventType="touchUpInside" id="hTQ-6T-xku"/>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -272,8 +283,8 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="nicknameTextField" destination="67s-ud-C4l" id="jRX-c5-jUb"/>
-                                    <outlet property="setNicknameButton" destination="KA6-Na-Q9T" id="Ke5-VF-sRd"/>
+                                    <outlet property="directoryIdTextField" destination="67s-ud-C4l" id="VnK-nC-IyA"/>
+                                    <outlet property="setDirectoryIdButton" destination="KA6-Na-Q9T" id="Ke5-VF-sRd"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="PublicIdCell" rowHeight="65" id="AHI-D0-KRs" customClass="PublicIdCell" customModule="pippip_native_ios" customModuleProvider="target">
@@ -404,7 +415,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="b5P-2T-qqB" kind="show" identifier="FriendsListSegue" id="a3D-iu-dNc"/>
+                                    <segue destination="b5P-2T-qqB" kind="show" identifier="WhitelistSegue" id="a3D-iu-dNc"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -437,7 +448,7 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="separatorColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="FriendCell" textLabel="naZ-Sc-1AH" detailTextLabel="EBX-KW-bbd" rowHeight="75" style="IBUITableViewCellStyleSubtitle" id="i0Y-1W-yyh" customClass="PippipTableViewCell" customModule="pippip_native_ios" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="WhitelistCell" textLabel="naZ-Sc-1AH" detailTextLabel="EBX-KW-bbd" rowHeight="75" style="IBUITableViewCellStyleSubtitle" id="i0Y-1W-yyh" customClass="PippipTableViewCell" customModule="pippip_native_ios" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="369" height="75"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="i0Y-1W-yyh" id="knY-xj-8Qi">

@@ -27,18 +27,18 @@ protocol EnclaveDelegateProtocol {
     associatedtype ResponseT
 
     var request: RequestT { get }
-    var requestComplete: ((ResponseT) -> Void) { get }
-    var requestError: ((String) -> Void) { get }
-    var responseError: ((String) -> Void) { get }
+    var requestComplete: ((ResponseT) -> Void)! { get }
+    var requestError: ((String) -> Void)! { get }
+    var responseError: ((String) -> Void)! { get }
 
 }
 
 class EnclaveDelegate<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponseProtocol>: EnclaveDelegateProtocol {
     
     var request: RequestT
-    var requestComplete: ((ResponseT) -> Void) = { (ResponseT) in return }
-    var requestError: ((String) -> Void) = { (String) in return }
-    var responseError: ((String) -> Void) = { (String) in return }
+    var requestComplete: ((ResponseT) -> Void)!
+    var requestError: ((String) -> Void)!
+    var responseError: ((String) -> Void)!
 
     init(request: RequestT) {
         self.request = request

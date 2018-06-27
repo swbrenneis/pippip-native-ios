@@ -17,9 +17,9 @@ struct Notifications {
     static let ContactDeleted = NSNotification.Name("ContactDeleted")
     static let ContactRequested = NSNotification.Name("ContactRequested")
     static let ContactSelected = NSNotification.Name("ContactSelected")
+    static let DirectoryIdMatched = NSNotification.Name("DirectoryIdMatched")
+    static let DirectoryIdUpdated = NSNotification.Name("DirectoryIdUpdated")
     static let EnclaveRequestComplete = NSNotification.Name("EnclaveRequestComplete")
-    static let FriendAdded = NSNotification.Name("FriendAdded")
-    static let FriendDeleted = NSNotification.Name("FriendDeleted")
     static let GuideDismissed = NSNotification.Name("GuideDismissed")
     static let LocalAuthComplete = NSNotification.Name("LocalAuthComplete")
     static let MessageFailed = NSNotification.Name("MessageFailed")
@@ -27,8 +27,6 @@ struct Notifications {
     static let MessagesUpdated = NSNotification.Name("MessagesUpdated")
     static let NewMessages = NSNotification.Name("NewMessages")
     static let NewSession = NSNotification.Name("NewSession")
-    static let NicknameMatched = NSNotification.Name("NicknameMatched")
-    static let NicknameUpdated = NSNotification.Name("NicknameUpdated")
     static let ParametersGenerated = NSNotification.Name("ParametersGenerated")
     static let PolicyChanged = NSNotification.Name("PolicyChanged")
     static let PolicyUpdated = NSNotification.Name("PolicyUpdated")
@@ -41,5 +39,7 @@ struct Notifications {
     static let SessionEnded = NSNotification.Name("SessionEnded")
     static let SessionStarted = NSNotification.Name("SessionStarted")
     static let UpdateProgress = NSNotification.Name("UpdateProgress")
+    static let WhitelistEntryAdded = NSNotification.Name("WhitelistEntryAdded")
+    static let WhitelistEntryDeleted = NSNotification.Name("WhitelistEntryDeleted")
 
 }

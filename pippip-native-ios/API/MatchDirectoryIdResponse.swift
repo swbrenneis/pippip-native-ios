@@ -1,5 +1,5 @@
 //
-//  MatchNicknameResponse.swift
+//  MatchDirectoryIdResponse.swift
 //  pippip-native-ios
 //
 //  Created by Steve Brenneis on 6/2/18.
@@ -9,12 +9,12 @@
 import UIKit
 import ObjectMapper
 
-class MatchNicknameResponse: NSObject, EnclaveResponseProtocol {
+class MatchDirectoryIdResponse: NSObject, EnclaveResponseProtocol {
 
     var error: String?
     var result: String?
     var publicId: String?
-    var nickname: String?
+    var directoryId: String?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil && map.JSON["result"] == nil {
@@ -26,7 +26,7 @@ class MatchNicknameResponse: NSObject, EnclaveResponseProtocol {
         error <- map["error"]
         result <- map["result"]
         publicId <- map["publicId"]
-        nickname <- map["nickname"]
+        directoryId <- map["directoryId"]
     }
 
 }

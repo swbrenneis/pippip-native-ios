@@ -57,7 +57,7 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
 
     func responseError(_ error: APIResponseError) {
         print("Enclave response error: \(error.localizedDescription)")
-        delegate?.requestError(error.localizedDescription)
+        delegate?.responseError(error.localizedDescription)
     }
 
     func sendRequest(_ request: EnclaveRequestProtocol) {

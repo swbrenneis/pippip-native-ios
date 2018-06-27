@@ -12,7 +12,7 @@ class AccountDeleter: NSObject {
 
     func deleteAccount(accountName: String) throws {
 
-        deleteNickname()
+        deleteDirectoryId()
         let authenticator = Authenticator()
         authenticator.logout()
         AccountSession.accountName = nil
@@ -35,12 +35,12 @@ class AccountDeleter: NSObject {
 
     }
 
-    func deleteNickname() {
+    func deleteDirectoryId() {
 
         let config = Configurator()
-        if let nickname = config.nickname {
+        if let directoryId = config.directoryId {
             let contactManager = ContactManager()
-            contactManager.updateNickname(newNickname: nil, oldNickname: nickname)
+            contactManager.updateDirectoryId(newDirectoryId: nil, oldDirectoryId: directoryId)
         }
 
     }

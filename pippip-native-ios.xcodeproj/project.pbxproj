@@ -27,14 +27,14 @@
 		5511E9C220C2CE3F0080C0DF /* GetRequestStatusResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9C120C2CE3F0080C0DF /* GetRequestStatusResponse.swift */; };
 		5511E9C420C2D1AC0080C0DF /* GetPendingRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9C320C2D1AC0080C0DF /* GetPendingRequests.swift */; };
 		5511E9C620C2D1C20080C0DF /* GetPendingRequestsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9C520C2D1C20080C0DF /* GetPendingRequestsResponse.swift */; };
-		5511E9C820C2DFA10080C0DF /* MatchNicknameRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9C720C2DFA10080C0DF /* MatchNicknameRequest.swift */; };
-		5511E9CA20C2DFB30080C0DF /* MatchNicknameResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9C920C2DFB30080C0DF /* MatchNicknameResponse.swift */; };
+		5511E9C820C2DFA10080C0DF /* MatchDirectoryIdRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9C720C2DFA10080C0DF /* MatchDirectoryIdRequest.swift */; };
+		5511E9CA20C2DFB30080C0DF /* MatchDirectoryIdResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9C920C2DFB30080C0DF /* MatchDirectoryIdResponse.swift */; };
 		5511E9CC20C301720080C0DF /* RequestContactRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9CB20C301710080C0DF /* RequestContactRequest.swift */; };
 		5511E9CE20C301850080C0DF /* RequestContactResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9CD20C301850080C0DF /* RequestContactResponse.swift */; };
 		5511E9D020C325DD0080C0DF /* SetContactPolicyRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9CF20C325DD0080C0DF /* SetContactPolicyRequest.swift */; };
 		5511E9D220C325F40080C0DF /* SetContactPolicyResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9D120C325F40080C0DF /* SetContactPolicyResponse.swift */; };
-		5511E9D420C32A3B0080C0DF /* SetNicknameRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9D320C32A3B0080C0DF /* SetNicknameRequest.swift */; };
-		5511E9D620C32A500080C0DF /* SetNicknameResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9D520C32A500080C0DF /* SetNicknameResponse.swift */; };
+		5511E9D420C32A3B0080C0DF /* SetDirectoryIdRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9D320C32A3B0080C0DF /* SetDirectoryIdRequest.swift */; };
+		5511E9D620C32A500080C0DF /* SetDirectoryIdResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9D520C32A500080C0DF /* SetDirectoryIdResponse.swift */; };
 		5511E9D820C3367F0080C0DF /* AcknowledgeMessagesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9D720C3367F0080C0DF /* AcknowledgeMessagesRequest.swift */; };
 		5511E9DA20C3369C0080C0DF /* AcknowledgeMessagesResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9D920C3369B0080C0DF /* AcknowledgeMessagesResponse.swift */; };
 		5511E9DC20C33B780080C0DF /* GetMessagesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9DB20C33B780080C0DF /* GetMessagesRequest.swift */; };
@@ -77,7 +77,7 @@
 		555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 555B0D40204C887B00D99807 /* MBProgressHUD.m */; };
 		555B0D45204CD80000D99807 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 555B0D44204CD80000D99807 /* UserNotifications.framework */; };
 		55721A0A20C86876008FE9F6 /* EnclaveDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0920C86876008FE9F6 /* EnclaveDelegate.swift */; };
-		55721A0C20C952EC008FE9F6 /* MatchNicknameDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0B20C952EC008FE9F6 /* MatchNicknameDelegate.swift */; };
+		55721A0C20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0B20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift */; };
 		55721A0E20C97A5C008FE9F6 /* AcknowledgeMessagesDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0D20C97A5C008FE9F6 /* AcknowledgeMessagesDelegate.swift */; };
 		55721A1020C98111008FE9F6 /* AcknowledgeRequestDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0F20C98111008FE9F6 /* AcknowledgeRequestDelegate.swift */; };
 		55721A1220C98504008FE9F6 /* DeleteContactDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1120C98504008FE9F6 /* DeleteContactDelegate.swift */; };
@@ -87,7 +87,7 @@
 		55721A1A20C9A5F5008FE9F6 /* RequestContactDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1920C9A5F5008FE9F6 /* RequestContactDelegate.swift */; };
 		55721A1C20C9A88E008FE9F6 /* SendMessageDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1B20C9A88E008FE9F6 /* SendMessageDelegate.swift */; };
 		55721A1E20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1D20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift */; };
-		55721A2020C9F973008FE9F6 /* SetNicknameDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1F20C9F973008FE9F6 /* SetNicknameDelegate.swift */; };
+		55721A2020C9F973008FE9F6 /* SetDirectoryIdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1F20C9F973008FE9F6 /* SetDirectoryIdDelegate.swift */; };
 		55721A2220C9FB52008FE9F6 /* UpdateWhitelistDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A2120C9FB52008FE9F6 /* UpdateWhitelistDelegate.swift */; };
 		5575D3C420618FD200593AF7 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5575D3C320618FD200593AF7 /* LocalAuthentication.framework */; };
 		557C2B552093AF840069336D /* ChattoDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B542093AF840069336D /* ChattoDataSource.swift */; };
@@ -206,7 +206,7 @@
 		55FD018620B0C6CD0028435E /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD018520B0C6CD0028435E /* SettingsTableViewController.swift */; };
 		55FD018820B0C7880028435E /* MultiCellItemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD018720B0C7880028435E /* MultiCellItemProtocol.swift */; };
 		55FD018C20B0CA120028435E /* MultiCellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD018B20B0CA120028435E /* MultiCellProtocol.swift */; };
-		55FD018E20B0D1930028435E /* SetNicknameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD018D20B0D1930028435E /* SetNicknameCell.swift */; };
+		55FD018E20B0D1930028435E /* DirectoryIdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD018D20B0D1930028435E /* DirectoryIdCell.swift */; };
 		55FD019020B102510028435E /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD018F20B102510028435E /* AlertPresenter.swift */; };
 		AB0F2126D201B71442A7B29F /* Pods_pippip_native_iosTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D45A36A5745F6B3DF862F12 /* Pods_pippip_native_iosTests.framework */; };
 /* End PBXBuildFile section */
@@ -256,14 +256,14 @@
 		5511E9C120C2CE3F0080C0DF /* GetRequestStatusResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetRequestStatusResponse.swift; sourceTree = "<group>"; };
 		5511E9C320C2D1AC0080C0DF /* GetPendingRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPendingRequests.swift; sourceTree = "<group>"; };
 		5511E9C520C2D1C20080C0DF /* GetPendingRequestsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPendingRequestsResponse.swift; sourceTree = "<group>"; };
-		5511E9C720C2DFA10080C0DF /* MatchNicknameRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchNicknameRequest.swift; sourceTree = "<group>"; };
-		5511E9C920C2DFB30080C0DF /* MatchNicknameResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchNicknameResponse.swift; sourceTree = "<group>"; };
+		5511E9C720C2DFA10080C0DF /* MatchDirectoryIdRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchDirectoryIdRequest.swift; sourceTree = "<group>"; };
+		5511E9C920C2DFB30080C0DF /* MatchDirectoryIdResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchDirectoryIdResponse.swift; sourceTree = "<group>"; };
 		5511E9CB20C301710080C0DF /* RequestContactRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestContactRequest.swift; sourceTree = "<group>"; };
 		5511E9CD20C301850080C0DF /* RequestContactResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestContactResponse.swift; sourceTree = "<group>"; };
 		5511E9CF20C325DD0080C0DF /* SetContactPolicyRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetContactPolicyRequest.swift; sourceTree = "<group>"; };
 		5511E9D120C325F40080C0DF /* SetContactPolicyResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetContactPolicyResponse.swift; sourceTree = "<group>"; };
-		5511E9D320C32A3B0080C0DF /* SetNicknameRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetNicknameRequest.swift; sourceTree = "<group>"; };
-		5511E9D520C32A500080C0DF /* SetNicknameResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetNicknameResponse.swift; sourceTree = "<group>"; };
+		5511E9D320C32A3B0080C0DF /* SetDirectoryIdRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetDirectoryIdRequest.swift; sourceTree = "<group>"; };
+		5511E9D520C32A500080C0DF /* SetDirectoryIdResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetDirectoryIdResponse.swift; sourceTree = "<group>"; };
 		5511E9D720C3367F0080C0DF /* AcknowledgeMessagesRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgeMessagesRequest.swift; sourceTree = "<group>"; };
 		5511E9D920C3369B0080C0DF /* AcknowledgeMessagesResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgeMessagesResponse.swift; sourceTree = "<group>"; };
 		5511E9DB20C33B780080C0DF /* GetMessagesRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMessagesRequest.swift; sourceTree = "<group>"; };
@@ -307,7 +307,7 @@
 		555B0D43204CA4E300D99807 /* pippip-native-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "pippip-native-ios.entitlements"; sourceTree = "<group>"; };
 		555B0D44204CD80000D99807 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		55721A0920C86876008FE9F6 /* EnclaveDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnclaveDelegate.swift; sourceTree = "<group>"; };
-		55721A0B20C952EC008FE9F6 /* MatchNicknameDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchNicknameDelegate.swift; sourceTree = "<group>"; };
+		55721A0B20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchDirectoryIdDelegate.swift; sourceTree = "<group>"; };
 		55721A0D20C97A5C008FE9F6 /* AcknowledgeMessagesDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgeMessagesDelegate.swift; sourceTree = "<group>"; };
 		55721A0F20C98111008FE9F6 /* AcknowledgeRequestDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgeRequestDelegate.swift; sourceTree = "<group>"; };
 		55721A1120C98504008FE9F6 /* DeleteContactDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteContactDelegate.swift; sourceTree = "<group>"; };
@@ -317,7 +317,7 @@
 		55721A1920C9A5F5008FE9F6 /* RequestContactDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestContactDelegate.swift; sourceTree = "<group>"; };
 		55721A1B20C9A88E008FE9F6 /* SendMessageDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageDelegate.swift; sourceTree = "<group>"; };
 		55721A1D20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetContactPolicyDelegate.swift; sourceTree = "<group>"; };
-		55721A1F20C9F973008FE9F6 /* SetNicknameDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetNicknameDelegate.swift; sourceTree = "<group>"; };
+		55721A1F20C9F973008FE9F6 /* SetDirectoryIdDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetDirectoryIdDelegate.swift; sourceTree = "<group>"; };
 		55721A2120C9FB52008FE9F6 /* UpdateWhitelistDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateWhitelistDelegate.swift; sourceTree = "<group>"; };
 		5575D3C320618FD200593AF7 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		557C2B542093AF840069336D /* ChattoDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattoDataSource.swift; sourceTree = "<group>"; };
@@ -518,7 +518,7 @@
 		55FD018520B0C6CD0028435E /* SettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		55FD018720B0C7880028435E /* MultiCellItemProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiCellItemProtocol.swift; sourceTree = "<group>"; };
 		55FD018B20B0CA120028435E /* MultiCellProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiCellProtocol.swift; sourceTree = "<group>"; };
-		55FD018D20B0D1930028435E /* SetNicknameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetNicknameCell.swift; sourceTree = "<group>"; };
+		55FD018D20B0D1930028435E /* DirectoryIdCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryIdCell.swift; sourceTree = "<group>"; };
 		55FD018F20B102510028435E /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
 		5601D2975F6170FB85CE94D6 /* Pods-pippip-native-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pippip-native-ios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pippip-native-ios/Pods-pippip-native-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		654663B39B017346F8ACE361 /* Pods-pippip-native-iosTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pippip-native-iosTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pippip-native-iosTests/Pods-pippip-native-iosTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -666,12 +666,12 @@
 				55B0DBB82048962400F6B29B /* CopyableLabel.h */,
 				55B0DBB92048962400F6B29B /* CopyableLabel.m */,
 				5500D169207405190016AC71 /* DeleteAccountCell.swift */,
+				55FD018D20B0D1930028435E /* DirectoryIdCell.swift */,
 				5586B8842064826000641514 /* EditWhitelistCell.swift */,
 				55169792209B7282002BB4C1 /* LocalAuthCell.swift */,
 				554D01C5207C54A900C19373 /* LocalPasswordCell.swift */,
 				55FD018B20B0CA120028435E /* MultiCellProtocol.swift */,
 				55FD018720B0C7880028435E /* MultiCellItemProtocol.swift */,
-				55FD018D20B0D1930028435E /* SetNicknameCell.swift */,
 				5586B881206428A400641514 /* PublicIdCell.swift */,
 				55FD018520B0C6CD0028435E /* SettingsTableViewController.swift */,
 				55E7593D20674DAE009BAA1C /* WhitelistViewController.swift */,
@@ -715,9 +715,9 @@
 				5511E9C120C2CE3F0080C0DF /* GetRequestStatusResponse.swift */,
 				55E970A620AB07C6008C2F39 /* Logout.swift */,
 				55F7B57E20BF35F50083AE01 /* NewAccountFinal.swift */,
-				55721A0B20C952EC008FE9F6 /* MatchNicknameDelegate.swift */,
-				5511E9C720C2DFA10080C0DF /* MatchNicknameRequest.swift */,
-				5511E9C920C2DFB30080C0DF /* MatchNicknameResponse.swift */,
+				55721A0B20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift */,
+				5511E9C720C2DFA10080C0DF /* MatchDirectoryIdRequest.swift */,
+				5511E9C920C2DFB30080C0DF /* MatchDirectoryIdResponse.swift */,
 				55F7B58020BF364E0083AE01 /* NewAccountFinish.swift */,
 				55F7B58220BF36720083AE01 /* NewAccountRequest.swift */,
 				55F7B58420BF36930083AE01 /* NewAccountResponse.swift */,
@@ -736,9 +736,9 @@
 				55721A1D20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift */,
 				5511E9CF20C325DD0080C0DF /* SetContactPolicyRequest.swift */,
 				5511E9D120C325F40080C0DF /* SetContactPolicyResponse.swift */,
-				55721A1F20C9F973008FE9F6 /* SetNicknameDelegate.swift */,
-				5511E9D320C32A3B0080C0DF /* SetNicknameRequest.swift */,
-				5511E9D520C32A500080C0DF /* SetNicknameResponse.swift */,
+				55721A1F20C9F973008FE9F6 /* SetDirectoryIdDelegate.swift */,
+				5511E9D320C32A3B0080C0DF /* SetDirectoryIdRequest.swift */,
+				5511E9D520C32A500080C0DF /* SetDirectoryIdResponse.swift */,
 				55721A2120C9FB52008FE9F6 /* UpdateWhitelistDelegate.swift */,
 				5511E9B720C1FF550080C0DF /* UpdateWhitelistRequest.swift */,
 				5511E9B920C209350080C0DF /* UpdateWhitelistResponse.swift */,
@@ -1257,7 +1257,7 @@
 				55AA555B1FA14D7100A7026B /* GCMCodec.cc in Sources */,
 				55721A1C20C9A88E008FE9F6 /* SendMessageDelegate.swift in Sources */,
 				5500D16A207405190016AC71 /* DeleteAccountCell.swift in Sources */,
-				5511E9D620C32A500080C0DF /* SetNicknameResponse.swift in Sources */,
+				5511E9D620C32A500080C0DF /* SetDirectoryIdResponse.swift in Sources */,
 				55FB2F62202A6D7B005E3730 /* CKIVGenerator.mm in Sources */,
 				55AA55011FA14C1300A7026B /* CKSHA256.mm in Sources */,
 				55AA54FC1FA14C1300A7026B /* CKRSAKeyPair.m in Sources */,
@@ -1268,7 +1268,7 @@
 				5516978F20994A01002BB4C1 /* MessagesHeadingCell.swift in Sources */,
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
 				5511E9C620C2D1C20080C0DF /* GetPendingRequestsResponse.swift in Sources */,
-				55721A2020C9F973008FE9F6 /* SetNicknameDelegate.swift in Sources */,
+				55721A2020C9F973008FE9F6 /* SetDirectoryIdDelegate.swift in Sources */,
 				5511E9C420C2D1AC0080C0DF /* GetPendingRequests.swift in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
 				557C2B592093B8360069336D /* PippipTextMessageModel.swift in Sources */,
@@ -1277,7 +1277,7 @@
 				55AA55581FA14D7100A7026B /* HMAC.cc in Sources */,
 				55AA54DE1FA14B1E00A7026B /* ByteStreamCodec.cc in Sources */,
 				55169791209A4894002BB4C1 /* PreviewCell.swift in Sources */,
-				5511E9D420C32A3B0080C0DF /* SetNicknameRequest.swift in Sources */,
+				5511E9D420C32A3B0080C0DF /* SetDirectoryIdRequest.swift in Sources */,
 				55AA55001FA14C1300A7026B /* CKSHA1.mm in Sources */,
 				55AA54E11FA14B1E00A7026B /* Unsigned64.cc in Sources */,
 				55FD018620B0C6CD0028435E /* SettingsTableViewController.swift in Sources */,
@@ -1340,7 +1340,7 @@
 				5511E9D220C325F40080C0DF /* SetContactPolicyResponse.swift in Sources */,
 				5511E9B420C1F1C90080C0DF /* AcknowledgeRequest.swift in Sources */,
 				5511E9DE20C33B8D0080C0DF /* GetMessagesResponse.swift in Sources */,
-				5511E9C820C2DFA10080C0DF /* MatchNicknameRequest.swift in Sources */,
+				5511E9C820C2DFA10080C0DF /* MatchDirectoryIdRequest.swift in Sources */,
 				55BFD36520CF18300084C555 /* DatabaseMessage.swift in Sources */,
 				55AA55591FA14D7100A7026B /* SHA1.cc in Sources */,
 				55AA55641FA14D7100A7026B /* RSACodec.cc in Sources */,
@@ -1366,14 +1366,14 @@
 				5536A68D206897D200B7E6D8 /* ContactsViewController.swift in Sources */,
 				55AA554F1FA14D7100A7026B /* RSA.cc in Sources */,
 				55AA55521FA14D7100A7026B /* OAEPrsaes.cc in Sources */,
-				55721A0C20C952EC008FE9F6 /* MatchNicknameDelegate.swift in Sources */,
+				55721A0C20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift in Sources */,
 				55AA55611FA14D7100A7026B /* PKCS1rsassa.cc in Sources */,
 				5511E9D020C325DD0080C0DF /* SetContactPolicyRequest.swift in Sources */,
 				5586B88C206493D000641514 /* HexCodec.m in Sources */,
 				5592A59A1F8BBB4500F08BF5 /* main.mm in Sources */,
 				55187ED220BE4A1C00F94792 /* ClientAuthorized.swift in Sources */,
 				55AA55651FA14D7100A7026B /* Random.cc in Sources */,
-				5511E9CA20C2DFB30080C0DF /* MatchNicknameResponse.swift in Sources */,
+				5511E9CA20C2DFB30080C0DF /* MatchDirectoryIdResponse.swift in Sources */,
 				55E970A320AAE05E008C2F39 /* ClientAuthChallenge.swift in Sources */,
 				55721A0E20C97A5C008FE9F6 /* AcknowledgeMessagesDelegate.swift in Sources */,
 				55AA55511FA14D7100A7026B /* RSAPrivateModKey.cc in Sources */,
@@ -1409,7 +1409,7 @@
 				55BFD36320CEDDA40084C555 /* DatabaseContactRequest.swift in Sources */,
 				55AA554D1FA14D7100A7026B /* RSAPublicKey.cc in Sources */,
 				5511E9DA20C3369C0080C0DF /* AcknowledgeMessagesResponse.swift in Sources */,
-				55FD018E20B0D1930028435E /* SetNicknameCell.swift in Sources */,
+				55FD018E20B0D1930028435E /* DirectoryIdCell.swift in Sources */,
 				55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */,
 				55F7B58320BF36720083AE01 /* NewAccountRequest.swift in Sources */,
 				5599914020D82F3D00D112FA /* QSPromptView.swift in Sources */,

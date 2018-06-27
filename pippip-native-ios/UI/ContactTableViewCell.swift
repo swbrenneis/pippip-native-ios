@@ -12,7 +12,7 @@ class ContactTableViewCell: UITableViewCell {
 
     @IBOutlet weak var nibView: UIView!
     @IBOutlet weak var publicIdLabel: UILabel!
-    @IBOutlet weak var nicknameLabel: UILabel!
+    @IBOutlet weak var directoryIdLabel: UILabel!
 
     public override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

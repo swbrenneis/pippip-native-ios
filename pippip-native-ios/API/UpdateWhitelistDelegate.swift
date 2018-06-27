@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum WhitelistUpdateType { case addFriend, deleteFriend }
+enum WhitelistUpdateType { case addEntry, deleteEntry }
 
 class UpdateWhitelistDelegate: EnclaveDelegate<UpdateWhitelistRequest, UpdateWhitelistResponse> {
 
@@ -28,20 +28,20 @@ class UpdateWhitelistDelegate: EnclaveDelegate<UpdateWhitelistRequest, UpdateWhi
     func updateComplete(response: UpdateWhitelistResponse) {
         
         switch updateType {
-        case .addFriend:
+        case .addEntry:
             if  response.action == "add", response.result == "added" || response.result == "exists" {
-                NotificationCenter.default.post(name: Notifications.FriendAdded, object: response)
+                NotificationCenter.default.post(name: Notifications.WhitelistEntryAdded, object: response)
             }
             else {
-                print("Invalid response from server to add friend update")
+                print("Invalid response from server to add whitelist entry update")
             }
             break
-        case .deleteFriend:
+        case .deleteEntry:
             if  response.action == "delete", response.result == "deleted" || response.result == "not found" {
-                NotificationCenter.default.post(name: Notifications.FriendDeleted, object: nil)
+                NotificationCenter.default.post(name: Notifications.WhitelistEntryDeleted, object: nil)
             }
             else {
-                print("Invalid response from server to delete friend update")
+                print("Invalid response from server to delete whitelist entry update")
             }
             break
         }

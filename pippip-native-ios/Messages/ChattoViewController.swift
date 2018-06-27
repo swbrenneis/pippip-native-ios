@@ -33,6 +33,10 @@ class ChattoViewController: BaseChatViewController {
         var items = [UIBarButtonItem]()
         let editItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editMessages(_:)))
         items.append(editItem)
+        #if targetEnvironment(simulator)
+        let pollButton = UIBarButtonItem(title: "Poll", style: .plain, target: self, action: #selector(pollServer(_ :)))
+        items.append(pollButton)
+        #endif
         self.navigationItem.rightBarButtonItems = items
 
         if ChattoViewController.receiveSoundId == 0 {
@@ -215,4 +219,10 @@ class ChattoViewController: BaseChatViewController {
         
     }
 
+    #if targetEnvironment(simulator)
+    @objc func pollServer(_ sender: Any) {
+        ApplicationInitializer.accountSession.doUpdates()
+    }
+    #endif
+    
 }

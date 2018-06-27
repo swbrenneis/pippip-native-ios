@@ -10,7 +10,7 @@ import UIKit
 
 class PendingRequestCell: PippipTableViewCell {
 
-    @IBOutlet weak var nicknameLabel: UILabel!
+    @IBOutlet weak var directoryIdLabel: UILabel!
     @IBOutlet weak var publicIdLabel: UILabel!
 
     override func awakeFromNib() {
@@ -26,7 +26,7 @@ class PendingRequestCell: PippipTableViewCell {
 
     override func setLightTheme() {
         
-        nicknameLabel.textColor = PippipTheme.lightTextColor
+        directoryIdLabel.textColor = PippipTheme.lightTextColor
         publicIdLabel.textColor = PippipTheme.lightTextColor
         super.setLightTheme()
         
@@ -34,7 +34,7 @@ class PendingRequestCell: PippipTableViewCell {
     
     override func setMediumTheme() {
         
-        nicknameLabel.textColor = PippipTheme.mediumTextColor
+        directoryIdLabel.textColor = PippipTheme.mediumTextColor
         publicIdLabel.textColor = PippipTheme.mediumTextColor
         super.setMediumTheme()
         
@@ -42,7 +42,7 @@ class PendingRequestCell: PippipTableViewCell {
     
     override func setDarkTheme() {
         
-        nicknameLabel.textColor = PippipTheme.darkTextColor
+        directoryIdLabel.textColor = PippipTheme.darkTextColor
         publicIdLabel.textColor = PippipTheme.darkTextColor
         super.setDarkTheme()
         

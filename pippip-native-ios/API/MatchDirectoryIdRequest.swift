@@ -1,5 +1,5 @@
 //
-//  MatchNicknameRequest.swift
+//  MatchDirectoryIdRequest.swift
 //  pippip-native-ios
 //
 //  Created by Steve Brenneis on 6/2/18.
@@ -9,15 +9,15 @@
 import UIKit
 import ObjectMapper
 
-class MatchNicknameRequest: NSObject, EnclaveRequestProtocol {
+class MatchDirectoryIdRequest: NSObject, EnclaveRequestProtocol {
 
-    var method: String = "MatchNickname"
+    var method: String = "MatchDirectoryId"
     var publicId: String?
-    var nickname: String?
+    var directoryId: String?
     
-    init(publicId: String?, nickname: String?) {
+    init(publicId: String?, directoryId: String?) {
         self.publicId = publicId
-        self.nickname = nickname
+        self.directoryId = directoryId
     }
 
     required init?(map: Map) {
@@ -27,7 +27,7 @@ class MatchNicknameRequest: NSObject, EnclaveRequestProtocol {
     func mapping(map: Map) {
         method <- map["method"]
         publicId <- map["publicId"]
-        nickname <- map["nickname"]
+        directoryId <- map["directoryId"]
     }
 
 }

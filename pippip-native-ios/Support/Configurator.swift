@@ -12,22 +12,22 @@ import RealmSwift
 struct Entity {
     
     var publicId: String
-    var nickname: String?
+    var directoryId: String?
     
     init() {
         publicId = ""
     }
     
-    init(publicId: String, nickname: String?) {
+    init(publicId: String, directoryId: String?) {
         self.publicId = publicId
-        self.nickname = nickname
+        self.directoryId = directoryId
     }
 
 }
 
 class Configurator: NSObject {
 
-    static let currentVersion: Float = 2.0
+    static let currentVersion: Float = 2.1
 
     var whitelist: [Entity] {
         return privateWhitelist
@@ -43,6 +43,7 @@ class Configurator: NSObject {
             let realm = try! Realm()
             try! realm.write {
                 config.useLocalAuth = newValue
+                config.version = Configurator.currentVersion
             }
         }
     }
@@ -56,19 +57,21 @@ class Configurator: NSObject {
             let realm = try! Realm()
             try! realm.write {
                 config.contactPolicy = newValue
+                config.version = Configurator.currentVersion
             }
         }
     }
-    var nickname: String? {
+    var directoryId: String? {
         get {
             let config = getConfig()
-            return config.nickname
+            return config.directoryId
         }
         set {
             let config = getConfig()
             let realm = try! Realm()
             try! realm.write {
-                config.nickname = newValue
+                config.directoryId = newValue
+                config.version = Configurator.currentVersion
             }
         }
     }
@@ -94,9 +97,9 @@ class Configurator: NSObject {
         let count = codec.getLong()
         while whitelist.count < count {
             var entity = Entity()
-            let nickname = codec.getString()
-            if nickname.utf8.count > 0 {
-                entity.nickname = nickname
+            let directoryId = codec.getString()
+            if directoryId.utf8.count > 0 {
+                entity.directoryId = directoryId
             }
             entity.publicId = codec.getString()
             privateWhitelist.append(entity)
@@ -131,7 +134,7 @@ class Configurator: NSObject {
             let codec = CKGCMCodec()
             codec.putLong(Int64(whitelist.count))
             for entity in whitelist {
-                codec.put(entity.nickname ?? "")
+                codec.put(entity.directoryId ?? "")
                 codec.put(entity.publicId)
             }
             let encoded = codec.encrypt(sessionState.contactsKey!, withAuthData: sessionState.authData!)
@@ -140,11 +143,13 @@ class Configurator: NSObject {
             }
             try realm.write {
                 config.whitelist = encoded
+                config.version = Configurator.currentVersion
             }
         }
         else {
             try realm.write {
                 config.whitelist = nil
+                config.version = Configurator.currentVersion
             }
         }
         
@@ -174,6 +179,7 @@ class Configurator: NSObject {
         let realm = try! Realm()
         try! realm.write {
             config.currentContactId = contactId + 1
+            config.version = Configurator.currentVersion
         }
         
         return contactId
@@ -188,6 +194,7 @@ class Configurator: NSObject {
         let realm = try! Realm()
         try! realm.write {
             config.currentMessageId = messageId + 1
+            config.version = Configurator.currentVersion
         }
         
         return messageId

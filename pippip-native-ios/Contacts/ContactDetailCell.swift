@@ -8,22 +8,25 @@
 
 import UIKit
 
-class ContactDetailCell: PippipTableViewCell {
+class ContactDetailCell: PippipTableViewCell, UITextFieldDelegate {
 
-    @IBOutlet weak var displayNameLabel: UILabel!
     @IBOutlet weak var publicIdLabel: UILabel!
     @IBOutlet weak var lastSeenLabel: UILabel!
     @IBOutlet weak var resendRequestButton: UIButton!
     @IBOutlet weak var statusImageView: UIImageView!
     @IBOutlet weak var lastSeenTitle: UILabel!
-
+    @IBOutlet weak var displayNameText: UITextField!
+    @IBOutlet weak var displayNameLabel: UILabel!
+    
     var contactManager = ContactManager()
     var publicId: String!
     var alertPresenter = AlertPresenter()
+    var contact: Contact!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        displayNameText.delegate = self
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -34,10 +37,14 @@ class ContactDetailCell: PippipTableViewCell {
 
     func configure(contact: Contact, expanded: Bool) {
 
+        self.contact = contact
         publicId = contact.publicId
+        displayNameText.text = contact.directoryId
         displayNameLabel.text = contact.displayName
         statusImageView.image = UIImage(named: contact.status)
         if expanded {
+            displayNameText.isHidden = false
+            displayNameLabel.isHidden = true
             publicIdLabel.text = contact.publicId
             setLastSeen(timestamp: contact.timestamp)
             lastSeenLabel.isHidden = false
@@ -45,6 +52,8 @@ class ContactDetailCell: PippipTableViewCell {
             resendRequestButton.isHidden = contact.status != "pending"
         }
         else {
+            displayNameText.isHidden = true
+            displayNameLabel.isHidden = false
             publicIdLabel.isHidden = true
             lastSeenLabel.isHidden = true
             resendRequestButton.isHidden = true
@@ -71,6 +80,7 @@ class ContactDetailCell: PippipTableViewCell {
         super.setDarkTheme()
 
         displayNameLabel.textColor = PippipTheme.darkTextColor
+        displayNameText.textColor = PippipTheme.darkTextColor
         publicIdLabel.textColor = PippipTheme.darkTextColor
         lastSeenLabel.textColor = PippipTheme.darkTextColor
         resendRequestButton.setTitleColor(PippipTheme.buttonDarkTextColor, for: .normal)
@@ -80,8 +90,8 @@ class ContactDetailCell: PippipTableViewCell {
     override func setMediumTheme() {
         super.setMediumTheme()
         
-
         displayNameLabel.textColor = PippipTheme.mediumTextColor
+        displayNameText.textColor = PippipTheme.mediumTextColor
         publicIdLabel.textColor = PippipTheme.mediumTextColor
         lastSeenLabel.textColor = PippipTheme.mediumTextColor
         resendRequestButton.setTitleColor(PippipTheme.buttonMediumTextColor, for: .normal)
@@ -91,8 +101,8 @@ class ContactDetailCell: PippipTableViewCell {
     override func setLightTheme() {
         super.setLightTheme()
         
-
         displayNameLabel.textColor = PippipTheme.lightTextColor
+        displayNameText.textColor = PippipTheme.lightTextColor
         publicIdLabel.textColor = PippipTheme.lightTextColor
         lastSeenLabel.textColor = PippipTheme.lightTextColor
         resendRequestButton.setTitleColor(PippipTheme.buttonLightTextColor, for: .normal)
@@ -101,8 +111,22 @@ class ContactDetailCell: PippipTableViewCell {
     
     @IBAction func resendRequest(_ sender: Any) {
 
-        contactManager.requestContact(publicId: publicId, nickname: nil, retry: true)
+        contactManager.requestContact(publicId: publicId, directoryId: nil, retry: true)
         alertPresenter.infoAlert(title: "Contact Request Sent", message: "The request was sent to this contact")
+
+    }
+
+    // Text field delegate
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+
+        if textField.text != contact.directoryId {
+            let contactManager = ContactManager()
+            contactManager.setDirectoryId(contactId: contact.contactId, directoryId: textField.text)
+            contact.directoryId = textField.text
+            displayNameLabel.text = contact.displayName
+        }
+        textField.resignFirstResponder()
+        return true
 
     }
 
