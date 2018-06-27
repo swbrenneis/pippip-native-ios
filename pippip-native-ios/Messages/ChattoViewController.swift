@@ -99,14 +99,14 @@ class ChattoViewController: BaseChatViewController {
     
     override func createChatInputView() -> UIView {
 
-        let chatInputView = ChatInputBar.loadNib()
+        let chatInputBar = ChatInputBar.loadNib()
         var appearance = ChatInputBarAppearance()
         appearance.sendButtonAppearance.title = NSLocalizedString("Send", comment: "")
         appearance.textInputAppearance.placeholderText = NSLocalizedString("Type a message", comment: "")
         appearance.textInputAppearance.font = UIFont.systemFont(ofSize: 14.0)
-        self.chatInputPresenter = BasicChatInputBarPresenter(chatInputBar: chatInputView, chatInputItems: self.createChatInputItems(), chatInputBarAppearance: appearance)
-        chatInputView.maxCharactersCount = 1000
-        return chatInputView
+        self.chatInputPresenter = BasicChatInputBarPresenter(chatInputBar: chatInputBar, chatInputItems: self.createChatInputItems(), chatInputBarAppearance: appearance)
+        chatInputBar.maxCharactersCount = 1000
+        return chatInputBar
 
     }
 
@@ -150,11 +150,11 @@ class ChattoViewController: BaseChatViewController {
     // Notifications
     
     @objc func appSuspended(_ notification: Notification) {
-        
-/*        DispatchQueue.main.async {
-            self.navigationController?.popViewController(animated: true)
-        } */
-        
+
+        DispatchQueue.main.async {
+            self.view.endEditing(true)
+        }
+
     }
     
     @objc func contactSelected(_ notification: Notification) {
@@ -169,13 +169,6 @@ class ChattoViewController: BaseChatViewController {
         }
         
     }
-    
-    @objc func retryMessage(_ notification: Notification) {
-
-        guard let textMessage = notification.object as? TextMessage else { return }
-        dataSource?.retryTextMessage(textMessage)
-
-    }
 
     @objc func localAuthComplete(_ notification: Notification) {
         
@@ -185,12 +178,23 @@ class ChattoViewController: BaseChatViewController {
         
     }
     
+    @objc func retryMessage(_ notification: Notification) {
+        
+        guard let textMessage = notification.object as? TextMessage else { return }
+        dataSource?.retryTextMessage(textMessage)
+        
+    }
+    
     // UI actions
     @objc func cancelEdit(_ item: Any) {
         
         var items = [UIBarButtonItem]()
         let editItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editMessages(_:)))
         items.append(editItem)
+        #if targetEnvironment(simulator)
+        let pollButton = UIBarButtonItem(title: "Poll", style: .plain, target: self, action: #selector(pollServer(_ :)))
+        items.append(pollButton)
+        #endif
         self.navigationItem.rightBarButtonItems = items
         
     }

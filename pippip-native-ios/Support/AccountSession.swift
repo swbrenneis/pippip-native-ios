@@ -12,7 +12,7 @@ import RealmSwift
 
 class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
-    static let production = false
+    static let production = true
     static var accountName: String?
     
     @objc var deviceToken: Data?

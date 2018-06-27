@@ -13,7 +13,6 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AuthView" customModule="pippip_native_ios" customModuleProvider="target">
             <connections>
-                <outlet property="authButton" destination="TF5-d6-lAQ" id="a4J-5t-T0G"/>
                 <outlet property="contentView" destination="iN0-l3-epB" id="ZGs-mQ-8B5"/>
                 <outlet property="logoImage" destination="nUB-J6-IOn" id="LtC-R3-3EM"/>
                 <outlet property="logoLeading" destination="zjD-m5-zQS" id="tM9-j3-hcq"/>
@@ -40,16 +39,8 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TF5-d6-lAQ">
-                    <rect key="frame" x="153.5" y="314.5" width="68" height="38"/>
-                    <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
-                    <state key="normal" title="Sign In"/>
-                    <connections>
-                        <action selector="authSelected:" destination="-1" eventType="touchUpInside" id="8PO-jT-9M3"/>
-                    </connections>
-                </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Version 1.0.4 2018062301" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wDk-ZI-Lt8">
-                    <rect key="frame" x="120.5" y="575" width="136" height="13.5"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Version 1.0.4 2018062701" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wDk-ZI-Lt8">
+                    <rect key="frame" x="120.5" y="575" width="135.5" height="13.5"/>
                     <fontDescription key="fontDescription" type="system" pointSize="11"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
@@ -57,11 +48,9 @@
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="TF5-d6-lAQ" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="6F3-sX-32y"/>
                 <constraint firstItem="1yC-of-Msj" firstAttribute="top" secondItem="wDk-ZI-Lt8" secondAttribute="bottom" constant="15" id="Cer-AC-2Cl"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="nUB-J6-IOn" secondAttribute="trailing" constant="55" id="DKi-o7-Z4I"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="1yC-of-Msj" secondAttribute="bottom" constant="50" id="QWJ-gN-yzj"/>
-                <constraint firstItem="TF5-d6-lAQ" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="ihf-6Q-twR"/>
                 <constraint firstItem="wDk-ZI-Lt8" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="qqs-Zv-cAM"/>
                 <constraint firstItem="1yC-of-Msj" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="vgZ-YJ-Kdi"/>
                 <constraint firstItem="nUB-J6-IOn" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="50" id="wti-2C-K0P"/>

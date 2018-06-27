@@ -10,23 +10,16 @@ import UIKit
 import PMAlertController
 import ChameleonFramework
 
-class AuthView: UIView, AuthenticationDelegateProtocol {
+class AuthView: UIView {
 
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var logoImage: UIImageView!
     @IBOutlet weak var versionLabel: UILabel!
-    @IBOutlet weak var authButton: UIButton!
     @IBOutlet weak var logoTrailing: NSLayoutConstraint!
     @IBOutlet weak var logoLeading: NSLayoutConstraint!
     @IBOutlet weak var logoTop: NSLayoutConstraint!
     @IBOutlet weak var secommLabel: UILabel!
     
-    var accountName = AccountSession.accountName
-    var viewController: UIViewController!
-    var authenticator = Authenticator()
-    var newAccountCreator = NewAccountCreator()
-    var alertPresenter = AlertPresenter()
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
@@ -43,11 +36,9 @@ class AuthView: UIView, AuthenticationDelegateProtocol {
         addSubview(contentView)
         contentView.frame = self.bounds
         contentView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        authenticator.delegate = self
-        newAccountCreator.delegate = self
 
     }
-
+/*
     @IBAction func authSelected(_ sender: Any) {
         
         let alert = PMAlertController(title: accountName!,
@@ -85,7 +76,6 @@ class AuthView: UIView, AuthenticationDelegateProtocol {
         authenticator.authenticate(accountName: self.accountName!, passphrase: passphrase)
         
     }
-    
     // This is just used to dismiss the HUD
     @objc func presentAlert(_ notification: Notification) {
 
@@ -128,5 +118,5 @@ class AuthView: UIView, AuthenticationDelegateProtocol {
     func loggedOut() {
         // Nothing to do.
     }
-    
+*/
 }

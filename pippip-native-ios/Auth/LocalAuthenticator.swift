@@ -30,8 +30,8 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
                 NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                        name: Notifications.AppSuspended, object: nil)
                 // Used to dismiss the HUD
-                NotificationCenter.default.addObserver(authView, selector: #selector(AuthView.presentAlert(_:)),
-                                                       name: Notifications.PresentAlert, object: nil)
+/*                NotificationCenter.default.addObserver(authView, selector: #selector(AuthView.presentAlert(_:)),
+                                                       name: Notifications.PresentAlert, object: nil) */
             }
             else {
                 NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
@@ -62,14 +62,14 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
 
         let bounds = view.bounds;
         authView = AuthView(frame: bounds)
-        authView.viewController = viewController
+        //authView.viewController = viewController
         let logoWidth = bounds.width * 0.7
         authView.logoLeading.constant = (bounds.width - logoWidth) / 2
         authView.logoTrailing.constant = (bounds.width - logoWidth) / 2
         let backgroundColor = UIColor.flatForestGreen.lighten(byPercentage: 0.15)!
         authView.contentView.backgroundColor = backgroundColor
-        authView.authButton.setTitleColor(ContrastColorOf(backgroundColor, returnFlat: false), for: .normal)
-        authView.authButton.backgroundColor = .clear
+        //authView.authButton.setTitleColor(ContrastColorOf(backgroundColor, returnFlat: false), for: .normal)
+        //authView.authButton.backgroundColor = .clear
         authView.versionLabel.textColor = UIColor.flatSand
         authView.secommLabel.textColor = UIColor.flatSand
 
@@ -130,9 +130,11 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
                     }
                 }
             }
+                /*
             else {
                 self.authView.authButton.isHidden = false
             }
+ */
         }
         
     }
@@ -141,7 +143,7 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
         
         suspended = true
         DispatchQueue.main.async {
-            self.authView.authButton.isHidden = true
+            //self.authView.authButton.isHidden = true
             self.visible = true
         }
         
@@ -161,7 +163,7 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
 
         AsyncNotifier.notify(name: Notifications.SessionEnded)
         DispatchQueue.main.async {
-            self.authView.authButton.isHidden = false
+            //self.authView.authButton.isHidden = false
             self.viewController.navigationController?.performSegue(withIdentifier: "AuthViewSegue", sender: nil)
             self.visible = false
         }
