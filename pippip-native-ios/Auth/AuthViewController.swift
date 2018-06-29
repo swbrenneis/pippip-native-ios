@@ -45,7 +45,7 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         authButton.backgroundColor = .clear
         quickstartButton.setTitleColor(ContrastColorOf(backgroundColor, returnFlat: false), for: .normal)
         quickstartButton.backgroundColor = .clear
-        quickstartButton.isHidden = true
+        // quickstartButton.isHidden = true
         versionLabel.textColor = UIColor.flatSand
         secommLabel.textColor = UIColor.flatSand
 
@@ -79,6 +79,14 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    @IBAction func quickstartPressed(_ sender: Any) {
+
+        let url = "https://www.pippip.io"
+        guard let link = URL(string: url) else { return }
+        UIApplication.shared.open(link, options: [:], completionHandler: nil)
+
     }
     
     func doAuthenticateAlerts() {

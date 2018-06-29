@@ -642,7 +642,7 @@
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                                 <state key="normal" title="Help Me Get Started"/>
                                 <connections>
-                                    <segue destination="9ak-Ht-JaH" kind="presentation" id="lnC-TC-Sd1"/>
+                                    <action selector="quickstartPressed:" destination="Qgm-Jj-c6i" eventType="touchUpInside" id="aoI-go-dHD"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -677,14 +677,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AqU-Su-8iz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1007" y="-1436"/>
-        </scene>
-        <!--QSAuthView-->
-        <scene sceneID="kyX-qo-XAb">
-            <objects>
-                <viewControllerPlaceholder storyboardName="QuickStart" referencedIdentifier="QSAuthView" id="9ak-Ht-JaH" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Xa1-4j-HNg" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1686" y="-1322"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="t6p-yp-DOv">
