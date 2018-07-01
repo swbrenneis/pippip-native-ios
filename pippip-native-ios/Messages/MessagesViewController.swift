@@ -59,6 +59,7 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         let sidebarImages = [ UIImage(named: "contacts")!, UIImage(named: "compose")!,
                               UIImage(named: "settings")!, UIImage(named: "exit")! ]
         sidebar = FrostedSidebar(itemImages: sidebarImages, colors: nil, selectionStyle: .single)
+        sidebar.showFromRight = true
         contactsView = self.storyboard?.instantiateViewController(withIdentifier: "ContactsViewController") as! ContactsViewController
         settingsView = self.storyboard?.instantiateViewController(withIdentifier: "SettingsTableViewController") as! SettingsTableViewController
         sidebar.actionForIndex[0] = {

@@ -80,7 +80,7 @@ class SettingsTableViewController: UITableViewController {
     @objc func accountDeleted(_ notification: Notification) {
 
         DispatchQueue.main.async {
-            self.navigationController?.popViewController(animated: true)
+            self.navigationController?.performSegue(withIdentifier: "AuthViewSegue", sender: nil)
         }
 
     }

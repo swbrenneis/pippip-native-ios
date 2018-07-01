@@ -22,6 +22,7 @@ class ChattoViewController: BaseChatViewController {
     var messageManager = MessageManager()
     var alertPresenter = AlertPresenter()
     var localAuth: LocalAuthenticator?
+    var chatInputBar: ChatInputBar!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -99,13 +100,14 @@ class ChattoViewController: BaseChatViewController {
     
     override func createChatInputView() -> UIView {
 
-        let chatInputBar = ChatInputBar.loadNib()
+        chatInputBar = ChatInputBar.loadNib()
         var appearance = ChatInputBarAppearance()
         appearance.sendButtonAppearance.title = NSLocalizedString("Send", comment: "")
         appearance.textInputAppearance.placeholderText = NSLocalizedString("Type a message", comment: "")
         appearance.textInputAppearance.font = UIFont.systemFont(ofSize: 14.0)
         self.chatInputPresenter = BasicChatInputBarPresenter(chatInputBar: chatInputBar, chatInputItems: self.createChatInputItems(), chatInputBarAppearance: appearance)
         chatInputBar.maxCharactersCount = 1000
+        chatInputBar.textView.returnKeyType = .send
         return chatInputBar
 
     }
@@ -127,6 +129,11 @@ class ChattoViewController: BaseChatViewController {
                     textMessage.timestamp = Int64(Date().timeIntervalSince1970 * 1000)
                     self?.messageManager.sendMessage(textMessage: textMessage, retry: false)
                     self?.dataSource?.addTextMessage(textMessage)
+                    DispatchQueue.main.async {
+                        self?.chatInputBar.textView.resignFirstResponder()
+                        self?.chatInputBar.textView.keyboardType = .default
+                        self?.chatInputBar.textView.becomeFirstResponder()
+                    }
                 }
                 catch {
                     // TODO: Show alert
@@ -229,4 +236,8 @@ class ChattoViewController: BaseChatViewController {
     }
     #endif
     
+}
+
+extension ChattoViewController: UITextViewDelegate {
+
 }

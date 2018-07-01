@@ -45,7 +45,7 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         authButton.backgroundColor = .clear
         quickstartButton.setTitleColor(ContrastColorOf(backgroundColor, returnFlat: false), for: .normal)
         quickstartButton.backgroundColor = .clear
-        // quickstartButton.isHidden = true
+        quickstartButton.isHidden = false
         versionLabel.textColor = UIColor.flatSand
         secommLabel.textColor = UIColor.flatSand
 
