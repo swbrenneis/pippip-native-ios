@@ -17,8 +17,10 @@ class LocalAuthCellItem: MultiCellItemProtocol {
 }
 
 class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
+    
     @IBOutlet weak var localAuthSwitch: UISwitch!
-
+    @IBOutlet weak var localAuthLabel: UILabel!
+    
     static var cellItem: MultiCellItemProtocol = LocalAuthCellItem()
     var viewController: UITableViewController?
     var config = Configurator()
@@ -28,7 +30,7 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
         // Initialization code
         
         localAuthSwitch.setOn(config.useLocalAuth, animated: true)
-
+    
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -42,4 +44,5 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
         config.useLocalAuth = sender.isOn
 
     }
+
 }

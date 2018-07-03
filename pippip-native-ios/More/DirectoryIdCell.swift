@@ -90,7 +90,7 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol {
             }
         }
         else {
-            alertPresenter.errorAlert(title: "Directory Id Error",
+            alertPresenter.errorAlert(title: "Directory ID Error",
                                       message: "This directory ID is in use, please choose another")
         }
     }

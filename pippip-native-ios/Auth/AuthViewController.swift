@@ -33,6 +33,7 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         SecommAPI.initializeAPI()
 
         authenticator.delegate = self
+        newAccountCreator.delegate = self
 
         // Do any additional setup after loading the view.
         let bounds = self.view.bounds
