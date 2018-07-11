@@ -46,6 +46,7 @@ class ContactDetailCell: PippipTableViewCell, UITextFieldDelegate {
             displayNameText.isHidden = false
             displayNameLabel.isHidden = true
             publicIdLabel.text = contact.publicId
+            publicIdLabel.isHidden = false
             setLastSeen(timestamp: contact.timestamp)
             lastSeenLabel.isHidden = false
             lastSeenTitle.isHidden = false

@@ -82,14 +82,14 @@ class WhitelistViewController: UIViewController {
         if let nick = directoryId {
             let myNick = config.directoryId
             if myNick == nick {
-                alertPresenter.errorAlert(title: "Add Permitted Contact Error", message: "You can't add yourself")
+                alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "You can't add yourself")
                 return true
             }
         }
         if let puid = publicId {
             let myId = sessionState.publicId
             if myId == puid {
-                alertPresenter.errorAlert(title: "Add Permitted Contact Error", message: "You can't add yourself")
+                alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "You can't add yourself")
                 return true
             }
         }
@@ -102,7 +102,7 @@ class WhitelistViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
                                                name: Notifications.DirectoryIdMatched, object: nil)
         
-        let alert = PMAlertController(title: "Add A New Permitted Contact",
+        let alert = PMAlertController(title: "Add A New Permitted ID",
                                       description: "Enter a directory ID or public ID",
                                       image: nil,
                                       style: PMAlertControllerStyle.alert)
@@ -116,7 +116,7 @@ class WhitelistViewController: UIViewController {
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
         })
-        alert.addAction(PMAlertAction(title: "Add Permitted Contact",
+        alert.addAction(PMAlertAction(title: "Add Permitted ID",
                                       style: .default, action: { () in
                                         self.directoryId = alert.textFields[0].text ?? ""
                                         self.publicId = alert.textFields[1].text ?? ""
@@ -126,8 +126,8 @@ class WhitelistViewController: UIViewController {
                                             }
                                             else if self.publicId.utf8.count > 0 {
                                                 if !self.contactManager.addWhitelistEntry(self.publicId) {
-                                                    self.alertPresenter.errorAlert(title: "Add Permitted Contact Error",
-                                                                                   message: "You already added that contact")
+                                                    self.alertPresenter.errorAlert(title: "Add Permitted ID Error",
+                                                                                   message: "You already added that ID")
                                                 }
                                             }
                                         }
@@ -166,8 +166,8 @@ class WhitelistViewController: UIViewController {
             DispatchQueue.main.async {
                 self.tableView.insertRows(at: [IndexPath(row: self.config.whitelist.count-1, section: 0)],
                                           with: .left)
-                self.alertPresenter.successAlert(title: "Permitted Contact Added",
-                                                 message: "This ID has been added to your permitted contacts list")
+//                self.alertPresenter.successAlert(title: "Permitted ID Added",
+//                                                 message: "This ID has been added to your permitted contacts list")
             }
         }
         catch {
@@ -183,8 +183,8 @@ class WhitelistViewController: UIViewController {
             assert(row != NSNotFound)
             DispatchQueue.main.async {
                 self.tableView.deleteRows(at: [IndexPath(row: row, section: 0)], with: .top)
-                self.alertPresenter.successAlert(title: "Permitted Contact Deleted",
-                                                 message: "This ID has been deleted from your permitted contacts list")
+//                self.alertPresenter.successAlert(title: "Permitted ID Deleted",
+//                                                 message: "This ID has been deleted from your permitted contacts list")
             }
         }
         catch {
@@ -200,11 +200,11 @@ class WhitelistViewController: UIViewController {
         if response.result == "found" {
             publicId = response.publicId!
             if !contactManager.addWhitelistEntry(self.publicId) {
-                alertPresenter.errorAlert(title: "Add Permitted Contact Error", message: "You already added that ID")
+                alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "You already added that ID")
             }
         }
         else {
-            alertPresenter.errorAlert(title: "Add Permitted Contact Error", message: "That directory ID doesn't exist")
+            alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "That directory ID doesn't exist")
         }
 
     }

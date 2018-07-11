@@ -173,7 +173,7 @@ class MessageManager: NSObject {
         let contact = contactManager.getContact(contactId: textMessage.contactId)!
         let request = SendMessageRequest(message: textMessage.encodeForServer(publicId: contact.publicId))
         let delegate = SendMessageDelegate(request: request, textMessage: textMessage)
-        let enclaveTask = EnclaveTask<SendMessageRequest ,SendMessageResponse>(delegate: delegate)
+        let enclaveTask = EnclaveTask<SendMessageRequest, SendMessageResponse>(delegate: delegate)
         enclaveTask.errorTitle = "Message Error"
         enclaveTask.sendRequest(request)
 

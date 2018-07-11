@@ -1049,7 +1049,6 @@
 				5592A5821F8BBB4400F08BF5 /* Resources */,
 				5500D1662073BA480016AC71 /* Embed Frameworks */,
 				CB296341ED6C8FA56D2F7BEE /* [CP] Embed Pods Frameworks */,
-				EA2CDD4F67C88389BA1BD743 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1068,8 +1067,6 @@
 				5592A59B1F8BBB4500F08BF5 /* Sources */,
 				5592A59C1F8BBB4500F08BF5 /* Frameworks */,
 				5592A59D1F8BBB4500F08BF5 /* Resources */,
-				EF12D73AFC15452B9FE0D031 /* [CP] Embed Pods Frameworks */,
-				22809B4FCAAE772CD9C8E2AF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1159,21 +1156,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		22809B4FCAAE772CD9C8E2AF /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pippip-native-iosTests/Pods-pippip-native-iosTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		4E25082DCA2BF6A347432C71 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1234,36 +1216,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pippip-native-ios/Pods-pippip-native-ios-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EA2CDD4F67C88389BA1BD743 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pippip-native-ios/Pods-pippip-native-ios-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EF12D73AFC15452B9FE0D031 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pippip-native-iosTests/Pods-pippip-native-iosTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F1111D78906ABE61505842ED /* [CP] Check Pods Manifest.lock */ = {

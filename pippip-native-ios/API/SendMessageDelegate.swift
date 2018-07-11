@@ -14,6 +14,7 @@ class SendMessageDelegate: EnclaveDelegate<SendMessageRequest, SendMessageRespon
     static var sendSoundId: SystemSoundID = 0
     var textMessage: TextMessage
     var messageManager = MessageManager()
+    var contactManager = ContactManager()
 
     init(request: SendMessageRequest, textMessage: TextMessage) {
         
@@ -35,6 +36,10 @@ class SendMessageDelegate: EnclaveDelegate<SendMessageRequest, SendMessageRespon
     func sendComplete(response: SendMessageResponse) {
         
         textMessage.timestamp = Int64(response.timestamp!)
+        if let contact = contactManager.getContact(contactId: textMessage.contactId) {
+            contact.timestamp = Int64(response.timestamp!) / 1000
+            try! contactManager.updateContact(contact)
+        }
         textMessage.acknowledged = true
         messageManager.updateMessage(textMessage)
         DispatchQueue.main.async {

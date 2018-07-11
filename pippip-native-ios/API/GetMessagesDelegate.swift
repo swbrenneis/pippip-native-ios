@@ -30,6 +30,8 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
                 if contact.status == "accepted" {
                     let textMessage = TextMessage(serverMessage: message)
                     textMessages.append(textMessage)
+                    contact.timestamp = textMessage.timestamp / 1000
+                    try! contactManager.updateContact(contact)
                 }
             }
             else {
