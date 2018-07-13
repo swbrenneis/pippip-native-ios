@@ -36,7 +36,7 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
             else {
                 NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
                 NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
-                NotificationCenter.default.removeObserver(authView, name: Notifications.PresentAlert, object: nil)
+                // NotificationCenter.default.removeObserver(authView, name: Notifications.PresentAlert, object: nil)
             }
         }
     }
@@ -103,7 +103,7 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
                                                                                 object: nil)
                                             }
                                             else {
-                                                self.authenticator.logout()
+                                                //self.authenticator.logout()
                                                 guard let theError = error else { return }
                                                 print("Local authentication failed: \(theError)")
                                             }
