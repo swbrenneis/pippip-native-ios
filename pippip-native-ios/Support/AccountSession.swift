@@ -186,7 +186,9 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
-        if sessionActive && !suspended {
+        let badgeCount = UIApplication.shared.applicationIconBadgeNumber
+        print("Received notification, badge count \(badgeCount)")
+        if sessionActive {
             doUpdates()
         }
         completionHandler(.badge)

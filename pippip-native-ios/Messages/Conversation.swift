@@ -11,7 +11,8 @@ import UIKit
 class Conversation: NSObject {
 
     var contact: Contact
-    var messageManager: MessageManager
+    var messageManager = MessageManager()
+    let cacheSize = 50
     // Sorted list, oldest first
     private var messageList = SortedArray<TextMessage>(areInIncreasingOrder: { id1, id2 in
         if id1.timestamp < id2.timestamp {
@@ -22,7 +23,6 @@ class Conversation: NSObject {
         }
     })
     private var messageMap = [Int64: TextMessage]()
-    private var timestampSet = Set<Int64>()
     private var pos: Int = Int.max
 
     var messageCount: Int {
@@ -32,7 +32,6 @@ class Conversation: NSObject {
     init(_ contact: Contact) {
 
         self.contact = contact
-        messageManager = MessageManager()
 
         super.init()
 
@@ -60,15 +59,13 @@ class Conversation: NSObject {
 
         messageList.removeAll()
         messageMap.removeAll()
-        timestampSet.removeAll()
         messageManager.clearMessages(contactId: contact.contactId)
 
     }
 
-    func deleteMessage(_ messageId: Int64) {
+    func deleteMessage(messageId: Int64) {
 
         if let message = messageMap.removeValue(forKey: messageId) {
-            timestampSet.remove(message.timestamp)
             if let index = messageList.index(of: message) {
                 messageList.remove(at: index)
             }
@@ -106,14 +103,19 @@ class Conversation: NSObject {
 
     }
 
-    // Lazy loading of message list.
     func getMessages(pos: Int, count: Int) -> [TextMessage] {
 
+        // Lazy loading of message list.
         if pos < self.pos {
-            // Returns a sorted list. Return maximum of messages remaining in database or count.
+            if self.pos < messageCount {
+                self.pos -= cacheSize
+            }
+            else {
+                self.pos = messageCount - cacheSize
+            }
+            self.pos = max(0, self.pos)
             let messages = messageManager.getTextMessages(contactId: contact.contactId,
-                                                          pos: pos, count: count)
-            self.pos = pos
+                                                          pos: self.pos, count: cacheSize)
             if !messages.isEmpty {
                 for message in messages {
                     if messageMap[message.messageId] == nil {
@@ -124,12 +126,17 @@ class Conversation: NSObject {
             }
         }
 
-        let actualPos = min(pos, pos - self.pos)
+        // pos is the absolute position in the conversation.
+        // listPos is the position in the message list
+        var listPos = pos
+        if self.pos > 0 {
+            listPos -= self.pos
+        }
         let actualCount = min(count, messageList.count)
-        assert(actualPos + actualCount <= messageList.count)
+        assert(listPos + actualCount <= messageList.count)
         var subrange = [TextMessage]()
         for index in 0..<actualCount {
-            subrange.append(messageList[index + actualPos])
+            subrange.append(messageList[index + listPos])
         }
         return subrange
         
@@ -137,7 +144,6 @@ class Conversation: NSObject {
 
     /*
      * Returns a temporary timestamp for sorting purposes
-     */
     func getTimestamp() -> Int64 {
 
         var timestamp = Int64(Date().timeIntervalSince1970 * 1000)
@@ -147,6 +153,7 @@ class Conversation: NSObject {
         return timestamp
 
     }
+     */
 
     func markMessagesRead(_ messages: [Message]) {
 

@@ -11,6 +11,7 @@ import UIKit
 class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPendingRequestsResponse> {
 
     var contactManager = ContactManager()
+    var alertPresenter = AlertPresenter()
 
     override init(request: GetPendingRequests) {
         super.init(request: request)
@@ -25,6 +26,8 @@ class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPending
         print("\(response.requests!.count) pending requests returned")
         if response.requests!.count > 0 {
             contactManager.addRequests(response.requests!)
+            alertPresenter.infoAlert(title: "New Contact Requests",
+                                     message: "You have \(response.requests!.count) new contact requests")
         }
         else {
             contactManager.clearRequests()
