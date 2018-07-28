@@ -15,6 +15,7 @@ class SetDirectoryIdDelegate: EnclaveDelegate<SetDirectoryIdRequest, SetDirector
 
         requestComplete = self.setComplete
         requestError = self.setError
+        responseError = self.setError
 
     }
 

@@ -21,7 +21,8 @@ class AcknowledgeMessagesDelegate: EnclaveDelegate<AcknowledgeMessagesRequest, A
 
         requestComplete = self.ackComplete
         requestError = self.ackError
-        
+        responseError = self.ackError
+
     }
 
     func ackComplete(response: AcknowledgeMessagesResponse) {

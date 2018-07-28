@@ -612,16 +612,24 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pippip3" translatesAutoresizingMaskIntoConstraints="NO" id="5iF-rd-no8">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pippip4" translatesAutoresizingMaskIntoConstraints="NO" id="5iF-rd-no8">
                                 <rect key="frame" x="55" y="70" width="265" height="199"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="5iF-rd-no8" secondAttribute="height" multiplier="1024:768" id="sRZ-Hf-c0r"/>
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Vy-hB-X1h">
-                                <rect key="frame" x="86" y="314.5" width="203" height="38"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
+                                <rect key="frame" x="70" y="308.5" width="235" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="tym-xY-cB8"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="19"/>
                                 <state key="normal" title="Create New Account"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="7"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="authSelected:" destination="Qgm-Jj-c6i" eventType="touchUpInside" id="zxC-jY-ae9"/>
                                 </connections>
@@ -639,7 +647,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2l8-P8-qWa">
-                                <rect key="frame" x="115.5" y="448.5" width="144" height="30"/>
+                                <rect key="frame" x="115.5" y="454.5" width="144" height="30"/>
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                                 <state key="normal" title="Help Me Get Started"/>
                                 <connections>
@@ -652,9 +660,10 @@
                             <constraint firstItem="2l8-P8-qWa" firstAttribute="top" secondItem="1Vy-hB-X1h" secondAttribute="bottom" constant="96" id="3Vs-OM-DSZ"/>
                             <constraint firstItem="gii-MB-YQ7" firstAttribute="trailing" secondItem="5iF-rd-no8" secondAttribute="trailing" constant="55" id="6w0-zN-EzI"/>
                             <constraint firstItem="nDU-R8-jrQ" firstAttribute="top" secondItem="AtH-2U-osO" secondAttribute="bottom" constant="15" id="BDQ-NT-Diu"/>
+                            <constraint firstItem="gii-MB-YQ7" firstAttribute="trailing" secondItem="1Vy-hB-X1h" secondAttribute="trailing" constant="70" id="Ix0-BH-rOh"/>
                             <constraint firstItem="5iF-rd-no8" firstAttribute="top" secondItem="gii-MB-YQ7" secondAttribute="top" constant="50" id="MCk-gO-HVJ"/>
-                            <constraint firstItem="1Vy-hB-X1h" firstAttribute="centerX" secondItem="kNK-an-MJm" secondAttribute="centerX" id="NaT-V8-cwJ"/>
                             <constraint firstItem="gii-MB-YQ7" firstAttribute="bottom" secondItem="nDU-R8-jrQ" secondAttribute="bottom" constant="50" id="UMO-eU-Njw"/>
+                            <constraint firstItem="1Vy-hB-X1h" firstAttribute="leading" secondItem="gii-MB-YQ7" secondAttribute="leading" constant="70" id="m4k-wG-DJ1"/>
                             <constraint firstItem="1Vy-hB-X1h" firstAttribute="centerY" secondItem="kNK-an-MJm" secondAttribute="centerY" id="qsf-78-TDq"/>
                             <constraint firstItem="5iF-rd-no8" firstAttribute="leading" secondItem="gii-MB-YQ7" secondAttribute="leading" constant="55" id="tkw-bw-LCY"/>
                             <constraint firstItem="2l8-P8-qWa" firstAttribute="centerX" secondItem="kNK-an-MJm" secondAttribute="centerX" id="uiA-P1-IJR"/>
@@ -703,6 +712,6 @@
     <resources>
         <image name="avatar-user-small" width="60" height="60"/>
         <image name="bluedot" width="50" height="47"/>
-        <image name="pippip3" width="1024" height="760"/>
+        <image name="pippip4" width="1024" height="768"/>
     </resources>
 </document>

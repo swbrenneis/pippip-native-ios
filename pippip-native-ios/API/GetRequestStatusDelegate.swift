@@ -21,8 +21,9 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
 
         super.init(request: request)
 
-        requestComplete = getComplete
-        requestError = getError
+        requestComplete = self.getComplete
+        requestError = self.getError
+        responseError = self.getError
 
     }
 

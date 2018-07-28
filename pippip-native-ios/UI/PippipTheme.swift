@@ -34,7 +34,7 @@ class PippipTheme: NSObject {
     static func setTheme() {
 
         let colorScheme = ColorSchemeOf(.complementary, color: UIColor.flatCoffee, isFlatScheme: false)
-        viewColor = colorScheme[4].lighten(byPercentage: 0.1)!
+        viewColor = colorScheme[4].lighten(byPercentage: 0.15)!
         navBarColor = viewColor.lighten(byPercentage: 0.1)!
         navBarTint = ContrastColorOf(navBarColor, returnFlat: false)
         darkCellColor = UIColor.flatForestGreen.lighten(byPercentage: 0.1)!

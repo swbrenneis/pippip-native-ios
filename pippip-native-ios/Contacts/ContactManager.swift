@@ -383,10 +383,10 @@ class ContactManager: NSObject {
         var updates = [Contact]()
 
         for serverContact in serverContacts {
-            if serverContact.status == "accepted" {
-                if let contact = ContactManager.contactMap[serverContact.publicId!] {
-                    contact.status = serverContact.status!
-                    contact.timestamp = Int64(serverContact.timestamp!)
+            if let contact = ContactManager.contactMap[serverContact.publicId!] {
+                contact.status = serverContact.status!
+                contact.timestamp = Int64(serverContact.timestamp!)
+                if contact.status == "accepted" {
                     contact.authData = Data(base64Encoded: serverContact.authData!)
                     contact.nonce = Data(base64Encoded: serverContact.nonce!)
                     var messageKeys = [Data]()
@@ -394,12 +394,12 @@ class ContactManager: NSObject {
                         messageKeys.append(Data(base64Encoded: key)!)
                     }
                     contact.messageKeys = messageKeys
-                    updates.append(contact)
                 }
-                else {
-                    print("Updated contact not found")
-                    // alertPresenter.errorAlert(title: "Contact Error", message: "Updated contact not found")
-                }
+                updates.append(contact)
+            }
+            else {
+                print("Updated contact not found")
+                // alertPresenter.errorAlert(title: "Contact Error", message: "Updated contact not found")
             }
         }
         try updateContacts(updates)

@@ -22,6 +22,7 @@ class UpdateWhitelistDelegate: EnclaveDelegate<UpdateWhitelistRequest, UpdateWhi
 
         requestComplete = self.updateComplete
         requestError = self.updateError
+        responseError = self.updateError
 
     }
 

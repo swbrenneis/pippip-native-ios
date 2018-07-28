@@ -59,11 +59,13 @@ class Contact: NSObject {
         currentIndex = 0
         currentSequence = 1
         timestamp = Int64(serverContact.timestamp!)
-        authData = Data(base64Encoded: serverContact.authData!)
-        nonce = Data(base64Encoded: serverContact.nonce!)
-        messageKeys = [Data]()
-        for key in serverContact.messageKeys! {
-            messageKeys?.append(Data(base64Encoded: key)!)
+        if status == "accepted" {
+            authData = Data(base64Encoded: serverContact.authData!)
+            nonce = Data(base64Encoded: serverContact.nonce!)
+            messageKeys = [Data]()
+            for key in serverContact.messageKeys! {
+                messageKeys?.append(Data(base64Encoded: key)!)
+            }
         }
         
         super.init()

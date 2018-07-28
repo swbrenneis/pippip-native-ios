@@ -18,6 +18,7 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
 
         requestComplete = self.getComplete
         requestError = self.getError
+        responseError = self.getError
 
     }
 

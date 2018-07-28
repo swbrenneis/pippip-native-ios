@@ -48,13 +48,9 @@ class ContactsViewController: UIViewController {
         rightBarItems.append(addContact)
         let editContacts = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editContacts(_:)))
         rightBarItems.append(editContacts)
+        let deleteItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteContact(_:)))
+        rightBarItems.append(deleteItem)
         self.navigationItem.rightBarButtonItems = rightBarItems
-//        var items = [UIBarButtonItem]()
-//        if (debugging) {
-//            let deleteItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: //#selector(deleteContact(_:)))
-//            items.append(deleteItem)
-//        }
-//        self.navigationItem.rightBarButtonItems = items
         self.navigationItem.title = "Contacts"
 
         NotificationCenter.default.addObserver(self, selector: #selector(contactRequested(_:)),

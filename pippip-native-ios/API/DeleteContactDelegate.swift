@@ -18,6 +18,7 @@ class DeleteContactDelegate: EnclaveDelegate<DeleteContactRequest, DeleteContact
 
         requestComplete = self.deleteComplete
         requestError = self.deleteError
+        responseError = self.deleteError
 
     }
 

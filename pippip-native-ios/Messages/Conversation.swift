@@ -151,10 +151,10 @@ class Conversation: NSObject {
     func markMessagesRead(_ messages: [Message]) {
 
         for message in messages {
-            if !message.read {
+            //if !message.read {
                 message.read = true
                 messageManager.markMessageRead(messageId: message.messageId)
-            }
+            //}
         }
     
     }

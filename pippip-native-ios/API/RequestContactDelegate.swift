@@ -23,6 +23,7 @@ class RequestContactDelegate: EnclaveDelegate<RequestContactRequest, RequestCont
 
         requestComplete = self.contactRequestComplete
         requestError = self.contactRequestError
+        responseError = self.contactRequestError
 
     }
 

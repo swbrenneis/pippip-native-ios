@@ -24,6 +24,7 @@ class SendMessageDelegate: EnclaveDelegate<SendMessageRequest, SendMessageRespon
 
         requestComplete = self.sendComplete
         requestError = self.sendError
+        responseError = self.sendError
 
         if SendMessageDelegate.sendSoundId == 0 {
             if let sendUrl = Bundle.main.url(forResource: "iphone_send_sms", withExtension: "mp3") {

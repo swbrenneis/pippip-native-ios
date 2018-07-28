@@ -15,6 +15,7 @@ class MatchDirectoryIdDelegate: EnclaveDelegate<MatchDirectoryIdRequest, MatchDi
 
         requestComplete = self.matchComplete
         requestError = self.matchError
+        responseError = self.matchError
 
     }
     

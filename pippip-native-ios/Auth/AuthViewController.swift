@@ -40,11 +40,11 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         let logoWidth = bounds.width * 0.7
         logoLeading.constant = (bounds.width - logoWidth) / 2
         logoTrailing.constant = (bounds.width - logoWidth) / 2
-        let backgroundColor = UIColor.flatForestGreen.lighten(byPercentage: 0.15)!
+        let backgroundColor = PippipTheme.viewColor
         self.view.backgroundColor = backgroundColor
-        authButton.setTitleColor(ContrastColorOf(backgroundColor, returnFlat: false), for: .normal)
-        authButton.backgroundColor = .clear
-        quickstartButton.setTitleColor(ContrastColorOf(backgroundColor, returnFlat: false), for: .normal)
+        authButton.setTitleColor(ContrastColorOf(backgroundColor!, returnFlat: false), for: .normal)
+        authButton.backgroundColor = UIColor.flatMintDark
+        quickstartButton.setTitleColor(ContrastColorOf(backgroundColor!, returnFlat: false), for: .normal)
         quickstartButton.backgroundColor = .clear
         quickstartButton.isHidden = false
         versionLabel.textColor = UIColor.flatSand

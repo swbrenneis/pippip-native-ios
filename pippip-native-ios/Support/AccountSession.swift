@@ -12,7 +12,7 @@ import RealmSwift
 
 class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
-    static let production = true
+    static let production = false
     static var accountName: String?
     
     @objc var deviceToken: Data?
@@ -174,6 +174,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     @objc func newSession(_ notification: Notification) {
         sessionActive = true
+        doUpdates()
     }
 
     @objc func sessionEnded(_ notification: Notification) {
@@ -186,7 +187,8 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
-        if sessionActive && !suspended {
+        print("Notification received")
+        if sessionActive {
             doUpdates()
         }
         completionHandler(.badge)

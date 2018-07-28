@@ -15,6 +15,7 @@ class SetContactPolicyDelegate: EnclaveDelegate<SetContactPolicyRequest, SetCont
 
         requestComplete  = self.setComplete
         requestError = self.setError
+        responseError = self.setError
 
     }
 

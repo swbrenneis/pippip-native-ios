@@ -66,8 +66,8 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
         let logoWidth = bounds.width * 0.7
         authView.logoLeading.constant = (bounds.width - logoWidth) / 2
         authView.logoTrailing.constant = (bounds.width - logoWidth) / 2
-        let backgroundColor = UIColor.flatForestGreen.lighten(byPercentage: 0.15)!
-        authView.contentView.backgroundColor = backgroundColor
+        //let backgroundColor = UIColor.flatForestGreen.lighten(byPercentage: 0.15)!
+        authView.contentView.backgroundColor = PippipTheme.viewColor
         //authView.authButton.setTitleColor(ContrastColorOf(backgroundColor, returnFlat: false), for: .normal)
         //authView.authButton.backgroundColor = .clear
         authView.versionLabel.textColor = UIColor.flatSand

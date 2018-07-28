@@ -17,6 +17,7 @@ class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPending
 
         requestComplete = self.getComplete
         requestError = self.getError
+        responseError = self.getError
 
     }
 

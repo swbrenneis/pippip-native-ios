@@ -27,7 +27,7 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pippip3" translatesAutoresizingMaskIntoConstraints="NO" id="nUB-J6-IOn">
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pippip4" translatesAutoresizingMaskIntoConstraints="NO" id="nUB-J6-IOn">
                     <rect key="frame" x="55" y="70" width="265" height="199"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="nUB-J6-IOn" secondAttribute="height" multiplier="1024:768" id="m00-0x-7wr"/>
@@ -61,6 +61,6 @@
         </view>
     </objects>
     <resources>
-        <image name="pippip3" width="1024" height="760"/>
+        <image name="pippip4" width="1024" height="768"/>
     </resources>
 </document>
