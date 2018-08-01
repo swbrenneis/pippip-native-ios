@@ -13,6 +13,7 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
     var contactManager = ContactManager()
     var publicId: String?
     var retry: Bool
+    var alertPresenter = AlertPresenter()
 
     init(request: GetRequestStatusRequest, publicId: String?, retry: Bool) {
 
@@ -34,6 +35,14 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
                 let updated = try contactManager.updateContacts(response.contacts!)
                 NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updated)
                 print("\(updated.count) contacts updated")
+                var message = "You have \(updated.count) contact status "
+                if updated.count == 1 {
+                    message += "update"
+                }
+                else {
+                    message += "updates"
+                }
+                alertPresenter.infoAlert(title: "Contact Status Updates", message: message)
             }
             catch {
                 print("Error updating contacts: \(error)")
