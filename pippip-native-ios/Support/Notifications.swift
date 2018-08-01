@@ -22,6 +22,7 @@ struct Notifications {
     static let EnclaveRequestComplete = NSNotification.Name("EnclaveRequestComplete")
     static let GuideDismissed = NSNotification.Name("GuideDismissed")
     static let LocalAuthComplete = NSNotification.Name("LocalAuthComplete")
+    static let MessageBubbleTapped = NSNotification.Name("MessageBubbleTapped")
     static let MessageFailed = NSNotification.Name("MessageFailed")
     static let MessageSent = NSNotification.Name("MessageSent")
     static let MessagesUpdated = NSNotification.Name("MessagesUpdated")

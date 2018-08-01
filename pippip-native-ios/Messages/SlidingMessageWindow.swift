@@ -60,6 +60,22 @@ class SlidingMessageWindow: NSObject {
 
     }
 
+    func deleteMessage(_ message: Message) {
+
+        var index = -1
+        for i in 0..<window.count {
+            if message.messageId == window[i].messageId {
+                index = i
+            }
+        }
+        if index >= 0 {
+            conversation.deleteMessage(message.messageId)
+            window.remove(at: index)
+            items.remove(at: index)
+        }
+
+    }
+    
     func insertMessage(_ textMessage: TextMessage) {
 
         conversation.addTextMessage(textMessage)

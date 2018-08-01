@@ -10,6 +10,7 @@ import Chatto
 import ChattoAdditions
 import ChameleonFramework
 import AudioToolbox
+import PMAlertController
 
 class ChattoViewController: BaseChatViewController {
 
@@ -82,6 +83,8 @@ class ChattoViewController: BaseChatViewController {
                                                name: Notifications.RetryMessage, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
                                                name: Notifications.LocalAuthComplete, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(messageBubbleTapped(_:)),
+                                               name: Notifications.MessageBubbleTapped, object: nil)
 
     }
 
@@ -95,6 +98,7 @@ class ChattoViewController: BaseChatViewController {
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.RetryMessage, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.LocalAuthComplete, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.MessageBubbleTapped, object: nil)
 
     }
     
@@ -183,6 +187,37 @@ class ChattoViewController: BaseChatViewController {
             self.localAuth?.visible = false
         }
         
+    }
+    
+    @objc func messageBubbleTapped(_ notification: Notification) {
+
+        guard let message = notification.object as? Message else { return }
+        let now = Int64(Date().timeIntervalSince1970 * 1000)
+        // 10 second debounce
+        if now - message.timestamp > 10000 {
+            var doRetry = false
+            var description = "Delete Message"
+            if !message.acknowledged && message.originating {
+                doRetry = true
+                description = "Delete or Retry Message"
+            }
+
+            let alert = PMAlertController(title: "Message Action",
+                                          description: description,
+                                          image: nil,
+                                          style: .alert)
+            if doRetry {
+                alert.addAction(PMAlertAction(title: "Retry", style: .default, action: {
+                    NotificationCenter.default.post(name: Notifications.RetryMessage, object: message)
+                }))
+            }
+            alert.addAction(PMAlertAction(title: "Delete", style: .default, action: {
+                self.dataSource?.deleteMessage(message)
+            }))
+            alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
+            self.present(alert, animated: true, completion: nil)
+        }
+
     }
     
     @objc func retryMessage(_ notification: Notification) {

@@ -27,6 +27,9 @@ class PippipTextMessageInteractionHandler: BaseMessageInteractionHandlerProtocol
     }
 
     func userDidTapOnBubble(viewModel: TextMessageViewModel<PippipTextMessageModel>) {
+
+        let message = viewModel.textMessage.message
+        NotificationCenter.default.post(name: Notifications.MessageBubbleTapped, object: message)
         
     }
 
