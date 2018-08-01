@@ -79,6 +79,13 @@ class ChattoDataSource: ChatDataSourceProtocol {
 
     }
 
+    func deleteMessage(_ message: Message) {
+        
+        slidingWindow.deleteMessage(message)
+        delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
+
+    }
+
     func retryTextMessage(_ textMessage: TextMessage) {
 
         DispatchQueue.main.async {
