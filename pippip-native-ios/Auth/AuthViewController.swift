@@ -186,6 +186,8 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
                                                name: Notifications.PresentAlert, object: nil)
         let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
         hud.mode = .annularDeterminate;
+        hud.contentColor = PippipTheme.buttonColor
+        hud.label.textColor = PippipTheme.buttonTextColor
         hud.label.text = "Authenticating...";
         authenticator.authenticate(accountName: self.accountName!, passphrase: passphrase)
         
@@ -199,6 +201,8 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
                                                name: Notifications.PresentAlert, object: nil)
         let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
         hud.mode = .annularDeterminate;
+        hud.contentColor = PippipTheme.buttonColor
+        hud.label.textColor = PippipTheme.buttonTextColor
         hud.label.text = "Creating...";
         newAccountCreator.createAccount(accountName: self.accountName!, passphrase: passphrase)
         

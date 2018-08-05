@@ -12,6 +12,9 @@ import ChameleonFramework
 class PippipTheme: NSObject {
 
     static var viewColor: UIColor!
+    static var splashColor: UIColor!
+    static var buttonColor: UIColor!
+    static var buttonTextColor: UIColor!
     static var navBarColor: UIColor!
     static var navBarTint: UIColor!
     static var darkCellColor: UIColor!
@@ -24,7 +27,7 @@ class PippipTheme: NSObject {
     static var buttonLightTextColor: UIColor!
     static var infoAlertColor = UIColor.flatSand
     static var errorAlertColor = UIColor.flatOrange
-    static var successAlertColor = UIColor.flatGreen
+    static var successAlertColor = UIColor.flatMintDark
     static var darkTextColor: UIColor!
     static var mediumTextColor: UIColor!
     static var lightTextColor: UIColor!
@@ -34,7 +37,11 @@ class PippipTheme: NSObject {
     static func setTheme() {
 
         let colorScheme = ColorSchemeOf(.complementary, color: UIColor.flatCoffee, isFlatScheme: false)
+        splashColor = colorScheme[4].lighten(byPercentage: 0.15)!
         viewColor = colorScheme[4].lighten(byPercentage: 0.15)!
+        buttonColor = UIColor.flatMintDark
+        buttonTextColor = UIColor.flatBlackDark
+        
         navBarColor = viewColor.lighten(byPercentage: 0.1)!
         navBarTint = ContrastColorOf(navBarColor, returnFlat: false)
         darkCellColor = UIColor.flatForestGreen.lighten(byPercentage: 0.1)!
