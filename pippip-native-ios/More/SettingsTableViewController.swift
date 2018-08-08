@@ -29,9 +29,9 @@ class SettingsTableViewController: UITableViewController {
         var items = [MultiCellItemProtocol]()
         items.append(PublicIdCell.cellItem)
         items.append(DirectoryIdCell.cellItem)
+        items.append(LocalPasswordCell.cellItem)
         items.append(ContactPolicyCell.cellItem)
         items.append(LocalAuthCell.cellItem)
-        items.append(LocalPasswordCell.cellItem)
         let policy = config.contactPolicy
         if policy != "public" {
             items.append(EditWhitelistCell.cellItem)
@@ -145,13 +145,7 @@ extension SettingsTableViewController {
                             as? MultiCellProtocol else { return UITableViewCell() }
         cell.viewController = self
         guard let pippipCell = cell as? PippipTableViewCell else { return UITableViewCell() }
-        if indexPath.section == 0 {
-            pippipCell.setMediumTheme()
-        }
-        else {
-            pippipCell.setLightTheme()
-            pippipCell.textLabel?.textColor = PippipTheme.buttonLightTextColor
-        }
+        pippipCell.setMediumTheme()
 
         return pippipCell
 
@@ -164,6 +158,14 @@ extension SettingsTableViewController {
 
     }
 
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0.0
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0.0
+    }
+    
 /*
  // Override to support conditional editing of the table view.
  override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

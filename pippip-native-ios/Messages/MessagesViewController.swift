@@ -41,11 +41,16 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         self.view.backgroundColor = PippipTheme.viewColor
         self.navigationController?.navigationBar.barTintColor = PippipTheme.navBarColor
         self.navigationController?.navigationBar.tintColor = PippipTheme.navBarTint
-        messageSearch.backgroundColor = .clear
+        messageSearch.backgroundImage = UIImage()
+        let searchBarColor = PippipTheme.navBarColor.withAlphaComponent(0.3)
+        messageSearch.backgroundColor = searchBarColor
         messageSearch.barTintColor = PippipTheme.navBarColor
-        let attributes: [NSAttributedStringKey: Any] = [NSAttributedStringKey.foregroundColor: PippipTheme.navBarTint]
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes,
-                                                                                                          for: .normal)
+        //messageSearch.alpha = 0.4
+        //let cancelButton = UIButton.appearance(whenContainedInInstancesOf: [UISearchBar.self])
+        //cancelButton.setTitleColor(PippipTheme.navBarColor.darken(byPercentage: 0.2), for: .normal)
+//        let attributes: [NSAttributedStringKey: Any] = [NSAttributedStringKey.foregroundColor: PippipTheme.navBarColor]
+//        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes,
+//                                                                                                          for: .normal)
 
         let headingFrame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 10)
         headingView = UIView(frame: headingFrame)
@@ -135,6 +140,16 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         tableView.reloadData()
         let requests = contactManager.pendingRequests
         contactBadge.badgeValue = requests.count
+
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        let bounds = self.navigationController!.navigationBar.bounds
+        self.navigationController?.navigationBar.frame = CGRect(x: 0, y: 0,
+                                                                width: bounds.width,
+                                                                height: bounds.height + 6.0)
 
     }
 

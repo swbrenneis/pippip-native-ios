@@ -29,7 +29,7 @@ class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        self.textLabel?.textColor = UIColor.flatRed
+        //self.textLabel?.textColor = UIColor.flatRed
 
     }
 

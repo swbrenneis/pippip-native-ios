@@ -31,27 +31,31 @@ class PippipTheme: NSObject {
     static var darkTextColor: UIColor!
     static var mediumTextColor: UIColor!
     static var lightTextColor: UIColor!
+    static var textFieldBorderColor: UIColor!
 
     static var cellCorners: CGFloat = 15.0
 
     static func setTheme() {
 
         let colorScheme = ColorSchemeOf(.complementary, color: UIColor.flatCoffee, isFlatScheme: false)
-        splashColor = colorScheme[4].lighten(byPercentage: 0.15)!
-        viewColor = colorScheme[4].lighten(byPercentage: 0.15)!
-        buttonColor = UIColor.flatMintDark
+//        splashColor = colorScheme[4].lighten(byPercentage: 0.15)!
+        splashColor = UIColor.flatTealDark
+        viewColor = UIColor.flatWhite
+        viewTextColor = ContrastColorOf(viewColor, returnFlat: false)
+        buttonColor = UIColor.flatMintDark.darken(byPercentage: 0.05)
         buttonTextColor = UIColor.flatBlackDark
-        
-        navBarColor = viewColor.lighten(byPercentage: 0.1)!
+        navBarColor = UIColor.flatTealDark
         navBarTint = ContrastColorOf(navBarColor, returnFlat: false)
+
         darkCellColor = UIColor.flatForestGreen.lighten(byPercentage: 0.1)!
-        mediumCellColor = darkCellColor.lighten(byPercentage: 0.1)!
+//        mediumCellColor = darkCellColor.lighten(byPercentage: 0.1)!
+        mediumCellColor = UIColor.flatWhite
         lightCellColor = darkCellColor.lighten(byPercentage: 0.2)!
 
-        viewTextColor = ContrastColorOf(viewColor, returnFlat: false)
         buttonDarkTextColor = colorScheme[2]
-        buttonMediumTextColor = colorScheme[1]
+        buttonMediumTextColor = colorScheme[4].lighten(byPercentage: 0.15)!.withAlphaComponent(0.7)
         buttonLightTextColor = colorScheme[0]
+        textFieldBorderColor = colorScheme[4].lighten(byPercentage: 0.15)!.withAlphaComponent(0.7)
 
         darkTextColor = ContrastColorOf(darkCellColor, returnFlat: true)
         mediumTextColor = ContrastColorOf(mediumCellColor, returnFlat: true)

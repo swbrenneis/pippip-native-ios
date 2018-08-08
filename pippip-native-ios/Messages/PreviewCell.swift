@@ -57,11 +57,11 @@ class PreviewCell: PippipTableViewCell {
             }
         }
 
-        senderLabel.textColor = PippipTheme.darkTextColor
-        previewLabel.textColor = PippipTheme.darkTextColor
-        timestampLabel.textColor = PippipTheme.darkTextColor
+        //senderLabel.textColor = PippipTheme.darkTextColor
+        //previewLabel.textColor = PippipTheme.darkTextColor
+        //timestampLabel.textColor = PippipTheme.darkTextColor
 
-        super.setDarkTheme()
+        super.setMediumTheme()
 
     }
 

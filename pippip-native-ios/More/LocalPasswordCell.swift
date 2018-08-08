@@ -24,6 +24,7 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
     @IBOutlet weak var changePassphraseButton: UIButton!
 
     static var cellItem: MultiCellItemProtocol = LocalPasswordCellItem()
+    let obscured = "***********"
     var viewController: UITableViewController?
     var sessionState = SessionState()
     var alertPresenter = AlertPresenter()
@@ -33,7 +34,8 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
         // Initialization code
 
         changePassphraseButton.isHidden = true
-        
+        passphraseText.layer.borderColor = PippipTheme.textFieldBorderColor.cgColor
+
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -52,6 +54,8 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
     override func setMediumTheme() {
         
         passphraseText.textColor = PippipTheme.mediumTextColor
+        passphraseText.layer.borderColor = PippipTheme.textFieldBorderColor.cgColor
+        changePassphraseButton.setTitleColor(PippipTheme.buttonMediumTextColor, for: .normal)
         super.setMediumTheme()
         
     }
@@ -68,7 +72,7 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
         let vault = UserVault()
         do {
             try vault.changePassphrase(oldPassphrase: oldPassphrase, newPassphrase: newPassphrase)
-            alertPresenter.successAlert(title: "Passphrase Changes", message: "Your local passphrase has been changed")
+            alertPresenter.successAlert(title: "Passphrase Changed", message: "Your local passphrase has been changed")
             resetCell()
         }
         catch {
@@ -109,7 +113,7 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
 
     func resetCell() {
 
-        passphraseText.text = "***********"
+        passphraseText.text = obscured
         changePassphraseButton.alpha = 0.0
         changePassphraseButton.isEnabled = false
 
@@ -156,10 +160,19 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
 
     }
 
-    @IBAction func passphraseChanged(_ sender: Any) {
+    @IBAction func passphraseSeleted(_ sender: UITextField) {
 
-        changePassphraseButton.alpha = 1.0
-        changePassphraseButton.isEnabled = true
+        if passphraseText.text == obscured {
+            passphraseText.text = ""
+            changePassphraseButton.isHidden = false
+        }
+    
+    }
+    
+    @IBAction func passphraseEndEdit(_ sender: Any) {
+
+        passphraseText.text = obscured
+        changePassphraseButton.isHidden = true
 
     }
 

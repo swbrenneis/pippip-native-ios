@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "icons8-edit-file-32.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "menu-compose.png",
       "scale" : "2x"
     },
     {
