@@ -42,8 +42,7 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         self.navigationController?.navigationBar.barTintColor = PippipTheme.navBarColor
         self.navigationController?.navigationBar.tintColor = PippipTheme.navBarTint
         messageSearch.backgroundImage = UIImage()
-        let searchBarColor = PippipTheme.navBarColor.withAlphaComponent(0.3)
-        messageSearch.backgroundColor = searchBarColor
+        messageSearch.backgroundColor = PippipTheme.lightBarColor
         messageSearch.barTintColor = PippipTheme.navBarColor
         //messageSearch.alpha = 0.4
         //let cancelButton = UIButton.appearance(whenContainedInInstancesOf: [UISearchBar.self])
@@ -65,6 +64,8 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
                               UIImage(named: "settings")!, UIImage(named: "exit")! ]
         sidebar = FrostedSidebar(itemImages: sidebarImages, colors: nil, selectionStyle: .single)
         sidebar.showFromRight = true
+        sidebar.itemBackgroundColor = .clear
+        sidebar.itemSize = CGSize(width: 130.0, height: 130.0)
         contactsView = self.storyboard?.instantiateViewController(withIdentifier: "ContactsViewController") as! ContactsViewController
         settingsView = self.storyboard?.instantiateViewController(withIdentifier: "SettingsTableViewController") as! SettingsTableViewController
         sidebar.actionForIndex[0] = {

@@ -42,6 +42,7 @@ class ContactDetailCell: PippipTableViewCell, UITextFieldDelegate {
         displayNameText.text = contact.directoryId
         displayNameLabel.text = contact.displayName
         statusImageView.image = UIImage(named: contact.status)
+        self.backgroundColor = .clear
         if expanded {
             displayNameText.isHidden = false
             displayNameLabel.isHidden = true

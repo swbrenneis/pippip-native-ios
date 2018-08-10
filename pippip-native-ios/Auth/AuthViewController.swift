@@ -25,6 +25,8 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
     var alertPresenter = AlertPresenter()
     var authenticator = Authenticator()
     var newAccountCreator = NewAccountCreator()
+    var signInView: SignInView?
+    var newAccountView: NewAccountView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +44,7 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         logoTrailing.constant = (bounds.width - logoWidth) / 2
         let backgroundColor = PippipTheme.splashColor
         self.view.backgroundColor = backgroundColor
-        authButton.setTitleColor(ContrastColorOf(backgroundColor!, returnFlat: false), for: .normal)
+        authButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         authButton.backgroundColor = PippipTheme.buttonColor
         quickstartButton.setTitleColor(ContrastColorOf(backgroundColor!, returnFlat: false), for: .normal)
         quickstartButton.backgroundColor = .clear
@@ -90,6 +92,28 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
 
     }
     
+    func showAuthenticateView() {
+
+        let frame = self.view.bounds
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.45)
+        signInView = SignInView(frame: viewRect)
+        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 100)
+        signInView?.center = viewCenter
+        signInView?.alpha = 0.3
+
+        signInView?.accountName = accountName!
+        signInView?.authViewController = self
+
+        self.view.addSubview(self.signInView!)
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.signInView?.alpha = 1.0
+        }, completion: { complete in
+            self.signInView?.passphraseTextField.becomeFirstResponder()
+        })
+
+    }
+    
     func doAuthenticateAlerts() {
         
         let alert = PMAlertController(title: accountName!,
@@ -102,19 +126,41 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
             textField?.becomeFirstResponder()
-            //textField?.returnKeyType = .go
-            //textField?.delegate = self
+            let lockImageView = UIImageView(image: UIImage(named: "passphrase"))
+            textField?.rightView = lockImageView
+            textField?.rightViewMode = .always
         })
         alert.addAction(PMAlertAction(title: "Sign In",
                                       style: .default, action: { () in
                                         let passphrase = alert.textFields[0].text ?? ""
-                                        self.doAuthenticate(passphrase)
+                                        self.doAuthenticate(passphrase: passphrase)
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         present(alert, animated: true, completion: nil)
         
     }
-    
+
+    func showNewAccountView() {
+
+        let frame = self.view.bounds
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.5)
+        newAccountView = NewAccountView(frame: viewRect)
+        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 100)
+        newAccountView?.center = viewCenter
+        newAccountView?.alpha = 0.3
+        
+        newAccountView?.authViewController = self
+        
+        self.view.addSubview(self.newAccountView!)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.newAccountView?.alpha = 1.0
+        }, completion: { complete in
+            self.newAccountView?.accountNameTextField.becomeFirstResponder()
+        })
+        
+    }
+
     func doNewAccountAlerts() {
         
         let alert = PMAlertController(title: "Create A New Account",
@@ -126,16 +172,18 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
-            //textField?.returnKeyType = .go
-            //textField?.delegate = self
+            let userImageView = UIImageView(image: UIImage(named: "user"))
+            textField?.rightView = userImageView
+            textField?.rightViewMode = .always
         })
         alert.addTextField({ (textField) in
             textField?.placeholder = "Passphrase"
             textField?.autocorrectionType = .no
             textField?.spellCheckingType = .no
             textField?.autocapitalizationType = .none
-            //textField?.returnKeyType = .go
-            //textField?.delegate = self
+            let lockImageView = UIImageView(image: UIImage(named: "passphrase"))
+            textField?.rightView = lockImageView
+            textField?.rightViewMode = .always
         })
         alert.addAction(PMAlertAction(title: "Create Account",
                                       style: .default, action: { () in
@@ -151,14 +199,14 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
                                             }
                                         }
                                         else {
-                                            self.doNewAccount(passphrase)
+                                            self.doNewAccount(accountName: self.accountName!, passphrase: passphrase)
                                         }
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         present(alert, animated: true, completion: nil)
         
     }
-    
+
     func passphraseAlert() {
         
         let alert = PMAlertController(title: "Check Your Passphrase",
@@ -167,7 +215,7 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
                                       style: PMAlertControllerStyle.alert)
         alert.addAction(PMAlertAction(title: "Use Empty Passphrase",
                                       style: .default, action: { () in
-                                        self.doNewAccount("")
+                                        self.doNewAccount(accountName: self.accountName!, passphrase: "")
         }))
         alert.addAction(PMAlertAction(title: "Start Over", style: .cancel,
                                       action: { () in
@@ -177,8 +225,8 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         present(alert, animated: true, completion: nil)
         
     }
-    
-    func doAuthenticate(_ passphrase: String) {
+
+    func doAuthenticate(passphrase: String) {
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),
                                                name: Notifications.UpdateProgress, object: nil)
@@ -187,13 +235,13 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
         hud.mode = .annularDeterminate;
         hud.contentColor = PippipTheme.buttonColor
-        hud.label.textColor = PippipTheme.buttonTextColor
+        hud.label.textColor = UIColor.flatTealDark
         hud.label.text = "Authenticating...";
         authenticator.authenticate(accountName: self.accountName!, passphrase: passphrase)
         
     }
     
-    func doNewAccount(_ passphrase: String) {
+    func doNewAccount(accountName: String, passphrase: String) {
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),
                                                name: Notifications.UpdateProgress, object: nil)
@@ -202,19 +250,21 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
         hud.mode = .annularDeterminate;
         hud.contentColor = PippipTheme.buttonColor
-        hud.label.textColor = PippipTheme.buttonTextColor
+        hud.label.textColor = UIColor.flatTealDark
         hud.label.text = "Creating...";
-        newAccountCreator.createAccount(accountName: self.accountName!, passphrase: passphrase)
+        newAccountCreator.createAccount(accountName: accountName, passphrase: passphrase)
         
     }
     
     @IBAction func authSelected(_ sender: Any) {
 
         if accountName != nil {
-            doAuthenticateAlerts()
+            showAuthenticateView()
+            // doAuthenticateAlerts()
         }
         else {
-            doNewAccountAlerts()
+            showNewAccountView()
+            //doNewAccountAlerts()
         }
 
     }

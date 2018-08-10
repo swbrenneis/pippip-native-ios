@@ -6,11 +6,11 @@
     },
     {
       "idiom" : "universal",
-      "filename" : "menu-contacts.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
+      "filename" : "top-menu-contacts.png",
       "scale" : "3x"
     }
   ],

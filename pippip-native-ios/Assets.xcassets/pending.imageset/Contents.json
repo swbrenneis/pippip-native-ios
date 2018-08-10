@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "contacts-pending.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "contacts-pending.png",
       "scale" : "2x"
     },
     {

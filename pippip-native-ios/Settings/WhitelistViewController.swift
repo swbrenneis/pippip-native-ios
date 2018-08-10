@@ -24,6 +24,7 @@ class WhitelistViewController: UIViewController {
     var localAuth: LocalAuthenticator!
     var alertPresenter = AlertPresenter()
     var rightBarItems = [UIBarButtonItem]()
+    var addIdView: AddToWhitelistView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,7 +102,8 @@ class WhitelistViewController: UIViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
                                                name: Notifications.DirectoryIdMatched, object: nil)
-        
+
+        /*
         let alert = PMAlertController(title: "Add A New Permitted ID",
                                       description: "Enter a directory ID or public ID",
                                       image: nil,
@@ -134,6 +136,24 @@ class WhitelistViewController: UIViewController {
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true, completion: nil)
+        */
+
+        let frame = self.view.bounds
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.4)
+        addIdView = AddToWhitelistView(frame: viewRect)
+        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 30)
+        addIdView?.center = viewCenter
+        addIdView?.alpha = 0.3
+        
+        addIdView?.whitelistViewController = self
+        
+        self.view.addSubview(self.addIdView!)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.addIdView?.alpha = 1.0
+        }, completion: { complete in
+            self.addIdView?.directoryIdTextField.becomeFirstResponder()
+        })
         
     }
 

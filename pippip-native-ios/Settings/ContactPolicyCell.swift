@@ -38,6 +38,7 @@ class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
         else {
             contactPolicySwitch.setOn(false, animated: true)
         }
+        contactPolicySwitch.onTintColor = PippipTheme.buttonColor
 
         NotificationCenter.default.addObserver(self, selector: #selector(policyUpdated(_:)),
                                                name: Notifications.PolicyUpdated, object: nil)

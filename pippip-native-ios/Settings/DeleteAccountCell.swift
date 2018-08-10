@@ -13,13 +13,15 @@ import ChameleonFramework
 class DeleteAccountCellItem: MultiCellItemProtocol {
 
     var cellReuseId: String = "DeleteAccountCell"
-    var cellHeight: CGFloat = 45.0
+    var cellHeight: CGFloat = 65.0
     var currentCell: UITableViewCell?
     
 }
 
 class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
 
+    @IBOutlet weak var deleteAccountLabel: UILabel!
+    
     static var cellItem: MultiCellItemProtocol = DeleteAccountCellItem()
     var viewController: UITableViewController?
     var accountDeleter = AccountDeleter()
@@ -29,8 +31,11 @@ class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        //self.textLabel?.textColor = UIColor.flatRed
-
+        deleteAccountLabel.backgroundColor = PippipTheme.lightBarColor
+        deleteAccountLabel.textColor = UIColor.flatTealDark
+        deleteAccountLabel.layer.cornerRadius = 7.0
+        deleteAccountLabel.layer.masksToBounds = true
+    
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

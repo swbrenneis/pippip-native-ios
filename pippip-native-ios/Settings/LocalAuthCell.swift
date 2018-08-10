@@ -30,6 +30,7 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
         // Initialization code
         
         localAuthSwitch.setOn(config.useLocalAuth, animated: true)
+        localAuthSwitch.onTintColor = PippipTheme.buttonColor
     
     }
 
