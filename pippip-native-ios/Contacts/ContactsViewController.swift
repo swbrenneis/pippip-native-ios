@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import PMAlertController
 import ChameleonFramework
 
 class ContactsViewController: UIViewController {
@@ -30,17 +29,17 @@ class ContactsViewController: UIViewController {
     var showRequests = false
     var headerView: UIView!
     var addContactView: AddContactView?
-    var dimView: UIView?
+    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.view.backgroundColor = PippipTheme.viewColor
         let frame = self.view.bounds
-        dimView = UIView(frame: frame)
-        dimView?.backgroundColor = UIColor.flatGray
-        dimView?.alpha = 0.0
-        self.view.addSubview(dimView!)
+        blurView.frame = frame
+        blurView.alpha = 0.0
+        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.view.addSubview(blurView)
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -106,7 +105,7 @@ class ContactsViewController: UIViewController {
     }
 
     func acknowledgeRequest(_ contactRequest: ContactRequest) {
-
+/*
         let name = contactRequest.directoryId ?? contactRequest.publicId
         let alert = PMAlertController(title: "New Contact Request",
                                       description: "New contact request from \(name)",
@@ -129,7 +128,7 @@ class ContactsViewController: UIViewController {
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         present(alert, animated: true, completion: nil)
-
+*/
     }
 
     func validateAndRequest(publicId: String, directoryId: String) {
@@ -219,7 +218,7 @@ class ContactsViewController: UIViewController {
 
     // Debug only
     @objc func deleteContact(_ sender: Any) {
-
+/*
         let alert = PMAlertController(title: "Delete A Server Contact",
                                       description: "Enter a directory ID or public ID",
                                       image: nil,
@@ -235,7 +234,7 @@ class ContactsViewController: UIViewController {
         }))
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true, completion: nil)
-        
+*/
     }
 
     @objc func directoryIdMatched(_ notification: Notification) {
@@ -338,7 +337,7 @@ class ContactsViewController: UIViewController {
         self.view.addSubview(self.addContactView!)
         
         UIView.animate(withDuration: 0.3, animations: {
-            self.dimView?.alpha = 0.55
+            self.blurView.alpha = 0.6
             self.addContactView?.alpha = 1.0
         }, completion: { complete in
             self.addContactView?.directoryIdTextField.becomeFirstResponder()

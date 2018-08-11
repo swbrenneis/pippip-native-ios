@@ -53,6 +53,7 @@ class AddContactView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
+            self.contactsViewController?.blurView.alpha = 0.0
         }, completion: { completed in
             completion(completed)
         })
@@ -72,7 +73,7 @@ class AddContactView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.contactsViewController?.dimView?.alpha = 0.0
+            self.contactsViewController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
         })

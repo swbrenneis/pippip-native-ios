@@ -47,7 +47,24 @@ class AddToWhitelistView: UIView {
         
     }
     
+    func dismiss() {
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.center.y = 0.0
+            self.alpha = 0.0
+            self.whitelistViewController?.blurView.alpha = 0.0
+        }, completion: { completed in
+            self.removeFromSuperview()
+        })
+        
+    }
+
     @IBAction func addIdTapped(_ sender: Any) {
+
+        let directoryId = directoryIdTextField.text ?? ""
+        let publicId = publicIdTextField.text ?? ""
+        whitelistViewController?.verifyAndAdd(directoryId: directoryId, publicId: publicId)
+
     }
     
     @IBAction func cancelTapped(_ sender: Any) {
@@ -55,6 +72,7 @@ class AddToWhitelistView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
+            self.whitelistViewController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
         })

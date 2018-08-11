@@ -15,12 +15,19 @@ class SettingsTableViewController: UITableViewController {
     var config = Configurator()
     var alertPresenter = AlertPresenter()
     var localAuth: LocalAuthenticator!
+    var deleteAccountView: DeleteAccountView?
+    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.view.backgroundColor = PippipTheme.viewColor
-        
+        let frame = self.view.bounds
+        blurView.frame = frame
+        blurView.alpha = 0.0
+        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.view.addSubview(blurView)
+
         self.tableView.dataSource = self
         self.tableView.delegate = self
 
@@ -75,6 +82,30 @@ class SettingsTableViewController: UITableViewController {
         NotificationCenter.default.removeObserver(self, name: Notifications.LocalAuthComplete, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AccountDeleted, object: nil)
 
+    }
+
+    func showDeleteAccountView() {
+
+        let frame = self.view.bounds
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.38)
+        deleteAccountView = DeleteAccountView(frame: viewRect)
+        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 30)
+        deleteAccountView?.center = viewCenter
+        deleteAccountView?.alpha = 0.3
+        
+        deleteAccountView?.settingsViewController = self
+        
+        self.view.addSubview(self.deleteAccountView!)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.deleteAccountView?.alpha = 1.0
+            self.blurView.alpha = 0.6
+        })
+        
+    }
+
+    func verifyPassphrase() {
+        
     }
 
     @objc func accountDeleted(_ notification: Notification) {
@@ -158,14 +189,6 @@ extension SettingsTableViewController {
 
     }
 
-    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 0.0
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0.0
-    }
-    
 /*
  // Override to support conditional editing of the table view.
  override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

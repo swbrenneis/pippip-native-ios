@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import PMAlertController
 import ChameleonFramework
 
 class WhitelistViewController: UIViewController {
@@ -25,11 +24,18 @@ class WhitelistViewController: UIViewController {
     var alertPresenter = AlertPresenter()
     var rightBarItems = [UIBarButtonItem]()
     var addIdView: AddToWhitelistView?
+    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.view.backgroundColor = PippipTheme.viewColor
+        let frame = self.view.bounds
+        blurView.frame = frame
+        blurView.alpha = 0.0
+        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.view.addSubview(blurView)
+
         tableView.delegate = self
         tableView.dataSource = self
 
@@ -98,10 +104,39 @@ class WhitelistViewController: UIViewController {
         
     }
     
-    @objc func addWhitelistEntry(_ sender: Any) {
+    func verifyAndAdd(directoryId: String, publicId: String) {
 
-        NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
-                                               name: Notifications.DirectoryIdMatched, object: nil)
+        self.directoryId = directoryId
+        self.publicId = publicId
+
+        if !self.checkSelfAdd(directoryId: directoryId, publicId: publicId) {
+            if directoryId.utf8.count > 0 {
+                NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
+                                                       name: Notifications.DirectoryIdMatched, object: nil)                
+                contactManager.matchDirectoryId(directoryId: directoryId, publicId: nil)
+            }
+            else if publicId.utf8.count > 0 {
+                let regex = try! NSRegularExpression(pattern: "[^A-Fa-f0-9]", options: [])
+                if let match = regex.firstMatch(in: publicId,
+                                                options: [],
+                                                range: NSMakeRange(0, publicId.utf8.count)) {
+                    if match.numberOfRanges > 0 || publicId.utf8.count < 40 {
+                        alertPresenter.errorAlert(title: "Contact Request Error", message: "Not a valid public ID")
+                    }
+                }
+                else if contactManager.addWhitelistEntry(publicId) {
+                    addIdView?.dismiss()
+                }
+                else {
+                    self.alertPresenter.errorAlert(title: "Add Permitted ID Error",
+                                                   message: "You already added that ID")
+                }
+            }
+        }
+
+    }
+
+    @objc func addWhitelistEntry(_ sender: Any) {
 
         /*
         let alert = PMAlertController(title: "Add A New Permitted ID",
@@ -139,7 +174,7 @@ class WhitelistViewController: UIViewController {
         */
 
         let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.4)
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.45)
         addIdView = AddToWhitelistView(frame: viewRect)
         let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 30)
         addIdView?.center = viewCenter
@@ -151,12 +186,32 @@ class WhitelistViewController: UIViewController {
         
         UIView.animate(withDuration: 0.3, animations: {
             self.addIdView?.alpha = 1.0
+            self.blurView.alpha = 0.6
         }, completion: { complete in
             self.addIdView?.directoryIdTextField.becomeFirstResponder()
         })
         
     }
 
+    @objc func directoryIdMatched(_ notification: Notification) {
+        
+        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
+        guard let response = notification.object as? MatchDirectoryIdResponse else { return }
+        if response.result == "found" {
+            publicId = response.publicId!
+            if contactManager.addWhitelistEntry(self.publicId) {
+                addIdView?.dismiss()
+            }
+            else {
+                alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "You already added that ID")
+            }
+        }
+        else {
+            alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "That directory ID doesn't exist")
+        }
+        
+    }
+    
     @objc func editWhitelist(_ sender: Any) {
 
         tableView.setEditing(true, animated: true)
@@ -209,22 +264,6 @@ class WhitelistViewController: UIViewController {
         }
         catch {
             print("Error deleting whitelist entry: \(error)")
-        }
-
-    }
-
-    @objc func directoryIdMatched(_ notification: Notification) {
-        
-        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
-        guard let response = notification.object as? MatchDirectoryIdResponse else { return }
-        if response.result == "found" {
-            publicId = response.publicId!
-            if !contactManager.addWhitelistEntry(self.publicId) {
-                alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "You already added that ID")
-            }
-        }
-        else {
-            alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "That directory ID doesn't exist")
         }
 
     }

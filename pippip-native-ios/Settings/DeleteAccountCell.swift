@@ -42,7 +42,10 @@ class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
         super.setSelected(selected, animated: animated)
 
         if selected {
-            validateDelete()
+            if let settingsViewController = viewController as? SettingsTableViewController {
+                settingsViewController.showDeleteAccountView()
+            }
+            //validateDelete()
         }
 
     }

@@ -83,6 +83,8 @@
 		5557B469211DE2DD00FE1775 /* AddContactView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B468211DE2DD00FE1775 /* AddContactView.xib */; };
 		5557B46B211E06E500FE1775 /* AddToWhitelistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5557B46A211E06E500FE1775 /* AddToWhitelistView.swift */; };
 		5557B46D211E087000FE1775 /* AddToWhitelistView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B46C211E087000FE1775 /* AddToWhitelistView.xib */; };
+		5557B46F211F09F200FE1775 /* DeleteAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5557B46E211F09F200FE1775 /* DeleteAccountView.swift */; };
+		5557B471211F0A2C00FE1775 /* DeleteAccountView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */; };
 		555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 555B0D40204C887B00D99807 /* MBProgressHUD.m */; };
 		555B0D45204CD80000D99807 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 555B0D44204CD80000D99807 /* UserNotifications.framework */; };
 		55721A0A20C86876008FE9F6 /* EnclaveDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0920C86876008FE9F6 /* EnclaveDelegate.swift */; };
@@ -314,6 +316,8 @@
 		5557B468211DE2DD00FE1775 /* AddContactView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddContactView.xib; sourceTree = "<group>"; };
 		5557B46A211E06E500FE1775 /* AddToWhitelistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToWhitelistView.swift; sourceTree = "<group>"; };
 		5557B46C211E087000FE1775 /* AddToWhitelistView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddToWhitelistView.xib; sourceTree = "<group>"; };
+		5557B46E211F09F200FE1775 /* DeleteAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountView.swift; sourceTree = "<group>"; };
+		5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DeleteAccountView.xib; sourceTree = "<group>"; };
 		555B0D40204C887B00D99807 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		555B0D41204C887B00D99807 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		555B0D43204CA4E300D99807 /* pippip-native-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "pippip-native-ios.entitlements"; sourceTree = "<group>"; };
@@ -664,6 +668,7 @@
 				55B0DBB82048962400F6B29B /* CopyableLabel.h */,
 				55B0DBB92048962400F6B29B /* CopyableLabel.m */,
 				5500D169207405190016AC71 /* DeleteAccountCell.swift */,
+				5557B46E211F09F200FE1775 /* DeleteAccountView.swift */,
 				55FD018D20B0D1930028435E /* DirectoryIdCell.swift */,
 				5586B8842064826000641514 /* EditWhitelistCell.swift */,
 				55169792209B7282002BB4C1 /* LocalAuthCell.swift */,
@@ -841,6 +846,7 @@
 				5557B464211CE41600FE1775 /* PassphraseAlertView.xib */,
 				55206DA82075486000B0B246 /* SelectContactView.xib */,
 				5557B45C211C9A4D00FE1775 /* SignInView.xib */,
+				5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */,
 			);
 			path = Nibs;
 			sourceTree = "<group>";
@@ -1125,6 +1131,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5557B45D211C9A4D00FE1775 /* SignInView.xib in Resources */,
+				5557B471211F0A2C00FE1775 /* DeleteAccountView.xib in Resources */,
 				5592A5971F8BBB4400F08BF5 /* LaunchScreen.storyboard in Resources */,
 				5557B469211DE2DD00FE1775 /* AddContactView.xib in Resources */,
 				5557B46D211E087000FE1775 /* AddToWhitelistView.xib in Resources */,
@@ -1415,6 +1422,7 @@
 				55FD018820B0C7880028435E /* MultiCellItemProtocol.swift in Sources */,
 				55F7B57D20BF22240083AE01 /* EnclaveResponse.swift in Sources */,
 				55AA54DA1FA14B1E00A7026B /* ByteArrayInputStream.cc in Sources */,
+				5557B46F211F09F200FE1775 /* DeleteAccountView.swift in Sources */,
 				55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */,
 				55245F4320BCD62D00E6ECB6 /* Authenticator.swift in Sources */,
 				55AA55561FA14D7100A7026B /* PEMCodec.cc in Sources */,

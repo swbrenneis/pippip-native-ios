@@ -8,7 +8,6 @@
 
 import UIKit
 import ChameleonFramework
-import PMAlertController
 
 class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
 
@@ -27,6 +26,7 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
     var newAccountCreator = NewAccountCreator()
     var signInView: SignInView?
     var newAccountView: NewAccountView?
+    var dimView: UIView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +51,11 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         quickstartButton.isHidden = false
         versionLabel.textColor = UIColor.flatSand
         secommLabel.textColor = UIColor.flatSand
+        dimView = UIView(frame: bounds)
+        dimView?.backgroundColor = UIColor.flatBlack
+        dimView?.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        dimView?.alpha = 0.0
+        self.view.addSubview(dimView!)
 
         do {
             try ApplicationInitializer.accountSession.loadAccount()
@@ -107,13 +112,14 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         self.view.addSubview(self.signInView!)
 
         UIView.animate(withDuration: 0.3, animations: {
+            self.dimView?.alpha = 0.3
             self.signInView?.alpha = 1.0
         }, completion: { complete in
             self.signInView?.passphraseTextField.becomeFirstResponder()
         })
 
     }
-    
+    /*
     func doAuthenticateAlerts() {
         
         let alert = PMAlertController(title: accountName!,
@@ -139,11 +145,11 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         present(alert, animated: true, completion: nil)
         
     }
-
+*/
     func showNewAccountView() {
 
         let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.5)
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.45)
         newAccountView = NewAccountView(frame: viewRect)
         let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 100)
         newAccountView?.center = viewCenter
@@ -154,13 +160,14 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         self.view.addSubview(self.newAccountView!)
         
         UIView.animate(withDuration: 0.3, animations: {
+            self.dimView?.alpha = 0.3
             self.newAccountView?.alpha = 1.0
         }, completion: { complete in
             self.newAccountView?.accountNameTextField.becomeFirstResponder()
         })
         
     }
-
+/*
     func doNewAccountAlerts() {
         
         let alert = PMAlertController(title: "Create A New Account",
@@ -225,7 +232,7 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         present(alert, animated: true, completion: nil)
         
     }
-
+*/
     func doAuthenticate(passphrase: String) {
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),

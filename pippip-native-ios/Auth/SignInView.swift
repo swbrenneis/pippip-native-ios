@@ -59,6 +59,7 @@ class SignInView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
+            self.authViewController?.dimView?.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
         })
@@ -70,6 +71,7 @@ class SignInView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
+            self.authViewController?.dimView?.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
             let passphrase = self.passphraseTextField.text ?? ""

@@ -61,6 +61,7 @@ class NewAccountView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
+            self.authViewController?.dimView?.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
             self.authViewController?.doNewAccount(accountName: self.accountName!, passphrase: self.passphrase!)
@@ -105,6 +106,7 @@ class NewAccountView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
+            self.authViewController?.dimView?.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
         })
