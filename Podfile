@@ -6,7 +6,6 @@ target 'pippip-native-ios' do
   use_frameworks!
 
   # Pods for pippip-native-ios
-  pod 'PMAlertController'
   pod 'ChameleonFramework/Swift', :git => 'https://github.com/ViccAlexander/Chameleon.git'
   pod 'RKDropdownAlert'
   pod 'FrostedSidebar'

@@ -63,10 +63,6 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         catch {
             print("Error loading account name: \(error)")
         }
-        accountName = AccountSession.accountName
-        if accountName != nil {
-            authButton.setTitle("Sign In", for: .normal)
-        }
         
     }
 
@@ -74,6 +70,13 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
+        accountName = AccountSession.accountName
+        if accountName != nil {
+            authButton.setTitle("Sign In", for: .normal)
+        }
+        else {
+            authButton.setTitle("Create A New Account", for: .normal)
+        }
 
     }
 
@@ -149,7 +152,7 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
     func showNewAccountView() {
 
         let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.45)
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.5)
         newAccountView = NewAccountView(frame: viewRect)
         let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 100)
         newAccountView?.center = viewCenter

@@ -10,7 +10,6 @@ import Chatto
 import ChattoAdditions
 import ChameleonFramework
 import AudioToolbox
-import PMAlertController
 
 class ChattoViewController: BaseChatViewController {
 
@@ -190,7 +189,7 @@ class ChattoViewController: BaseChatViewController {
     }
     
     @objc func messageBubbleTapped(_ notification: Notification) {
-
+/*
         guard let message = notification.object as? Message else { return }
         let now = Int64(Date().timeIntervalSince1970 * 1000)
         // 10 second debounce
@@ -217,7 +216,7 @@ class ChattoViewController: BaseChatViewController {
             alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
             self.present(alert, animated: true, completion: nil)
         }
-
+*/
     }
     
     @objc func retryMessage(_ notification: Notification) {

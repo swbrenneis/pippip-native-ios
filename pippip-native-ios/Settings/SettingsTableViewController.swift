@@ -16,6 +16,8 @@ class SettingsTableViewController: UITableViewController {
     var alertPresenter = AlertPresenter()
     var localAuth: LocalAuthenticator!
     var deleteAccountView: DeleteAccountView?
+    var verifyPassphraseView: VerifyPassphraseView?
+    var changePassphraseView: ChangePassphraseView?
     var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
 
     override func viewDidLoad() {
@@ -84,8 +86,32 @@ class SettingsTableViewController: UITableViewController {
 
     }
 
-    func showDeleteAccountView() {
+    func changePassphrase(oldPassphrase: String, newPassphrase: String) {
+        
+    }
 
+    func showChangePassphraseView() {
+        
+        let frame = self.view.bounds
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.5)
+        changePassphraseView = ChangePassphraseView(frame: viewRect)
+        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
+        changePassphraseView?.center = viewCenter
+        changePassphraseView?.alpha = 0.3
+        
+        changePassphraseView?.settingsViewController = self
+        
+        self.view.addSubview(self.changePassphraseView!)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.blurView.alpha = 0.6
+            self.changePassphraseView?.alpha = 1.0
+        })
+        
+    }
+
+    func showDeleteAccountView() {
+        
         let frame = self.view.bounds
         let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.38)
         deleteAccountView = DeleteAccountView(frame: viewRect)
@@ -98,13 +124,33 @@ class SettingsTableViewController: UITableViewController {
         self.view.addSubview(self.deleteAccountView!)
         
         UIView.animate(withDuration: 0.3, animations: {
-            self.deleteAccountView?.alpha = 1.0
             self.blurView.alpha = 0.6
+            self.deleteAccountView?.alpha = 1.0
         })
+        
+    }
+    
+    func showEmptyPassphraseWarning(oldPassphrase: String, newPassphrase: String) {
         
     }
 
     func verifyPassphrase() {
+        
+        let frame = self.view.bounds
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.38)
+        verifyPassphraseView = VerifyPassphraseView(frame: viewRect)
+        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 30)
+        verifyPassphraseView?.center = viewCenter
+        verifyPassphraseView?.alpha = 0.3
+        
+        verifyPassphraseView?.settingsViewController = self
+        
+        self.view.addSubview(self.verifyPassphraseView!)
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.verifyPassphraseView?.alpha = 1.0
+            self.verifyPassphraseView?.passphraseTextField.becomeFirstResponder()
+        })
         
     }
 

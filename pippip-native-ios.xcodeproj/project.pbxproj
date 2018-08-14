@@ -85,6 +85,8 @@
 		5557B46D211E087000FE1775 /* AddToWhitelistView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B46C211E087000FE1775 /* AddToWhitelistView.xib */; };
 		5557B46F211F09F200FE1775 /* DeleteAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5557B46E211F09F200FE1775 /* DeleteAccountView.swift */; };
 		5557B471211F0A2C00FE1775 /* DeleteAccountView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */; };
+		5557B473212066A700FE1775 /* VerifyPassphraseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5557B472212066A700FE1775 /* VerifyPassphraseView.swift */; };
+		5557B475212066CE00FE1775 /* VerifyPassphraseView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B474212066CE00FE1775 /* VerifyPassphraseView.xib */; };
 		555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 555B0D40204C887B00D99807 /* MBProgressHUD.m */; };
 		555B0D45204CD80000D99807 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 555B0D44204CD80000D99807 /* UserNotifications.framework */; };
 		55721A0A20C86876008FE9F6 /* EnclaveDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0920C86876008FE9F6 /* EnclaveDelegate.swift */; };
@@ -173,6 +175,8 @@
 		55AA55661FA14D7100A7026B /* Base64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55481FA14D7100A7026B /* Base64.cc */; };
 		55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55491FA14D7100A7026B /* RSAPrivateKey.cc */; };
 		55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA554A1FA14D7100A7026B /* BigInteger.cc */; };
+		55AD26F62121CF1200FD8A9A /* ChangePassphraseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AD26F52121CF1200FD8A9A /* ChangePassphraseView.swift */; };
+		55AD26FA2121CF9E00FD8A9A /* ChangePassphraseView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55AD26F92121CF9E00FD8A9A /* ChangePassphraseView.xib */; };
 		55B0DBBA2048962400F6B29B /* CopyableLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B0DBB92048962400F6B29B /* CopyableLabel.m */; };
 		55B17DAF20A1492600DA16DE /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B17DAE20A1492600DA16DE /* MessagesViewController.swift */; };
 		55BFD35F20CDCFB30084C555 /* AccountConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD35E20CDCFB30084C555 /* AccountConfig.swift */; };
@@ -318,6 +322,8 @@
 		5557B46C211E087000FE1775 /* AddToWhitelistView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddToWhitelistView.xib; sourceTree = "<group>"; };
 		5557B46E211F09F200FE1775 /* DeleteAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountView.swift; sourceTree = "<group>"; };
 		5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DeleteAccountView.xib; sourceTree = "<group>"; };
+		5557B472212066A700FE1775 /* VerifyPassphraseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyPassphraseView.swift; sourceTree = "<group>"; };
+		5557B474212066CE00FE1775 /* VerifyPassphraseView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VerifyPassphraseView.xib; sourceTree = "<group>"; };
 		555B0D40204C887B00D99807 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		555B0D41204C887B00D99807 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		555B0D43204CA4E300D99807 /* pippip-native-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "pippip-native-ios.entitlements"; sourceTree = "<group>"; };
@@ -485,6 +491,8 @@
 		55AA554B1FA14D7100A7026B /* KeyPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyPair.h; sourceTree = "<group>"; };
 		55AA55691FA14E5900A7026B /* gmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmp.h; sourceTree = "<group>"; };
 		55AA556D1FA1527C00A7026B /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgmp.a; sourceTree = "<group>"; };
+		55AD26F52121CF1200FD8A9A /* ChangePassphraseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePassphraseView.swift; sourceTree = "<group>"; };
+		55AD26F92121CF9E00FD8A9A /* ChangePassphraseView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChangePassphraseView.xib; sourceTree = "<group>"; };
 		55B0DBB82048962400F6B29B /* CopyableLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CopyableLabel.h; sourceTree = "<group>"; };
 		55B0DBB92048962400F6B29B /* CopyableLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CopyableLabel.m; sourceTree = "<group>"; };
 		55B17DAE20A1492600DA16DE /* MessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
@@ -664,6 +672,7 @@
 			isa = PBXGroup;
 			children = (
 				5557B46A211E06E500FE1775 /* AddToWhitelistView.swift */,
+				55AD26F52121CF1200FD8A9A /* ChangePassphraseView.swift */,
 				554D01CB207D9C2300C19373 /* ContactPolicyCell.swift */,
 				55B0DBB82048962400F6B29B /* CopyableLabel.h */,
 				55B0DBB92048962400F6B29B /* CopyableLabel.m */,
@@ -677,6 +686,7 @@
 				55FD018720B0C7880028435E /* MultiCellItemProtocol.swift */,
 				5586B881206428A400641514 /* PublicIdCell.swift */,
 				55FD018520B0C6CD0028435E /* SettingsTableViewController.swift */,
+				5557B472212066A700FE1775 /* VerifyPassphraseView.swift */,
 				55E7593D20674DAE009BAA1C /* WhitelistViewController.swift */,
 			);
 			path = Settings;
@@ -842,11 +852,13 @@
 				5557B46C211E087000FE1775 /* AddToWhitelistView.xib */,
 				55E970A820AE28F0008C2F39 /* AuthView.xib */,
 				55E970B620B09DD2008C2F39 /* ContactTableViewCell.xib */,
+				5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */,
 				5557B460211CCE4000FE1775 /* NewAccountView.xib */,
 				5557B464211CE41600FE1775 /* PassphraseAlertView.xib */,
 				55206DA82075486000B0B246 /* SelectContactView.xib */,
 				5557B45C211C9A4D00FE1775 /* SignInView.xib */,
-				5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */,
+				5557B474212066CE00FE1775 /* VerifyPassphraseView.xib */,
+				55AD26F92121CF9E00FD8A9A /* ChangePassphraseView.xib */,
 			);
 			path = Nibs;
 			sourceTree = "<group>";
@@ -1130,6 +1142,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55AD26FA2121CF9E00FD8A9A /* ChangePassphraseView.xib in Resources */,
 				5557B45D211C9A4D00FE1775 /* SignInView.xib in Resources */,
 				5557B471211F0A2C00FE1775 /* DeleteAccountView.xib in Resources */,
 				5592A5971F8BBB4400F08BF5 /* LaunchScreen.storyboard in Resources */,
@@ -1143,6 +1156,7 @@
 				55E970B720B09DD2008C2F39 /* ContactTableViewCell.xib in Resources */,
 				55E06BF920BC6EA20034C652 /* iphone_send_sms.mp3 in Resources */,
 				5557B465211CE41600FE1775 /* PassphraseAlertView.xib in Resources */,
+				5557B475212066CE00FE1775 /* VerifyPassphraseView.xib in Resources */,
 				55E970A920AE28F0008C2F39 /* AuthView.xib in Resources */,
 				5592A5941F8BBB4400F08BF5 /* Assets.xcassets in Resources */,
 				5592A5921F8BBB4400F08BF5 /* Main.storyboard in Resources */,
@@ -1193,7 +1207,6 @@
 				"${BUILT_PRODUCTS_DIR}/DeviceKit/DeviceKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FrostedSidebar/FrostedSidebar.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
-				"${BUILT_PRODUCTS_DIR}/PMAlertController/PMAlertController.framework",
 				"${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
@@ -1210,7 +1223,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeviceKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FrostedSidebar.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PMAlertController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RKDropdownAlert.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
@@ -1385,6 +1397,7 @@
 				55AA55621FA14D7100A7026B /* RSAKeyPairGenerator.cc in Sources */,
 				557C2B70209635E00069336D /* SlidingMessageWindow.swift in Sources */,
 				55E970B120B07D14008C2F39 /* PippipTableViewCell.swift in Sources */,
+				55AD26F62121CF1200FD8A9A /* ChangePassphraseView.swift in Sources */,
 				55AA55631FA14D7100A7026B /* RSAPrivateCrtKey.cc in Sources */,
 				5511E9B820C1FF550080C0DF /* UpdateWhitelistRequest.swift in Sources */,
 				55AA54DD1FA14B1E00A7026B /* ByteArray.cc in Sources */,
@@ -1419,6 +1432,7 @@
 				55FD018C20B0CA120028435E /* MultiCellProtocol.swift in Sources */,
 				55FD019020B102510028435E /* AlertPresenter.swift in Sources */,
 				5586B8942065190B00641514 /* NotificationErrorDelegate.swift in Sources */,
+				5557B473212066A700FE1775 /* VerifyPassphraseView.swift in Sources */,
 				55FD018820B0C7880028435E /* MultiCellItemProtocol.swift in Sources */,
 				55F7B57D20BF22240083AE01 /* EnclaveResponse.swift in Sources */,
 				55AA54DA1FA14B1E00A7026B /* ByteArrayInputStream.cc in Sources */,

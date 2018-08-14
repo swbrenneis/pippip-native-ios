@@ -16,6 +16,10 @@ class PassphraseAlertView: UIView {
     @IBOutlet weak var cancelButton: UIButton!
   
     var newAccountView: NewAccountView?
+    var settingsViewController: SettingsTableViewController?
+    // Used for the change passphrase function
+    var oldPassphrase = ""
+    var newPassphrase = ""
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -52,6 +56,8 @@ class PassphraseAlertView: UIView {
         }, completion: { complete in
             self.removeFromSuperview()
             self.newAccountView?.dismissAndCreate()
+            self.settingsViewController?.changePassphrase(oldPassphrase: self.oldPassphrase,
+                                                          newPassphrase: self.newPassphrase)
         })
         
     }

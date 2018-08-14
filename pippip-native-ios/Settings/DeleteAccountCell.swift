@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import PMAlertController
 import ChameleonFramework
 
 class DeleteAccountCellItem: MultiCellItemProtocol {
@@ -49,7 +48,7 @@ class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
         }
 
     }
-
+/*
     func validateDelete() {
 
         let alert = PMAlertController(title: "CAUTION!",
@@ -87,7 +86,7 @@ class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
                                         let passphrase = alert.textFields[0].text ?? ""
                                         do {
                                             if try UserVault.validatePassphrase(passphrase) {
-                                                try self.accountDeleter.deleteAccount(accountName: accountName!)
+                                                try self.accountDeleter.deleteAccount()
                                                 self.alertPresenter.successAlert(title: "Account Deleted",
                                                                                  message: "This account has been deleted and you will now be logged out")
                                                 NotificationCenter.default.post(name: Notifications.AccountDeleted,
@@ -106,5 +105,5 @@ class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
         viewController?.present(alert, animated: true, completion: nil)
         
     }
-
+*/
 }

@@ -36,7 +36,7 @@ class TextMessage: Message {
     func compress(_ text: String) -> Data? {
 
         let decompressed = text.data(using: .utf8)
-        let compressed = decompressed?.compress(withAlgorithm: .LZMA)
+        let compressed = decompressed?.compress(withAlgorithm: .lzma)
         print("Uncompressed size \(text.utf8.count)")
         print("Compressed size \(compressed?.count ?? 0)")
         return compressed
@@ -45,7 +45,7 @@ class TextMessage: Message {
 
     func decompress(_ compressed: Data) -> String? {
 
-        let decompressed = compressed.decompress(withAlgorithm: .LZMA)
+        let decompressed = compressed.decompress(withAlgorithm: .lzma)
         return String(data: decompressed!, encoding: .utf8)
 
     }

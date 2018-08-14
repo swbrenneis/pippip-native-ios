@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import PMAlertController
 import ChameleonFramework
 
 class AuthView: UIView {

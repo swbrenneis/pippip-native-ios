@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import PMAlertController
 import ChameleonFramework
 
 class LocalPasswordCellItem: MultiCellItemProtocol {
@@ -34,7 +33,6 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
         // Initialization code
 
         changePassphraseButton.isHidden = true
-        passphraseText.layer.borderColor = PippipTheme.textFieldBorderColor.cgColor
 
     }
 
@@ -82,7 +80,7 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
     }
 
     func emptyPassphrase (oldPassphrase: String, newPassphrase: String) {
-
+/*
         DispatchQueue.main.async {
             let alert = PMAlertController(title: "Change Passphrase",
                                           description: "Empty passphrases are not recommended\nProceed?",
@@ -96,7 +94,7 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
             }))
             self.viewController?.present(alert, animated: true, completion: nil)
         }
-
+*/
     }
 
     func newPassphrase(_ oldPassphrase: String) {
@@ -120,7 +118,7 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
     }
     
     @IBAction func changePassphrase(_ sender: Any) {
-
+/*
         let alert = PMAlertController(title: "Change Passphrase",
                                       description: "Enter your current passphrase",
                                       image: nil,
@@ -157,6 +155,11 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
             self.resetCell()
         }))
         viewController?.present(alert, animated: true, completion: nil)
+*/
+
+        if let settingsViewController = viewController as? SettingsTableViewController {
+            settingsViewController.showChangePassphraseView()
+        }
 
     }
 

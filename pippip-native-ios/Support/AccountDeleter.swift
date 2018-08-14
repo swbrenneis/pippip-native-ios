@@ -10,11 +10,12 @@ import RealmSwift
 
 class AccountDeleter: NSObject {
 
-    func deleteAccount(accountName: String) throws {
+    func deleteAccount() throws {
 
         deleteDirectoryId()
         let authenticator = Authenticator()
         authenticator.logout()
+        let accountName = AccountSession.accountName!
         AccountSession.accountName = nil
 
         let realmURL = Realm.Configuration.defaultConfiguration.fileURL!
