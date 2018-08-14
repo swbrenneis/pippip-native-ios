@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="VerifyPassphraseView" customModule="pippip_native_ios" customModuleProvider="target">
+            <connections>
+                <outlet property="cancelButton" destination="SBV-o8-fGB" id="IFe-c7-hhb"/>
+                <outlet property="contentView" destination="iN0-l3-epB" id="V9G-Sn-x80"/>
+                <outlet property="passphraseTextField" destination="fkd-uj-YVu" id="7gX-My-fW2"/>
+                <outlet property="titleLabel" destination="Xf8-HE-ytf" id="N6a-KL-rg2"/>
+                <outlet property="verifyButton" destination="WMI-y3-g7e" id="dH2-xD-LIr"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="614"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Passphrase Verification" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xf8-HE-ytf">
+                    <rect key="frame" x="0.0" y="20" width="375" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="JvY-aE-JVn"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="zSD-o6-tD8"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="21"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="4b8-ij-grb">
+                    <rect key="frame" x="25" y="70" width="325" height="519"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter your passphrase" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oK8-oW-hPe">
+                            <rect key="frame" x="0.0" y="0.0" width="325" height="115"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Passphrase" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="fkd-uj-YVu">
+                            <rect key="frame" x="0.0" y="135" width="325" height="114.5"/>
+                            <nil key="textColor"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
+                        </textField>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WMI-y3-g7e">
+                            <rect key="frame" x="0.0" y="269.5" width="325" height="115"/>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                            <state key="normal" title="Verify"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="7"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="verifyTapped:" destination="-1" eventType="touchUpInside" id="glD-wk-gVM"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SBV-o8-fGB">
+                            <rect key="frame" x="0.0" y="404.5" width="325" height="114.5"/>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                            <state key="normal" title="Cancel"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="7"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="cancelButton:" destination="-1" eventType="touchUpInside" id="fZL-7t-BSb"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <viewLayoutGuide key="safeArea" id="j7Q-m8-p56"/>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="Xf8-HE-ytf" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="LGq-We-u9g"/>
+                <constraint firstItem="Xf8-HE-ytf" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="P6O-t8-xgc"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="4b8-ij-grb" secondAttribute="trailing" constant="25" id="UjZ-YK-7rL"/>
+                <constraint firstItem="Xf8-HE-ytf" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="dCh-Jt-AC5"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="4b8-ij-grb" secondAttribute="bottom" constant="25" id="jh7-g4-eff"/>
+                <constraint firstItem="4b8-ij-grb" firstAttribute="top" secondItem="Xf8-HE-ytf" secondAttribute="bottom" id="qBn-B3-WCz"/>
+                <constraint firstItem="4b8-ij-grb" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="25" id="xH9-dO-R4c"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="81.5" y="31"/>
+        </view>
+    </objects>
+</document>
