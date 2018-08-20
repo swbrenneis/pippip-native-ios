@@ -87,7 +87,7 @@ class VerifyPassphraseView: UIView {
     }
     
     @IBAction func cancelButton(_ sender: Any) {
-    
+
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0

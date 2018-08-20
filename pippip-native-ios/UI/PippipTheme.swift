@@ -8,6 +8,7 @@
 
 import UIKit
 import ChameleonFramework
+import DeviceKit
 
 class PippipTheme: NSObject {
 
@@ -39,6 +40,7 @@ class PippipTheme: NSObject {
     static var textFieldBorderColor: UIColor!
 
     static var cellCorners: CGFloat = 15.0
+    static var popupHeightRatio4Fields: CGFloat!
 
     static func setTheme() {
 
@@ -69,6 +71,14 @@ class PippipTheme: NSObject {
         darkTextColor = ContrastColorOf(darkCellColor, returnFlat: true)
         mediumTextColor = ContrastColorOf(mediumCellColor, returnFlat: true)
         lightTextColor = ContrastColorOf(lightCellColor, returnFlat: true)
+
+        let device = Device()
+        if device == .iPhoneX {
+            popupHeightRatio4Fields = 0.5
+        }
+        else {
+            popupHeightRatio4Fields = 0.6
+        }
 
     }
 

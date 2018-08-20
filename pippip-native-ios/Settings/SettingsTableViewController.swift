@@ -9,7 +9,7 @@
 import UIKit
 import ChameleonFramework
 
-class SettingsTableViewController: UITableViewController {
+class SettingsTableViewController: UITableViewController, ControllerBlurProtocol {
 
     var cellItems = [Int: [MultiCellItemProtocol]]()
     var config = Configurator()
@@ -39,8 +39,8 @@ class SettingsTableViewController: UITableViewController {
         items.append(PublicIdCell.cellItem)
         items.append(DirectoryIdCell.cellItem)
         items.append(LocalPasswordCell.cellItem)
-        items.append(ContactPolicyCell.cellItem)
         items.append(LocalAuthCell.cellItem)
+        items.append(ContactPolicyCell.cellItem)
         let policy = config.contactPolicy
         if policy != "public" {
             items.append(EditWhitelistCell.cellItem)
@@ -86,14 +86,10 @@ class SettingsTableViewController: UITableViewController {
 
     }
 
-    func changePassphrase(oldPassphrase: String, newPassphrase: String) {
-        
-    }
-
     func showChangePassphraseView() {
         
         let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.5)
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * PippipTheme.popupHeightRatio4Fields)
         changePassphraseView = ChangePassphraseView(frame: viewRect)
         let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
         changePassphraseView?.center = viewCenter
@@ -102,6 +98,7 @@ class SettingsTableViewController: UITableViewController {
         changePassphraseView?.settingsViewController = self
         
         self.view.addSubview(self.changePassphraseView!)
+        changePassphraseView?.oldPassphraseTextView.becomeFirstResponder()
         
         UIView.animate(withDuration: 0.3, animations: {
             self.blurView.alpha = 0.6
@@ -130,11 +127,7 @@ class SettingsTableViewController: UITableViewController {
         
     }
     
-    func showEmptyPassphraseWarning(oldPassphrase: String, newPassphrase: String) {
-        
-    }
-
-    func verifyPassphrase() {
+    func showVerifyPassphraseView() {
         
         let frame = self.view.bounds
         let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.38)

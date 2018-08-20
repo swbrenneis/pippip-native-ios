@@ -151,7 +151,7 @@ class ContactsViewController: UIViewController {
                 }
             }
             else {
-                addContactView?.dismiss(completion: { comleted in
+                addContactView?.dismiss(completion: { completed in
                     self.contactManager.requestContact(publicId: publicId, directoryId: nil, retry: false)
                 })
             }

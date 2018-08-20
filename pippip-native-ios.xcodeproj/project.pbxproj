@@ -60,6 +60,9 @@
 		55206DB12076A5EA00B0B246 /* MessageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DB02076A5EA00B0B246 /* MessageManager.swift */; };
 		55245F4120BCC9A100E6ECB6 /* SessionResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55245F4020BCC9A100E6ECB6 /* SessionResponse.swift */; };
 		55245F4320BCD62D00E6ECB6 /* Authenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55245F4220BCD62D00E6ECB6 /* Authenticator.swift */; };
+		552BC4642124BB9E00694CB4 /* Alert2ButtonView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 552BC4632124BB9E00694CB4 /* Alert2ButtonView.xib */; };
+		552BC46B2124BCE800694CB4 /* Alert2ButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552BC46A2124BCE800694CB4 /* Alert2ButtonView.swift */; };
+		552BC46D2124C00C00694CB4 /* ControllerBlurProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552BC46C2124C00C00694CB4 /* ControllerBlurProtocol.swift */; };
 		55316C8B206AD21800EB1AF7 /* PendingRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55316C8A206AD21800EB1AF7 /* PendingRequestCell.swift */; };
 		5536A6832067559400B7E6D8 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A6822067559400B7E6D8 /* Notifications.swift */; };
 		5536A68D206897D200B7E6D8 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A68C206897D200B7E6D8 /* ContactsViewController.swift */; };
@@ -77,7 +80,6 @@
 		5557B45D211C9A4D00FE1775 /* SignInView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B45C211C9A4D00FE1775 /* SignInView.xib */; };
 		5557B45F211CCDD400FE1775 /* NewAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5557B45E211CCDD400FE1775 /* NewAccountView.swift */; };
 		5557B461211CCE4000FE1775 /* NewAccountView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B460211CCE4000FE1775 /* NewAccountView.xib */; };
-		5557B463211CE36C00FE1775 /* PassphraseAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5557B462211CE36C00FE1775 /* PassphraseAlertView.swift */; };
 		5557B465211CE41600FE1775 /* PassphraseAlertView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B464211CE41600FE1775 /* PassphraseAlertView.xib */; };
 		5557B467211DE1D800FE1775 /* AddContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5557B466211DE1D800FE1775 /* AddContactView.swift */; };
 		5557B469211DE2DD00FE1775 /* AddContactView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B468211DE2DD00FE1775 /* AddContactView.xib */; };
@@ -298,6 +300,9 @@
 		55206DB02076A5EA00B0B246 /* MessageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageManager.swift; sourceTree = "<group>"; };
 		55245F4020BCC9A100E6ECB6 /* SessionResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionResponse.swift; sourceTree = "<group>"; };
 		55245F4220BCD62D00E6ECB6 /* Authenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authenticator.swift; sourceTree = "<group>"; };
+		552BC4632124BB9E00694CB4 /* Alert2ButtonView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Alert2ButtonView.xib; sourceTree = "<group>"; };
+		552BC46A2124BCE800694CB4 /* Alert2ButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert2ButtonView.swift; sourceTree = "<group>"; };
+		552BC46C2124C00C00694CB4 /* ControllerBlurProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControllerBlurProtocol.swift; sourceTree = "<group>"; };
 		55316C8A206AD21800EB1AF7 /* PendingRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingRequestCell.swift; sourceTree = "<group>"; };
 		5536A6822067559400B7E6D8 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		5536A68C206897D200B7E6D8 /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
@@ -314,7 +319,6 @@
 		5557B45C211C9A4D00FE1775 /* SignInView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SignInView.xib; sourceTree = "<group>"; };
 		5557B45E211CCDD400FE1775 /* NewAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAccountView.swift; sourceTree = "<group>"; };
 		5557B460211CCE4000FE1775 /* NewAccountView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewAccountView.xib; sourceTree = "<group>"; };
-		5557B462211CE36C00FE1775 /* PassphraseAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassphraseAlertView.swift; sourceTree = "<group>"; };
 		5557B464211CE41600FE1775 /* PassphraseAlertView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PassphraseAlertView.xib; sourceTree = "<group>"; };
 		5557B466211DE1D800FE1775 /* AddContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactView.swift; sourceTree = "<group>"; };
 		5557B468211DE2DD00FE1775 /* AddContactView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddContactView.xib; sourceTree = "<group>"; };
@@ -581,10 +585,12 @@
 		55316C8E206B32B300EB1AF7 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				55A734B6206ECEEB00D31AD6 /* Nibs */,
+				552BC46A2124BCE800694CB4 /* Alert2ButtonView.swift */,
 				55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */,
+				552BC46C2124C00C00694CB4 /* ControllerBlurProtocol.swift */,
 				55E970B020B07D14008C2F39 /* PippipTableViewCell.swift */,
 				55E970B220B07DAE008C2F39 /* PippipTheme.swift */,
+				55A734B6206ECEEB00D31AD6 /* Nibs */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -599,7 +605,6 @@
 				55E970AC20AE6927008C2F39 /* LocalAuthenticator.swift */,
 				55F2758C20C1A2CB002687C9 /* NewAccountCreator.swift */,
 				5557B45E211CCDD400FE1775 /* NewAccountView.swift */,
-				5557B462211CE36C00FE1775 /* PassphraseAlertView.swift */,
 				5557B45A211C9A1000FE1775 /* SignInView.swift */,
 				554D01C3207C0CEC00C19373 /* UserVault.swift */,
 			);
@@ -850,7 +855,9 @@
 			children = (
 				5557B468211DE2DD00FE1775 /* AddContactView.xib */,
 				5557B46C211E087000FE1775 /* AddToWhitelistView.xib */,
+				552BC4632124BB9E00694CB4 /* Alert2ButtonView.xib */,
 				55E970A820AE28F0008C2F39 /* AuthView.xib */,
+				55AD26F92121CF9E00FD8A9A /* ChangePassphraseView.xib */,
 				55E970B620B09DD2008C2F39 /* ContactTableViewCell.xib */,
 				5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */,
 				5557B460211CCE4000FE1775 /* NewAccountView.xib */,
@@ -858,7 +865,6 @@
 				55206DA82075486000B0B246 /* SelectContactView.xib */,
 				5557B45C211C9A4D00FE1775 /* SignInView.xib */,
 				5557B474212066CE00FE1775 /* VerifyPassphraseView.xib */,
-				55AD26F92121CF9E00FD8A9A /* ChangePassphraseView.xib */,
 			);
 			path = Nibs;
 			sourceTree = "<group>";
@@ -1160,6 +1166,7 @@
 				55E970A920AE28F0008C2F39 /* AuthView.xib in Resources */,
 				5592A5941F8BBB4400F08BF5 /* Assets.xcassets in Resources */,
 				5592A5921F8BBB4400F08BF5 /* Main.storyboard in Resources */,
+				552BC4642124BB9E00694CB4 /* Alert2ButtonView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1279,6 +1286,7 @@
 				55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */,
 				55E7593E20674DAE009BAA1C /* WhitelistViewController.swift in Sources */,
 				5586B88E2064951000641514 /* ParameterGenerator.swift in Sources */,
+				552BC46D2124C00C00694CB4 /* ControllerBlurProtocol.swift in Sources */,
 				55721A1420C9900F008FE9F6 /* GetMessagesDelegate.swift in Sources */,
 				5516978F20994A01002BB4C1 /* MessagesHeadingCell.swift in Sources */,
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
@@ -1390,7 +1398,6 @@
 				5511E9CA20C2DFB30080C0DF /* MatchDirectoryIdResponse.swift in Sources */,
 				55E970A320AAE05E008C2F39 /* ClientAuthChallenge.swift in Sources */,
 				55721A0E20C97A5C008FE9F6 /* AcknowledgeMessagesDelegate.swift in Sources */,
-				5557B463211CE36C00FE1775 /* PassphraseAlertView.swift in Sources */,
 				55AA55511FA14D7100A7026B /* RSAPrivateModKey.cc in Sources */,
 				557C2B5D2093C5080069336D /* PippipMessageModel.swift in Sources */,
 				55E970AB20AE2C11008C2F39 /* AuthView.swift in Sources */,
@@ -1440,6 +1447,7 @@
 				55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */,
 				55245F4320BCD62D00E6ECB6 /* Authenticator.swift in Sources */,
 				55AA55561FA14D7100A7026B /* PEMCodec.cc in Sources */,
+				552BC46B2124BCE800694CB4 /* Alert2ButtonView.swift in Sources */,
 				55721A1E20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift in Sources */,
 				55187ED020BE427700F94792 /* ServerAuthChallenge.swift in Sources */,
 				5511E9CE20C301850080C0DF /* RequestContactResponse.swift in Sources */,

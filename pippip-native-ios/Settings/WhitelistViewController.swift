@@ -54,11 +54,6 @@ class WhitelistViewController: UIViewController {
         rightBarItems.append(editWhitelist)
         self.navigationItem.rightBarButtonItems = rightBarItems
 
-        NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryDeleted(_:)),
-                                               name: Notifications.WhitelistEntryDeleted, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
-                                               name: Notifications.WhitelistEntryAdded, object: nil)
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -124,12 +119,17 @@ class WhitelistViewController: UIViewController {
                         alertPresenter.errorAlert(title: "Contact Request Error", message: "Not a valid public ID")
                     }
                 }
-                else if contactManager.addWhitelistEntry(publicId) {
-                    addIdView?.dismiss()
-                }
                 else {
-                    self.alertPresenter.errorAlert(title: "Add Permitted ID Error",
+                    NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
+                                                           name: Notifications.WhitelistEntryAdded, object: nil)
+                    if contactManager.addWhitelistEntry(publicId) {
+                        addIdView?.dismiss()
+                    }
+                    else {
+                        self.alertPresenter.errorAlert(title: "Add Permitted ID Error",
                                                    message: "You already added that ID")
+                        NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryAdded, object: nil)
+                    }
                 }
             }
         }
@@ -199,11 +199,15 @@ class WhitelistViewController: UIViewController {
         guard let response = notification.object as? MatchDirectoryIdResponse else { return }
         if response.result == "found" {
             publicId = response.publicId!
-            if contactManager.addWhitelistEntry(self.publicId) {
+            NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
+                                                   name: Notifications.WhitelistEntryAdded, object: nil)
+            if contactManager.addWhitelistEntry(publicId) {
                 addIdView?.dismiss()
             }
             else {
-                alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "You already added that ID")
+                self.alertPresenter.errorAlert(title: "Add Permitted ID Error",
+                                               message: "You already added that ID")
+                NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryAdded, object: nil)
             }
         }
         else {
@@ -234,7 +238,7 @@ class WhitelistViewController: UIViewController {
 
     @objc func whitelistEntryAdded(_ notification: Notification) {
 
-        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryAdded, object: nil)
         let entity = Entity(publicId: publicId, directoryId: directoryId)
         do {
             try config.addWhitelistEntry(entity)
@@ -253,6 +257,7 @@ class WhitelistViewController: UIViewController {
 
     @objc func whitelistEntryDeleted(_ notification:Notification) {
 
+        NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryDeleted, object: nil)
         do {
             let row = try config.deleteWhitelistEntry(self.publicId)
             assert(row != NSNotFound)
@@ -336,6 +341,8 @@ extension WhitelistViewController: UITableViewDelegate, UITableViewDataSource {
                    forRowAt indexPath: IndexPath) {
 
         if editingStyle == .delete {
+            NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryDeleted(_:)),
+                                                   name: Notifications.WhitelistEntryDeleted, object: nil)
             publicId = config.whitelist[indexPath.row].publicId
             contactManager.deleteWhitelistEntry(publicId)
         }

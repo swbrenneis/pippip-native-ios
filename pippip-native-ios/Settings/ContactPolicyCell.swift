@@ -25,7 +25,6 @@ class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
     var contactManager = ContactManager()
     var config = Configurator()
     var currentPolicy = "whitelist"
-    var selectedPolicy = "whitelist"
     var alertPresenter = AlertPresenter()
 
     override func awakeFromNib() {
@@ -40,9 +39,6 @@ class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
         }
         contactPolicySwitch.onTintColor = PippipTheme.buttonColor
 
-        NotificationCenter.default.addObserver(self, selector: #selector(policyUpdated(_:)),
-                                               name: Notifications.PolicyUpdated, object: nil)
-
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -53,19 +49,18 @@ class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
 
     @objc func policyUpdated(_ notification: Notification) {
 
+        NotificationCenter.default.removeObserver(self, name: Notifications.PolicyUpdated, object: nil)
         guard let response = notification.object as? SetContactPolicyResponse else { return }
         if (response.result == "policySet") {
-            self.currentPolicy = self.selectedPolicy
-            self.config.contactPolicy = self.currentPolicy
-            var info = [AnyHashable: Any]()
-            info["policy"] = self.currentPolicy
+            currentPolicy = response.policy!
+            config.contactPolicy = currentPolicy
             NotificationCenter.default.post(name: Notifications.PolicyChanged, object: response.policy)
             DispatchQueue.main.async {
                 self.resetCell()
             }
         }
         else {
-            alertPresenter.errorAlert(title: "PolicyError", message: "Invlaid Server Response")
+            alertPresenter.errorAlert(title: "PolicyError", message: "Invalid Server Response")
             DispatchQueue.main.async {
                 self.resetCell()
             }
@@ -86,12 +81,12 @@ class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
 
     @IBAction func policyChanged(_ sender: UISwitch) {
 
+        var selectedPolicy = "whitelist"
         if (sender.isOn) {
             selectedPolicy = "public"
         }
-        else {
-            selectedPolicy = "whitelist"
-        }
+        NotificationCenter.default.addObserver(self, selector: #selector(policyUpdated(_:)),
+                                               name: Notifications.PolicyUpdated, object: nil)
         contactManager.setContactPolicy(selectedPolicy)
 
     }

@@ -19,9 +19,8 @@ class LocalPasswordCellItem: MultiCellItemProtocol {
 
 class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
 
-    @IBOutlet weak var passphraseText: UITextField!
-    @IBOutlet weak var changePassphraseButton: UIButton!
-
+    @IBOutlet weak var changePassphraseLabel: UILabel!
+    
     static var cellItem: MultiCellItemProtocol = LocalPasswordCellItem()
     let obscured = "***********"
     var viewController: UITableViewController?
@@ -32,7 +31,10 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
         super.awakeFromNib()
         // Initialization code
 
-        changePassphraseButton.isHidden = true
+        changePassphraseLabel.backgroundColor = PippipTheme.lightBarColor
+        changePassphraseLabel.textColor = UIColor.flatTealDark
+        changePassphraseLabel.layer.cornerRadius = 7.0
+        changePassphraseLabel.layer.masksToBounds = true
 
     }
 
@@ -40,31 +42,14 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
-    }
+        if selected {
+            if let settingsViewController = viewController as? SettingsTableViewController {
+                settingsViewController.showChangePassphraseView()
+            }
+        }
 
-    override func setDarkTheme() {
-        
-        passphraseText.textColor = PippipTheme.darkTextColor
-        super.setDarkTheme()
-        
     }
-    
-    override func setMediumTheme() {
-        
-        passphraseText.textColor = PippipTheme.mediumTextColor
-        passphraseText.layer.borderColor = PippipTheme.textFieldBorderColor.cgColor
-        changePassphraseButton.setTitleColor(PippipTheme.buttonMediumTextColor, for: .normal)
-        super.setMediumTheme()
-        
-    }
-    
-    override func setLightTheme() {
-        
-        passphraseText.textColor = PippipTheme.lightTextColor
-        super.setLightTheme()
-        
-    }
-    
+/*
     func doChangePassphrase(oldPassphrase: String, newPassphrase: String) {
 
         let vault = UserVault()
@@ -80,7 +65,7 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
     }
 
     func emptyPassphrase (oldPassphrase: String, newPassphrase: String) {
-/*
+
         DispatchQueue.main.async {
             let alert = PMAlertController(title: "Change Passphrase",
                                           description: "Empty passphrases are not recommended\nProceed?",
@@ -94,7 +79,7 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
             }))
             self.viewController?.present(alert, animated: true, completion: nil)
         }
-*/
+
     }
 
     func newPassphrase(_ oldPassphrase: String) {
@@ -108,75 +93,5 @@ class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
         }
     
     }
-
-    func resetCell() {
-
-        passphraseText.text = obscured
-        changePassphraseButton.alpha = 0.0
-        changePassphraseButton.isEnabled = false
-
-    }
-    
-    @IBAction func changePassphrase(_ sender: Any) {
-/*
-        let alert = PMAlertController(title: "Change Passphrase",
-                                      description: "Enter your current passphrase",
-                                      image: nil,
-                                      style: .alert)
-        alert.addTextField({ (textField) in
-            textField?.placeholder = "Passphrase"
-            textField?.autocorrectionType = .no
-            textField?.spellCheckingType = .no
-            textField?.autocapitalizationType = .none
-            textField?.becomeFirstResponder()
-        })
-        alert.addAction(PMAlertAction(title: "Verify Passphrase", style: .default, action: { () in
-            let passphrase = alert.textFields[0].text ?? ""
-            do {
-                if try UserVault.validatePassphrase(passphrase) {
-                    self.newPassphrase(passphrase)
-                }
-                else {
-                    var info = [AnyHashable: Any]()
-                    info["title"] = "Verify Passphrase"
-                    info["message"] = "Invalid passphrase"
-                    NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
-                    self.resetCell()
-                }
-            }
-            catch {
-                var info = [AnyHashable: Any]()
-                info["title"] = "Verify Passphrase Exception"
-                info["message"] = "An error has occurred, please try again"
-                NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
-            }
-        }))
-        alert.addAction(PMAlertAction(title: "Cancel", style: .cancel, action: { () in
-            self.resetCell()
-        }))
-        viewController?.present(alert, animated: true, completion: nil)
 */
-
-        if let settingsViewController = viewController as? SettingsTableViewController {
-            settingsViewController.showChangePassphraseView()
-        }
-
-    }
-
-    @IBAction func passphraseSeleted(_ sender: UITextField) {
-
-        if passphraseText.text == obscured {
-            passphraseText.text = ""
-            changePassphraseButton.isHidden = false
-        }
-    
-    }
-    
-    @IBAction func passphraseEndEdit(_ sender: Any) {
-
-        passphraseText.text = obscured
-        changePassphraseButton.isHidden = true
-
-    }
-
 }

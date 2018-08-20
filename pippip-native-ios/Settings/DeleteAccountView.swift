@@ -52,7 +52,7 @@ class DeleteAccountView: UIView {
             self.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
-            self.settingsViewController?.verifyPassphrase()
+            self.settingsViewController?.showVerifyPassphraseView()
         })
         
     }

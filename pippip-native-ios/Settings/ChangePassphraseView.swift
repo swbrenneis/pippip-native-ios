@@ -19,7 +19,10 @@ class ChangePassphraseView: UIView {
     
     var settingsViewController: SettingsTableViewController?
     var alertPresenter = AlertPresenter()
-    
+    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
+    var oldPassphrase = ""
+    var newPassphrase = ""
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
@@ -41,34 +44,61 @@ class ChangePassphraseView: UIView {
         
         titleLabel.backgroundColor = PippipTheme.lightBarColor
         titleLabel.textColor = PippipTheme.titleColor
-        changePassphraseButton.backgroundColor = PippipTheme.buttonColor
+        changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
         changePassphraseButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
+        changePassphraseButton.isEnabled = false
         cancelButton.backgroundColor = PippipTheme.cancelButtonColor
         cancelButton.setTitleColor(PippipTheme.cancelButtonTextColor, for: .normal)
         
+        let frame = self.bounds
+        blurView.frame = frame
+        blurView.alpha = 0.0
+        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        addSubview(blurView)
+
     }
     
     @IBAction func changePassphraseTapped(_ sender: Any) {
         
-        let oldPassphrase = oldPassphraseTextView.text ?? ""
-        let newPassphrase = newPassphraseTextView.text ?? ""
+        oldPassphrase = oldPassphraseTextView.text ?? ""
+        newPassphrase = newPassphraseTextView.text ?? ""
         do {
-            if newPassphrase.utf8.count == 0 {
-                settingsViewController?.showEmptyPassphraseWarning(oldPassphrase: oldPassphrase,
-                                                                   newPassphrase: newPassphrase)
-            }
-            else if try UserVault.validatePassphrase(oldPassphrase) {
-                settingsViewController?.changePassphrase(oldPassphrase: oldPassphrase,
-                                                         newPassphrase: newPassphrase)
+            if try UserVault.validatePassphrase(oldPassphrase) {
+                dismiss(changePassphrase: true)
             }
         }
         catch {
-            alertPresenter.infoAlert(title: "Invalid Old Passphrase",
-                                     message: "The old passphrase you entered is invalid, passphrase not changed")
+            alertPresenter.errorAlert(title: "Invalid Old Passphrase",
+                                      message: "The old passphrase you entered is invalid")
+            // Dismiss here to make brute force harder
+            dismiss(changePassphrase: false)
         }
 
     }
     
+    func dismiss(changePassphrase: Bool) {
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.center.y = 0.0
+            self.alpha = 0.0
+            self.blurView.alpha = 0.0
+            self.settingsViewController?.blurView.alpha = 0.0
+        }, completion: { completed in
+            self.removeFromSuperview()
+            if changePassphrase {
+                let vault = UserVault()
+                do {
+                    try vault.changePassphrase(oldPassphrase: self.oldPassphrase, newPassphrase: self.newPassphrase)
+                    self.alertPresenter.successAlert(title: "Passphrase Changed", message: "Your local passphrase has been changed")
+                }
+                catch {
+                    self.alertPresenter.errorAlert(title: "Change Passphrase Error", message: "An error has occurred, please try again")
+                }
+            }
+        })
+        
+    }
+
     @IBAction func cancelTapped(_ sender: Any) {
         
         UIView.animate(withDuration: 0.3, animations: {
@@ -81,4 +111,22 @@ class ChangePassphraseView: UIView {
         
     }
 
+    @IBAction func newPassphraseChanged(_ sender: Any) {
+
+        guard let passphrase = newPassphraseTextView.text else {
+            changePassphraseButton.isEnabled = false
+            changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
+            return
+        }
+        if passphrase.utf8.count > 0 {
+            changePassphraseButton.isEnabled = true
+            changePassphraseButton.backgroundColor = PippipTheme.buttonColor
+        }
+        else {
+            changePassphraseButton.isEnabled = false
+            changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
+        }
+
+    }
+    
 }
