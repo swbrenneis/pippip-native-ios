@@ -42,6 +42,8 @@ class ContactDetailCell: PippipTableViewCell, UITextFieldDelegate {
         displayNameText.text = contact.directoryId
         displayNameLabel.text = contact.displayName
         statusImageView.image = UIImage(named: contact.status)
+        resendRequestButton.backgroundColor = PippipTheme.buttonColor
+        resendRequestButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         self.backgroundColor = .clear
         if expanded {
             displayNameText.isHidden = false

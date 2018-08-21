@@ -18,7 +18,7 @@ class AddContactView: UIView {
     @IBOutlet weak var cancelButton: UIButton!
     
     var contactsViewController: ContactsViewController?
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()

@@ -13,7 +13,6 @@ class SessionResponse: Mappable {
 
     var serverPublicKey: String?
     var sessionId: Int32?
-    var sessionTTL: Int64?
     var error: String?
 
     required init?(map: Map) {
@@ -23,7 +22,6 @@ class SessionResponse: Mappable {
     func mapping(map: Map) {
         serverPublicKey <- map["serverPublicKey"]
         sessionId <- map["sessionId"]
-        sessionTTL <- map["sessionTTL"]
         error <- map["error"]
     }
 

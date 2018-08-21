@@ -13,8 +13,6 @@ import DeviceKit
 
 class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
 
-    @objc static var sessionTTL: Int64 = 0
-
     var viewController: UIViewController
     var view: UIView
     var authView: AuthView

@@ -29,6 +29,7 @@ class ContactsViewController: UIViewController {
     var showRequests = false
     var headerView: UIView!
     var addContactView: AddContactView?
+    var acknowledgeRequestView: AcknowledgeRequestView?
     var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
 
     override func viewDidLoad() {
@@ -129,6 +130,25 @@ class ContactsViewController: UIViewController {
         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
         present(alert, animated: true, completion: nil)
 */
+
+        let frame = self.view.bounds
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.45)
+        acknowledgeRequestView = AcknowledgeRequestView(frame: viewRect)
+        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 30)
+        acknowledgeRequestView?.center = viewCenter
+        acknowledgeRequestView?.alpha = 0.3
+        
+        acknowledgeRequestView?.contactsViewController = self
+        
+        self.view.addSubview(self.acknowledgeRequestView!)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.blurView.alpha = 0.6
+            self.acknowledgeRequestView?.alpha = 1.0
+        }, completion: { complete in
+            //self.addContactView?.directoryIdTextField.becomeFirstResponder()
+        })
+        
     }
 
     func validateAndRequest(publicId: String, directoryId: String) {
@@ -301,30 +321,6 @@ class ContactsViewController: UIViewController {
 
     @objc func addContact(_ item: Any) {
 
-/*
-        let alert = PMAlertController(title: "Add A New Contact",
-                                      description: "Enter a directory ID or public ID",
-                                      image: nil,
-                                      style: PMAlertControllerStyle.alert)
-        alert.addTextField({ (textField) in
-            textField?.placeholder = "Directory ID"
-            textField?.autocorrectionType = .no
-            textField?.spellCheckingType = .no
-        })
-        alert.addTextField({ (textField) in
-            textField?.placeholder = "Public ID"
-            textField?.autocorrectionType = .no
-            textField?.spellCheckingType = .no
-        })
-        alert.addAction(PMAlertAction(title: "Add Contact",
-                                      style: .default, action: { () in
-                                        self.validateAndRequest(publicId: alert.textFields[1].text,
-                                                                directoryId: alert.textFields[0].text)
-        }))
-        alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
-        self.present(alert, animated: true, completion: nil)
-*/
-
         let frame = self.view.bounds
         let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.45)
         addContactView = AddContactView(frame: viewRect)
@@ -394,17 +390,16 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
             assert(contactRequests.count > 0)
             if indexPath.row == 0 {
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "PendingRequestsCell", for: indexPath)
-                    as? PippipTableViewCell else { return UITableViewCell() }
-                cell.setMediumTheme()
-                cell.textLabel?.textColor = PippipTheme.buttonMediumTextColor
+                    as? PendingRequestsCell else { return UITableViewCell() }
+                //cell.setMediumTheme()
                 return cell
             }
             else {
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "PendingRequestCell", for: indexPath)
                     as? PendingRequestCell else { return UITableViewCell() }
-                cell.setLightTheme()
+                //cell.setLightTheme()
                 let request = contactRequests[indexPath.row-1]
-                cell.directoryIdLabel.text = request.directoryId
+                cell.directoryIdLabel.text = request.directoryId ?? "No Directory ID"
                 cell.publicIdLabel.text = request.publicId
                 return cell
             }
@@ -422,7 +417,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
         if indexPath.section == 0 {
-            return indexPath.row == 0 ? 55.0 : 65.0
+            return indexPath.row == 0 ? 60.0 : 70.0
         }
         else if expandedRows[indexPath.row] {
             let contact = contactList[indexPath.row]
@@ -450,7 +445,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 showRequests = !showRequests
-                tableView.reloadSections(IndexSet(integer: 0), with: .left)
+                tableView.reloadSections(IndexSet(integer: 0), with: showRequests ? .bottom : .top)
             }
             else {
                 let contactRequest = contactRequests[indexPath.row-1]
@@ -459,7 +454,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
         }
         else {
             expandedRows[indexPath.row] = !expandedRows[indexPath.row]
-            tableView.reloadRows(at: [indexPath], with: .left)
+            tableView.reloadRows(at: [indexPath], with: .bottom)
         }
 
     }

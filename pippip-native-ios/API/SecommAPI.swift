@@ -64,6 +64,14 @@ class SecommAPI: NSObject {
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
             urlRequest.httpBody = delegate.request.toJSONString()?.data(using: .utf8, allowLossyConversion: false)
             Alamofire.request(urlRequest).responseObject { (response: DataResponse<DelegateT.ResponseT>) in
+                //print("Request: \(response.request)")
+                //print("Response: \(response.response)")
+                //print("Error: \(response.error)")
+                
+                if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
+                    print("Data: \(utf8Text)")
+                }
+
                 if response.error != nil {
                     let responseError = APIResponseError(errorString: response.error!.localizedDescription)
                     delegate.responseError(responseError)

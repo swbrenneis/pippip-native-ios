@@ -183,7 +183,6 @@ class Authenticator: NSObject {
             alertPresenter.errorAlert(title: "Session Error", message: sessionResponse.error!)
         }
         else {
-            LocalAuthenticator.sessionTTL = sessionResponse.sessionTTL!
             sessionState.sessionId = sessionResponse.sessionId!
             let pem = CKPEMCodec()
             sessionState.serverPublicKey = pem.decodePublicKey(sessionResponse.serverPublicKey!)
