@@ -132,14 +132,15 @@ class ContactsViewController: UIViewController {
 */
 
         let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.45)
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.6)
         acknowledgeRequestView = AcknowledgeRequestView(frame: viewRect)
         let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 30)
         acknowledgeRequestView?.center = viewCenter
         acknowledgeRequestView?.alpha = 0.3
         
         acknowledgeRequestView?.contactsViewController = self
-        
+        acknowledgeRequestView?.contactRequest = contactRequest
+
         self.view.addSubview(self.acknowledgeRequestView!)
         
         UIView.animate(withDuration: 0.3, animations: {

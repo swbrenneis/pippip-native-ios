@@ -14,6 +14,7 @@ class SelectContactView: UIView {
     @IBOutlet weak var searchText: UITextField!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var selectButton: UIButton!
+    @IBOutlet weak var toLabel: UILabel!
     
     var contactList = [Contact]()
     var contactManager = ContactManager()
@@ -44,6 +45,7 @@ class SelectContactView: UIView {
         tableView.register(nib, forCellReuseIdentifier: "SelectContactCell")
         selectButton.isEnabled = false
         selectButton.isHidden = true
+        toLabel.backgroundColor = PippipTheme.lightBarColor
 
     }
 
@@ -136,6 +138,9 @@ extension SelectContactView: UITableViewDelegate, UITableViewDataSource {
         selectButton.isEnabled = true
         selectButton.isHidden = false
         searchText.text = selected!.displayName
+        let cell = tableView.cellForRow(at: indexPath)
+        cell?.backgroundColor = PippipTheme.selectedCellColor
+        cell?.textLabel?.textColor = PippipTheme.selectedTextColor
 
     }
 

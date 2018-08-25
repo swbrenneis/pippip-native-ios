@@ -16,6 +16,14 @@ struct ContactRequest: Hashable {
     var hashValue: Int {
         return publicId.hashValue
     }
+    var displayId: String {
+        if directoryId != nil {
+            return directoryId!
+        }
+        else {
+            return publicId
+        }
+    }
 
     init(publicId: String, directoryId: String?) {
 

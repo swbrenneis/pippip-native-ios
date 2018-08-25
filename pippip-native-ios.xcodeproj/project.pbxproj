@@ -191,6 +191,8 @@
 		55BFD36720D04C0D0084C555 /* AccountDeleter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36620D04C0D0084C555 /* AccountDeleter.swift */; };
 		55BFD36920D052FC0084C555 /* AccountSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36820D052FC0084C555 /* AccountSession.swift */; };
 		55C88DCF20707F6B00D58BCA /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C88DCE20707F6B00D58BCA /* Contact.swift */; };
+		55CB2803212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CB2802212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift */; };
+		55CB280721305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CB280621305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift */; };
 		55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */; };
 		55E029322093AAC00074B97F /* ChattoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E029312093AAC00074B97F /* ChattoViewController.swift */; };
 		55E06BF820BC6EA20034C652 /* iphone_receive_sms.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 55E06BF620BC6EA20034C652 /* iphone_receive_sms.mp3 */; };
@@ -513,6 +515,8 @@
 		55BFD36620D04C0D0084C555 /* AccountDeleter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDeleter.swift; sourceTree = "<group>"; };
 		55BFD36820D052FC0084C555 /* AccountSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSession.swift; sourceTree = "<group>"; };
 		55C88DCE20707F6B00D58BCA /* Contact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
+		55CB2802212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessageViewModelBuilder.swift; sourceTree = "<group>"; };
+		55CB280621305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipMessageCollectionViewCellStyle.swift; sourceTree = "<group>"; };
 		55CBAE5E1FD62E8D00C73A2B /* CKSignature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKSignature.h; sourceTree = "<group>"; };
 		55CBAE5F1FD62E8D00C73A2B /* CKSignature.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKSignature.mm; sourceTree = "<group>"; };
 		55E029312093AAC00074B97F /* ChattoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattoViewController.swift; sourceTree = "<group>"; };
@@ -667,11 +671,13 @@
 				55206DB02076A5EA00B0B246 /* MessageManager.swift */,
 				5516978E20994A01002BB4C1 /* MessagesHeadingCell.swift */,
 				55B17DAE20A1492600DA16DE /* MessagesViewController.swift */,
+				55CB280621305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift */,
 				557C2B5C2093C5080069336D /* PippipMessageModel.swift */,
 				557C2B732096A03D0069336D /* PippipMessageViewModel.swift */,
 				557C2B642093CE7C0069336D /* PippipTextMessageInteractionHandler.swift */,
 				557C2B582093B8360069336D /* PippipTextMessageModel.swift */,
 				557C2B5E2093C5530069336D /* PippipTextMessageViewModel.swift */,
+				55CB2802212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift */,
 				55169790209A4894002BB4C1 /* PreviewCell.swift */,
 				55206DAA20754A2500B0B246 /* SelectContactView.swift */,
 				557C2B6F209635E00069336D /* SlidingMessageWindow.swift */,
@@ -1344,6 +1350,7 @@
 				55AA55011FA14C1300A7026B /* CKSHA256.mm in Sources */,
 				55AA54FC1FA14C1300A7026B /* CKRSAKeyPair.m in Sources */,
 				55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */,
+				55CB280721305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift in Sources */,
 				55E7593E20674DAE009BAA1C /* WhitelistViewController.swift in Sources */,
 				5586B88E2064951000641514 /* ParameterGenerator.swift in Sources */,
 				552BC46D2124C00C00694CB4 /* ControllerBlurProtocol.swift in Sources */,
@@ -1509,6 +1516,7 @@
 				55AA55561FA14D7100A7026B /* PEMCodec.cc in Sources */,
 				552BC46B2124BCE800694CB4 /* Alert2ButtonView.swift in Sources */,
 				55721A1E20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift in Sources */,
+				55CB2803212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift in Sources */,
 				55187ED020BE427700F94792 /* ServerAuthChallenge.swift in Sources */,
 				5511E9CE20C301850080C0DF /* RequestContactResponse.swift in Sources */,
 				55245F4120BCC9A100E6ECB6 /* SessionResponse.swift in Sources */,

@@ -79,7 +79,7 @@ class ContactDetailCell: PippipTableViewCell, UITextFieldDelegate {
         }
         
     }
-
+/*
     override func setDarkTheme() {
         super.setDarkTheme()
 
@@ -112,7 +112,7 @@ class ContactDetailCell: PippipTableViewCell, UITextFieldDelegate {
         resendRequestButton.setTitleColor(PippipTheme.buttonLightTextColor, for: .normal)
         
     }
-    
+*/
     @IBAction func resendRequest(_ sender: Any) {
 
         contactManager.requestContact(publicId: publicId, directoryId: nil, retry: true)

@@ -17,6 +17,7 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
     var alertPresenter = AlertPresenter()
     var request: EnclaveRequestProtocol!
     var authenticator = Authenticator()
+    var sessionState = SessionState()
 
     init(delegate: EnclaveDelegate<RequestT, ResponseT>) {
 
@@ -30,10 +31,14 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
     func responseComplete(_ response: EnclaveResponse) {
 
         if response.needsAuth! {
-            NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
-            authenticator.reauthenticate()
+            if !sessionState.reauth {
+                sessionState.reauth = true
+                NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
+                authenticator.reauthenticate()
+            }
         }
         else {
+            sessionState.reauth = false
             do {
                 try response.processResponse()
                 if let enclaveResponse = ResponseT(JSONString: response.json) {

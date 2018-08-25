@@ -69,8 +69,8 @@ class ChattoViewController: BaseChatViewController {
             let frame = self.view.bounds
             let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.7)
             selectView = SelectContactView(frame: viewRect)
-            selectView!.contentView.backgroundColor = UIColor.init(gradientStyle: .topToBottom, withFrame: viewRect, andColors: [UIColor.flatPowderBlue, UIColor.flatSkyBlue])
-            selectView!.contentView.alpha = 0.8
+            //selectView!.contentView.backgroundColor = UIColor.init(gradientStyle: .topToBottom, withFrame: viewRect, andColors: [UIColor.flatPowderBlue, UIColor.flatSkyBlue])
+            //selectView!.contentView.alpha = 0.8
             selectView!.center = self.view.center
             self.view.addSubview(self.selectView!)
         }
@@ -110,7 +110,8 @@ class ChattoViewController: BaseChatViewController {
         appearance.textInputAppearance.font = UIFont.systemFont(ofSize: 14.0)
         self.chatInputPresenter = BasicChatInputBarPresenter(chatInputBar: chatInputBar, chatInputItems: self.createChatInputItems(), chatInputBarAppearance: appearance)
         chatInputBar.maxCharactersCount = 1000
-        chatInputBar.textView.returnKeyType = .send
+        //chatInputBar.textView.returnKeyType = .send
+        chatInputBar.backgroundColor = PippipTheme.buttonColor
         return chatInputBar
 
     }
@@ -150,11 +151,38 @@ class ChattoViewController: BaseChatViewController {
 
     override func createPresenterBuilders() -> [ChatItemType : [ChatItemPresenterBuilderProtocol]] {
 
+        let chatColors = BaseMessageCollectionViewCellDefaultStyle.Colors(incoming: PippipTheme.incomingMessageBubbleColor,
+                                                                          outgoing: PippipTheme.outgoingMessageBubbleColor)
+
+        let textStyle = TextMessageCollectionViewCellDefaultStyle.TextStyle(font: UIFont.systemFont(ofSize: 16),
+                                                                            incomingColor: PippipTheme.incomingTextColor,
+                                                                            outgoingColor: PippipTheme.outgoingTextColor,
+                                                                            incomingInsets: UIEdgeInsets(top: 10, left: 19, bottom: 10, right: 15),
+                                                                            outgoingInsets: UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 19))
+
+        let baseMessageStyle = BaseMessageCollectionViewCellDefaultStyle(colors: chatColors)
+        /*
+            bubbleBorderImages: chatBubbleBorderImages, //BaseMessageCollectionViewCellDefaultStyle.createDefaultBubbleBorderImages(),
+            failedIconImages: failedIconImages,
+            layoutConstants: BaseMessageCollectionViewCellDefaultStyle.createDefaultLayoutConstants(),
+            dateTextStyle: BaseMessageCollectionViewCellDefaultStyle.createDefaultDateTextStyle(),
+            avatarStyle: BaseMessageCollectionViewCellDefaultStyle.AvatarStyle()
+        )
+ */
+
+        let textCellStyle = TextMessageCollectionViewCellDefaultStyle(textStyle: textStyle, baseStyle: baseMessageStyle)
+
         let textMessagePresenter = TextMessagePresenterBuilder(
             viewModelBuilder: TextMessageViewModelDefaultBuilder<PippipTextMessageModel>(),
             interactionHandler: PippipTextMessageInteractionHandler())
-        return [ "text-message-type": [textMessagePresenter] ]
 
+        textMessagePresenter.baseMessageStyle = baseMessageStyle
+        textMessagePresenter.textCellStyle = textCellStyle
+
+        return [
+            "text-message-type": [ textMessagePresenter ]
+        ]
+        
     }
 
     // Notifications

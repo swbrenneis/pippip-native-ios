@@ -57,6 +57,8 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
         }
         
         if sessionId != sessionState.sessionId || authToken != sessionState.authToken {
+            print("Current session ID: \(sessionState.sessionId)")
+            print("Current auth token: \(sessionState.authToken)")
             alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid authentication! Please sign off immediately!")
             throw APIResponseError(errorString: "Mismatched authentication tokens")
         }

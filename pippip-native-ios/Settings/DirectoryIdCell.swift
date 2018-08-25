@@ -51,7 +51,7 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol {
         }
 
     }
-
+/*
     override func setDarkTheme() {
         
         directoryIdTextField.textColor = PippipTheme.darkTextColor
@@ -75,7 +75,7 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol {
         super.setLightTheme()
         
     }
-    
+*/
     @objc func directoryIdMatched(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)

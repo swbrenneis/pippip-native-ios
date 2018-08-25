@@ -19,7 +19,13 @@ class AcknowledgeRequestView: UIView {
     @IBOutlet weak var rejectButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
 
+    var contactManager = ContactManager()
     var contactsViewController: ContactsViewController?
+    var contactRequest: ContactRequest? {
+        didSet {
+            promptLabel.text = "New contact request from \(contactRequest!.displayId)"
+        }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -44,7 +50,7 @@ class AcknowledgeRequestView: UIView {
         titleLabel.backgroundColor = PippipTheme.lightBarColor
         acceptButton.backgroundColor = PippipTheme.buttonColor
         acceptButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
-        deleteButton.backgroundColor = UIColor.flatGray
+        deleteButton.backgroundColor = UIColor.flatGrayDark
         deleteButton.setTitleColor(ContrastColorOf(UIColor.flatGray, returnFlat: true), for: .normal)
         rejectButton.backgroundColor = UIColor.flatOrange
         rejectButton.setTitleColor(ContrastColorOf(UIColor.flatOrange, returnFlat: true), for: .normal)
@@ -54,12 +60,42 @@ class AcknowledgeRequestView: UIView {
     }
     
     @IBAction func acceptTapped(_ sender: Any) {
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.center.y = 0.0
+            self.alpha = 0.0
+            self.contactsViewController?.blurView.alpha = 0.0
+        }, completion: { completed in
+            self.removeFromSuperview()
+            self.contactManager.acknowledgeRequest(contactRequest: self.contactRequest!, response: "accept")
+        })
+        
     }
     
     @IBAction func deleteTapped(_ sender: Any) {
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.center.y = 0.0
+            self.alpha = 0.0
+            self.contactsViewController?.blurView.alpha = 0.0
+        }, completion: { completed in
+            self.removeFromSuperview()
+            self.contactManager.acknowledgeRequest(contactRequest: self.contactRequest!, response: "ignore")
+        })
+        
     }
     
     @IBAction func rejectTapped(_ sender: Any) {
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.center.y = 0.0
+            self.alpha = 0.0
+            self.contactsViewController?.blurView.alpha = 0.0
+        }, completion: { completed in
+            self.removeFromSuperview()
+            self.contactManager.acknowledgeRequest(contactRequest: self.contactRequest!, response: "reject")
+        })
+        
     }
     
     @IBAction func cancelTapped(_ sender: Any) {

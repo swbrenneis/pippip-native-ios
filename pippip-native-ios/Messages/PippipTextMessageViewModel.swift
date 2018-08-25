@@ -9,6 +9,7 @@
 import Chatto
 import ChattoAdditions
 
+// This class is currently unused.
 class PippipTextMessageViewModel: TextMessageViewModel<PippipTextMessageModel> {
 
     init(textMessageModel: PippipTextMessageModel, messageModel: PippipMessageModel) {

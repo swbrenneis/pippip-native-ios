@@ -23,29 +23,33 @@ class PippipTheme: NSObject {
     static var viewTextColor: UIColor!
     static var lightBarColor: UIColor!
     static var titleColor: UIColor!
+    static var selectedCellColor: UIColor!
+    static var selectedTextColor: UIColor!
+    static var incomingMessageBubbleColor: UIColor!
+    static var incomingTextColor: UIColor!
+    static var outgoingMessageBubbleColor: UIColor!
+    static var outgoingTextColor: UIColor!
 
     static var darkCellColor: UIColor!
     static var mediumCellColor: UIColor!
     static var lightCellColor: UIColor!
 
-    static var buttonDarkTextColor: UIColor!
-    static var buttonMediumTextColor: UIColor!
-    static var buttonLightTextColor: UIColor!
+    //static var buttonDarkTextColor: UIColor!
+    //static var buttonMediumTextColor: UIColor!
+    //static var buttonLightTextColor: UIColor!
     static var infoAlertColor = UIColor.flatSand
     static var errorAlertColor = UIColor.flatOrangeDark
     static var successAlertColor = UIColor.flatMintDark
     static var darkTextColor: UIColor!
     static var mediumTextColor: UIColor!
     static var lightTextColor: UIColor!
-    static var textFieldBorderColor: UIColor!
+    //static var textFieldBorderColor: UIColor!
 
     static var cellCorners: CGFloat = 15.0
     static var popupHeightRatio4Fields: CGFloat!
 
     static func setTheme() {
 
-        let colorScheme = ColorSchemeOf(.complementary, color: UIColor.flatCoffee, isFlatScheme: false)
-//        splashColor = colorScheme[4].lighten(byPercentage: 0.15)!
         splashColor = UIColor.flatTealDark
         viewColor = UIColor.flatWhite
         viewTextColor = ContrastColorOf(viewColor, returnFlat: false)
@@ -57,20 +61,12 @@ class PippipTheme: NSObject {
         navBarTint = ContrastColorOf(navBarColor, returnFlat: false)
         lightBarColor = UIColor.flatTealDark.withAlphaComponent(0.25)
         titleColor = UIColor.flatTealDark
-
-        darkCellColor = UIColor.flatForestGreen.lighten(byPercentage: 0.1)!
-//        mediumCellColor = darkCellColor.lighten(byPercentage: 0.1)!
-        mediumCellColor = UIColor.flatWhite
-        lightCellColor = darkCellColor.lighten(byPercentage: 0.2)!
-
-        buttonDarkTextColor = colorScheme[2]
-        buttonMediumTextColor = colorScheme[4].lighten(byPercentage: 0.15)!.withAlphaComponent(0.7)
-        buttonLightTextColor = colorScheme[0]
-        textFieldBorderColor = colorScheme[4].lighten(byPercentage: 0.15)!.withAlphaComponent(0.7)
-
-        darkTextColor = ContrastColorOf(darkCellColor, returnFlat: true)
-        mediumTextColor = ContrastColorOf(mediumCellColor, returnFlat: true)
-        lightTextColor = ContrastColorOf(lightCellColor, returnFlat: true)
+        selectedCellColor = buttonColor.withAlphaComponent(0.5)
+        selectedTextColor = ContrastColorOf(selectedCellColor, returnFlat: true)
+        incomingMessageBubbleColor = UIColor.flatTeal.withAlphaComponent(0.25)
+        incomingTextColor = UIColor.flatBlack
+        outgoingMessageBubbleColor = UIColor.flatTealDark
+        outgoingTextColor = ContrastColorOf(outgoingMessageBubbleColor, returnFlat: true)
 
         let device = Device()
         if device == .iPhoneX {

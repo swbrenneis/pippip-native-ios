@@ -68,9 +68,9 @@ class SecommAPI: NSObject {
                 //print("Response: \(response.response)")
                 //print("Error: \(response.error)")
                 
-                if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
-                    print("Data: \(utf8Text)")
-                }
+                //if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
+                //    print("API response: \(utf8Text)")
+                //}
 
                 if response.error != nil {
                     let responseError = APIResponseError(errorString: response.error!.localizedDescription)

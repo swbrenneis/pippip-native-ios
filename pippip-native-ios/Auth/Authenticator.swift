@@ -128,6 +128,8 @@ class Authenticator: NSObject {
         do {
             try authorized.processResponse()
             sessionState.authenticated = true
+            sessionState.sessionId = authorized.sessionId!
+            sessionState.authToken = authorized.authToken!
             ApplicationInitializer.accountSession.loadConfig()
             delegate?.authenticated()
         }

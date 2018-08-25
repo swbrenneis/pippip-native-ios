@@ -143,6 +143,7 @@ class SessionState: NSObject {
             SessionState.actual.userPrivateKeyPEM = newValue
         }
     }
+    
     @objc var userPublicKey: CKRSAPublicKey? {
         get {
             return SessionState.actual.userPublicKey
@@ -151,5 +152,14 @@ class SessionState: NSObject {
             SessionState.actual.userPublicKey = newValue
         }
     }
-    
+
+    @objc var reauth: Bool {
+        get {
+            return SessionState.actual.reauth ?? false
+        }
+        set {
+            SessionState.actual.reauth = newValue
+        }
+    }
+
 }

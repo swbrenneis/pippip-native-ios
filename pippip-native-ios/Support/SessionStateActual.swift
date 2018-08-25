@@ -35,6 +35,9 @@ class SessionStateActual: NSObject {
     var clientAuthRandom: Data?
     var serverAuthRandom: Data?
 
+    // Reauthorization latch
+    var reauth: Bool?
+
     override init() {
 
         sessionId = 0;
