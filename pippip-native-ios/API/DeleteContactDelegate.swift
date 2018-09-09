@@ -31,7 +31,7 @@ class DeleteContactDelegate: EnclaveDelegate<DeleteContactRequest, DeleteContact
             contactManager.deleteContact(contact: contact)
             messageManager.clearMessages(contactId: contact.contactId)
             NotificationCenter.default.post(name: Notifications.ContactDeleted, object: contact.publicId)
-            NotificationCenter.default.post(name: Notifications.MessagesUpdated, object: nil)
+//            NotificationCenter.default.post(name: Notifications.MessagesUpdated, object: nil)
         }
         else {
             print("Delete contact returned invalid public ID")

@@ -72,19 +72,19 @@ class SecommAPI: NSObject {
                 //    print("API response: \(utf8Text)")
                 //}
 
-                if response.error != nil {
-                    let responseError = APIResponseError(errorString: response.error!.localizedDescription)
-                    delegate.responseError(responseError)
-                    print("API post failure: \(response.error!)")
-                }
-                else if let postResponse = response.result.value {
-                    delegate.responseComplete(postResponse)
-                }
-                else {
-                    let responseError = APIResponseError(errorString: "Invalid server response")
-                    delegate.responseError(responseError)
-                }
                 DispatchQueue.global().async {
+                    if response.error != nil {
+                        let responseError = APIResponseError(errorString: response.error!.localizedDescription)
+                        delegate.responseError(responseError)
+                        print("API post failure: \(response.error!)")
+                    }
+                    else if let postResponse = response.result.value {
+                        delegate.responseComplete(postResponse)
+                    }
+                    else {
+                        let responseError = APIResponseError(errorString: "Invalid server response")
+                        delegate.responseError(responseError)
+                    }
                     self.nextPost()
                 }
             }

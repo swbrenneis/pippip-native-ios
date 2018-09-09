@@ -13,6 +13,7 @@ import RealmSwift
 class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     static let production = true
+    static var firstRun = true
     static var accountName: String?
     
     @objc var deviceToken: Data?
@@ -20,7 +21,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     var suspended = false
     var contactManager = ContactManager()
     var messageManager = MessageManager()
-    var suspendTime: Date?
+    var sessionState = SessionState()
 
     override init() {
         super.init()
@@ -34,11 +35,10 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     func doUpdates() {
 
-        messageManager.getNewMessages()
-        contactManager.getPendingRequests()
-        contactManager.getRequestStatus(retry: false, publicId: nil)
-        DispatchQueue.main.async {
-            UIApplication.shared.applicationIconBadgeNumber = 0
+        if !suspended {
+            NotificationCenter.default.addObserver(self, selector: #selector(getMessagesComplete(_:)),
+                                                   name: Notifications.GetMessagesComplete, object: nil)
+            messageManager.getNewMessages()
         }
 
     }
@@ -90,11 +90,11 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     }
     
     func setRealmConfiguration() {
-        
+
         var realmConfig = Realm.Configuration()
         realmConfig.fileURL = realmConfig.fileURL?.deletingLastPathComponent()
             .appendingPathComponent("\(AccountSession.accountName!).realm")
-        realmConfig.schemaVersion = 15
+        realmConfig.schemaVersion = 16
         realmConfig.migrationBlock = { (migration, oldSchemaVersion) in
             // Schema version 13 is Realm Swift
 /*            if oldSchemaVersion < 13 {
@@ -149,12 +149,9 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     
     @objc func resume() {
         
-        if suspended {
+        if suspended  && sessionState.authenticated {
             suspended = false
-            let resumeTime = Date()
-            let suspendedTime = resumeTime.timeIntervalSince(suspendTime!)
-            let info = ["suspendedTime": suspendedTime]
-            NotificationCenter.default.post(name: Notifications.AppResumed, object: nil, userInfo: info)
+            NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
             DispatchQueue.main.async {
                 if UIApplication.shared.applicationIconBadgeNumber > 0 {
                     self.doUpdates()
@@ -167,11 +164,21 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     @objc func suspend() {
         
         suspended = true
-        suspendTime = Date()
         NotificationCenter.default.post(name: Notifications.AppSuspended, object: nil)
 
     }
 
+    @objc func getMessagesComplete(_ notification: Notification) {
+
+        NotificationCenter.default.removeObserver(self, name: Notifications.GetMessagesComplete, object: nil)
+        contactManager.getPendingRequests()
+        contactManager.getRequestStatus(retry: false, publicId: nil)
+        DispatchQueue.main.async {
+            UIApplication.shared.applicationIconBadgeNumber = 0
+        }
+
+    }
+    
     @objc func newSession(_ notification: Notification) {
         sessionActive = true
         doUpdates()

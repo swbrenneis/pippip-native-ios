@@ -9,7 +9,7 @@
 import UIKit
 import ChameleonFramework
 
-class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
+class AuthViewController: UIViewController, AuthenticationDelegateProtocol, ControllerBlurProtocol {
 
     @IBOutlet weak var logoImage: UIImageView!
     @IBOutlet weak var logoTrailing: NSLayoutConstraint!
@@ -19,18 +19,24 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
     @IBOutlet weak var quickstartButton: UIButton!
     @IBOutlet weak var versionLabel: UILabel!
     @IBOutlet weak var secommLabel: UILabel!
-
+    @IBOutlet weak var firstRunLabel: UILabel!
+    
     var accountName: String?
     var alertPresenter = AlertPresenter()
     var authenticator = Authenticator()
     var newAccountCreator = NewAccountCreator()
     var signInView: SignInView?
     var newAccountView: NewAccountView?
-    var dimView: UIView?
+    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        try! ApplicationInitializer.accountSession.loadAccount()
+        if AccountSession.accountName != nil {
+            ApplicationInitializer.accountSession.loadConfig()
+        }
+        
         PippipTheme.setTheme()
         SecommAPI.initializeAPI()
 
@@ -51,11 +57,10 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         quickstartButton.isHidden = false
         versionLabel.textColor = UIColor.flatSand
         secommLabel.textColor = UIColor.flatSand
-        dimView = UIView(frame: bounds)
-        dimView?.backgroundColor = UIColor.flatBlack
-        dimView?.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        dimView?.alpha = 0.0
-        self.view.addSubview(dimView!)
+        blurView.frame = bounds
+        blurView.alpha = 0.0
+        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.view.addSubview(blurView)
 
         do {
             try ApplicationInitializer.accountSession.loadAccount()
@@ -77,6 +82,30 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         else {
             authButton.setTitle("Create A New Account", for: .normal)
         }
+        //if AccountSession.firstRun {
+        //    AccountSession.firstRun = false
+        if AccountSession.accountName != nil {
+        firstRunLabel.isHidden = false
+        let config = Configurator()
+        if let lastSignout = config.lastSignout {
+            firstRunLabel.text = "Signed out: \(lastSignout)"
+            config.lastSignout = nil
+        }
+        else if let lastExit = config.lastExit {
+            firstRunLabel.text = "Terminated: \(lastExit)"
+            config.lastExit = nil
+        }
+        else {
+            firstRunLabel.isHidden = true
+        }
+        }
+        else {
+            firstRunLabel.isHidden = true
+        }
+        //}
+        //else {
+        //    firstRunLabel.isHidden = true
+        //}
 
     }
 
@@ -94,7 +123,7 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
     
     @IBAction func quickstartPressed(_ sender: Any) {
 
-        let url = "https://www.pippip.io"
+        let url = "https://www.pippip.io/help.html"
         guard let link = URL(string: url) else { return }
         UIApplication.shared.open(link, options: [:], completionHandler: nil)
 
@@ -110,45 +139,20 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         signInView?.alpha = 0.3
 
         signInView?.accountName = accountName!
-        signInView?.authViewController = self
+        signInView?.blurController = self
+        signInView?.signInCompletion = doAuthenticate(passphrase:)
 
         self.view.addSubview(self.signInView!)
 
         UIView.animate(withDuration: 0.3, animations: {
-            self.dimView?.alpha = 0.3
+            self.blurView.alpha = 0.3
             self.signInView?.alpha = 1.0
         }, completion: { complete in
             self.signInView?.passphraseTextField.becomeFirstResponder()
         })
 
     }
-    /*
-    func doAuthenticateAlerts() {
-        
-        let alert = PMAlertController(title: accountName!,
-                                      description: "Enter your passphrase",
-                                      image: nil,
-                                      style: PMAlertControllerStyle.alert)
-        alert.addTextField({ (textField) in
-            textField?.placeholder = "Passphrase"
-            textField?.autocorrectionType = .no
-            textField?.spellCheckingType = .no
-            textField?.autocapitalizationType = .none
-            textField?.becomeFirstResponder()
-            let lockImageView = UIImageView(image: UIImage(named: "passphrase"))
-            textField?.rightView = lockImageView
-            textField?.rightViewMode = .always
-        })
-        alert.addAction(PMAlertAction(title: "Sign In",
-                                      style: .default, action: { () in
-                                        let passphrase = alert.textFields[0].text ?? ""
-                                        self.doAuthenticate(passphrase: passphrase)
-        }))
-        alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
-        present(alert, animated: true, completion: nil)
-        
-    }
-*/
+
     func showNewAccountView() {
 
         let frame = self.view.bounds
@@ -158,84 +162,20 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol {
         newAccountView?.center = viewCenter
         newAccountView?.alpha = 0.3
         
-        newAccountView?.authViewController = self
+        newAccountView?.blurController = self
+        newAccountView?.createCompletion = doNewAccount(accountName:passphrase:)
         
         self.view.addSubview(self.newAccountView!)
         
         UIView.animate(withDuration: 0.3, animations: {
-            self.dimView?.alpha = 0.3
+            self.blurView.alpha = 0.3
             self.newAccountView?.alpha = 1.0
         }, completion: { complete in
             self.newAccountView?.accountNameTextField.becomeFirstResponder()
         })
         
     }
-/*
-    func doNewAccountAlerts() {
-        
-        let alert = PMAlertController(title: "Create A New Account",
-                                      description: "Enter an account name and passphrase",
-                                      image: nil,
-                                      style: PMAlertControllerStyle.alert)
-        alert.addTextField({ (textField) in
-            textField?.placeholder = "Account Name"
-            textField?.autocorrectionType = .no
-            textField?.spellCheckingType = .no
-            textField?.autocapitalizationType = .none
-            let userImageView = UIImageView(image: UIImage(named: "user"))
-            textField?.rightView = userImageView
-            textField?.rightViewMode = .always
-        })
-        alert.addTextField({ (textField) in
-            textField?.placeholder = "Passphrase"
-            textField?.autocorrectionType = .no
-            textField?.spellCheckingType = .no
-            textField?.autocapitalizationType = .none
-            let lockImageView = UIImageView(image: UIImage(named: "passphrase"))
-            textField?.rightView = lockImageView
-            textField?.rightViewMode = .always
-        })
-        alert.addAction(PMAlertAction(title: "Create Account",
-                                      style: .default, action: { () in
-                                        self.accountName = alert.textFields[0].text ?? ""
-                                        let passphrase = alert.textFields[1].text ?? ""
-                                        if self.accountName!.utf8.count == 0 {
-                                            self.alertPresenter.errorAlert(title: "Invalid Account Name",
-                                                                           message: "Empty account names are not permitted")
-                                        }
-                                        else if passphrase.utf8.count == 0 {
-                                            DispatchQueue.main.async {
-                                                self.passphraseAlert()
-                                            }
-                                        }
-                                        else {
-                                            self.doNewAccount(accountName: self.accountName!, passphrase: passphrase)
-                                        }
-        }))
-        alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
-        present(alert, animated: true, completion: nil)
-        
-    }
 
-    func passphraseAlert() {
-        
-        let alert = PMAlertController(title: "Check Your Passphrase",
-                                      description: "Empty passphrases are not recommended",
-                                      image: nil,
-                                      style: PMAlertControllerStyle.alert)
-        alert.addAction(PMAlertAction(title: "Use Empty Passphrase",
-                                      style: .default, action: { () in
-                                        self.doNewAccount(accountName: self.accountName!, passphrase: "")
-        }))
-        alert.addAction(PMAlertAction(title: "Start Over", style: .cancel,
-                                      action: { () in
-                                        self.accountName = nil
-        }))
-        alert.alertActionStackView.axis = .vertical
-        present(alert, animated: true, completion: nil)
-        
-    }
-*/
     func doAuthenticate(passphrase: String) {
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),

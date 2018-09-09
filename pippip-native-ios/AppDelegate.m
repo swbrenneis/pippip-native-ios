@@ -75,7 +75,11 @@
 
 
 - (void)applicationWillTerminate:(UIApplication *)application {
+
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    Configurator *config = [[Configurator alloc] init];
+    config.lastExit = [[NSDate alloc] init];
+
 }
 
 - (void)application:(UIApplication *)application

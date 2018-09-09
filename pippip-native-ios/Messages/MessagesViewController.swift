@@ -209,11 +209,14 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         let contactList = contactManager.contactList
         for contact in contactList {
             let conversation = ConversationCache.getConversation(contact.contactId)
-            if let message = conversation.mostRecentMessage() {
+            if let message = conversation.mostRecentMessage {
                 previews.append(message)
             }
         }
-        
+        previews.sort(by: { (message1, message2) -> Bool in
+            return message1.timestamp > message2.timestamp
+        })
+
     }
 
     func signOut() {
@@ -259,7 +262,7 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
     @objc func localAuthComplete(_ notification: Notification) {
 
         DispatchQueue.main.async {
-            self.localAuth.visible = false
+            self.localAuth.showAuthView = false
         }
 
     }

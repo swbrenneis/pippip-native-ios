@@ -9,7 +9,7 @@
 import UIKit
 import ChameleonFramework
 
-class AuthView: UIView {
+class AuthView: UIView, ControllerBlurProtocol {
 
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var logoImage: UIImageView!
@@ -19,6 +19,8 @@ class AuthView: UIView {
     @IBOutlet weak var logoTop: NSLayoutConstraint!
     @IBOutlet weak var secommLabel: UILabel!
     
+    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
@@ -35,6 +37,10 @@ class AuthView: UIView {
         addSubview(contentView)
         contentView.frame = self.bounds
         contentView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        blurView.frame = self.bounds
+        blurView.alpha = 0.0
+        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        contentView.addSubview(blurView)
 
     }
 

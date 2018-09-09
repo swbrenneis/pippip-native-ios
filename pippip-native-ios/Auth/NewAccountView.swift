@@ -17,10 +17,11 @@ class NewAccountView: UIView {
     @IBOutlet weak var createAccountButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
     
-    var authViewController: AuthViewController?
+    var blurController: ControllerBlurProtocol?
     var alertPresenter = AlertPresenter()
     var accountName = ""
     var passphrase = ""
+    var createCompletion = { (accountName: String, passphrase: String) in }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -75,10 +76,11 @@ class NewAccountView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.authViewController?.dimView?.alpha = 0.0
+            self.blurController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
-            self.authViewController?.doNewAccount(accountName: self.accountName, passphrase: self.passphrase)
+            self.createCompletion(self.accountName, self.passphrase)
+//            self.authViewController?.doNewAccount(accountName: self.accountName, passphrase: self.passphrase)
         })
         
     }
@@ -88,7 +90,7 @@ class NewAccountView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.authViewController?.dimView?.alpha = 0.0
+            self.blurController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
         })

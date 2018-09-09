@@ -18,7 +18,7 @@ class PippipMessageModel: MessageModelProtocol {
     var type: ChatItemType
     var uid: String
 
-    init(_ message: Message) {
+    init(message: Message) {
 
         let contactManager = ContactManager()
         let contact = contactManager.getContact(contactId: message.contactId)!

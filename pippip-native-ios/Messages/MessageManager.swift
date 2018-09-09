@@ -121,23 +121,34 @@ class MessageManager: NSObject {
 
         var textMessages = [TextMessage]()
         let realm = try! Realm()
-        let dbMessages = realm.objects(DatabaseMessage.self).filter("contactId = %ld", contactId)
+        let dbMessages = realm.objects(DatabaseMessage.self)
+                                .filter("contactId = %ld", contactId)
+                                .sorted(byKeyPath: "timestamp", ascending: true)
 
         if pos >= dbMessages.count {
             return textMessages
         }
-        var actual = count
-        if pos + count > dbMessages.count {
-            actual = dbMessages.count - pos
-        }
-        for index in 0..<actual {
-            textMessages.append(TextMessage(dbMessage: dbMessages[pos+index]))
+        let end = min(pos+count, dbMessages.count)
+        for index in pos..<end {
+            textMessages.append(TextMessage(dbMessage: dbMessages[index]))
         }
 
         return textMessages
 
     }
-
+    /*
+    func getTextMessages(contactId: Int) -> [TextMessage] {
+        
+        var textMessages = [TextMessage]()
+        let realm = try! Realm()
+        let dbMessages = realm.objects(DatabaseMessage.self).filter("contactId = %ld", contactId)
+        for dbMessage in dbMessages {
+            textMessages.append(TextMessage(dbMessage: dbMessage))
+        }
+        return textMessages
+        
+    }
+*/
     func markMessageRead(messageId: Int64) {
 
         let realm = try! Realm()
@@ -149,18 +160,27 @@ class MessageManager: NSObject {
 
     }
 
-    func mostRecentMessage(contactId: Int) -> TextMessage? {
+    func messageCount(contactId: Int) -> Int {
+        
+        let realm = try! Realm()
+        let dbMessages = realm.objects(DatabaseMessage.self).filter("contactId = %ld", contactId)
+        return dbMessages.count
+
+    }
+
+    func mostRecentMessages(contactId: Int, count: Int) -> [TextMessage] {
 
         let realm = try! Realm()
         let dbMessages = realm.objects(DatabaseMessage.self)
                                 .filter("contactId = %ld", contactId)
-                                .sorted(byKeyPath: "timestamp", ascending: false)
-        if !dbMessages.isEmpty {
-            return TextMessage(dbMessage: dbMessages.first!)
+                                .sorted(byKeyPath: "timestamp", ascending: true)
+        var messages = [TextMessage]()
+        let pos = max(0, dbMessages.count - count)
+        for index in pos..<dbMessages.count {
+            messages.append(TextMessage(dbMessage: dbMessages[index]))
         }
-        else {
-            return nil
-        }
+
+        return messages
 
     }
 

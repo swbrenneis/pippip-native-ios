@@ -130,7 +130,7 @@ class Authenticator: NSObject {
             sessionState.authenticated = true
             sessionState.sessionId = authorized.sessionId!
             sessionState.authToken = authorized.authToken!
-            ApplicationInitializer.accountSession.loadConfig()
+            // ApplicationInitializer.accountSession.loadConfig()
             delegate?.authenticated()
         }
         catch {
@@ -170,7 +170,10 @@ class Authenticator: NSObject {
     }
 
     func logoutComplete(_ response: NullResponse) {
-        // Nothing to do here
+
+        let config = Configurator()
+        config.lastSignout = Date()
+
     }
 
     func logoutError(_ error: APIResponseError) {

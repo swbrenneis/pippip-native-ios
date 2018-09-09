@@ -45,7 +45,18 @@ class ChattoViewController: BaseChatViewController {
                 AudioServicesCreateSystemSoundID(receiveUrl as CFURL, &ChattoViewController.receiveSoundId)
             }
         }
-
+/*
+        // Add the delete menu item
+        let menuItemTitle = NSLocalizedString("Delete", comment: "Delete a message")
+        let action = #selector(UIResponderStandardEditActions.delete(_:))
+        let deleteMenuItem = UIMenuItem(title: menuItemTitle, action: action)
+        
+        // Configure the shared menu controller
+        let menuController = UIMenuController.shared
+        if var menuItems = menuController.menuItems {
+            menuItems.append(deleteMenuItem)
+        }
+*/
         NotificationCenter.default.addObserver(self, selector: #selector(contactSelected(_:)),
                                                name: Notifications.ContactSelected, object: nil)
 
@@ -60,9 +71,8 @@ class ChattoViewController: BaseChatViewController {
         }
         localAuth?.listening = true
         if contact != nil {
-            dataSource =
-                ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
-            self.chatDataSource = dataSource
+            dataSource = ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
+            chatDataSource = dataSource
             self.navigationItem.title = contact!.displayName
         }
         else {
@@ -74,7 +84,7 @@ class ChattoViewController: BaseChatViewController {
             selectView!.center = self.view.center
             self.view.addSubview(self.selectView!)
         }
-        dataSource?.visible = true
+        //dataSource?.visible = true
 
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                name: Notifications.AppSuspended, object: nil)
@@ -153,27 +163,16 @@ class ChattoViewController: BaseChatViewController {
 
         let chatColors = BaseMessageCollectionViewCellDefaultStyle.Colors(incoming: PippipTheme.incomingMessageBubbleColor,
                                                                           outgoing: PippipTheme.outgoingMessageBubbleColor)
-
         let textStyle = TextMessageCollectionViewCellDefaultStyle.TextStyle(font: UIFont.systemFont(ofSize: 16),
                                                                             incomingColor: PippipTheme.incomingTextColor,
                                                                             outgoingColor: PippipTheme.outgoingTextColor,
                                                                             incomingInsets: UIEdgeInsets(top: 10, left: 19, bottom: 10, right: 15),
                                                                             outgoingInsets: UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 19))
-
         let baseMessageStyle = BaseMessageCollectionViewCellDefaultStyle(colors: chatColors)
-        /*
-            bubbleBorderImages: chatBubbleBorderImages, //BaseMessageCollectionViewCellDefaultStyle.createDefaultBubbleBorderImages(),
-            failedIconImages: failedIconImages,
-            layoutConstants: BaseMessageCollectionViewCellDefaultStyle.createDefaultLayoutConstants(),
-            dateTextStyle: BaseMessageCollectionViewCellDefaultStyle.createDefaultDateTextStyle(),
-            avatarStyle: BaseMessageCollectionViewCellDefaultStyle.AvatarStyle()
-        )
- */
+        let textCellStyle = PippipTextCellStyle(textStyle: textStyle, baseStyle: baseMessageStyle)
 
-        let textCellStyle = TextMessageCollectionViewCellDefaultStyle(textStyle: textStyle, baseStyle: baseMessageStyle)
-
-        let textMessagePresenter = TextMessagePresenterBuilder(
-            viewModelBuilder: TextMessageViewModelDefaultBuilder<PippipTextMessageModel>(),
+        let textMessagePresenter = PippipTextMessagePresenterBuilder(
+            viewModelBuilder: PippipTextMessageViewModelBuilder(),
             interactionHandler: PippipTextMessageInteractionHandler())
 
         textMessagePresenter.baseMessageStyle = baseMessageStyle
@@ -211,40 +210,22 @@ class ChattoViewController: BaseChatViewController {
     @objc func localAuthComplete(_ notification: Notification) {
         
         DispatchQueue.main.async {
-            self.localAuth?.visible = false
+            self.localAuth?.showAuthView = false
         }
         
     }
     
     @objc func messageBubbleTapped(_ notification: Notification) {
-/*
+
         guard let message = notification.object as? Message else { return }
         let now = Int64(Date().timeIntervalSince1970 * 1000)
         // 10 second debounce
         if now - message.timestamp > 10000 {
-            var doRetry = false
-            var description = "Delete Message"
             if !message.acknowledged && message.originating {
-                doRetry = true
-                description = "Delete or Retry Message"
+                NotificationCenter.default.post(name: Notifications.RetryMessage, object: message)
             }
-
-            let alert = PMAlertController(title: "Message Action",
-                                          description: description,
-                                          image: nil,
-                                          style: .alert)
-            if doRetry {
-                alert.addAction(PMAlertAction(title: "Retry", style: .default, action: {
-                    NotificationCenter.default.post(name: Notifications.RetryMessage, object: message)
-                }))
-            }
-            alert.addAction(PMAlertAction(title: "Delete", style: .default, action: {
-                self.dataSource?.deleteMessage(message)
-            }))
-            alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
-            self.present(alert, animated: true, completion: nil)
         }
-*/
+        
     }
     
     @objc func retryMessage(_ notification: Notification) {

@@ -18,5 +18,7 @@ class AccountConfig: Object {
     @objc dynamic var whitelist: Data?
     @objc dynamic var storeCleartextMessages: Bool = false
     @objc dynamic var useLocalAuth: Bool = true
+    @objc dynamic var lastExit: Date?
+    @objc dynamic var lastSignout: Date?
 
 }

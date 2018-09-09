@@ -14,47 +14,56 @@ class ChattoDataSource: ChatDataSourceProtocol {
 
     var hasMoreNext: Bool {
         get {
-            return slidingWindow.canSlideDown()
+            return conversation.canSlideDown()
         }
     }
     var hasMorePrevious: Bool {
         get {
-            return slidingWindow.canSlideUp()
+            return conversation.canSlideUp()
         }
     }
     var chatItems: [ChatItemProtocol] {
-        return slidingWindow.items
+        return conversation.items
     }
     var visible: Bool = false {
         didSet {
-            slidingWindow.visible = visible
+            conversation.visible = visible
         }
     }
     var delegate: ChatDataSourceDelegateProtocol?
-    var slidingWindow: SlidingMessageWindow
+    var conversation: Conversation
 
     init(conversation: Conversation) {
 
-        slidingWindow = SlidingMessageWindow(conversation: conversation, windowSize: 15)
+        self.conversation = conversation
+        visible = true
+        conversation.visible = true
+        addObservers()
 
+    }
+
+    func addObservers() {
+        
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(messageDeleted(_:)),
+                                               name: Notifications.MessageDeleted, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(messageFailed(_:)),
                                                name: Notifications.MessageFailed, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(messageSent(_:)),
                                                name: Notifications.MessageSent, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(cleartextAvailable(_:)),
                                                name: Notifications.CleartextAvailable, object: nil)
-
+        
     }
 
     func loadNext() {
-        slidingWindow.slideDown()
+        conversation.slideDown()
         delegate?.chatDataSourceDidUpdate(self, updateType: .pagination)
     }
     
     func loadPrevious() {
-        slidingWindow.slideUp()
+        conversation.slideUp()
         delegate?.chatDataSourceDidUpdate(self, updateType: .pagination)
     }
     
@@ -66,7 +75,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
     
     func addTextMessage(_ textMessage: TextMessage) {
 
-        slidingWindow.insertMessage(textMessage)
+        conversation.addTextMessage(textMessage)
         delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
 
     }
@@ -74,22 +83,32 @@ class ChattoDataSource: ChatDataSourceProtocol {
     func clearMessages() {
 
         assert(Thread.isMainThread, "clearMessages not called from main thread")
-        slidingWindow.clearMessages()
+        conversation.clearMessages()
         delegate?.chatDataSourceDidUpdate(self, updateType: .pagination)
 
     }
 
-    func deleteMessage(_ message: Message) {
+    func deleteMessage(messageId: Int64) {
         
-        slidingWindow.deleteMessage(message)
+        conversation.deleteMessage(messageId)
         delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
+
+    }
+
+    func removeObservers() {
+        
+        NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.MessageDeleted, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.MessageFailed, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.MessageSent, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.CleartextAvailable, object: nil)
 
     }
 
     func retryTextMessage(_ textMessage: TextMessage) {
 
         DispatchQueue.main.async {
-            self.slidingWindow.retryTextMessage(textMessage)
+            self.conversation.retryTextMessage(textMessage)
             self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
         }
 
@@ -97,44 +116,56 @@ class ChattoDataSource: ChatDataSourceProtocol {
 
     // Notifications
 
+    @objc func cleartextAvailable(_ notification: Notification) {
+        
+        guard let textMessage = notification.object as? TextMessage else { return }
+        DispatchQueue.main.async {
+            self.conversation.updateChatItem(textMessage: textMessage)
+            self.delegate?.chatDataSourceDidUpdate(self, updateType: .reload)
+        }
+        
+    }
+    
+    @objc func messageDeleted(_ notification: Notification) {
+        
+        assert(Thread.isMainThread, "Message deleted notification must be sent from main thread")
+        guard let textMessage = notification.object as? TextMessage else { return }
+        conversation.deleteMessage(textMessage.messageId)
+        delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
+        
+    }
+    
     @objc func messageFailed(_ notification: Notification) {
-
+        
         assert(Thread.isMainThread, "Message failed notification must be sent from main thread")
         guard let textMessage = notification.object as? TextMessage else { return }
-        slidingWindow.messageFailed(textMessage.messageId)
+        conversation.messageFailed(textMessage.messageId)
         delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
-
+        
     }
-
+    
     // This is sent from the main thread
     @objc func messageSent(_ notification: Notification) {
 
         assert(Thread.isMainThread, "Message sent notification must be sent from main thread")
         guard let messageId = notification.object as? Int64 else { return }
-        slidingWindow.messageSent(messageId)
+        conversation.messageSent(messageId: messageId)
         delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
 
     }
 
     @objc func newMessages(_ notification: Notification) {
 
-        guard let textMessages = notification.object as? [TextMessage]else { return }
-        DispatchQueue.main.async {
-            if self.visible && self.slidingWindow.newMessages(textMessages) {
-                self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
-                AudioServicesPlaySystemSound(ChattoViewController.receiveSoundId)
+        guard let textMessages = notification.object as? [TextMessage] else { return }
+        for message in textMessages {
+            if message.contactId == conversation.contact.contactId {
+                conversation.addTextMessage(message)
             }
         }
-
-    }
-
-    @objc func cleartextAvailable(_ notification: Notification) {
-
-        guard  let textMessage = notification.object as? TextMessage else { return }
-        if visible {
-            DispatchQueue.main.async {
-                self.slidingWindow.updateChatItem(textMessage)
-                self.delegate?.chatDataSourceDidUpdate(self, updateType: .reload)
+        DispatchQueue.main.async {
+            if self.visible {
+                self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
+                AudioServicesPlaySystemSound(ChattoViewController.receiveSoundId)
             }
         }
 

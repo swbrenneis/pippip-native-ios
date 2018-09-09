@@ -9,10 +9,9 @@
 import UIKit
 import ChattoAdditions
 
-class PippipTextMessageViewModelBuilder: NSObject /* ViewModelBuilderProtocol */ {
-//    typealias ModelT = <#type#>
-    
-//    typealias ViewModelT = <#type#>
-    
+/*
+ * This is a placeholder class to simplify Chatto's byzantine inheritance model
+ */
+class PippipTextMessageViewModelBuilder: TextMessageViewModelDefaultBuilder<PippipTextMessageModel> {
 
 }

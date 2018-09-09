@@ -46,15 +46,15 @@ class PreviewCell: PippipTableViewCell {
             let contact = contactManager.getContact(contactId: textMessage.contactId)
             senderLabel.text = contact?.displayName
             timestampLabel.text = convertTimestamp(textMessage.timestamp) + " >"
-            if textMessage.ciphertext!.count < 100 {
-                textMessage.decrypt(noNotify: true)   // No notification
-                setPreviewText(textMessage.cleartext!)
-            }
-            else {
+//            if textMessage.ciphertext!.count < 100 {
+//                textMessage.decrypt(noNotify: true)   // No notification
+//                setPreviewText(textMessage.cleartext ?? "Text not available")
+//            }
+//            else {
                 DispatchQueue.global(qos: .background).async {
                     textMessage.decrypt()
                 }
-            }
+//            }
         }
 
         //senderLabel.textColor = PippipTheme.darkTextColor
@@ -104,7 +104,7 @@ class PreviewCell: PippipTableViewCell {
             if textMessage.messageId == self.textMessage?.messageId {
                 NotificationCenter.default.removeObserver(self, name: Notifications.CleartextAvailable, object: nil)
                 DispatchQueue.main.async {
-                    let text = textMessage.cleartext ?? "<nil>"
+                    let text = textMessage.cleartext ?? "Text Not Available"
                     self.setPreviewText(text)
                 }
             }

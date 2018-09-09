@@ -112,7 +112,6 @@
 		557C2B652093CE7C0069336D /* PippipTextMessageInteractionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B642093CE7C0069336D /* PippipTextMessageInteractionHandler.swift */; };
 		557C2B692093F5F50069336D /* TextMessageDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B682093F5F50069336D /* TextMessageDecorator.swift */; };
 		557C2B6E20961DB10069336D /* SortedArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B6D20961DB10069336D /* SortedArray.swift */; };
-		557C2B70209635E00069336D /* SlidingMessageWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B6F209635E00069336D /* SlidingMessageWindow.swift */; };
 		557C2B72209657FD0069336D /* ConversationCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B71209657FD0069336D /* ConversationCache.swift */; };
 		557C2B742096A03D0069336D /* PippipMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B732096A03D0069336D /* PippipMessageViewModel.swift */; };
 		5586B882206428A400641514 /* PublicIdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B881206428A400641514 /* PublicIdCell.swift */; };
@@ -190,6 +189,9 @@
 		55BFD36520CF18300084C555 /* DatabaseMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36420CF18300084C555 /* DatabaseMessage.swift */; };
 		55BFD36720D04C0D0084C555 /* AccountDeleter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36620D04C0D0084C555 /* AccountDeleter.swift */; };
 		55BFD36920D052FC0084C555 /* AccountSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36820D052FC0084C555 /* AccountSession.swift */; };
+		55C49BFA21402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C49BF921402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift */; };
+		55C49BFC2140303400EEED14 /* PippipTextMessagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C49BFB2140303400EEED14 /* PippipTextMessagePresenter.swift */; };
+		55C49BFE2141B25400EEED14 /* PippipTextCellStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C49BFD2141B25400EEED14 /* PippipTextCellStyle.swift */; };
 		55C88DCF20707F6B00D58BCA /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C88DCE20707F6B00D58BCA /* Contact.swift */; };
 		55CB2803212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CB2802212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift */; };
 		55CB280721305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CB280621305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift */; };
@@ -358,7 +360,6 @@
 		557C2B642093CE7C0069336D /* PippipTextMessageInteractionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessageInteractionHandler.swift; sourceTree = "<group>"; };
 		557C2B682093F5F50069336D /* TextMessageDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageDecorator.swift; sourceTree = "<group>"; };
 		557C2B6D20961DB10069336D /* SortedArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortedArray.swift; sourceTree = "<group>"; };
-		557C2B6F209635E00069336D /* SlidingMessageWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingMessageWindow.swift; sourceTree = "<group>"; };
 		557C2B71209657FD0069336D /* ConversationCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCache.swift; sourceTree = "<group>"; };
 		557C2B732096A03D0069336D /* PippipMessageViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PippipMessageViewModel.swift; sourceTree = "<group>"; };
 		5586B880206428A400641514 /* pippip-native-ios-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pippip-native-ios-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -514,6 +515,9 @@
 		55BFD36420CF18300084C555 /* DatabaseMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMessage.swift; sourceTree = "<group>"; };
 		55BFD36620D04C0D0084C555 /* AccountDeleter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDeleter.swift; sourceTree = "<group>"; };
 		55BFD36820D052FC0084C555 /* AccountSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSession.swift; sourceTree = "<group>"; };
+		55C49BF921402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessagePresenterBuilder.swift; sourceTree = "<group>"; };
+		55C49BFB2140303400EEED14 /* PippipTextMessagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessagePresenter.swift; sourceTree = "<group>"; };
+		55C49BFD2141B25400EEED14 /* PippipTextCellStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextCellStyle.swift; sourceTree = "<group>"; };
 		55C88DCE20707F6B00D58BCA /* Contact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		55CB2802212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessageViewModelBuilder.swift; sourceTree = "<group>"; };
 		55CB280621305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipMessageCollectionViewCellStyle.swift; sourceTree = "<group>"; };
@@ -674,13 +678,15 @@
 				55CB280621305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift */,
 				557C2B5C2093C5080069336D /* PippipMessageModel.swift */,
 				557C2B732096A03D0069336D /* PippipMessageViewModel.swift */,
+				55C49BFD2141B25400EEED14 /* PippipTextCellStyle.swift */,
 				557C2B642093CE7C0069336D /* PippipTextMessageInteractionHandler.swift */,
 				557C2B582093B8360069336D /* PippipTextMessageModel.swift */,
+				55C49BF921402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift */,
+				55C49BFB2140303400EEED14 /* PippipTextMessagePresenter.swift */,
 				557C2B5E2093C5530069336D /* PippipTextMessageViewModel.swift */,
 				55CB2802212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift */,
 				55169790209A4894002BB4C1 /* PreviewCell.swift */,
 				55206DAA20754A2500B0B246 /* SelectContactView.swift */,
-				557C2B6F209635E00069336D /* SlidingMessageWindow.swift */,
 				5500D171207455450016AC71 /* TextMessage.swift */,
 				557C2B682093F5F50069336D /* TextMessageDecorator.swift */,
 			);
@@ -1334,6 +1340,7 @@
 				55E970A120AA82F7008C2F39 /* EnclaveRequest.swift in Sources */,
 				5593C942212B4EC80053011E /* PendingRequestsCell.swift in Sources */,
 				55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */,
+				55C49BFC2140303400EEED14 /* PippipTextMessagePresenter.swift in Sources */,
 				55AA554C1FA14D7100A7026B /* DigestBase.cc in Sources */,
 				55B17DAF20A1492600DA16DE /* MessagesViewController.swift in Sources */,
 				55721A1220C98504008FE9F6 /* DeleteContactDelegate.swift in Sources */,
@@ -1405,6 +1412,7 @@
 				555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */,
 				557C2B742096A03D0069336D /* PippipMessageViewModel.swift in Sources */,
 				5511E9CC20C301720080C0DF /* RequestContactRequest.swift in Sources */,
+				55C49BFE2141B25400EEED14 /* PippipTextCellStyle.swift in Sources */,
 				55E970A720AB07C6008C2F39 /* Logout.swift in Sources */,
 				554D01C8207D0E2500C19373 /* ContactManager.swift in Sources */,
 				55721A2220C9FB52008FE9F6 /* UpdateWhitelistDelegate.swift in Sources */,
@@ -1469,7 +1477,6 @@
 				557C2B5D2093C5080069336D /* PippipMessageModel.swift in Sources */,
 				55E970AB20AE2C11008C2F39 /* AuthView.swift in Sources */,
 				55AA55621FA14D7100A7026B /* RSAKeyPairGenerator.cc in Sources */,
-				557C2B70209635E00069336D /* SlidingMessageWindow.swift in Sources */,
 				55E970B120B07D14008C2F39 /* PippipTableViewCell.swift in Sources */,
 				55AD26F62121CF1200FD8A9A /* ChangePassphraseView.swift in Sources */,
 				55AA55631FA14D7100A7026B /* RSAPrivateCrtKey.cc in Sources */,
@@ -1487,6 +1494,7 @@
 				55AA54FB1FA14C1300A7026B /* CKRSAPublicKey.m in Sources */,
 				55E970B320B07DAE008C2F39 /* PippipTheme.swift in Sources */,
 				554D01C2207BE35400C19373 /* SessionState.swift in Sources */,
+				55C49BFA21402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift in Sources */,
 				55AA55021FA14C1300A7026B /* CKRSAKeyPairGenerator.mm in Sources */,
 				55187ED420BE4C8900F94792 /* ServerAuthorized.swift in Sources */,
 				55721A1820C99DEF008FE9F6 /* GetRequestStatusDelegate.swift in Sources */,

@@ -12,25 +12,14 @@ import ChattoAdditions
 class PippipTextMessageModel: TextMessageModel<PippipMessageModel> {
 
     var message: TextMessage
-    var messageText = "Processing..."
+    var messageText: String
     var pippipMessageModel: PippipMessageModel
 
     init(textMessage: TextMessage) {
 
         message = textMessage
-        pippipMessageModel = PippipMessageModel(textMessage)
-        if textMessage.cleartext != nil {
-            messageText = textMessage.cleartext!
-        }
-        else if textMessage.ciphertext!.count < 50 {
-            textMessage.decrypt(noNotify: true)
-            messageText = textMessage.cleartext!
-        }
-        else {
-            DispatchQueue.global(qos: .background).async {
-                textMessage.decrypt(noNotify: false)
-            }
-        }
+        pippipMessageModel = PippipMessageModel(message: textMessage)
+        messageText = textMessage.cleartext ?? "Text not available"
         super.init(messageModel: pippipMessageModel, text: messageText)
 
     }

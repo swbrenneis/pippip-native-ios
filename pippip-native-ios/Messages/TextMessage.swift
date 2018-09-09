@@ -50,7 +50,7 @@ class TextMessage: Message {
 
     }
 
-    func decrypt(noNotify: Bool = false) {
+    func decrypt() {
 
         if cleartext == nil {
             guard let _ = ciphertext else { return }
@@ -83,9 +83,7 @@ class TextMessage: Message {
         if cleartext == nil {
             cleartext = "Decryption failed"
         }
-        if !noNotify {
-            NotificationCenter.default.post(name: Notifications.CleartextAvailable, object: self)
-        }
+        NotificationCenter.default.post(name: Notifications.CleartextAvailable, object: self)
 
     }
 

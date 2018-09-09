@@ -11,7 +11,7 @@ import ChameleonFramework
 import LocalAuthentication
 import DeviceKit
 
-class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
+class LocalAuthenticator: NSObject {
 
     var viewController: UIViewController
     var view: UIView
@@ -19,28 +19,25 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
     var suspended = false
     var sessionState = SessionState()
     var config = Configurator()
-    var authenticator = Authenticator()
-    @objc var listening: Bool {
+    var signInView: SignInView?
+    var alertPresenter = AlertPresenter()
+    var listening: Bool = false {
         didSet {
             if listening {
                 NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
                                                        name: Notifications.AppResumed, object: nil)
                 NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
-                                                       name: Notifications.AppSuspended, object: nil)
-                // Used to dismiss the HUD
-/*                NotificationCenter.default.addObserver(authView, selector: #selector(AuthView.presentAlert(_:)),
-                                                       name: Notifications.PresentAlert, object: nil) */
+                                                       name: Notifications.AppSuspended, object: nil)                // Used to dismiss the HUD
             }
             else {
                 NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
                 NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
-                // NotificationCenter.default.removeObserver(authView, name: Notifications.PresentAlert, object: nil)
             }
         }
     }
-    @objc var visible: Bool {
+    var showAuthView: Bool = false {
         didSet {
-            if visible {
+            if showAuthView {
                 assert(Thread.isMainThread)
                 viewController.navigationController?.isNavigationBarHidden = true
                 view.addSubview(authView)
@@ -60,23 +57,14 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
 
         let bounds = view.bounds;
         authView = AuthView(frame: bounds)
-        //authView.viewController = viewController
         let logoWidth = bounds.width * 0.7
         authView.logoLeading.constant = (bounds.width - logoWidth) / 2
         authView.logoTrailing.constant = (bounds.width - logoWidth) / 2
-        //let backgroundColor = UIColor.flatForestGreen.lighten(byPercentage: 0.15)!
         authView.contentView.backgroundColor = PippipTheme.splashColor
-        //authView.authButton.setTitleColor(ContrastColorOf(backgroundColor, returnFlat: false), for: .normal)
-        //authView.authButton.backgroundColor = .clear
         authView.versionLabel.textColor = UIColor.flatSand
         authView.secommLabel.textColor = UIColor.flatSand
 
-        visible = false
-        listening = false
-
         super.init()
-
-        authenticator.delegate = self
 
     }
 
@@ -101,7 +89,6 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
                                                                                 object: nil)
                                             }
                                             else {
-                                                //self.authenticator.logout()
                                                 guard let theError = error else { return }
                                                 print("Local authentication failed: \(theError)")
                                             }
@@ -111,28 +98,63 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
         
     }
 
+    func showPassphraseView() {
+        
+        let frame = self.view.bounds
+        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.45)
+        signInView = SignInView(frame: viewRect)
+        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 100)
+        signInView?.center = viewCenter
+        signInView?.alpha = 0.3
+        
+        signInView?.accountName = AccountSession.accountName!
+        signInView?.blurController = authView
+        signInView?.signInCompletion = validatePassphrase(passphrase:)
+        
+        self.view.addSubview(self.signInView!)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.authView.blurView.alpha = 0.3
+            self.signInView?.alpha = 1.0
+        }, completion: { complete in
+            self.signInView?.passphraseTextField.becomeFirstResponder()
+        })
+        
+    }
+
+    func validatePassphrase(passphrase: String) {
+
+        var validated = false
+        do {
+            validated = try UserVault.validatePassphrase(passphrase)
+        }
+        catch {
+            print("Passphrase validation error: \(error)")
+        }
+        if (validated) {
+            NotificationCenter.default.post(name: Notifications.LocalAuthComplete,
+                                            object: nil)
+        }
+        else {
+            alertPresenter.errorAlert(title: "Invalid Passphrase", message: "The passphrase you entered is invalid")
+        }
+
+    }
+
     @objc func appResumed(_ notification: Notification) {
         
         DispatchQueue.main.async {
             if self.suspended && self.sessionState.authenticated {
                 self.suspended = false
-                var localAuth = true
-                if !self.config.useLocalAuth {
-                    localAuth = false
-                    self.authenticator.logout()
-                }
-                
                 DispatchQueue.main.async {
-                    if localAuth {
+                    if self.config.useLocalAuth {
                         self.doThumbprint()
+                    }
+                    else {
+                        self.showPassphraseView()
                     }
                 }
             }
-                /*
-            else {
-                self.authView.authButton.isHidden = false
-            }
- */
         }
         
     }
@@ -141,31 +163,9 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
         
         suspended = true
         DispatchQueue.main.async {
-            //self.authView.authButton.isHidden = true
-            self.visible = true
+            self.showAuthView = true
         }
         
-    }
-
-    // Authentication delegate
-    
-    func authenticated() {
-        // Nothing to do
-    }
-    
-    func authenticationFailed(reason: String) {
-        // Nothing to do
-    }
-
-    func loggedOut() {
-
-        AsyncNotifier.notify(name: Notifications.SessionEnded)
-        DispatchQueue.main.async {
-            //self.authView.authButton.isHidden = false
-            self.viewController.navigationController?.performSegue(withIdentifier: "AuthViewSegue", sender: nil)
-            self.visible = false
-        }
-
     }
 
 }

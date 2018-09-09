@@ -23,7 +23,8 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
     }
 
     func getComplete(response: GetMessagesResponse) {
-        
+
+        NotificationCenter.default.post(name: Notifications.GetMessagesComplete, object: nil)
         print("\(response.messages!.count) new messages returned")
         var textMessages = [TextMessage]()
         for message in response.messages! {
@@ -47,6 +48,7 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
     }
 
     func getError(_ reason: String) {
+        NotificationCenter.default.post(name: Notifications.GetMessagesComplete, object: nil)
         print("Get messages error: \(reason)")
     }
 

@@ -345,7 +345,7 @@ class ContactsViewController: UIViewController {
     @objc func localAuthComplete(_ notification: Notification) {
         
         DispatchQueue.main.async {
-            self.localAuth.visible = false
+            self.localAuth.showAuthView = false
         }
         
     }

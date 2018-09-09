@@ -11,7 +11,7 @@ import UIKit
 class Conversation: NSObject {
 
     var contact: Contact
-    var messageManager: MessageManager
+    var messageManager = MessageManager()
     // Sorted list, oldest first
     private var messageList = SortedArray<TextMessage>(areInIncreasingOrder: { id1, id2 in
         if id1.timestamp < id2.timestamp {
@@ -22,19 +22,32 @@ class Conversation: NSObject {
         }
     })
     private var messageMap = [Int64: TextMessage]()
-    private var timestampSet = Set<Int64>()
-    private var pos: Int = Int.max
-
-    var messageCount: Int {
-        return messageManager.getMessageCount(contactId: contact.contactId)
+    var windowSize: Int
+    var windowPos: Int = 0
+    var loadComplete = true
+    var items = [PippipTextMessageModel]()
+    var visible: Bool = false {
+        didSet {
+            if visible {
+                updateAllChatItems()
+                markAllMessagesRead()
+            }
+        }
+    }
+    var mostRecentMessage: TextMessage? {
+        get {
+            return messageList.last
+        }
     }
 
-    init(_ contact: Contact) {
+    init(contact: Contact, windowSize: Int) {
 
         self.contact = contact
-        messageManager = MessageManager()
+        self.windowSize = windowSize
 
         super.init()
+        // The conversation is instantiated in the summary screen, so we don't want to load all of the messages yet
+        loadInitialMessages()
 
     }
 
@@ -49,18 +62,47 @@ class Conversation: NSObject {
         if messageMap[textMessage.messageId] == nil {
             messageList.insert(textMessage)
             messageMap[textMessage.messageId] = textMessage
+            items.append(PippipTextMessageModel(textMessage: textMessage))
+            if visible {
+                textMessage.read = true
+                messageManager.markMessageRead(messageId: textMessage.messageId)
+            }
+            DispatchQueue.global().async {
+                textMessage.decrypt()
+            }
         }
         else {
             print("Duplicate messageId \(textMessage.messageId)")
         }
         
     }
+    
+    func addTextMessages(_ textMessages: [TextMessage]) {
 
+        for textMessage in textMessages {
+            addTextMessage(textMessage)
+        }
+
+    }
+
+    func canSlideDown() -> Bool {
+        
+        return windowPos < messageList.count - windowSize
+        
+    }
+    
+    func canSlideUp() -> Bool {
+        
+        return windowPos > 0
+        
+    }
+    
     func clearMessages() {
 
         messageList.removeAll()
         messageMap.removeAll()
-        timestampSet.removeAll()
+        windowPos = 0
+        items.removeAll()
         messageManager.clearMessages(contactId: contact.contactId)
 
     }
@@ -68,9 +110,9 @@ class Conversation: NSObject {
     func deleteMessage(_ messageId: Int64) {
 
         if let message = messageMap.removeValue(forKey: messageId) {
-            timestampSet.remove(message.timestamp)
             if let index = messageList.index(of: message) {
                 messageList.remove(at: index)
+                items.remove(at: index - windowPos)
             }
             messageManager.deleteMessage(messageId: messageId)
         }
@@ -106,57 +148,62 @@ class Conversation: NSObject {
 
     }
 
-    // Lazy loading of message list.
-    func getMessages(pos: Int, count: Int) -> [TextMessage] {
+    func loadInitialMessages() {
 
-        if pos < self.pos {
-            // Returns a sorted list. Return maximum of messages remaining in database or count.
-            let messages = messageManager.getTextMessages(contactId: contact.contactId,
-                                                          pos: pos, count: count)
-            self.pos = pos
-            if !messages.isEmpty {
+        let messages = messageManager.mostRecentMessages(contactId: contact.contactId, count: windowSize)
+        for message in messages {
+            messageMap[message.messageId] = message
+            messageList.insert(message)
+        }
+        for textMessage in messageList {
+            items.append(PippipTextMessageModel(textMessage: textMessage))
+        }
+        windowPos = max(0, messageManager.messageCount(contactId: contact.contactId) - windowSize)
+
+        DispatchQueue.global().async {
+            for textMessage in self.messageList {
+                textMessage.decrypt()
+            }
+        }
+
+    }
+
+    func loadPreviousMessages() {
+
+        if windowPos > 0 {
+            let count = min(windowSize, messageManager.messageCount(contactId: contact.contactId) - messageList.count)
+            windowPos = max(0, windowPos-windowSize)
+            let messages = messageManager.getTextMessages(contactId: contact.contactId, pos: windowPos, count: count)
+            for message in messages {
+                messageMap[message.messageId] = message
+                messageList.insert(message)
+            }
+            items.removeAll()
+            for textMessage in messageList {
+                items.append(PippipTextMessageModel(textMessage: textMessage))
+            }
+            DispatchQueue.global().async {
                 for message in messages {
-                    if messageMap[message.messageId] == nil {
-                        messageMap[message.messageId] = message
-                        messageList.insert(message)
+                    message.decrypt()
+                }
+            }
+        }
+
+    }
+
+    func markAllMessagesRead() {
+
+        if visible {
+            DispatchQueue.global().async {
+                for message in self.messageList {
+                    if !message.read {
+                        message.read = true
+                        self.messageManager.markMessageRead(messageId: message.messageId)
                     }
                 }
             }
         }
 
-        let actualPos = min(pos, pos - self.pos)
-        let actualCount = min(count, messageList.count)
-        assert(actualPos + actualCount <= messageList.count)
-        var subrange = [TextMessage]()
-        for index in 0..<actualCount {
-            subrange.append(messageList[index + actualPos])
-        }
-        return subrange
-        
-    }
-
-    /*
-     * Returns a temporary timestamp for sorting purposes
-     */
-    func getTimestamp() -> Int64 {
-
-        var timestamp = Int64(Date().timeIntervalSince1970 * 1000)
-        while timestampSet.contains(timestamp) {
-            timestamp += 1
-        }
-        return timestamp
-
-    }
-
-    func markMessagesRead(_ messages: [Message]) {
-
-        for message in messages {
-            //if !message.read {
-                message.read = true
-                messageManager.markMessageRead(messageId: message.messageId)
-            //}
-        }
-    
     }
 
     func messageFailed(_ messageId: Int64) {
@@ -164,25 +211,34 @@ class Conversation: NSObject {
         guard let message = messageMap[messageId] else { return }
         message.failed = true
         messageManager.updateMessage(message)
-
-    }
-
-    func mostRecentMessage() -> TextMessage? {
-
-        if messageList.isEmpty {
-            if let textMessage = messageManager.mostRecentMessage(contactId: contact.contactId) {
-                messageList.insert(textMessage)
-                messageMap[textMessage.messageId] = textMessage
+        for index in 0..<items.count {
+            if items[index].message.messageId == messageId {
+                items[index] = PippipTextMessageModel(textMessage: message)
             }
         }
-        return messageList.last
-
+        
     }
 
-    func retryTextMessage(_ messageId: Int64) {
+    func messageSent(messageId: Int64) {
 
-        guard let textMessage = messageMap[messageId] else { return }
+        guard let message = messageMap[messageId] else { return }
+        for index in 0..<items.count {
+            if items[index].message.messageId == messageId {
+                items[index] = PippipTextMessageModel(textMessage: message)
+            }
+        }
+        
+    }
+
+    func retryTextMessage(_ textMessage: TextMessage) {
+
+        guard let textMessage = messageMap[textMessage.messageId] else { return }
         textMessage.failed = false
+        for index in 0..<items.count {
+            if items[index].message.messageId == textMessage.messageId {
+                items[index] = PippipTextMessageModel(textMessage: textMessage)
+            }
+        }
         messageManager.updateMessage(textMessage)
         messageManager.sendMessage(textMessage: textMessage, retry: true)
 
@@ -198,14 +254,46 @@ class Conversation: NSObject {
         return false
         
     }
-/*
-    func sendMessage(_ textMessage: TextMessage) throws {
 
-        textMessage.read = true
-        try textMessage.encrypt()
-        textMessage.timestamp = Int64(Date().timeIntervalSince1970 * 1000)
-        messageManager.sendMessage(textMessage: textMessage, retry: false)
+    func slideDown() {
+        
+        if canSlideDown() {
+            windowPos = min(windowPos + windowSize, windowPos + (messageList.count - windowSize))
+            //markMessagesRead(messages: window)
+        }
+        
+    }
+    
+    func slideUp() {
+        
+        if canSlideUp() {
+            loadPreviousMessages()
+        }
+        
+    }
+    
+    func updateAllChatItems() {
+
+        items.removeAll()
+        for message in messageList {
+            if (message.cleartext != nil) {
+                items.append(PippipTextMessageModel(textMessage: message))
+            }
+        }
 
     }
-*/
+
+    func updateChatItem(textMessage: TextMessage) {
+        
+        if visible {
+            if let index = messageList.anyIndex(of: textMessage) {
+                items[index] = PippipTextMessageModel(textMessage: textMessage)
+            }
+            else {
+                print("Message not found in updateChatItem")
+            }
+        }
+
+    }
+
 }

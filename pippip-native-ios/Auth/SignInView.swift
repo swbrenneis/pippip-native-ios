@@ -21,7 +21,8 @@ class SignInView: UIView {
             accountNameLabel.text = accountName
         }
     }
-    var authViewController: AuthViewController?
+    var blurController: ControllerBlurProtocol?
+    var signInCompletion = { (passphrase: String) in }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -54,15 +55,21 @@ class SignInView: UIView {
 
     }
     
-    @IBAction func cancelTapped(_ sender: Any) {
+    func dismiss() {
 
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.authViewController?.dimView?.alpha = 0.0
+            self.blurController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
         })
+        
+    }
+
+    @IBAction func cancelTapped(_ sender: Any) {
+
+        dismiss()
 
     }
 
@@ -71,11 +78,12 @@ class SignInView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.authViewController?.dimView?.alpha = 0.0
+            self.blurController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
             let passphrase = self.passphraseTextField.text ?? ""
-            self.authViewController?.doAuthenticate(passphrase: passphrase)
+            self.signInCompletion(passphrase)
+//            self.authViewController?.doAuthenticate(passphrase: passphrase)
         })
         
     }

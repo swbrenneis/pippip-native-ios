@@ -75,6 +75,34 @@ class Configurator: NSObject {
             }
         }
     }
+    @objc var lastExit: Date? {
+        get {
+            let config = getConfig()
+            return config.lastExit
+        }
+        set {
+            let config = getConfig()
+            let realm = try! Realm()
+            try! realm.write {
+                config.lastExit = newValue
+                config.version = Configurator.currentVersion
+            }
+        }
+    }
+    var lastSignout: Date? {
+        get {
+            let config = getConfig()
+            return config.lastSignout
+        }
+        set {
+            let config = getConfig()
+            let realm = try! Realm()
+            try! realm.write {
+                config.lastSignout = newValue
+                config.version = Configurator.currentVersion
+            }
+        }
+    }
 
     var sessionState = SessionState()
 
