@@ -18,12 +18,12 @@ class Contact: NSObject {
     var directoryId: String?
     var displayName: String {
         get {
-            if directoryId != nil {
-                return directoryId!
+            if let did = directoryId {
+                return did
             }
             else {
                 let shortened = publicId.prefix(10) + "..."
-                return String(shortened)
+                return "\(shortened)"
             }
         }
     }

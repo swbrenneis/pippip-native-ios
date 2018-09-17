@@ -61,6 +61,18 @@ class MessageManager: NSObject {
 
     }
 
+    func allTextMessages() -> [TextMessage] {
+        
+        var allMessages = [TextMessage]()
+        let realm = try! Realm()
+        let dbMessages = realm.objects(DatabaseMessage.self)
+        for dbMessage in dbMessages {
+            allMessages.append(TextMessage(dbMessage: dbMessage))
+        }
+        return allMessages
+
+    }
+
     func clearMessages(contactId: Int) {
 
         let realm = try! Realm()
@@ -136,19 +148,7 @@ class MessageManager: NSObject {
         return textMessages
 
     }
-    /*
-    func getTextMessages(contactId: Int) -> [TextMessage] {
-        
-        var textMessages = [TextMessage]()
-        let realm = try! Realm()
-        let dbMessages = realm.objects(DatabaseMessage.self).filter("contactId = %ld", contactId)
-        for dbMessage in dbMessages {
-            textMessages.append(TextMessage(dbMessage: dbMessage))
-        }
-        return textMessages
-        
-    }
-*/
+
     func markMessageRead(messageId: Int64) {
 
         let realm = try! Realm()

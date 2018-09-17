@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import DeviceKit
 
 class LocalAuthCellItem: MultiCellItemProtocol {
 
@@ -28,6 +29,13 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
+        let device = Device()
+        var laType = "Enable thumbprint"
+        if device == .iPhoneX {
+            laType = "Enable facial recognition"
+        }
+        localAuthLabel.text = laType
         
         localAuthSwitch.setOn(config.useLocalAuth, animated: true)
         localAuthSwitch.onTintColor = PippipTheme.buttonColor

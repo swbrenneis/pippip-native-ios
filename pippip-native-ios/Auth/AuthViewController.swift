@@ -19,7 +19,6 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
     @IBOutlet weak var quickstartButton: UIButton!
     @IBOutlet weak var versionLabel: UILabel!
     @IBOutlet weak var secommLabel: UILabel!
-    @IBOutlet weak var firstRunLabel: UILabel!
     
     var accountName: String?
     var alertPresenter = AlertPresenter()
@@ -82,30 +81,6 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
         else {
             authButton.setTitle("Create A New Account", for: .normal)
         }
-        //if AccountSession.firstRun {
-        //    AccountSession.firstRun = false
-        if AccountSession.accountName != nil {
-        firstRunLabel.isHidden = false
-        let config = Configurator()
-        if let lastSignout = config.lastSignout {
-            firstRunLabel.text = "Signed out: \(lastSignout)"
-            config.lastSignout = nil
-        }
-        else if let lastExit = config.lastExit {
-            firstRunLabel.text = "Terminated: \(lastExit)"
-            config.lastExit = nil
-        }
-        else {
-            firstRunLabel.isHidden = true
-        }
-        }
-        else {
-            firstRunLabel.isHidden = true
-        }
-        //}
-        //else {
-        //    firstRunLabel.isHidden = true
-        //}
 
     }
 

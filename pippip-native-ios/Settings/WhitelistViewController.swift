@@ -98,7 +98,7 @@ class WhitelistViewController: UIViewController {
         return false
         
     }
-    
+
     func verifyAndAdd(directoryId: String, publicId: String) {
 
         self.directoryId = directoryId
@@ -138,41 +138,6 @@ class WhitelistViewController: UIViewController {
 
     @objc func addWhitelistEntry(_ sender: Any) {
 
-        /*
-        let alert = PMAlertController(title: "Add A New Permitted ID",
-                                      description: "Enter a directory ID or public ID",
-                                      image: nil,
-                                      style: PMAlertControllerStyle.alert)
-        alert.addTextField({ (textField) in
-            textField?.placeholder = "Directory ID"
-            textField?.autocorrectionType = .no
-            textField?.spellCheckingType = .no
-        })
-        alert.addTextField({ (textField) in
-            textField?.placeholder = "Public ID"
-            textField?.autocorrectionType = .no
-            textField?.spellCheckingType = .no
-        })
-        alert.addAction(PMAlertAction(title: "Add Permitted ID",
-                                      style: .default, action: { () in
-                                        self.directoryId = alert.textFields[0].text ?? ""
-                                        self.publicId = alert.textFields[1].text ?? ""
-                                        if !self.checkSelfAdd(directoryId: self.directoryId, publicId: self.publicId) {
-                                            if self.directoryId.utf8.count > 0 {
-                                                self.contactManager.matchDirectoryId(directoryId: self.directoryId, publicId: nil)
-                                            }
-                                            else if self.publicId.utf8.count > 0 {
-                                                if !self.contactManager.addWhitelistEntry(self.publicId) {
-                                                    self.alertPresenter.errorAlert(title: "Add Permitted ID Error",
-                                                                                   message: "You already added that ID")
-                                                }
-                                            }
-                                        }
-        }))
-        alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
-        self.present(alert, animated: true, completion: nil)
-        */
-
         let frame = self.view.bounds
         let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.5)
         addIdView = AddToWhitelistView(frame: viewRect)
@@ -202,7 +167,9 @@ class WhitelistViewController: UIViewController {
             NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
                                                    name: Notifications.WhitelistEntryAdded, object: nil)
             if contactManager.addWhitelistEntry(publicId) {
-                addIdView?.dismiss()
+                DispatchQueue.main.async {
+                    self.addIdView?.dismiss()
+                }
             }
             else {
                 self.alertPresenter.errorAlert(title: "Add Permitted ID Error",

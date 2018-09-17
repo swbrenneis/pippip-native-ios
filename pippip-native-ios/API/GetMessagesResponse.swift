@@ -13,9 +13,13 @@ class GetMessagesResponse: NSObject, EnclaveResponseProtocol {
 
     var error: String?
     var messages: [ServerMessage]?
+    var rejected: [String]?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil && map.JSON["messages"] == nil {
+            return nil
+        }
+        if map.JSON["error"] == nil && map.JSON["rejected"] == nil {
             return nil
         }
     }
@@ -23,6 +27,7 @@ class GetMessagesResponse: NSObject, EnclaveResponseProtocol {
     func mapping(map: Map) {
         error <- map["error"]
         messages <- map["messages"]
+        rejected <- map["rejected"]
     }
 
 }

@@ -62,14 +62,14 @@ class Conversation: NSObject {
         if messageMap[textMessage.messageId] == nil {
             messageList.insert(textMessage)
             messageMap[textMessage.messageId] = textMessage
-            items.append(PippipTextMessageModel(textMessage: textMessage))
             if visible {
                 textMessage.read = true
                 messageManager.markMessageRead(messageId: textMessage.messageId)
             }
             DispatchQueue.global().async {
-                textMessage.decrypt()
+                textMessage.decrypt(notify: true)
             }
+            items.append(PippipTextMessageModel(textMessage: textMessage))
         }
         else {
             print("Duplicate messageId \(textMessage.messageId)")
@@ -151,20 +151,31 @@ class Conversation: NSObject {
     func loadInitialMessages() {
 
         let messages = messageManager.mostRecentMessages(contactId: contact.contactId, count: windowSize)
-        for message in messages {
-            messageMap[message.messageId] = message
-            messageList.insert(message)
-        }
-        for textMessage in messageList {
+        for textMessage in messages {
+            messageMap[textMessage.messageId] = textMessage
+            messageList.insert(textMessage)
+            if textMessage.ciphertext!.count < 25 {
+                textMessage.decrypt(notify: false)
+            }
+            else {
+                DispatchQueue.global().async {
+                    textMessage.decrypt(notify: true)
+                }
+            }
             items.append(PippipTextMessageModel(textMessage: textMessage))
         }
+//        for textMessage in messageList {
+//            if textMessage.ciphertext!.count < 25 {
+//                textMessage.decrypt(notify: false)
+//            }
+//            else {
+//                DispatchQueue.global().async {
+//                    textMessage.decrypt(notify: true)
+//                }
+//            }
+//            items.append(PippipTextMessageModel(textMessage: textMessage))
+//        }
         windowPos = max(0, messageManager.messageCount(contactId: contact.contactId) - windowSize)
-
-        DispatchQueue.global().async {
-            for textMessage in self.messageList {
-                textMessage.decrypt()
-            }
-        }
 
     }
 
@@ -179,13 +190,22 @@ class Conversation: NSObject {
                 messageList.insert(message)
             }
             items.removeAll()
+            for textMessage in messages {
+                var deferred = [TextMessage]()
+                if textMessage.ciphertext!.count < 25 {
+                    textMessage.decrypt(notify: false)
+                }
+                else {
+                    deferred.append(textMessage)
+                }
+                DispatchQueue.global().async {
+                    for message in deferred {
+                        message.decrypt(notify: true)
+                    }
+                }
+            }
             for textMessage in messageList {
                 items.append(PippipTextMessageModel(textMessage: textMessage))
-            }
-            DispatchQueue.global().async {
-                for message in messages {
-                    message.decrypt()
-                }
             }
         }
 

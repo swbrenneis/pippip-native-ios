@@ -19,6 +19,12 @@ class PippipTextMessageModel: TextMessageModel<PippipMessageModel> {
 
         message = textMessage
         pippipMessageModel = PippipMessageModel(message: textMessage)
+//        if let cleartext = message.cleartext {
+//            messageText = cleartext
+//        }
+//        else {
+//            messageText = "Text not available"
+//        }
         messageText = textMessage.cleartext ?? "Text not available"
         super.init(messageModel: pippipMessageModel, text: messageText)
 

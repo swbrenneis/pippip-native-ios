@@ -106,30 +106,6 @@ class ContactsViewController: UIViewController {
     }
 
     func acknowledgeRequest(_ contactRequest: ContactRequest) {
-/*
-        let name = contactRequest.directoryId ?? contactRequest.publicId
-        let alert = PMAlertController(title: "New Contact Request",
-                                      description: "New contact request from \(name)",
-                                      image: nil,
-                                      style: PMAlertControllerStyle.alert)
-        alert.addAction(PMAlertAction(title: "Accept",
-                                      style: .default, action: { () in
-                                        self.contactManager.acknowledgeRequest(contactRequest: contactRequest,
-                                                                               response: "accept")
-        }))
-        alert.addAction(PMAlertAction(title: "Reject",
-                                      style: .default, action: { () in
-                                        self.contactManager.acknowledgeRequest(contactRequest: contactRequest,
-                                                                               response: "reject")
-        }))
-        alert.addAction(PMAlertAction(title: "Delete",
-                                      style: .default, action: { () in
-                                        self.contactManager.acknowledgeRequest(contactRequest: contactRequest,
-                                                                               response: "ignore")
-        }))
-        alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
-        present(alert, animated: true, completion: nil)
-*/
 
         let frame = self.view.bounds
         let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.6)
@@ -264,11 +240,13 @@ class ContactsViewController: UIViewController {
 
         guard let response = notification.object as? MatchDirectoryIdResponse else { return }
         if response.result == "found" {
-            addContactView?.dismiss(completion: { comleted in
-                self.contactManager.requestContact(publicId: response.publicId!,
-                                                   directoryId: response.directoryId!,
-                                                   retry: false)
-            })
+            DispatchQueue.main.async {
+                self.addContactView?.dismiss(completion: { comleted in
+                    self.contactManager.requestContact(publicId: response.publicId!,
+                                                       directoryId: response.directoryId!,
+                                                       retry: false)
+                })
+            }
         }
         else {
             alertPresenter.errorAlert(title: "Add Contact Error", message: "That directory ID doesn't exist")

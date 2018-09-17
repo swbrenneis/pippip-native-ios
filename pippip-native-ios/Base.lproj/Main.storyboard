@@ -200,6 +200,58 @@
             </objects>
             <point key="canvasLocation" x="2208.8000000000002" y="-623.83808095952031"/>
         </scene>
+        <!--Message Dump Table View Controller-->
+        <scene sceneID="lJv-On-Gmv">
+            <objects>
+                <tableViewController storyboardIdentifier="MessageDumpTableViewController" id="wSy-GT-sQz" customClass="MessageDumpTableViewController" customModule="pippip_native_ios" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="sF0-3l-tAQ">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MessageDumpContactCell" textLabel="WBJ-7f-qJN" detailTextLabel="5Bh-tE-ReU" style="IBUITableViewCellStyleSubtitle" id="lSS-il-o9u">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="lSS-il-o9u" id="zel-VP-4aX">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="WBJ-7f-qJN">
+                                            <rect key="frame" x="16" y="5" width="33.5" height="20.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5Bh-tE-ReU">
+                                            <rect key="frame" x="16" y="25.5" width="44" height="14.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MessageDumpPreviewCell" rowHeight="55" id="t28-2a-K2x">
+                                <rect key="frame" x="0.0" y="72" width="375" height="55"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="t28-2a-K2x" id="QrE-It-WyJ">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="54.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="wSy-GT-sQz" id="e4F-Pr-C0X"/>
+                            <outlet property="delegate" destination="wSy-GT-sQz" id="r2Q-nM-8V6"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IVP-ye-viu" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1369" y="95"/>
+        </scene>
         <!--Settings Table View Controller-->
         <scene sceneID="zUo-ww-Rz5">
             <objects>
@@ -652,8 +704,8 @@
                                     <action selector="authSelected:" destination="Qgm-Jj-c6i" eventType="touchUpInside" id="zxC-jY-ae9"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Version 1.0.5 2018082407" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AtH-2U-osO">
-                                <rect key="frame" x="119" y="574" width="137" height="14"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Version 1.0.5 2018082411" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AtH-2U-osO">
+                                <rect key="frame" x="121" y="574" width="134" height="14"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -672,16 +724,9 @@
                                     <action selector="quickstartPressed:" destination="Qgm-Jj-c6i" eventType="touchUpInside" id="aoI-go-dHD"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="First run" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uh8-kr-Nid">
-                                <rect key="frame" x="16" y="626" width="51" height="16"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="Uh8-kr-Nid" firstAttribute="leading" secondItem="gii-MB-YQ7" secondAttribute="leading" constant="16" id="0KB-03-Xrx"/>
                             <constraint firstItem="2l8-P8-qWa" firstAttribute="top" secondItem="1Vy-hB-X1h" secondAttribute="bottom" constant="96" id="3Vs-OM-DSZ"/>
                             <constraint firstItem="gii-MB-YQ7" firstAttribute="trailing" secondItem="5iF-rd-no8" secondAttribute="trailing" constant="55" id="6w0-zN-EzI"/>
                             <constraint firstItem="nDU-R8-jrQ" firstAttribute="top" secondItem="AtH-2U-osO" secondAttribute="bottom" constant="15" id="BDQ-NT-Diu"/>
@@ -690,7 +735,6 @@
                             <constraint firstItem="gii-MB-YQ7" firstAttribute="bottom" secondItem="nDU-R8-jrQ" secondAttribute="bottom" constant="50" id="UMO-eU-Njw"/>
                             <constraint firstItem="1Vy-hB-X1h" firstAttribute="leading" secondItem="gii-MB-YQ7" secondAttribute="leading" constant="70" id="m4k-wG-DJ1"/>
                             <constraint firstItem="1Vy-hB-X1h" firstAttribute="centerY" secondItem="kNK-an-MJm" secondAttribute="centerY" id="qsf-78-TDq"/>
-                            <constraint firstItem="gii-MB-YQ7" firstAttribute="bottom" secondItem="Uh8-kr-Nid" secondAttribute="bottom" constant="25" id="s4x-Lc-a6u"/>
                             <constraint firstItem="5iF-rd-no8" firstAttribute="leading" secondItem="gii-MB-YQ7" secondAttribute="leading" constant="55" id="tkw-bw-LCY"/>
                             <constraint firstItem="2l8-P8-qWa" firstAttribute="centerX" secondItem="kNK-an-MJm" secondAttribute="centerX" id="uiA-P1-IJR"/>
                             <constraint firstItem="AtH-2U-osO" firstAttribute="centerX" secondItem="kNK-an-MJm" secondAttribute="centerX" id="xE7-Ec-YL6"/>
@@ -700,7 +744,6 @@
                     </view>
                     <connections>
                         <outlet property="authButton" destination="1Vy-hB-X1h" id="smF-hK-Kni"/>
-                        <outlet property="firstRunLabel" destination="Uh8-kr-Nid" id="aWK-IU-qFH"/>
                         <outlet property="logoImage" destination="5iF-rd-no8" id="aOa-44-d9P"/>
                         <outlet property="logoLeading" destination="tkw-bw-LCY" id="e5e-d7-yFs"/>
                         <outlet property="logoTop" destination="MCk-gO-HVJ" id="3M1-FS-tVI"/>

@@ -44,6 +44,21 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
             messageManager.addTextMessages(textMessages)
             messageManager.acknowledgeMessages(textMessages)
         }
+        if !response.rejected!.isEmpty {
+            var contacts = [Contact]()
+            for reject in response.rejected! {
+                if let contact = contactManager.getContact(publicId: reject) {
+                    if contact.status == "accepted" {
+                        contacts.append(contact)
+                    }
+                }
+            }
+            if !contacts.isEmpty {
+                DispatchQueue.global().async {
+                    self.contactManager.syncContacts(contacts: contacts, action: "add")
+                }
+            }
+        }
 
     }
 

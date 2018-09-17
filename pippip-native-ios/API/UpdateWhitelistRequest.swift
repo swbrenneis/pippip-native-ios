@@ -9,8 +9,8 @@
 import UIKit
 import ObjectMapper
 
-class UpdateWhitelistRequest: NSObject, EnclaveRequestProtocol {
-    
+class UpdateWhitelistRequest: EnclaveRequestProtocol {
+
     var method: String = "UpdateWhitelist"
     var id: String?
     var action: String?

@@ -11,6 +11,7 @@ import FrostedSidebar
 import ChameleonFramework
 import LocalAuthentication
 import Sheriff
+import MessageUI
 
 class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
 
@@ -60,31 +61,42 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         authenticator.delegate = self
 
         // Do any additional setup after loading the view.
-        let sidebarImages = [ UIImage(named: "contacts")!, UIImage(named: "compose")!,
-                              UIImage(named: "settings")!, UIImage(named: "exit")! ]
+//        let sidebarImages = [ UIImage(named: "help")!, UIImage(named: "contacts")!,
+//                              UIImage(named: "compose")!, UIImage(named: "settings")!,
+//                              UIImage(named: "exit")! ]
+        let sidebarImages = [ UIImage(named: "help")!, UIImage(named: "settings")!,
+                              UIImage(named: "exit")! ]
         sidebar = FrostedSidebar(itemImages: sidebarImages, colors: nil, selectionStyle: .single)
         sidebar.showFromRight = true
         sidebar.itemBackgroundColor = .clear
+        sidebar.adjustForNavigationBar = true
         sidebar.itemSize = CGSize(width: 130.0, height: 130.0)
         contactsView = self.storyboard?.instantiateViewController(withIdentifier: "ContactsViewController") as! ContactsViewController
         settingsView = self.storyboard?.instantiateViewController(withIdentifier: "SettingsTableViewController") as! SettingsTableViewController
         sidebar.actionForIndex[0] = {
             self.sidebarOn = false
             self.sidebar.dismissAnimated(true, completion: nil)
-            self.navigationController?.pushViewController(self.contactsView, animated: true)
+            let url = "https://www.pippip.io/help.html"
+            guard let link = URL(string: url) else { return }
+            UIApplication.shared.open(link, options: [:], completionHandler: nil)
         }
+//        sidebar.actionForIndex[1] = {
+//            self.sidebarOn = false
+//            self.sidebar.dismissAnimated(true, completion: nil)
+//            self.navigationController?.pushViewController(self.contactsView, animated: true)
+//        }
+//        sidebar.actionForIndex[2] = {
+//            self.sidebarOn = false
+//            self.sidebar.dismissAnimated(true, completion: nil)
+//            let chatto = ChattoViewController()
+//            self.navigationController?.pushViewController(chatto, animated: true)
+//        }
         sidebar.actionForIndex[1] = {
-            self.sidebarOn = false
-            self.sidebar.dismissAnimated(true, completion: nil)
-            let chatto = ChattoViewController()
-            self.navigationController?.pushViewController(chatto, animated: true)
-        }
-        sidebar.actionForIndex[2] = {
             self.sidebarOn = false
             self.sidebar.dismissAnimated(true, completion: nil)
             self.navigationController?.pushViewController(self.settingsView, animated: true)
         }
-        sidebar.actionForIndex[3] = {
+        sidebar.actionForIndex[2] = {
             self.sidebarOn = false
             self.sidebar.dismissAnimated(true, completion: nil)
             self.signOut()
@@ -95,6 +107,8 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         let hamburger = UIBarButtonItem(image: image, style: .plain, target: self,
                                         action: #selector(showSidebar(_:)))
         rightBarItems.append(hamburger)
+        //let dbDump = UIBarButtonItem(title: "Dump", style: .plain, target: self, action: #selector(showMessageDump(_:)))
+        //rightBarItems.append(dbDump)
         #if targetEnvironment(simulator)
         let pollButton = UIBarButtonItem(title: "Poll", style: .plain, target: self, action: #selector(pollServer(_ :)))
         rightBarItems.append(pollButton)
@@ -186,6 +200,14 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
     @objc func showContacts(_ item: Any) {
 
         self.navigationController?.pushViewController(self.contactsView, animated: true)
+
+    }
+
+    @objc func showMessageDump(_ item: Any) {
+        
+        let dumpView = self.storyboard?.instantiateViewController(withIdentifier: "MessageDumpTableViewController")
+            as! MessageDumpTableViewController
+        self.navigationController?.pushViewController(dumpView, animated: true)
 
     }
 

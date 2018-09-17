@@ -378,6 +378,19 @@ class ContactManager: NSObject {
         
     }
 
+    func syncContacts(contacts: [Contact], action: String) {
+
+        let syncRequest = SyncContactsRequest()
+        for contact in contacts {
+            syncRequest.contacts?.append(SyncContact(contact: contact, action: "add"))
+        }
+        let delegate = SyncContactsDelegate(request: syncRequest)
+        let setTask = EnclaveTask<SyncContactsRequest, SyncContactsResponse>(delegate: delegate)
+        setTask.errorTitle = "Contact Sync Error"
+        setTask.sendRequest(syncRequest)
+
+    }
+
     func updateContact(_ update: Contact) throws {
 
         ContactManager.contactMap[update.publicId] = update

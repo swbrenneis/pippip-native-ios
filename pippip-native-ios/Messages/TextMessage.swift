@@ -50,7 +50,7 @@ class TextMessage: Message {
 
     }
 
-    func decrypt() {
+    override func decrypt(notify: Bool) {
 
         if cleartext == nil {
             guard let _ = ciphertext else { return }
@@ -80,11 +80,15 @@ class TextMessage: Message {
                 print("Invalid contact ID in message")
             }
         }
+
         if cleartext == nil {
             cleartext = "Decryption failed"
         }
-        NotificationCenter.default.post(name: Notifications.CleartextAvailable, object: self)
 
+        if notify {
+            NotificationCenter.default.post(name: Notifications.CleartextAvailable, object: self)
+        }
+    
     }
 
     func encrypt() throws {

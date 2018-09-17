@@ -153,9 +153,9 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
             suspended = false
             NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
             DispatchQueue.main.async {
-                if UIApplication.shared.applicationIconBadgeNumber > 0 {
+//                if UIApplication.shared.applicationIconBadgeNumber > 0 {
                     self.doUpdates()
-                }
+//                }
             }
         }
 

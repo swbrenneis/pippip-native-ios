@@ -82,6 +82,12 @@ class Message: NSObject, Comparable {
 
     }
 
+    func decrypt(notify: Bool) {
+
+        assert(false, "Must be overridden in subclasses")
+
+    }
+
     func encodeForServer(publicId: String) -> ServerMessage {
 
         let serverMessage = ServerMessage()
