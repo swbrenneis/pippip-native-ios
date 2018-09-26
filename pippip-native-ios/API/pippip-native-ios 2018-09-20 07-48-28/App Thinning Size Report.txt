@@ -1,0 +1,64 @@
+
+App Thinning Size Report for All Variants of pippip-native-ios
+
+Variant: pippip-native-ios-160AF15D-8154-4A97-A933-D721EA110906.ipa
+Supported variant descriptors: [device: iPhone8,1, os-version: 12], [device: iPhone6,1, os-version: 12], [device: iPhone6,2, os-version: 12], [device: iPod7,1, os-version: 12], [device: iPhone7,2, os-version: 12], and [device: iPhone8,4, os-version: 12]
+App + On Demand Resources size: 7.6 MB compressed, 24.5 MB uncompressed
+App size: 7.6 MB compressed, 24.5 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
+
+
+Variant: pippip-native-ios-1739ADC9-57C8-4D77-BDB9-FAC8F75EBD7B.ipa
+Supported variant descriptors: [device: iPhone11,8, os-version: 12]
+App + On Demand Resources size: 7.6 MB compressed, 24.5 MB uncompressed
+App size: 7.6 MB compressed, 24.5 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
+
+
+Variant: pippip-native-ios-5A6FC0FB-23AA-4212-92EC-6004F493B01E.ipa
+Supported variant descriptors: [device: iPhone10,4, os-version: 12], [device: iPhone10,1, os-version: 12], [device: iPhone9,1, os-version: 12], and [device: iPhone9,3, os-version: 12]
+App + On Demand Resources size: 7.6 MB compressed, 24.5 MB uncompressed
+App size: 7.6 MB compressed, 24.5 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
+
+
+Variant: pippip-native-ios-5FF951F1-562C-40B2-8D12-A00247ECE4CB.ipa
+Supported variant descriptors: [device: iPhone9,8, os-version: 10], [device: iPhone9,9, os-version: 10], and [device: iPhone9,7, os-version: 10]
+App + On Demand Resources size: 7.6 MB compressed, 24.5 MB uncompressed
+App size: 7.6 MB compressed, 24.5 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
+
+
+Variant: pippip-native-ios-6879437B-A9B4-4106-A2C0-A85A21DA6D32.ipa
+Supported variant descriptors: [device: iPhone8,2, os-version: 12] and [device: iPhone7,1, os-version: 12]
+App + On Demand Resources size: 7.7 MB compressed, 24.5 MB uncompressed
+App size: 7.7 MB compressed, 24.5 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
+
+
+Variant: pippip-native-ios-CB24272E-CCEB-4635-8466-ED7B8FD29030.ipa
+Supported variant descriptors: [device: iPad4,5, os-version: 12], [device: iPad4,9, os-version: 12], [device: iPad4,3, os-version: 12], [device: iPad5,2, os-version: 12], [device: iPad4,7, os-version: 12], [device: iPad7,6, os-version: 12], [device: iPad4,1, os-version: 12], [device: iPad5,4, os-version: 12], [device: iPad6,11, os-version: 12], [device: iPad6,8, os-version: 12], [device: iPad6,7, os-version: 12], [device: iPad4,2, os-version: 12], [device: iPad4,8, os-version: 12], [device: iPad4,4, os-version: 12], [device: iPad4,6, os-version: 12], [device: iPad5,3, os-version: 12], [device: iPad5,1, os-version: 12], [device: iPad6,12, os-version: 12], and [device: iPad7,5, os-version: 12]
+App + On Demand Resources size: 7.6 MB compressed, 24.5 MB uncompressed
+App size: 7.6 MB compressed, 24.5 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
+
+
+Variant: pippip-native-ios-D61374B8-3E23-4E31-98A4-41CA966EF631.ipa
+Supported variant descriptors: [device: iPhone10,6, os-version: 12], [device: iPhone11,4, os-version: 12], [device: iPhone10,2, os-version: 12], [device: iPhone11,2, os-version: 12], [device: iPhone10,3, os-version: 12], [device: iPhone11,6, os-version: 12], [device: iPhone9,2, os-version: 12], [device: iPhone9,4, os-version: 12], and [device: iPhone10,5, os-version: 12]
+App + On Demand Resources size: 7.7 MB compressed, 24.5 MB uncompressed
+App size: 7.7 MB compressed, 24.5 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
+
+
+Variant: pippip-native-ios-E20A4513-F3F3-4D4F-8DAC-B061CC8085A6.ipa
+Supported variant descriptors: [device: iPad7,1, os-version: 12], [device: iPad6,3, os-version: 12], [device: iPad7,2, os-version: 12], [device: iPad7,3, os-version: 12], [device: iPad7,4, os-version: 12], and [device: iPad6,4, os-version: 12]
+App + On Demand Resources size: 7.6 MB compressed, 24.5 MB uncompressed
+App size: 7.6 MB compressed, 24.5 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
+
+
+Variant: pippip-native-ios.ipa
+Supported variant descriptors: Universal
+App + On Demand Resources size: 15.7 MB compressed, 50.5 MB uncompressed
+App size: 15.7 MB compressed, 50.5 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
