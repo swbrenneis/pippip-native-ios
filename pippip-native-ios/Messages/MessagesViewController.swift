@@ -12,6 +12,7 @@ import ChameleonFramework
 import LocalAuthentication
 import Sheriff
 import MessageUI
+import ImageSlideshow
 
 class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
 
@@ -35,6 +36,20 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
     var alertPresenter = AlertPresenter()
     var contactBarButton: UIBarButtonItem!
     var contactBadge = GIBadgeView()
+    var slideshow: ImageSlideshow!
+    let slides = [ImageSource(imageString: "quickstart01")!,
+                  ImageSource(imageString: "quickstart02")!,
+                  ImageSource(imageString: "quickstart03")!,
+                  ImageSource(imageString: "quickstart04")!,
+                  ImageSource(imageString: "quickstart05")!,
+                  ImageSource(imageString: "quickstart06")!,
+                  ImageSource(imageString: "quickstart07")!,
+                  ImageSource(imageString: "quickstart08")!,
+                  ImageSource(imageString: "quickstart09")!,
+                  ImageSource(imageString: "quickstart10")!,
+                  ImageSource(imageString: "quickstart11")!,
+                  ImageSource(imageString: "quickstart12")!,
+                  ImageSource(imageString: "quickstart13")!]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,6 +75,14 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         localAuth = LocalAuthenticator(viewController: self, view: self.view)
         authenticator.delegate = self
 
+        let bounds = self.view.bounds
+        slideshow = ImageSlideshow(frame: bounds)
+        slideshow.setImageInputs(slides)
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(MessagesViewController.didTap))
+        slideshow.addGestureRecognizer(recognizer)
+        slideshow.alpha = 0.0
+        self.view.addSubview(slideshow)
+        
         // Do any additional setup after loading the view.
 //        let sidebarImages = [ UIImage(named: "help")!, UIImage(named: "contacts")!,
 //                              UIImage(named: "compose")!, UIImage(named: "settings")!,
@@ -71,26 +94,17 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         sidebar.itemBackgroundColor = .clear
         sidebar.adjustForNavigationBar = true
         sidebar.itemSize = CGSize(width: 130.0, height: 130.0)
-        contactsView = self.storyboard?.instantiateViewController(withIdentifier: "ContactsViewController") as! ContactsViewController
-        settingsView = self.storyboard?.instantiateViewController(withIdentifier: "SettingsTableViewController") as! SettingsTableViewController
+        contactsView = (self.storyboard?.instantiateViewController(withIdentifier: "ContactsViewController") as! ContactsViewController)
+        settingsView = (self.storyboard?.instantiateViewController(withIdentifier: "SettingsTableViewController") as! SettingsTableViewController)
         sidebar.actionForIndex[0] = {
             self.sidebarOn = false
             self.sidebar.dismissAnimated(true, completion: nil)
-            let url = "https://www.pippip.io/help.html"
-            guard let link = URL(string: url) else { return }
-            UIApplication.shared.open(link, options: [:], completionHandler: nil)
+            UIView.animate(withDuration: 0.3, animations: {
+                self.slideshow.alpha = 1.0
+            }, completion: { (completed) in
+                self.navigationController?.setNavigationBarHidden(true, animated: true)
+            })
         }
-//        sidebar.actionForIndex[1] = {
-//            self.sidebarOn = false
-//            self.sidebar.dismissAnimated(true, completion: nil)
-//            self.navigationController?.pushViewController(self.contactsView, animated: true)
-//        }
-//        sidebar.actionForIndex[2] = {
-//            self.sidebarOn = false
-//            self.sidebar.dismissAnimated(true, completion: nil)
-//            let chatto = ChattoViewController()
-//            self.navigationController?.pushViewController(chatto, animated: true)
-//        }
         sidebar.actionForIndex[1] = {
             self.sidebarOn = false
             self.sidebar.dismissAnimated(true, completion: nil)
@@ -191,6 +205,16 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
 
     }
 
+    @objc func didTap() {
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.slideshow.alpha = 0.0
+        }, completion: { (completed) in
+            self.navigationController?.setNavigationBarHidden(false, animated: true)
+        })
+
+    }
+    
     #if targetEnvironment(simulator)
     @objc func pollServer(_ sender: Any) {
         ApplicationInitializer.accountSession.doUpdates()

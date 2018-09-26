@@ -9,6 +9,7 @@
 import UIKit
 import UserNotifications
 import RealmSwift
+import LocalAuthentication
 
 class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
@@ -22,6 +23,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     var contactManager = ContactManager()
     var messageManager = MessageManager()
     var sessionState = SessionState()
+    var config = Configurator()
 
     override init() {
         super.init()
@@ -60,6 +62,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
                                                          options: .skipsHiddenFiles)
         if !vaults.isEmpty {
             AccountSession.accountName = vaults[0].lastPathComponent
+            loadConfig()
         }
         
     }
@@ -77,6 +80,13 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         
         setRealmConfiguration()
         let config = AccountConfig()
+        let laContext = LAContext()
+        var authError: NSError?
+        if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)) {
+            if laContext.biometryType == .none {
+                config.useLocalAuth = false
+            }
+        }
         do {
             let realm = try Realm()
             try realm.write {
@@ -94,44 +104,8 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         var realmConfig = Realm.Configuration()
         realmConfig.fileURL = realmConfig.fileURL?.deletingLastPathComponent()
             .appendingPathComponent("\(AccountSession.accountName!).realm")
-        realmConfig.schemaVersion = 16
+        realmConfig.schemaVersion = 17
         realmConfig.migrationBlock = { (migration, oldSchemaVersion) in
-            // Schema version 13 is Realm Swift
-/*            if oldSchemaVersion < 13 {
-                migration.enumerateObjects(ofType: DatabaseContact.className()) { (oldObject, newObject) in
-                    newObject!["contactId"] = oldObject!["contactId"]
-                    newObject!["encoded"] = oldObject!["encoded"]
-                }
-                migration.enumerateObjects(ofType: DatabaseContactRequest.className()) { (oldObject, newObject) in
-                    newObject!["publicId"] = oldObject!["publicId"]
-                    newObject!["nickname"] = oldObject!["nickname"]
-                }
-                migration.enumerateObjects(ofType: DatabaseMessage.className()) { (oldObject, newObject) in
-                    newObject!["version"] = oldObject!["version"]
-                    newObject!["contactId"] = oldObject!["contactId"]
-                    newObject!["messageId"] = oldObject!["messageId"]
-                    newObject!["ciphertext"] = oldObject!["message"]
-                    newObject!["keyIndex"] = oldObject!["keyIndex"]
-                    newObject!["sequence"] = oldObject!["sequence"]
-                    newObject!["timestamp"] = oldObject!["timestamp"]
-                    newObject!["cleartext"] = oldObject!["cleartext"]
-                    newObject!["read"] = oldObject!["read"]
-                    newObject!["acknowledged"] = oldObject!["acknowledged"]
-                    newObject!["originating"] = oldObject!["sent"]
-                    newObject!["compressed"] = oldObject!["compressed"]
-//                    newObject!["failed"] = oldObject!["failed"]
-                }
-                migration.enumerateObjects(ofType: AccountConfig.className()) { (oldObject, newObject) in
-                    newObject!["version"] = oldObject!["version"]
-                    newObject!["nickname"] = oldObject!["nickname"]
-                    newObject!["contactPolicy"] = oldObject!["contactPolicy"]
-                    newObject!["currentMessageId"] = oldObject!["messageId"]
-                    newObject!["currentContactId"] = oldObject!["contactId"]
-                    newObject!["whitelist"] = oldObject!["whitelist"]
-                    newObject!["storeCleartextMessages"] = oldObject!["cleartextMessages"]
-                    newObject!["useLocalAuth"] = oldObject!["localAuth"]
-                }
-            } */
             if oldSchemaVersion < 15 {
                 migration.enumerateObjects(ofType: AccountConfig.className()) { (oldObject, newObject) in
                     newObject!["directoryId"] = oldObject!["nickname"]
@@ -149,7 +123,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     
     @objc func resume() {
         
-        if suspended  && sessionState.authenticated {
+        if suspended  && config.authenticated {
             suspended = false
             NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
             DispatchQueue.main.async {

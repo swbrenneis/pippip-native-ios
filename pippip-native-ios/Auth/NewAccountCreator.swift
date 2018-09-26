@@ -30,7 +30,8 @@ class NewAccountCreator: NSObject {
         do {
             try storeVault()
             ApplicationInitializer.accountSession.setDefaultConfig()
-            sessionState.authenticated = true
+            let config = Configurator()
+            config.authenticated = true
             delegate?.authenticated()
         }
         catch {

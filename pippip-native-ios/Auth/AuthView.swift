@@ -41,6 +41,12 @@ class AuthView: UIView, ControllerBlurProtocol {
         blurView.alpha = 0.0
         blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         contentView.addSubview(blurView)
+        let logoWidth = bounds.width * 0.7
+        logoLeading.constant = (bounds.width - logoWidth) / 2
+        logoTrailing.constant = (bounds.width - logoWidth) / 2
+        contentView.backgroundColor = PippipTheme.splashColor
+        versionLabel.textColor = UIColor.flatSand
+        secommLabel.textColor = UIColor.flatSand
 
     }
 

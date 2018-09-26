@@ -61,7 +61,8 @@ class Authenticator: NSObject {
         secommAPI.queuePost(delegate: APIResponseDelegate(request: Logout(),
                                                           responseComplete: self.logoutComplete,
                                                           responseError: self.logoutError))
-        sessionState.authenticated = false
+        let config = Configurator()
+        config.authenticated = false
         delegate?.loggedOut()
 
     }
@@ -127,7 +128,8 @@ class Authenticator: NSObject {
 
         do {
             try authorized.processResponse()
-            sessionState.authenticated = true
+            let config = Configurator()
+            config.authenticated = true
             sessionState.sessionId = authorized.sessionId!
             sessionState.authToken = authorized.authToken!
             // ApplicationInitializer.accountSession.loadConfig()
@@ -170,10 +172,7 @@ class Authenticator: NSObject {
     }
 
     func logoutComplete(_ response: NullResponse) {
-
-        let config = Configurator()
-        config.lastSignout = Date()
-
+        // Nothing to do here
     }
 
     func logoutError(_ error: APIResponseError) {

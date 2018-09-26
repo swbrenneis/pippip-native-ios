@@ -26,7 +26,7 @@ import Foundation
         let digest: CKSHA256 = CKSHA256()
         sessionState.authData = digest.digest(sessionState.genpass!)
         
-        // Create the message AES block cipher key.
+        // Create the enclave AES block cipher key.
         var keyRandom = rnd.nextBytes(32)
         sessionState.enclaveKey = digest.digest(keyRandom)
         

@@ -8,6 +8,8 @@
 
 import UIKit
 import ChameleonFramework
+import LocalAuthentication
+import ImageSlideshow
 
 class AuthViewController: UIViewController, AuthenticationDelegateProtocol, ControllerBlurProtocol {
 
@@ -21,20 +23,33 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
     @IBOutlet weak var secommLabel: UILabel!
     
     var accountName: String?
+    var authView: AuthView!
     var alertPresenter = AlertPresenter()
     var authenticator = Authenticator()
     var newAccountCreator = NewAccountCreator()
     var signInView: SignInView?
     var newAccountView: NewAccountView?
     var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
+    var config = Configurator()
+    var slideshow: ImageSlideshow!
+    let slides = [ImageSource(imageString: "quickstart01")!,
+                  ImageSource(imageString: "quickstart02")!,
+                  ImageSource(imageString: "quickstart03")!,
+                  ImageSource(imageString: "quickstart04")!,
+                  ImageSource(imageString: "quickstart05")!,
+                  ImageSource(imageString: "quickstart06")!,
+                  ImageSource(imageString: "quickstart07")!,
+                  ImageSource(imageString: "quickstart08")!,
+                  ImageSource(imageString: "quickstart09")!,
+                  ImageSource(imageString: "quickstart10")!,
+                  ImageSource(imageString: "quickstart11")!,
+                  ImageSource(imageString: "quickstart12")!,
+                  ImageSource(imageString: "quickstart13")!]
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         try! ApplicationInitializer.accountSession.loadAccount()
-        if AccountSession.accountName != nil {
-            ApplicationInitializer.accountSession.loadConfig()
-        }
         
         PippipTheme.setTheme()
         SecommAPI.initializeAPI()
@@ -61,12 +76,19 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
         blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.view.addSubview(blurView)
 
-        do {
-            try ApplicationInitializer.accountSession.loadAccount()
-        }
-        catch {
-            print("Error loading account name: \(error)")
-        }
+        slideshow = ImageSlideshow(frame: bounds)
+        slideshow.setImageInputs(slides)
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(AuthViewController.didTap))
+        slideshow.addGestureRecognizer(recognizer)
+        slideshow.alpha = 0.0
+        self.view.addSubview(slideshow)
+
+        authView = AuthView(frame: bounds)
+        authView.logoLeading.constant = (bounds.width - logoWidth) / 2
+        authView.logoTrailing.constant = (bounds.width - logoWidth) / 2
+        authView.contentView.backgroundColor = PippipTheme.splashColor
+        authView.versionLabel.textColor = UIColor.flatSand
+        authView.secommLabel.textColor = UIColor.flatSand
         
     }
 
@@ -75,11 +97,17 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
 
         alertPresenter.present = true
         accountName = AccountSession.accountName
-        if accountName != nil {
-            authButton.setTitle("Sign In", for: .normal)
-        }
-        else {
+        if accountName == nil {
             authButton.setTitle("Create A New Account", for: .normal)
+        }
+            /*
+        else if config.authenticated && config.useLocalAuth {
+            self.view.addSubview(authView)
+            doThumbprint()
+        }
+ */
+        else {
+            authButton.setTitle("Sign In", for: .normal)
         }
 
     }
@@ -95,12 +123,42 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+    /*
+    func doThumbprint() {
+        
+        assert(Thread.isMainThread)
+        
+        let device = Device()
+        var reason = "Please provide your thumbprint to open Pippip"
+        if device == .iPhoneX {
+            reason = "Please use face ID to open Pippip"
+        }
+        
+        let laContext = LAContext()
+        var authError: NSError? = nil
+        if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)) {
+            laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
+                                     localizedReason: reason, reply: { (success : Bool, error : Error? ) -> Void in
+                                        DispatchQueue.main.async {
+                                            if (success) {
+                                                self.authView.removeFromSuperview()
+                                                self.authenticated()
+                                            }
+                                            else {
+                                                guard let theError = error else { return }
+                                                print("Local authentication failed: \(theError)")
+                                            }
+                                        }
+            })
+        }
+        
+    }
+    */
     @IBAction func quickstartPressed(_ sender: Any) {
 
-        let url = "https://www.pippip.io/help.html"
-        guard let link = URL(string: url) else { return }
-        UIApplication.shared.open(link, options: [:], completionHandler: nil)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.slideshow.alpha = 1.0
+        }, completion: nil)
 
     }
     
@@ -210,6 +268,14 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
         DispatchQueue.main.async {
             MBProgressHUD(for: self.view)?.progress = p.floatValue
         }
+        
+    }
+
+    @objc func didTap() {
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.slideshow.alpha = 0.0
+        }, completion: nil)
         
     }
 

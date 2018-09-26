@@ -20,6 +20,7 @@ class SelectContactView: UIView {
     var contactManager = ContactManager()
     var lastPartialLength = 0
     var selected: Contact?
+    var selectedRow: Int = -1
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -141,6 +142,12 @@ extension SelectContactView: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.cellForRow(at: indexPath)
         cell?.backgroundColor = PippipTheme.selectedCellColor
         cell?.textLabel?.textColor = PippipTheme.selectedTextColor
+        if selectedRow >= 0  && selectedRow != indexPath.row {
+            if let previous = tableView.cellForRow(at: IndexPath(row: selectedRow, section: 0)) as? ContactTableViewCell {
+                previous.backgroundColor = UIColor.white
+            }
+        }
+        selectedRow = indexPath.row
 
     }
 

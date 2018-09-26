@@ -149,7 +149,7 @@ extension SortedArray {
     public mutating func removeSubrange(_ bounds: ClosedRange<Int>) {
         _elements.removeSubrange(bounds)
     }
-
+/*
     /// Removes the elements in the specified subrange from the array.
     ///
     /// - Parameter bounds: The range of the array to be removed. The
@@ -169,7 +169,7 @@ extension SortedArray {
     public mutating func removeSubrange(_ bounds: CountableClosedRange<Int>) {
         _elements.removeSubrange(bounds)
     }
-
+*/
     /// Removes the specified number of elements from the beginning of the
     /// array.
     ///

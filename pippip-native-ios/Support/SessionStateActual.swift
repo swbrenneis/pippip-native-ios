@@ -10,9 +10,6 @@ import Foundation
 
 class SessionStateActual: NSObject {
 
-    // Authentication state parameters
-    @objc var authenticated: Bool
-    
     // Server parameters
     var sessionId: Int32
     var authToken: Int64
@@ -42,7 +39,6 @@ class SessionStateActual: NSObject {
 
         sessionId = 0;
         authToken = 0;
-        authenticated = false;
 
         super.init()
 

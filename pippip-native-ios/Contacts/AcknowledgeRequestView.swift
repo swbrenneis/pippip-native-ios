@@ -51,7 +51,7 @@ class AcknowledgeRequestView: UIView {
         acceptButton.backgroundColor = PippipTheme.buttonColor
         acceptButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         deleteButton.backgroundColor = UIColor.flatGrayDark
-        deleteButton.setTitleColor(ContrastColorOf(UIColor.flatGray, returnFlat: true), for: .normal)
+        deleteButton.setTitleColor(ContrastColorOf(UIColor.flatGrayDark, returnFlat: true), for: .normal)
         rejectButton.backgroundColor = UIColor.flatOrange
         rejectButton.setTitleColor(ContrastColorOf(UIColor.flatOrange, returnFlat: true), for: .normal)
         cancelButton.backgroundColor = PippipTheme.cancelButtonColor

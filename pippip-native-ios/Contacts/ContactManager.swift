@@ -268,7 +268,7 @@ class ContactManager: NSObject {
 
     func loadContacts() {
 
-        if (sessionState.authenticated && !ContactManager.initialized) {
+        if (config.authenticated && !ContactManager.initialized) {
             let realm = try! Realm()
             ContactManager.initialized = true
             let dbContacts = realm.objects(DatabaseContact.self)

@@ -27,12 +27,26 @@ struct Entity {
 
 class Configurator: NSObject {
 
-    static let currentVersion: Float = 2.1
+    static let currentVersion: Float = 2.2
 
     var whitelist: [Entity] {
         return privateWhitelist
     }
     private var privateWhitelist = [Entity]()
+    var authenticated: Bool {
+        get {
+            let config = getConfig()
+            return config.authenticated
+        }
+        set {
+            let config = getConfig()
+            let realm = try! Realm()
+            try! realm.write {
+                config.authenticated = newValue
+                config.version = Configurator.currentVersion
+            }
+        }
+    }
     var useLocalAuth: Bool {
         get {
             let config = getConfig()
@@ -71,34 +85,6 @@ class Configurator: NSObject {
             let realm = try! Realm()
             try! realm.write {
                 config.directoryId = newValue
-                config.version = Configurator.currentVersion
-            }
-        }
-    }
-    @objc var lastExit: Date? {
-        get {
-            let config = getConfig()
-            return config.lastExit
-        }
-        set {
-            let config = getConfig()
-            let realm = try! Realm()
-            try! realm.write {
-                config.lastExit = newValue
-                config.version = Configurator.currentVersion
-            }
-        }
-    }
-    var lastSignout: Date? {
-        get {
-            let config = getConfig()
-            return config.lastSignout
-        }
-        set {
-            let config = getConfig()
-            let realm = try! Realm()
-            try! realm.write {
-                config.lastSignout = newValue
                 config.version = Configurator.currentVersion
             }
         }
@@ -183,13 +169,14 @@ class Configurator: NSObject {
         
     }
 
-    func getConfig() -> AccountConfig {
+    private func getConfig() -> AccountConfig {
         
         let realm = try! Realm()
         let config = realm.objects(AccountConfig.self).first!
         return config
         
     }
+    
     func loadWhitelist() throws {
 
         privateWhitelist.removeAll()

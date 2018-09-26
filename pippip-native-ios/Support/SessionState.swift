@@ -23,14 +23,6 @@ class SessionState: NSObject {
             SessionState.actual.accountRandom = newValue
         }
     }
-    @objc var authenticated: Bool {
-        get {
-            return SessionState.actual.authenticated
-        }
-        set {
-            SessionState.actual.authenticated = newValue
-        }
-    }
     @objc var authData: Data? {
         get {
             return SessionState.actual.authData

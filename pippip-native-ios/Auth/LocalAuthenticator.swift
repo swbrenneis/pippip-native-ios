@@ -9,7 +9,6 @@
 import UIKit
 import ChameleonFramework
 import LocalAuthentication
-import DeviceKit
 
 class LocalAuthenticator: NSObject {
 
@@ -57,12 +56,6 @@ class LocalAuthenticator: NSObject {
 
         let bounds = view.bounds;
         authView = AuthView(frame: bounds)
-        let logoWidth = bounds.width * 0.7
-        authView.logoLeading.constant = (bounds.width - logoWidth) / 2
-        authView.logoTrailing.constant = (bounds.width - logoWidth) / 2
-        authView.contentView.backgroundColor = PippipTheme.splashColor
-        authView.versionLabel.textColor = UIColor.flatSand
-        authView.secommLabel.textColor = UIColor.flatSand
 
         super.init()
 
@@ -72,15 +65,21 @@ class LocalAuthenticator: NSObject {
     
         assert(Thread.isMainThread)
         
-        let device = Device()
-        var reason = "Please provide your thumbprint to open Pippip"
-        if device == .iPhoneX {
-            reason = "Please use face ID to open Pippip"
-        }
-
         let laContext = LAContext()
-        var authError: NSError? = nil
+        var authError: NSError?
         if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)) {
+            var reason: String = ""
+            switch laContext.biometryType {
+            case .none:
+                print("Local authentication not supported")
+                break
+            case .touchID:
+                reason = "Please provide your thumbprint to open Pippip"
+                break
+            case .faceID:
+                reason = "Please use face ID to open Pippip"
+                break
+            }
             laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
                                      localizedReason: reason, reply: { (success : Bool, error : Error? ) -> Void in
                                         DispatchQueue.main.async {
@@ -91,6 +90,7 @@ class LocalAuthenticator: NSObject {
                                             else {
                                                 guard let theError = error else { return }
                                                 print("Local authentication failed: \(theError)")
+                                                self.showPassphraseView()
                                             }
                                         }
             })
@@ -144,7 +144,7 @@ class LocalAuthenticator: NSObject {
     @objc func appResumed(_ notification: Notification) {
         
         DispatchQueue.main.async {
-            if self.suspended && self.sessionState.authenticated {
+            if self.suspended && self.config.authenticated {
                 self.suspended = false
                 DispatchQueue.main.async {
                     if self.config.useLocalAuth {

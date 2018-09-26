@@ -765,10 +765,10 @@
 				5511E9BF20C2CE290080C0DF /* GetRequestStatusRequest.swift */,
 				5511E9C120C2CE3F0080C0DF /* GetRequestStatusResponse.swift */,
 				55E970A620AB07C6008C2F39 /* Logout.swift */,
-				55F7B57E20BF35F50083AE01 /* NewAccountFinal.swift */,
 				55721A0B20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift */,
 				5511E9C720C2DFA10080C0DF /* MatchDirectoryIdRequest.swift */,
 				5511E9C920C2DFB30080C0DF /* MatchDirectoryIdResponse.swift */,
+				55F7B57E20BF35F50083AE01 /* NewAccountFinal.swift */,
 				55F7B58020BF364E0083AE01 /* NewAccountFinish.swift */,
 				55F7B58220BF36720083AE01 /* NewAccountRequest.swift */,
 				55F7B58420BF36930083AE01 /* NewAccountResponse.swift */,
@@ -1105,7 +1105,6 @@
 				5592A5821F8BBB4400F08BF5 /* Resources */,
 				5500D1662073BA480016AC71 /* Embed Frameworks */,
 				CB296341ED6C8FA56D2F7BEE /* [CP] Embed Pods Frameworks */,
-				9659429C6CC4F0350126F198 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1124,8 +1123,6 @@
 				5592A59B1F8BBB4500F08BF5 /* Sources */,
 				5592A59C1F8BBB4500F08BF5 /* Frameworks */,
 				5592A59D1F8BBB4500F08BF5 /* Resources */,
-				924AADD9CA9CC5FF8DA5564C /* [CP] Embed Pods Frameworks */,
-				99D1584BE8962845CBE893AE /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1241,51 +1238,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		924AADD9CA9CC5FF8DA5564C /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pippip-native-iosTests/Pods-pippip-native-iosTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9659429C6CC4F0350126F198 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pippip-native-ios/Pods-pippip-native-ios-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		99D1584BE8962845CBE893AE /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pippip-native-iosTests/Pods-pippip-native-iosTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		CB296341ED6C8FA56D2F7BEE /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1301,6 +1253,7 @@
 				"${BUILT_PRODUCTS_DIR}/DataCompression/DataCompression.framework",
 				"${BUILT_PRODUCTS_DIR}/DeviceKit/DeviceKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FrostedSidebar/FrostedSidebar.framework",
+				"${BUILT_PRODUCTS_DIR}/ImageSlideshow/ImageSlideshow.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
@@ -1317,6 +1270,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DataCompression.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeviceKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FrostedSidebar.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ImageSlideshow.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RKDropdownAlert.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
@@ -1737,6 +1691,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "pippip-native-ios/pippip-native-ios.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = YSKMP8WLKB;
@@ -1748,7 +1703,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "pippip-native-ios/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1759,6 +1714,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = org.secomm.pippip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				"SWIFT_ACTIVE_COMPILATION_CONDITIONS[arch=*]" = DEBUG;
 				SWIFT_OBJC_BRIDGING_HEADER = "pippip-native-ios/pippip-native-ios-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1774,6 +1730,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "pippip-native-ios/pippip-native-ios.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = YSKMP8WLKB;
@@ -1785,7 +1742,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "pippip-native-ios/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1795,6 +1752,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.secomm.pippip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "pippip-native-ios/pippip-native-ios-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
