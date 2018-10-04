@@ -43,7 +43,7 @@ class AuthenticationResponse: NSObject, APIResponseProtocol {
 
         if error != nil {
             alertPresenter.errorAlert(title: "Authentication Error", message: error!)
-            throw APIResponseError(errorString: error!)
+            throw APIResponseError.responseError(error: error!)
         }
 
         if let encoded = Data(base64Encoded: data!) {
@@ -53,7 +53,7 @@ class AuthenticationResponse: NSObject, APIResponseProtocol {
         }
         else {
             alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid response encoding")
-            throw APIResponseError(errorString: "Response encoding error")
+            throw APIResponseError.responseError(error: "Response encoding error")
         }
 
     }

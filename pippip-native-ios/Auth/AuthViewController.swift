@@ -10,6 +10,7 @@ import UIKit
 import ChameleonFramework
 import LocalAuthentication
 import ImageSlideshow
+import DeviceKit
 
 class AuthViewController: UIViewController, AuthenticationDelegateProtocol, ControllerBlurProtocol {
 
@@ -66,6 +67,10 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
         self.view.backgroundColor = backgroundColor
         authButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         authButton.backgroundColor = PippipTheme.buttonColor
+        let device = Device()
+        if device == .iPhoneSE {
+            authButton.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
+        }
         quickstartButton.setTitleColor(ContrastColorOf(backgroundColor!, returnFlat: false), for: .normal)
         quickstartButton.backgroundColor = .clear
         quickstartButton.isHidden = false

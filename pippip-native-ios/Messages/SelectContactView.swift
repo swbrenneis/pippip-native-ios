@@ -15,6 +15,7 @@ class SelectContactView: UIView {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var selectButton: UIButton!
     @IBOutlet weak var toLabel: UILabel!
+    @IBOutlet weak var searchTextWidth: NSLayoutConstraint!
     
     var contactList = [Contact]()
     var contactManager = ContactManager()
@@ -46,7 +47,8 @@ class SelectContactView: UIView {
         tableView.register(nib, forCellReuseIdentifier: "SelectContactCell")
         selectButton.isEnabled = false
         selectButton.isHidden = true
-        toLabel.backgroundColor = PippipTheme.lightBarColor
+        toLabel.backgroundColor = .clear
+        searchTextWidth.constant  = self.bounds.width - 140.0
 
     }
 

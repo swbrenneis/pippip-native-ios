@@ -29,6 +29,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         blurView.alpha = 0.0
         blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.view.addSubview(blurView)
+        self.navigationItem.title = "Settings"
 
         self.tableView.dataSource = self
         self.tableView.delegate = self
@@ -40,6 +41,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         items.append(DirectoryIdCell.cellItem)
         items.append(LocalPasswordCell.cellItem)
         items.append(LocalAuthCell.cellItem)
+        items.append(ShowIgnoredCell.cellItem)
         items.append(ContactPolicyCell.cellItem)
         let policy = config.contactPolicy
         if policy != "public" {

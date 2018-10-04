@@ -12,12 +12,17 @@ import ObjectMapper
 class AcknowledgeRequest: NSObject, EnclaveRequestProtocol {
     
     var method: String = "AcknowledgeRequest"
+    var requestingId: String?
+    // Remove after server release
     var id: String?
     var response: String?
+    var version: Float?
 
-    init(id: String, response: String) {
-        self.id = id
+    init(requestingId: String, response: String) {
+        self.requestingId = requestingId
+        self.id = requestingId
         self.response = response
+        version = 1.1
     }
 
     required init?(map: Map) {
@@ -26,8 +31,10 @@ class AcknowledgeRequest: NSObject, EnclaveRequestProtocol {
     
     func mapping(map: Map) {
         method <- map["method"]
+        requestingId <- map["requestingId"]
         id <- map["id"]
         response <- map["response"]
+        version <- map["version"]
     }
 
 }

@@ -41,7 +41,7 @@ class NewAccountResponse: NSObject, APIResponseProtocol {
 
         if error != nil {
             alertPresenter.errorAlert(title: "New Account Error", message: error!)
-            throw APIResponseError(errorString: error!)
+            throw APIResponseError.responseError(error: error!)
         }
 
         if let encoded = Data(base64Encoded: data!) {
@@ -51,7 +51,7 @@ class NewAccountResponse: NSObject, APIResponseProtocol {
         }
         else {
             alertPresenter.errorAlert(title: "New Account Error", message: "Invalid response encoding")
-            throw APIResponseError(errorString: "Response encoding error")
+            throw APIResponseError.responseError(error: "Response encoding error")
         }
         
     }

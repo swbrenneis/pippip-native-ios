@@ -33,12 +33,11 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
         if response.needsAuth! {
             if !sessionState.reauth {
                 sessionState.reauth = true
-                NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
+                // NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
                 authenticator.reauthenticate()
             }
         }
         else {
-            sessionState.reauth = false
             do {
                 try response.processResponse()
                 if let enclaveResponse = ResponseT(JSONString: response.json) {
@@ -60,9 +59,9 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
         
     }
 
-    func responseError(_ error: APIResponseError) {
-        print("Enclave response error: \(error.localizedDescription)")
-        delegate?.responseError(error.localizedDescription)
+    func responseError(error: String) {
+        print("Enclave response error: \(error)")
+        delegate?.responseError(error)
     }
 
     func sendRequest(_ request: EnclaveRequestProtocol) {

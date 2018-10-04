@@ -82,10 +82,24 @@ class ContactsViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
                                                name: Notifications.LocalAuthComplete, object: nil)
 
-        contactList = contactManager.contactList
+        if config.showIgnoredContacts {
+            contactList = contactManager.contactList
+        }
+        else {
+            contactList = contactManager.visibleContactList
+        }
         expandedRows = Array<Bool>(repeating: false, count: contactList.count)
         contactRequests = Array(contactManager.pendingRequests)
         tableView.reloadData()
+        DispatchQueue.global().async {
+            if self.config.statusUpdates > 0 {
+                let suffix: String = self.config.statusUpdates > 1 ? "updates" : "update"
+                let message = "You have \(self.config.statusUpdates) contact status \(suffix)"
+                self.alertPresenter.infoAlert(title: "Contact Status Updates", message: message)
+            }
+            self.config.statusUpdates = 0
+            NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
+        }
 
     }
 
@@ -433,7 +447,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
         }
         else {
             expandedRows[indexPath.row] = !expandedRows[indexPath.row]
-            tableView.reloadRows(at: [indexPath], with: .bottom)
+            tableView.reloadRows(at: [indexPath], with: .left)
         }
 
     }

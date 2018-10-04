@@ -64,10 +64,20 @@ class ContactManager: NSObject {
         loadContacts()
         return Array(ContactManager.contactSet)
     }
+    var visibleContactList: [Contact] {
+        loadContacts()
+        var visible = [Contact]()
+        for contact in ContactManager.contactSet {
+            if contact.status != "ignored" {
+                visible.append(contact)
+            }
+        }
+        return visible
+    }
  
     func acknowledgeRequest(contactRequest: ContactRequest, response: String) {
 
-        let request = AcknowledgeRequest(id: contactRequest.publicId, response: response)
+        let request = AcknowledgeRequest(requestingId: contactRequest.publicId, response: response)
         let delegate = AcknowledgeRequestDelegate(request: request, contactRequest: contactRequest)
         let ackTask = EnclaveTask<AcknowledgeRequest, AcknowledgeRequestResponse>(delegate: delegate)
         ackTask.errorTitle = "Contact Error"
@@ -132,9 +142,6 @@ class ContactManager: NSObject {
                 }
             }
         }
-        if !newRequests.isEmpty {
-            addContactRequests(newRequests)
-        }
 
     }
 
@@ -191,14 +198,6 @@ class ContactManager: NSObject {
         
         ContactManager.requestSet.remove(contactRequest)
     
-        let realm = try! Realm()
-        if let dbRequest = realm.objects(DatabaseContactRequest.self).filter("publicId = %@",
-                                                                             contactRequest.publicId).first {
-            try! realm.write {
-                realm.delete(dbRequest)
-            }
-        }
-
     }
 
     func deleteWhitelistEntry(_ publicId: String) {
@@ -244,22 +243,22 @@ class ContactManager: NSObject {
         
     }
     
-    func getRequestStatus(retry: Bool, publicId: String?) {
+    func getRequestStatus(/* retry: Bool, publicId: String? */) {
         
         var pending = [String]()
-        if retry {
-            pending.append(publicId!)
-        }
-        else {
+        //if retry {
+        //    pending.append(publicId!)
+        //}
+        //else {
             for contact in ContactManager.contactSet {
                 if contact.status == "pending" {
                     pending.append(contact.publicId)
                 }
             }
-        }
+        //}
         
         let request = GetRequestStatusRequest(requestedIds: pending)
-        let delegate = GetRequestStatusDelegate(request: request, publicId: publicId, retry: retry)
+        let delegate = GetRequestStatusDelegate(request: request /*, publicId: publicId, retry: retry */)
         let updateTask = EnclaveTask<GetRequestStatusRequest, GetRequestStatusResponse>(delegate: delegate)
         updateTask.errorTitle = "Contact Error"
         updateTask.sendRequest(request)
@@ -282,10 +281,6 @@ class ContactManager: NSObject {
                 catch {
                     print("Error decoding contact: \(error)")
                 }
-            }
-            let requests = realm.objects(DatabaseContactRequest.self)
-            for request in requests {
-                ContactManager.requestSet.insert(ContactRequest(publicId: request.publicId, directoryId: request.directoryId))
             }
             mapContacts()
         }
@@ -320,7 +315,7 @@ class ContactManager: NSObject {
 //        }
 //        else {
         if ContactManager.contactMap[publicId] == nil || retry {
-            let request = RequestContactRequest(id: publicId, retry: retry)
+            let request = RequestContactRequest(requestedId: publicId, retry: retry)
             let delegate = RequestContactDelegate(request: request, retry: retry, directoryId: directoryId)
             let reqTask = EnclaveTask<RequestContactRequest, RequestContactResponse>(delegate: delegate)
             reqTask.errorTitle = "Contact Error"
@@ -442,7 +437,7 @@ class ContactManager: NSObject {
 
 // Database and encoding functions
 extension ContactManager {
-
+/*
     func addContactRequests(_ requests: [ContactRequest]) {
 
         let realm = try! Realm()
@@ -456,7 +451,7 @@ extension ContactManager {
         }
 
     }
-
+*/
     func decodeContact(_ encoded: Data) throws -> Contact {
 
         let codec = CKGCMCodec(data: encoded)

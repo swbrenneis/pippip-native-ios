@@ -134,11 +134,13 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
                                       target: self, action: #selector(composeMessage(_:)))
         let contactImage = UIImage(named: "contacts-small")?.withRenderingMode(.alwaysOriginal)
         let contactImageView = UIImageView(image: contactImage)
+        self.navigationItem.title = "Messages"
+
+        contactBadge.topOffset = 3
         contactBarButton = UIBarButtonItem(customView: contactImageView)
         contactBarButton.customView?.addSubview(contactBadge)
         contactBarButton.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self,
                                                                                  action: #selector(showContacts(_:))))
-        contactBadge.topOffset = 3
         leftBarItems.append(compose)
         leftBarItems.append(contactBarButton)
         self.navigationItem.leftBarButtonItems = leftBarItems
@@ -146,11 +148,6 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         tableView.delegate = self
         tableView.dataSource = self
         messageSearch.delegate = self
-
-        NotificationCenter.default.addObserver(self, selector: #selector(requestsUpdated(_:)),
-                                               name: Notifications.RequestsUpdated, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(requestAcknowledged(_:)),
-                                               name: Notifications.RequestAcknowledged, object: nil)
 
     }
 
@@ -164,11 +161,12 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
                                                name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
                                                name: Notifications.LocalAuthComplete, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(setContactBadge(_:)),
+                                               name: Notifications.SetContactBadge, object: nil)
 
         getMostRecentMessages()
         tableView.reloadData()
-        let requests = contactManager.pendingRequests
-        contactBadge.badgeValue = requests.count
+        contactBadge.badgeValue =  contactManager.pendingRequests.count + config.statusUpdates
 
     }
 
@@ -274,6 +272,14 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
 
     // Notifications
     
+    @objc func setContactBadge(_ notification: Notification) {
+
+        DispatchQueue.main.async {
+            self.contactBadge.badgeValue = self.contactManager.pendingRequests.count + self.config.statusUpdates
+        }
+
+    }
+    
     @objc func newMessages(_ notification: Notification) {
 
         getMostRecentMessages()
@@ -283,28 +289,6 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         
     }
 
-    @objc func requestsUpdated(_ notification: Notification) {
-
-        let requests = contactManager.pendingRequests
-        DispatchQueue.main.async {
-            let badgeCount = requests.count
-            self.contactBadge.badgeValue = badgeCount
-        }
-        
-    }
-    
-    @objc func requestAcknowledged(_ notification: Notification) {
-        
-        DispatchQueue.main.async {
-            var badgeCount = self.contactBadge.badgeValue - 1
-            if (badgeCount < 0) {
-                badgeCount = 0
-            }
-            self.contactBadge.badgeValue = badgeCount
-        }
-        
-    }
-    
     @objc func localAuthComplete(_ notification: Notification) {
 
         DispatchQueue.main.async {

@@ -12,12 +12,17 @@ import ObjectMapper
 class RequestContactRequest: NSObject, EnclaveRequestProtocol {
 
     var method: String = "RequestContact"
+    var requestedId: String?
+    // Remove when new server build is pushed
     var id: String?
     var retry: Bool?
+    var version: Float?
 
-    init(id: String, retry: Bool) {
-        self.id = id
+    init(requestedId: String, retry: Bool) {
+        self.requestedId = requestedId
+        self.id = requestedId
         self.retry = retry
+        version = 1.1
     }
 
     required init?(map: Map) {
@@ -26,6 +31,7 @@ class RequestContactRequest: NSObject, EnclaveRequestProtocol {
 
     func mapping(map: Map) {
         method <- map["method"]
+        requestedId <- map["requestedId"]
         id <- map["id"]
         retry <- map["retry"]
     }

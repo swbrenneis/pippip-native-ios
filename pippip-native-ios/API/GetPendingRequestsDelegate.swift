@@ -26,6 +26,7 @@ class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPending
         print("\(response.requests!.count) pending requests returned")
         if response.requests!.count > 0 {
             contactManager.addRequests(response.requests!)
+            NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
         }
         else {
             contactManager.clearRequests()

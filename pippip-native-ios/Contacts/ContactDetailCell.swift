@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import ChameleonFramework
 
 class ContactDetailCell: PippipTableViewCell, UITextFieldDelegate {
 
@@ -44,7 +45,7 @@ class ContactDetailCell: PippipTableViewCell, UITextFieldDelegate {
         statusImageView.image = UIImage(named: contact.status)
         resendRequestButton.backgroundColor = PippipTheme.buttonColor
         resendRequestButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
-        self.backgroundColor = .clear
+        self.backgroundColor = UIColor.flatWhite
         if expanded {
             displayNameText.isHidden = false
             displayNameLabel.isHidden = true

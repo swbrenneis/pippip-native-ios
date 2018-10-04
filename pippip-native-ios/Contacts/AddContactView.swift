@@ -64,6 +64,8 @@ class AddContactView: UIView {
     
         let directoryId = directoryIdTextField.text ?? ""
         let publicId = publicIdTextField.text ?? ""
+        directoryIdTextField.resignFirstResponder()
+        publicIdTextField.resignFirstResponder()
         contactsViewController?.validateAndRequest(publicId: publicId, directoryId: directoryId)
 
     }
@@ -75,6 +77,8 @@ class AddContactView: UIView {
             self.alpha = 0.0
             self.contactsViewController?.blurView.alpha = 0.0
         }, completion: { completed in
+            self.directoryIdTextField.resignFirstResponder()
+            self.publicIdTextField.resignFirstResponder()
             self.removeFromSuperview()
         })
         

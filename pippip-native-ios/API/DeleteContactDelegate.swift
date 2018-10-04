@@ -26,15 +26,15 @@ class DeleteContactDelegate: EnclaveDelegate<DeleteContactRequest, DeleteContact
 
         // If there are duplicates in the database, this will prevent crashes
         // However, duplicates will require two separate deletes
-        if let contact = contactManager.getContact(publicId: response.publicId!),
-            response.result == "deleted" {
+        let result = response.result ?? "invalid response"
+        print("Delete contact result: \(result)")
+        if let contact = contactManager.getContact(publicId: response.publicId!) {
             contactManager.deleteContact(contact: contact)
             messageManager.clearMessages(contactId: contact.contactId)
             NotificationCenter.default.post(name: Notifications.ContactDeleted, object: contact.publicId)
-//            NotificationCenter.default.post(name: Notifications.MessagesUpdated, object: nil)
         }
         else {
-            print("Delete contact returned invalid public ID")
+            print("Contact doesn't exist in local database")
         }
 
     }

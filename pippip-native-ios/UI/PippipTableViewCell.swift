@@ -37,8 +37,8 @@ class PippipTableViewCell: UITableViewCell {
     
     func setMediumTheme() {
         
-        self.backgroundColor = .clear
-        contentView.backgroundColor = PippipTheme.mediumCellColor
+        self.backgroundColor = UIColor.flatWhite
+        contentView.backgroundColor = UIColor.flatWhite
         contentView.layer.cornerRadius = PippipTheme.cellCorners
         contentView.layer.masksToBounds = true
 

@@ -27,7 +27,7 @@ struct Entity {
 
 class Configurator: NSObject {
 
-    static let currentVersion: Float = 2.2
+    static let currentVersion: Float = 2.3
 
     var whitelist: [Entity] {
         return privateWhitelist
@@ -61,6 +61,20 @@ class Configurator: NSObject {
             }
         }
     }
+    var showIgnoredContacts: Bool {
+        get {
+            let config = getConfig()
+            return config.showIgnoredContacts
+        }
+        set {
+            let config = getConfig()
+            let realm = try! Realm()
+            try! realm.write {
+                config.showIgnoredContacts = newValue
+                config.version = Configurator.currentVersion
+            }
+        }
+    }
     var contactPolicy: String {
         get {
             let config = getConfig()
@@ -85,6 +99,20 @@ class Configurator: NSObject {
             let realm = try! Realm()
             try! realm.write {
                 config.directoryId = newValue
+                config.version = Configurator.currentVersion
+            }
+        }
+    }
+    var statusUpdates: Int {
+        get {
+            let config = getConfig()
+            return config.statusUpdates
+        }
+        set {
+            let config = getConfig()
+            let realm = try! Realm()
+            try! realm.write {
+                config.statusUpdates = newValue
                 config.version = Configurator.currentVersion
             }
         }

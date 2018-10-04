@@ -28,17 +28,23 @@ class AcknowledgeRequestDelegate: EnclaveDelegate<AcknowledgeRequest, Acknowledg
 
     func ackComplete(response: AcknowledgeRequestResponse) {
 
-        let acknowledged = Contact(serverContact: response.acknowledged!)
-        if acknowledged.publicId == contactRequest.publicId {
-            acknowledged.directoryId = contactRequest.directoryId
-            contactManager.addContact(acknowledged)
-            contactManager.deleteContactRequest(contactRequest)
-            DispatchQueue.global().async {
-                NotificationCenter.default.post(name: Notifications.RequestAcknowledged, object: acknowledged)
-            }
+        if response.error != nil {
+            alertPresenter.errorAlert(title: "Contact Request Error", message: response.error!)
         }
         else {
-            print("Invalid server response, invalid contact JSON")
+            let acknowledged = Contact(serverContact: response.acknowledged!)
+            if acknowledged.publicId == contactRequest.publicId {
+                acknowledged.directoryId = contactRequest.directoryId
+                contactManager.addContact(acknowledged)
+                contactManager.deleteContactRequest(contactRequest)
+                DispatchQueue.global().async {
+                    NotificationCenter.default.post(name: Notifications.RequestAcknowledged, object: acknowledged)
+                    NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
+                }
+            }
+            else {
+                print("Invalid server response, invalid contact JSON")
+            }
         }
 
     }

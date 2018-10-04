@@ -11,18 +11,9 @@ import ObjectMapper
 
 enum ResponseErrors { case timedout, invalidServerResponse, invalidSession, invalidAuthToken, invalidRequest }
 
-class APIResponseError: Error {
-
-    var localizedDescription: String {
-        return errorString
-    }
-    private var errorString = "Unknown"
-    var errorType: ResponseErrors?
-    
-    init(errorString: String) {
-        self.errorString = errorString
-    }
-
+enum APIResponseError: Error {
+    case unknown
+    case responseError(error: String)
 }
 
 protocol APIResponseProtocol: Mappable {

@@ -48,27 +48,27 @@ class ServerAuthChallenge: NSObject, APIResponseProtocol {
 
         if error != nil {
             alertPresenter.errorAlert(title: "Authentication Error", message: error!)
-            throw APIResponseError(errorString: error!)
+            throw APIResponseError.responseError(error: error!)
         }
 
         guard let sigData = Data(base64Encoded: signature!) else {
             alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid response encoding")
-            throw APIResponseError(errorString: "Response encoding error")
+            throw APIResponseError.responseError(error: "Response encoding error")
         }
         guard let hmacData = Data(base64Encoded: hmac!) else {
             alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid response encoding")
-            throw APIResponseError(errorString: "Response encoding error")
+            throw APIResponseError.responseError(error: "Response encoding error")
         }
 
         let sig = CKSignature(sha256: ())
         if !sig.verify(sessionState.serverPublicKey!, withMessage: hmacData, withSignature: sigData) {
             alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid server signature")
-            throw APIResponseError(errorString: "HMAC signature failed to verify")
+            throw APIResponseError.responseError(error: "HMAC signature failed to verify")
         }
 
         if !validateHMAC(hmacData) {
             alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid server MAC")
-            throw APIResponseError(errorString: "HMAC failed to validate")
+            throw APIResponseError.responseError(error: "HMAC failed to validate")
         }
 
     }

@@ -44,7 +44,7 @@ class SecommAPI: NSObject {
             SecommAPI.apiState.sessionPath = "/authenticator/session-request"
         }
         else {
-            SecommAPI.apiState.hostPath = "https://dev.secomm.org:8443/secomm-api-rest-1.1.0"
+            SecommAPI.apiState.hostPath = "https://dev.secomm.org:8443/secomm-api-rest-2.0.0"
             SecommAPI.apiState.sessionPath = "/session-request"
         }
         SecommAPI.apiState.sessionActive = true
@@ -74,16 +74,14 @@ class SecommAPI: NSObject {
 
                 DispatchQueue.global().async {
                     if response.error != nil {
-                        let responseError = APIResponseError(errorString: response.error!.localizedDescription)
-                        delegate.responseError(responseError)
+                        delegate.responseError(response.error!.localizedDescription)
                         print("API post failure: \(response.error!)")
                     }
                     else if let postResponse = response.result.value {
                         delegate.responseComplete(postResponse)
                     }
                     else {
-                        let responseError = APIResponseError(errorString: "Invalid server response")
-                        delegate.responseError(responseError)
+                        delegate.responseError("Invalid Server Response")
                     }
                     self.nextPost()
                 }

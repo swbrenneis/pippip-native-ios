@@ -53,14 +53,14 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
 
         if error != nil {
             alertPresenter.errorAlert(title: "Enclave Error", message: error!)
-            throw APIResponseError(errorString: error!)
+            throw APIResponseError.responseError(error: error!)
         }
         
         if sessionId != sessionState.sessionId || authToken != sessionState.authToken {
             print("Current session ID: \(sessionState.sessionId)")
             print("Current auth token: \(sessionState.authToken)")
             alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid authentication! Please sign off immediately!")
-            throw APIResponseError(errorString: "Mismatched authentication tokens")
+            throw APIResponseError.responseError(error: "Mismatched authentication tokens")
         }
 
         if let responseData = Data(base64Encoded: response!) {
@@ -70,7 +70,7 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
         }
         else {
             alertPresenter.errorAlert(title: "Enclave Error", message: "Invalid server response")
-            throw APIResponseError(errorString: "Invalid response encoding")
+            throw APIResponseError.responseError(error: "Invalid response encoding")
         }
 
     }

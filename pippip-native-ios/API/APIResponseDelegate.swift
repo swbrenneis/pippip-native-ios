@@ -15,7 +15,7 @@ protocol APIResponseDelegateProtocol {
 
     var request: RequestT { get }
     var responseComplete: (ResponseT) -> Void { get }
-    var responseError: (APIResponseError) -> Void { get }
+    var responseError: (String) -> Void { get }
 
     func ready(api: SecommAPI)
 
@@ -25,9 +25,9 @@ class APIResponseDelegate<RequestT:APIRequestProtocol, ResponseT:APIResponseProt
 
     var request: RequestT
     var responseComplete: (ResponseT) -> Void
-    var responseError: (APIResponseError) -> Void
+    var responseError: (String) -> Void
     init(request: RequestT, responseComplete: @escaping (ResponseT) -> Void,
-         responseError: @escaping (APIResponseError) -> Void) {
+         responseError: @escaping (String) -> Void) {
         self.request = request
         self.responseComplete = responseComplete
         self.responseError = responseError

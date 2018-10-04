@@ -31,7 +31,12 @@ class RequestContactDelegate: EnclaveDelegate<RequestContactRequest, RequestCont
         
         if !retry {
             let contact = Contact()
-            contact.publicId = response.requestedContactId!
+            if response.version! >= 1.1 {
+                contact.publicId = response.requestedId!
+            }
+            else {
+                contact.publicId = response.requestedContactId!
+            }
             contact.directoryId = directoryId
             contact.status = response.result!
             contactManager.addContact(contact)

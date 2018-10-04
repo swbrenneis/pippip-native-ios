@@ -70,6 +70,7 @@ class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
 
     func resetCell() {
 
+        contactPolicySwitch.isEnabled = true
         if (currentPolicy == "public") {
             contactPolicySwitch.setOn(true, animated: true)
         }
@@ -85,6 +86,7 @@ class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
         if (sender.isOn) {
             selectedPolicy = "public"
         }
+        sender.isEnabled = false
         NotificationCenter.default.addObserver(self, selector: #selector(policyUpdated(_:)),
                                                name: Notifications.PolicyUpdated, object: nil)
         contactManager.setContactPolicy(selectedPolicy)

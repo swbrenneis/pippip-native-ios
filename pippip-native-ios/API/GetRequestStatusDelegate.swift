@@ -11,14 +11,16 @@ import UIKit
 class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequestStatusResponse> {
 
     var contactManager = ContactManager()
-    var publicId: String?
-    var retry: Bool
+//    var publicId: String?
+//    var retry: Bool
     var alertPresenter = AlertPresenter()
+    var accountSession = ApplicationInitializer.accountSession
+    var config = Configurator()
 
-    init(request: GetRequestStatusRequest, publicId: String?, retry: Bool) {
+    override init(request: GetRequestStatusRequest) {
 
-        self.publicId = publicId
-        self.retry = retry
+//        self.publicId = publicId
+//        self.retry = retry
 
         super.init(request: request)
 
@@ -35,21 +37,19 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
                 let updated = try contactManager.updateContacts(response.contacts!)
                 NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updated)
                 print("\(updated.count) contacts updated")
-                var message = "You have \(updated.count) contact status "
-                if updated.count == 1 {
-                    message += "update"
-                }
-                else {
-                    message += "updates"
-                }
-                alertPresenter.infoAlert(title: "Contact Status Updates", message: message)
+                config.statusUpdates = config.statusUpdates + updated.count
+                NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
+                print("Status updated on \(updated.count) requests")
             }
             catch {
                 print("Error updating contacts: \(error)")
             }
         }
-        else if retry {
-            contactManager.requestContact(publicId: publicId!, directoryId: nil, retry: true)
+        //else if retry {
+        //    contactManager.requestContact(publicId: publicId!, directoryId: nil, retry: true)
+        //}
+        else {
+            print("No request status updates")
         }
 
     }

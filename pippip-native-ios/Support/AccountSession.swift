@@ -18,12 +18,13 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     static var accountName: String?
     
     @objc var deviceToken: Data?
-    var sessionActive = false
+    private var sessionActive = false
     var suspended = false
     var contactManager = ContactManager()
     var messageManager = MessageManager()
     var sessionState = SessionState()
     var config = Configurator()
+    var updatesInProgress = false
 
     override init() {
         super.init()
@@ -38,6 +39,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     func doUpdates() {
 
         if !suspended {
+            updatesInProgress = true
             NotificationCenter.default.addObserver(self, selector: #selector(getMessagesComplete(_:)),
                                                    name: Notifications.GetMessagesComplete, object: nil)
             messageManager.getNewMessages()
@@ -104,15 +106,17 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         var realmConfig = Realm.Configuration()
         realmConfig.fileURL = realmConfig.fileURL?.deletingLastPathComponent()
             .appendingPathComponent("\(AccountSession.accountName!).realm")
-        realmConfig.schemaVersion = 17
+        realmConfig.schemaVersion = 20
         realmConfig.migrationBlock = { (migration, oldSchemaVersion) in
             if oldSchemaVersion < 15 {
                 migration.enumerateObjects(ofType: AccountConfig.className()) { (oldObject, newObject) in
                     newObject!["directoryId"] = oldObject!["nickname"]
                 }
+                /*
                 migration.enumerateObjects(ofType: DatabaseContactRequest.className()) { (oldObject, newObject) in
                     newObject!["directoryId"] = oldObject!["nickname"]
                 }
+ */
             }
         }
         Realm.Configuration.defaultConfiguration = realmConfig
@@ -146,10 +150,11 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.GetMessagesComplete, object: nil)
         contactManager.getPendingRequests()
-        contactManager.getRequestStatus(retry: false, publicId: nil)
+        contactManager.getRequestStatus(/* retry: false, publicId: nil */)
         DispatchQueue.main.async {
             UIApplication.shared.applicationIconBadgeNumber = 0
         }
+        updatesInProgress = false
 
     }
     
@@ -169,7 +174,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
         print("Notification received")
-        if sessionActive {
+        if sessionActive && !updatesInProgress {
             doUpdates()
         }
         completionHandler(.badge)

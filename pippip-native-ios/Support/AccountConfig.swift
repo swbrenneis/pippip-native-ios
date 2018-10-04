@@ -16,8 +16,9 @@ class AccountConfig: Object {
     @objc dynamic var currentMessageId: Int64 = 0
     @objc dynamic var currentContactId: Int = 0
     @objc dynamic var whitelist: Data?
-    @objc dynamic var storeCleartextMessages: Bool = false
+    @objc dynamic var showIgnoredContacts: Bool = false
     @objc dynamic var useLocalAuth: Bool = true
     @objc dynamic var authenticated: Bool = false
+    @objc dynamic var statusUpdates: Int = 0
 
 }

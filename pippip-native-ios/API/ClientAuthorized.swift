@@ -17,7 +17,6 @@ class ClientAuthorized: NSObject, APIResponseProtocol {
     var postId: Int = 0
 
     var alertPresenter = AlertPresenter()
-    var sessionState = SessionState()
 
     required init?(map: Map) {
         if map.JSON["sessionId"] == nil {
@@ -40,9 +39,8 @@ class ClientAuthorized: NSObject, APIResponseProtocol {
 
         if error != nil {
             alertPresenter.errorAlert(title: "Authentication Error", message: error!)
-            throw APIResponseError(errorString: error!)
+            throw APIResponseError.responseError(error: error!)
         }
-        sessionState.authToken = authToken!
 
     }
     

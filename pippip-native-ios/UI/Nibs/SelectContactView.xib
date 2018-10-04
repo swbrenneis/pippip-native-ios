@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -14,6 +13,7 @@
             <connections>
                 <outlet property="contentView" destination="iN0-l3-epB" id="zfI-62-ZVw"/>
                 <outlet property="searchText" destination="6tl-3g-NH5" id="Yit-IM-Gdj"/>
+                <outlet property="searchTextWidth" destination="HNO-23-EXd" id="ctr-Sk-9Nf"/>
                 <outlet property="selectButton" destination="fdw-Be-As0" id="fY4-Rg-diA"/>
                 <outlet property="tableView" destination="ld4-zI-Bwk" id="eX2-s5-0Tx"/>
                 <outlet property="toLabel" destination="Rex-dU-AsJ" id="KzO-tN-v4D"/>
@@ -25,7 +25,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="    To:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rex-dU-AsJ">
-                    <rect key="frame" x="0.0" y="20" width="375" height="50"/>
+                    <rect key="frame" x="0.0" y="20" width="41" height="50"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="50" id="Ny4-wQ-GJT"/>
                     </constraints>
@@ -34,9 +34,9 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Directoy ID or Public ID" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="6tl-3g-NH5">
-                    <rect key="frame" x="55" y="30" width="150" height="30"/>
+                    <rect key="frame" x="51" y="30" width="150" height="30"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="150" id="oT1-pi-G1n"/>
+                        <constraint firstAttribute="width" constant="150" id="HNO-23-EXd"/>
                     </constraints>
                     <nil key="textColor"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -45,13 +45,8 @@
                         <action selector="searchChanged:" destination="-1" eventType="editingChanged" id="AOg-Eg-88G"/>
                     </connections>
                 </textField>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ld4-zI-Bwk">
-                    <rect key="frame" x="0.0" y="70" width="375" height="597"/>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                </tableView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fdw-Be-As0">
-                    <rect key="frame" x="300" y="30" width="45" height="30"/>
+                    <rect key="frame" x="305" y="30" width="45" height="30"/>
                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                     <state key="normal" title="Select">
                         <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -60,20 +55,24 @@
                         <action selector="selectContact:" destination="-1" eventType="touchUpInside" id="3n1-wD-ubV"/>
                     </connections>
                 </button>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ld4-zI-Bwk">
+                    <rect key="frame" x="0.0" y="70" width="375" height="597"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                </tableView>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Rex-dU-AsJ" secondAttribute="trailing" id="3In-Co-Trb"/>
-                <constraint firstItem="6tl-3g-NH5" firstAttribute="centerY" secondItem="Rex-dU-AsJ" secondAttribute="centerY" id="5Ep-um-Jyt"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="ld4-zI-Bwk" secondAttribute="bottom" id="9Pp-tr-XkY"/>
+                <constraint firstItem="6tl-3g-NH5" firstAttribute="centerY" secondItem="Rex-dU-AsJ" secondAttribute="centerY" id="Fwd-jh-qqU"/>
                 <constraint firstItem="ld4-zI-Bwk" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="Ksg-nb-HnM"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="ld4-zI-Bwk" secondAttribute="trailing" id="Xoa-la-f6r"/>
                 <constraint firstItem="ld4-zI-Bwk" firstAttribute="top" secondItem="Rex-dU-AsJ" secondAttribute="bottom" id="Zby-Cb-ujz"/>
                 <constraint firstItem="fdw-Be-As0" firstAttribute="centerY" secondItem="Rex-dU-AsJ" secondAttribute="centerY" id="a8b-yE-II0"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="fdw-Be-As0" secondAttribute="trailing" constant="30" id="kuv-oP-cJu"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="fdw-Be-As0" secondAttribute="trailing" constant="25" id="ajG-J5-xKV"/>
+                <constraint firstItem="6tl-3g-NH5" firstAttribute="leading" secondItem="Rex-dU-AsJ" secondAttribute="trailing" constant="10" id="gQV-aR-P4h"/>
                 <constraint firstItem="Rex-dU-AsJ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="soJ-Bf-fuC"/>
                 <constraint firstItem="Rex-dU-AsJ" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="tUG-fL-IJa"/>
-                <constraint firstItem="6tl-3g-NH5" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="55" id="wKr-NM-NYX"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>

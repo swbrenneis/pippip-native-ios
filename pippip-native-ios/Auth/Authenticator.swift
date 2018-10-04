@@ -115,9 +115,9 @@ class Authenticator: NSObject {
         
     }
 
-    func authChallengeError(_ error: APIResponseError) {
-        print("Authentication challenge error: \(error.localizedDescription)")
-        delegate?.authenticationFailed(reason: error.localizedDescription)
+    func authChallengeError(error: String) {
+        print("Authentication challenge error: \(error)")
+        delegate?.authenticationFailed(reason: error)
     }
     
     func authorizedComplete(_ authorized: ClientAuthorized) {
@@ -135,16 +135,20 @@ class Authenticator: NSObject {
             // ApplicationInitializer.accountSession.loadConfig()
             delegate?.authenticated()
         }
-        catch {
-            print("Authorization response error: \(error)")
-            delegate?.authenticationFailed(reason: error.localizedDescription)
+        catch APIResponseError.responseError(let responseError) {
+            delegate?.authenticationFailed(reason: responseError)
         }
+        catch{
+            print("Unknown authorization error : \(error)")
+            delegate?.authenticationFailed(reason: "Unexpected error")
+        }
+        sessionState.reauth = false
 
     }
 
-    func authorizedError(_ error: APIResponseError) {
-        print("Authorization error: \(error.localizedDescription)")
-        delegate?.authenticationFailed(reason: error.localizedDescription)
+    func authorizedError(error: String) {
+        print("Authorization error: \(error)")
+        delegate?.authenticationFailed(reason: error)
     }
 
     func authRequestComplete(_ authResponse: AuthenticationResponse) {
@@ -166,16 +170,16 @@ class Authenticator: NSObject {
 
     }
 
-    func authRequestError(_ error: APIResponseError) {
-        print("Authentication request error: \(error.localizedDescription)")
-        delegate?.authenticationFailed(reason: error.localizedDescription)
+    func authRequestError(error: String) {
+        print("Authentication request error: \(error)")
+        delegate?.authenticationFailed(reason: error)
     }
 
     func logoutComplete(_ response: NullResponse) {
         // Nothing to do here
     }
 
-    func logoutError(_ error: APIResponseError) {
+    func logoutError(error: String) {
         // Nothing to do here
     }
 
