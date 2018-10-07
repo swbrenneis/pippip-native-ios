@@ -9,7 +9,7 @@
 import UIKit
 import ChameleonFramework
 
-class ContactsViewController: UIViewController {
+class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
 
     @IBOutlet weak var tableView: UITableView!
@@ -25,11 +25,9 @@ class ContactsViewController: UIViewController {
     var contactList: [Contact]!
     var expandedRows: [Bool]!
     var rightBarItems = [UIBarButtonItem]()
-    var contactRequests: [ContactRequest]!
-    var showRequests = false
-    var headerView: UIView!
+    var contactRequests = [ContactRequest]()
     var addContactView: AddContactView?
-    var acknowledgeRequestView: AcknowledgeRequestView?
+    var requestsView: ContactRequestsView?
     var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
 
     override func viewDidLoad() {
@@ -45,9 +43,11 @@ class ContactsViewController: UIViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
-        let headerFrame = CGRect(x: 0.0, y:0.0, width: self.view.frame.size.width, height:5.0)
-        headerView = UIView(frame: headerFrame)
-        headerView.backgroundColor = .clear
+        let nib = UINib(nibName: "SectionFooterView", bundle: nil)
+        tableView.register(nib, forHeaderFooterViewReuseIdentifier: "SectionFooterView")
+
+        //let footerBounds = CGRect(x: 0.0, y: 0.0, width: self.view.bounds.width, height: 25.0)
+        //footerView = SectionFooterView(frame: footerBounds)
 
         localAuth = LocalAuthenticator(viewController: self, view: self.view)
 
@@ -118,7 +118,7 @@ class ContactsViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+/*
     func acknowledgeRequest(_ contactRequest: ContactRequest) {
 
         let frame = self.view.bounds
@@ -134,14 +134,12 @@ class ContactsViewController: UIViewController {
         self.view.addSubview(self.acknowledgeRequestView!)
         
         UIView.animate(withDuration: 0.3, animations: {
-            self.blurView.alpha = 0.6
             self.acknowledgeRequestView?.alpha = 1.0
-        }, completion: { complete in
-            //self.addContactView?.directoryIdTextField.becomeFirstResponder()
-        })
+            self.blurView.alpha = 0.6
+        }, completion: nil)
         
     }
-
+*/
     func validateAndRequest(publicId: String, directoryId: String) {
         
         if directoryId == config.directoryId || publicId == sessionState.publicId {
@@ -200,11 +198,12 @@ class ContactsViewController: UIViewController {
             }
         }
         assert(index >= 0)
-        let paths = [IndexPath(row: index, section: 1)]
+//        let paths = [IndexPath(row: index, section: 1)]
         contactList.remove(at: index)
         expandedRows.remove(at: index)
         DispatchQueue.main.async {
-            self.tableView.deleteRows(at: paths, with: .bottom)
+            self.tableView.reloadData()
+//            self.tableView.deleteRows(at: paths, with: .bottom)
             self.alertPresenter.infoAlert(title: "Contact Deleted",
                                           message: "This contact has been removed from your list")
         }
@@ -217,10 +216,11 @@ class ContactsViewController: UIViewController {
 
         DispatchQueue.main.async {
             guard let contact = notification.object as? Contact else { return }
-            let paths = [IndexPath(row: self.contactList.count, section: 1)]
+//            let paths = [IndexPath(row: self.contactList.count, section: 1)]
             self.contactList.append(contact)
             self.expandedRows.append(false)
-            self.tableView.insertRows(at: paths, with: .bottom)
+            self.tableView.reloadData()
+//            self.tableView.insertRows(at: paths, with: .bottom)
             self.alertPresenter.successAlert(title: "Contact Added",
                                              message: "This contact has been added to your contacts list")
         }
@@ -271,14 +271,11 @@ class ContactsViewController: UIViewController {
     @objc func requestAcknowledged(_ notification: Notification) {
 
         guard let contact = notification.object as? Contact else { return }
-        let paths = [IndexPath(row: contactList.count, section: 1)]
         contactList.append(contact)
         expandedRows.append(false)
+        contactRequests = Array(contactManager.pendingRequests)
         DispatchQueue.main.async {
-            self.tableView.insertRows(at: paths, with: .left)
-            // This has to happen after the contact is inserted
-            self.contactRequests = Array(self.contactManager.pendingRequests)
-            self.tableView.reloadSections(IndexSet(integer: 0), with: .left)
+            self.tableView.reloadData()
         }
         
     }
@@ -306,7 +303,8 @@ class ContactsViewController: UIViewController {
         }
         if !paths.isEmpty {
             DispatchQueue.main.async {
-                self.tableView.reloadRows(at: paths, with: .none)
+                self.tableView.reloadData()
+//                self.tableView.reloadRows(at: paths, with: .none)
             }
         }
 
@@ -358,50 +356,34 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
 
-        return 2
+        return 1
 
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-        if section == 0 {
-            var rowCount = 0
-            if contactRequests.count > 0 {
-                rowCount = showRequests ? contactRequests.count + 1 : 1
-            }
-            return rowCount
+        var rowCount = contactList.count
+        if contactRequests.count > 0 {
+            rowCount = rowCount + 1
         }
-        else {
-            return contactList.count
-        }
+        return rowCount
 
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        if indexPath.section == 0 {
-            assert(contactRequests.count > 0)
-            if indexPath.row == 0 {
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: "PendingRequestsCell", for: indexPath)
-                    as? PendingRequestsCell else { return UITableViewCell() }
-                //cell.setMediumTheme()
-                return cell
-            }
-            else {
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: "PendingRequestCell", for: indexPath)
-                    as? PendingRequestCell else { return UITableViewCell() }
-                //cell.setLightTheme()
-                let request = contactRequests[indexPath.row-1]
-                cell.directoryIdLabel.text = request.directoryId ?? "No Directory ID"
-                cell.publicIdLabel.text = request.publicId
-                return cell
-            }
+        if contactRequests.count > 0 && indexPath.row == 0 {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "PendingRequestsCell", for: indexPath)
+                as? PendingRequestsCell else { return UITableViewCell() }
+            //cell.setMediumTheme()
+            return cell
         }
         else {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "ContactDetailCell", for: indexPath)
                 as? ContactDetailCell else { return UITableViewCell() }
             cell.setMediumTheme()
-            cell.configure(contact: contactList[indexPath.row], expanded: expandedRows[indexPath.row])
+            let increment = contactRequests.count > 0 ? 1 : 0
+            cell.configure(contact: contactList[indexPath.row - increment], expanded: expandedRows[indexPath.row - increment])
             return cell
         }
 
@@ -409,44 +391,57 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-        if indexPath.section == 0 {
-            return indexPath.row == 0 ? 60.0 : 70.0
-        }
-        else if expandedRows[indexPath.row] {
-            let contact = contactList[indexPath.row]
-            if contact.status == "pending" {
-                return 150.0
-            }
-            else {
-                return 105.0
-            }
+        if contactRequests.count > 0 && indexPath.row == 0 {
+            return 60.0
         }
         else {
-            return 60.0
+            let increment = contactRequests.count > 0 ? 1 : 0
+            if expandedRows[indexPath.row - increment] {
+                let contact = contactList[indexPath.row + increment]
+                if contact.status == "pending" {
+                    return 150.0
+                }
+                else {
+                    return 105.0
+                }
+            }
+            else {
+                return 60.0
+            }
         }
 
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
 
-        return indexPath.section != 0
+        if contactRequests.count > 0  && indexPath.row == 0{
+            return false
+        }
+        else {
+            return true
+        }
 
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        if indexPath.section == 0 {
-            if indexPath.row == 0 {
-                showRequests = !showRequests
-                tableView.reloadSections(IndexSet(integer: 0), with: showRequests ? .bottom : .top)
-            }
-            else {
-                let contactRequest = contactRequests[indexPath.row-1]
-                acknowledgeRequest(contactRequest)
-            }
+        if contactRequests.count > 0 && indexPath.row == 0 {
+            let frame = self.view.bounds
+            let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.7)
+            requestsView = ContactRequestsView(frame: viewRect)
+            requestsView!.blurController = self
+            requestsView!.contactRequests = contactRequests
+            requestsView!.alpha = 0.0
+            requestsView!.center = self.view.center
+            self.view.addSubview(requestsView!)
+            UIView.animate(withDuration: 0.3, animations: {
+                self.blurView.alpha = 0.6
+                self.requestsView!.alpha = 1.0
+            }, completion: nil)
         }
         else {
-            expandedRows[indexPath.row] = !expandedRows[indexPath.row]
+            let increment = contactRequests.count > 0 ? 1 : 0
+            expandedRows[indexPath.row - increment] = !expandedRows[indexPath.row - increment]
             tableView.reloadRows(at: [indexPath], with: .left)
         }
 
@@ -456,15 +451,10 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
                    forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {
-            contactManager.deleteContact(publicId: contactList[indexPath.row].publicId)
+            let increment = contactRequests.count > 0 ? 1 : 0
+            contactManager.deleteContact(publicId: contactList[indexPath.row - increment].publicId)
         }
         
     }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-
-        return headerView
-
-    }
-
- }
+ 
+}

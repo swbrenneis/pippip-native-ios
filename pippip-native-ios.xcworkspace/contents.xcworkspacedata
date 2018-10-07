@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:pippip-native-ios/Messages/SelectContactView.swift">
+   </FileRef>
+   <FileRef
       location = "group:pippip-native-ios.xcodeproj">
    </FileRef>
    <FileRef

@@ -20,7 +20,7 @@ class AcknowledgeRequestView: UIView {
     @IBOutlet weak var cancelButton: UIButton!
 
     var contactManager = ContactManager()
-    var contactsViewController: ContactsViewController?
+    var blurController: ControllerBlurProtocol?
     var contactRequest: ContactRequest? {
         didSet {
             promptLabel.text = "New contact request from \(contactRequest!.displayId)"
@@ -64,7 +64,7 @@ class AcknowledgeRequestView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.contactsViewController?.blurView.alpha = 0.0
+            self.blurController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
             self.contactManager.acknowledgeRequest(contactRequest: self.contactRequest!, response: "accept")
@@ -77,7 +77,7 @@ class AcknowledgeRequestView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.contactsViewController?.blurView.alpha = 0.0
+            self.blurController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
             self.contactManager.acknowledgeRequest(contactRequest: self.contactRequest!, response: "ignore")
@@ -90,7 +90,7 @@ class AcknowledgeRequestView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.contactsViewController?.blurView.alpha = 0.0
+            self.blurController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
             self.contactManager.acknowledgeRequest(contactRequest: self.contactRequest!, response: "reject")
@@ -103,7 +103,7 @@ class AcknowledgeRequestView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.contactsViewController?.blurView.alpha = 0.0
+            self.blurController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
         })

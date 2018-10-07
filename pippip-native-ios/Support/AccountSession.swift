@@ -126,8 +126,8 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     // Notifications
     
     @objc func resume() {
-        
-        if suspended  && config.authenticated {
+
+        if suspended && config.authenticated && sessionActive {
             suspended = false
             NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
             DispatchQueue.main.async {

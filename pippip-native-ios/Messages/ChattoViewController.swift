@@ -79,8 +79,6 @@ class ChattoViewController: BaseChatViewController {
             let frame = self.view.bounds
             let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.7)
             selectView = SelectContactView(frame: viewRect)
-            //selectView!.contentView.backgroundColor = UIColor.init(gradientStyle: .topToBottom, withFrame: viewRect, andColors: [UIColor.flatPowderBlue, UIColor.flatSkyBlue])
-            //selectView!.contentView.alpha = 0.8
             selectView!.center = self.view.center
             self.view.addSubview(self.selectView!)
         }

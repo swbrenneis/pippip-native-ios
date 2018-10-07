@@ -17,7 +17,9 @@ class PendingRequestsCell: UITableViewCell {
         
         // Initialization code
         self.backgroundColor = PippipTheme.lightBarColor
-        titleLabel.textColor = PippipTheme.titleColor
+        titleLabel.backgroundColor = PippipTheme.buttonColor
+        titleLabel.textColor = PippipTheme.buttonTextColor
+        titleLabel.layer.masksToBounds = true
     
     }
 
