@@ -26,7 +26,7 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol {
     var currentDirectoryId: String?
     var pendingDirectoryId: String?
     var config = Configurator()
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var alertPresenter = AlertPresenter()
 
     override func awakeFromNib() {

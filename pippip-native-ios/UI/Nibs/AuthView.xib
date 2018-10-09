@@ -11,11 +11,12 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AuthView" customModule="pippip_native_ios" customModuleProvider="target">
             <connections>
+                <outlet property="authButton" destination="4u4-LA-3Xt" id="VFd-AJ-Wht"/>
+                <outlet property="authButtonLeading" destination="Cln-mc-F0A" id="rde-eX-rKA"/>
+                <outlet property="authButtonTrailing" destination="ZUE-FN-bqp" id="gCq-Rj-Ymn"/>
                 <outlet property="contentView" destination="iN0-l3-epB" id="ZGs-mQ-8B5"/>
                 <outlet property="logoImage" destination="nUB-J6-IOn" id="LtC-R3-3EM"/>
-                <outlet property="logoLeading" destination="zjD-m5-zQS" id="tM9-j3-hcq"/>
-                <outlet property="logoTop" destination="wti-2C-K0P" id="DVG-Uh-Qvi"/>
-                <outlet property="logoTrailing" destination="DKi-o7-Z4I" id="K9b-Pf-Jke"/>
+                <outlet property="quickstartButton" destination="qzD-E3-Llh" id="V9I-c8-DmA"/>
                 <outlet property="secommLabel" destination="1yC-of-Msj" id="rVx-hk-AIG"/>
                 <outlet property="versionLabel" destination="wDk-ZI-Lt8" id="MPR-da-gaQ"/>
             </connections>
@@ -43,15 +44,42 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4u4-LA-3Xt">
+                    <rect key="frame" x="70" y="308.5" width="235" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="Q3z-vY-qhb"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="19"/>
+                    <state key="normal" title="Button"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="7"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="authPressed:" destination="-1" eventType="touchUpInside" id="5Nb-tp-lYI"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qzD-E3-Llh">
+                    <rect key="frame" x="117" y="454.5" width="141" height="30"/>
+                    <state key="normal" title="Help Me Get Started"/>
+                    <connections>
+                        <action selector="quickstartPressed:" destination="-1" eventType="touchUpInside" id="TjB-Tz-5lf"/>
+                    </connections>
+                </button>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="1yC-of-Msj" firstAttribute="top" secondItem="wDk-ZI-Lt8" secondAttribute="bottom" constant="15" id="Cer-AC-2Cl"/>
+                <constraint firstItem="4u4-LA-3Xt" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="70" id="Cln-mc-F0A"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="nUB-J6-IOn" secondAttribute="trailing" constant="55" id="DKi-o7-Z4I"/>
+                <constraint firstItem="qzD-E3-Llh" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Jhr-2k-sg1"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="1yC-of-Msj" secondAttribute="bottom" constant="50" id="QWJ-gN-yzj"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="4u4-LA-3Xt" secondAttribute="trailing" constant="70" id="ZUE-FN-bqp"/>
+                <constraint firstItem="qzD-E3-Llh" firstAttribute="top" secondItem="4u4-LA-3Xt" secondAttribute="bottom" constant="96" id="pQS-Fy-o0c"/>
                 <constraint firstItem="wDk-ZI-Lt8" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="qqs-Zv-cAM"/>
                 <constraint firstItem="1yC-of-Msj" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="vgZ-YJ-Kdi"/>
                 <constraint firstItem="nUB-J6-IOn" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="50" id="wti-2C-K0P"/>
+                <constraint firstItem="4u4-LA-3Xt" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="xMv-a6-aek"/>
                 <constraint firstItem="nUB-J6-IOn" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="55" id="zjD-m5-zQS"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>

@@ -15,7 +15,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var tableBottom: NSLayoutConstraint!
     
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var config = Configurator()
     var sessionState = SessionState()
     var localAuth: LocalAuthenticator!
@@ -49,7 +49,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         //let footerBounds = CGRect(x: 0.0, y: 0.0, width: self.view.bounds.width, height: 25.0)
         //footerView = SectionFooterView(frame: footerBounds)
 
-        localAuth = LocalAuthenticator(viewController: self, view: self.view)
+        localAuth = LocalAuthenticator(viewController: self, initial: false)
 
         let addContact = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addContact(_:)))
         rightBarItems.append(addContact)
@@ -73,14 +73,14 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
     override func viewWillAppear(_ animated: Bool) {
 
-        localAuth.listening = true
+        localAuth.viewWillAppear()
         alertPresenter.present = true
         NotificationCenter.default.addObserver(self, selector: #selector(requestsUpdated(_:)),
                                                name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestStatusUpdated(_:)),
                                                name: Notifications.RequestStatusUpdated, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
-                                               name: Notifications.LocalAuthComplete, object: nil)
+        //NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
+        //                                       name: Notifications.LocalAuthComplete, object: nil)
 
         if config.showIgnoredContacts {
             contactList = contactManager.contactList
@@ -105,15 +105,20 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
     override func viewWillDisappear(_ animated: Bool) {
 
-        localAuth.listening = false
         alertPresenter.present = false
 
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestStatusUpdated, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.LocalAuthComplete, object: nil)
 
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        localAuth.viewDidDisappear()
+        
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -331,7 +336,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         })
         
     }
-
+/*
     @objc func localAuthComplete(_ notification: Notification) {
         
         DispatchQueue.main.async {
@@ -339,7 +344,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         }
         
     }
-
+*/
     /*
     // MARK: - Navigation
 

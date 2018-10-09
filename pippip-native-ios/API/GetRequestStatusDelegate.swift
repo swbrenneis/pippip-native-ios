@@ -10,17 +10,13 @@ import UIKit
 
 class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequestStatusResponse> {
 
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
 //    var publicId: String?
 //    var retry: Bool
     var alertPresenter = AlertPresenter()
-    var accountSession = ApplicationInitializer.accountSession
     var config = Configurator()
 
     override init(request: GetRequestStatusRequest) {
-
-//        self.publicId = publicId
-//        self.retry = retry
 
         super.init(request: request)
 
@@ -32,6 +28,7 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
 
     func getComplete(response: GetRequestStatusResponse) {
         
+        AsyncNotifier.notify(name: Notifications.GetStatusComplete, object: nil)
         if response.contacts!.count > 0 {
             do {
                 let updated = try contactManager.updateContacts(response.contacts!)
@@ -45,9 +42,6 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
                 print("Error updating contacts: \(error)")
             }
         }
-        //else if retry {
-        //    contactManager.requestContact(publicId: publicId!, directoryId: nil, retry: true)
-        //}
         else {
             print("No request status updates")
         }
@@ -55,6 +49,7 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
     }
 
     func getError(_ reason: String) {
+        AsyncNotifier.notify(name: Notifications.GetStatusComplete, object: nil)
         print("Get request status error: \(reason)")
     }
 

@@ -21,7 +21,7 @@ class ChattoViewController: BaseChatViewController {
     var dataSource: ChattoDataSource?
     var messageManager = MessageManager()
     var alertPresenter = AlertPresenter()
-    var localAuth: LocalAuthenticator?
+    var localAuth: LocalAuthenticator!
     var chatInputBar: ChatInputBar!
 
     override func viewDidLoad() {
@@ -40,6 +40,7 @@ class ChattoViewController: BaseChatViewController {
         #endif
         self.navigationItem.rightBarButtonItems = items
 
+        localAuth = LocalAuthenticator(viewController: self, initial: false)
         if ChattoViewController.receiveSoundId == 0 {
             if let receiveUrl = Bundle.main.url(forResource: "iphone_receive_sms", withExtension: "mp3") {
                 AudioServicesCreateSystemSoundID(receiveUrl as CFURL, &ChattoViewController.receiveSoundId)
@@ -66,10 +67,7 @@ class ChattoViewController: BaseChatViewController {
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
-        if localAuth == nil {
-            localAuth = LocalAuthenticator(viewController: self, view: self.view)
-        }
-        localAuth?.listening = true
+        localAuth.viewWillAppear()
         if contact != nil {
             dataSource = ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
             chatDataSource = dataSource
@@ -82,14 +80,11 @@ class ChattoViewController: BaseChatViewController {
             selectView!.center = self.view.center
             self.view.addSubview(self.selectView!)
         }
-        //dataSource?.visible = true
 
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(retryMessage(_:)),
                                                name: Notifications.RetryMessage, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
-                                               name: Notifications.LocalAuthComplete, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(messageBubbleTapped(_:)),
                                                name: Notifications.MessageBubbleTapped, object: nil)
 
@@ -99,14 +94,19 @@ class ChattoViewController: BaseChatViewController {
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
-        localAuth?.listening = false
         dataSource?.visible = false
 
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.RetryMessage, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.LocalAuthComplete, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.MessageBubbleTapped, object: nil)
 
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        localAuth.viewDidDisappear()
+        
     }
     
     override func createChatInputView() -> UIView {
@@ -204,7 +204,7 @@ class ChattoViewController: BaseChatViewController {
         }
         
     }
-
+/*
     @objc func localAuthComplete(_ notification: Notification) {
         
         DispatchQueue.main.async {
@@ -212,7 +212,7 @@ class ChattoViewController: BaseChatViewController {
         }
         
     }
-    
+*/
     @objc func messageBubbleTapped(_ notification: Notification) {
 
         guard let message = notification.object as? Message else { return }
@@ -273,7 +273,7 @@ class ChattoViewController: BaseChatViewController {
 
     #if targetEnvironment(simulator)
     @objc func pollServer(_ sender: Any) {
-        ApplicationInitializer.accountSession.doUpdates()
+        AccountSession.instance.doUpdates()
     }
     #endif
     

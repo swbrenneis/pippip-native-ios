@@ -27,6 +27,7 @@ class AcknowledgeMessagesDelegate: EnclaveDelegate<AcknowledgeMessagesRequest, A
 
     func ackComplete(response: AcknowledgeMessagesResponse) {
 
+        AsyncNotifier.notify(name: Notifications.GetMessagesComplete, object: nil)
         print("Messages acknowledged, \(response.exceptions!.count) exceptions")
         for textMessage in textMessages {
             textMessage.acknowledged = true
@@ -38,6 +39,7 @@ class AcknowledgeMessagesDelegate: EnclaveDelegate<AcknowledgeMessagesRequest, A
     }
 
     func ackError(_ reason: String) {
+        AsyncNotifier.notify(name: Notifications.GetMessagesComplete, object: nil)
         print("Acknowledge messages error: \(reason)")
     }
 

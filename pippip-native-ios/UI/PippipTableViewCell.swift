@@ -30,8 +30,8 @@ class PippipTableViewCell: UITableViewCell {
         
         self.backgroundColor = .clear
         contentView.backgroundColor = PippipTheme.darkCellColor
-        contentView.layer.cornerRadius = PippipTheme.cellCorners
-        contentView.layer.masksToBounds = true
+//        contentView.layer.cornerRadius = PippipTheme.cellCorners
+//        contentView.layer.masksToBounds = true
 
     }
     
@@ -39,8 +39,8 @@ class PippipTableViewCell: UITableViewCell {
         
         self.backgroundColor = UIColor.flatWhite
         contentView.backgroundColor = UIColor.flatWhite
-        contentView.layer.cornerRadius = PippipTheme.cellCorners
-        contentView.layer.masksToBounds = true
+//        contentView.layer.cornerRadius = PippipTheme.cellCorners
+//        contentView.layer.masksToBounds = true
 
     }
     
@@ -48,8 +48,8 @@ class PippipTableViewCell: UITableViewCell {
         
         self.backgroundColor = .clear
         contentView.backgroundColor = PippipTheme.lightCellColor
-        contentView.layer.cornerRadius = PippipTheme.cellCorners
-        contentView.layer.masksToBounds = true
+//        contentView.layer.cornerRadius = PippipTheme.cellCorners
+//        contentView.layer.masksToBounds = true
         
     }
     

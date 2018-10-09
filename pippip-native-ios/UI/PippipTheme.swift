@@ -8,7 +8,6 @@
 
 import UIKit
 import ChameleonFramework
-import DeviceKit
 
 class PippipTheme: NSObject {
 
@@ -45,9 +44,6 @@ class PippipTheme: NSObject {
     static var lightTextColor: UIColor!
     //static var textFieldBorderColor: UIColor!
 
-    static var cellCorners: CGFloat = 15.0
-    static var popupHeightRatio4Fields: CGFloat!
-
     static func setTheme() {
 
         splashColor = UIColor.flatTealDark
@@ -67,14 +63,6 @@ class PippipTheme: NSObject {
         incomingTextColor = UIColor.flatBlack
         outgoingMessageBubbleColor = UIColor.flatTealDark
         outgoingTextColor = ContrastColorOf(outgoingMessageBubbleColor, returnFlat: true)
-
-        let device = Device()
-        if device == .iPhoneX {
-            popupHeightRatio4Fields = 0.5
-        }
-        else {
-            popupHeightRatio4Fields = 0.6
-        }
 
     }
 

@@ -12,17 +12,20 @@ import ChameleonFramework
 class SettingsTableViewController: UITableViewController, ControllerBlurProtocol {
 
     var cellItems = [Int: [MultiCellItemProtocol]]()
+    var accountName: String!
     var config = Configurator()
     var alertPresenter = AlertPresenter()
     var localAuth: LocalAuthenticator!
     var deleteAccountView: DeleteAccountView?
     var verifyPassphraseView: VerifyPassphraseView?
     var changePassphraseView: ChangePassphraseView?
+    var storePassphraseView: StorePassphraseView?
     var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        accountName = AccountSession.instance.accountName
         self.view.backgroundColor = PippipTheme.viewColor
         let frame = self.view.bounds
         blurView.frame = frame
@@ -34,7 +37,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         self.tableView.dataSource = self
         self.tableView.delegate = self
 
-        localAuth = LocalAuthenticator(viewController: self, view: self.view)
+        localAuth = LocalAuthenticator(viewController: self, initial: false)
 
         var items = [MultiCellItemProtocol]()
         items.append(PublicIdCell.cellItem)
@@ -61,12 +64,10 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        localAuth.listening = true
+        localAuth.viewWillAppear()
         alertPresenter.present = true
         NotificationCenter.default.addObserver(self, selector: #selector(policyChanged(_:)),
                                                name: Notifications.PolicyChanged, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
-                                               name: Notifications.LocalAuthComplete, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(accountDeleted(_:)),
                                                name: Notifications.AccountDeleted, object: nil)
 
@@ -75,22 +76,35 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        localAuth.listening = false
         alertPresenter.present = false
+        
+        verifyPassphraseView?.dismiss()
+        storePassphraseView?.dismiss()
+        changePassphraseView?.dismiss()
+        deleteAccountView?.dismiss()
         NotificationCenter.default.removeObserver(self, name: Notifications.PolicyChanged, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.LocalAuthComplete, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AccountDeleted, object: nil)
 
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        localAuth.viewDidDisappear()
+        
+    }
+    
     func showChangePassphraseView() {
         
         let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * PippipTheme.popupHeightRatio4Fields)
+        let viewRect = CGRect(x: 0.0, y: 0.0,
+                              width: frame.width * PippipGeometry.changePassphraseViewWidthRatio,
+                              height: frame.height * PippipGeometry.changePassphraseViewHeightRatio)
         changePassphraseView = ChangePassphraseView(frame: viewRect)
-        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
+        changePassphraseView?.accountName = accountName
+        let viewCenter = CGPoint(x: self.view.center.x, y: changePassphraseView!.center.y + PippipGeometry.changePassphraseViewOffset)
         changePassphraseView?.center = viewCenter
-        changePassphraseView?.alpha = 0.3
+        changePassphraseView?.alpha = 0.0
         
         changePassphraseView?.settingsViewController = self
         
@@ -107,9 +121,11 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
     func showDeleteAccountView() {
         
         let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.38)
+        let viewRect = CGRect(x: 0.0, y: 0.0,
+                              width: frame.width * PippipGeometry.deleteAccountViewWidthRatio,
+                              height: frame.height * PippipGeometry.deleteAccountViewHeightRatio)
         deleteAccountView = DeleteAccountView(frame: viewRect)
-        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 30)
+        let viewCenter = CGPoint(x: self.view.center.x, y: deleteAccountView!.center.y + PippipGeometry.deleteAccountViewOffset)
         deleteAccountView?.center = viewCenter
         deleteAccountView?.alpha = 0.3
         
@@ -124,14 +140,40 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         
     }
     
+    func showStorePassphraseView(cell: LocalAuthCell) {
+        
+        let frame = self.view.bounds
+        let viewRect = CGRect(x: 0.0, y: 0.0,
+                              width: frame.width * PippipGeometry.storePassphraseViewWidthRatio,
+                              height: frame.height * PippipGeometry.storePassphraseViewHeightRatio)
+        storePassphraseView = StorePassphraseView(frame: viewRect)
+        storePassphraseView?.accountName = accountName
+        storePassphraseView?.cell = cell
+        storePassphraseView?.alpha = 0.0
+        
+        storePassphraseView?.settingsViewController = self
+        
+        self.view.addSubview(self.storePassphraseView!)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.storePassphraseView?.alpha = 1.0
+            self.blurView.alpha = 0.6
+            self.storePassphraseView?.passphraseTextField.becomeFirstResponder()
+            let viewCenter = CGPoint(x: self.view.center.x, y: self.storePassphraseView!.center.y + PippipGeometry.storePassphraseViewOffset)
+            self.storePassphraseView?.center = viewCenter
+        })
+        
+    }
+    
     func showVerifyPassphraseView() {
         
         let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.38)
+        let viewRect = CGRect(x: 0.0, y: 0.0,
+                              width: frame.width * PippipGeometry.verifyPassphraseViewWidthRatio,
+                              height: frame.height * PippipGeometry.verifyPassphraseViewHeightRatio)
         verifyPassphraseView = VerifyPassphraseView(frame: viewRect)
-        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 30)
-        verifyPassphraseView?.center = viewCenter
-        verifyPassphraseView?.alpha = 0.3
+        verifyPassphraseView?.accountName = accountName
+        verifyPassphraseView?.alpha = 0.0
         
         verifyPassphraseView?.settingsViewController = self
         
@@ -139,11 +181,14 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
 
         UIView.animate(withDuration: 0.3, animations: {
             self.verifyPassphraseView?.alpha = 1.0
+            self.blurView.alpha = 0.6
             self.verifyPassphraseView?.passphraseTextField.becomeFirstResponder()
+            let viewCenter = CGPoint(x: self.view.center.x, y: self.verifyPassphraseView!.center.y + PippipGeometry.verifyPassphraseViewOffset)
+            self.verifyPassphraseView?.center = viewCenter
         })
         
     }
-
+    
     @objc func accountDeleted(_ notification: Notification) {
 
         DispatchQueue.main.async {
@@ -167,7 +212,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         }
 
     }
-
+/*
     @objc func localAuthComplete(_ notification: Notification) {
         
         DispatchQueue.main.async {
@@ -175,7 +220,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         }
         
     }
-    
+*/
    /*
     // MARK: - Navigation
 

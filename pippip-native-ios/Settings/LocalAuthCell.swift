@@ -25,6 +25,7 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
     static var cellItem: MultiCellItemProtocol = LocalAuthCellItem()
     var viewController: UITableViewController?
     var config = Configurator()
+    var initialState: Bool!
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -52,9 +53,10 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
             }
             localAuthLabel.text = laType
         }
-        
+
+        initialState = config.useLocalAuth
         localAuthSwitch.onTintColor = PippipTheme.buttonColor
-    
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -65,7 +67,30 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
 
     @IBAction func localAuthChanged(_ sender: UISwitch) {
 
-        config.useLocalAuth = sender.isOn
+        if sender.isOn {
+            if let settingsViewController = viewController as? SettingsTableViewController {
+                if config.uuid.count == 0 {
+                    config.uuid = UUID().uuidString
+                }
+                settingsViewController.showStorePassphraseView(cell: self)
+            }
+        }
+        else {
+            let keychain = Keychain(service: "io.pippip.token")
+            do {
+                try keychain.remove(key: config.uuid)
+                config.useLocalAuth = false
+                initialState = false
+            }
+            catch {
+                print("Error deleting keychain passphrase: \(error.localizedDescription)")
+                config.useLocalAuth = true
+                initialState = true
+                DispatchQueue.main.async {
+                    self.localAuthSwitch.setOn(true, animated: true)
+                }
+            }
+        }
 
     }
 

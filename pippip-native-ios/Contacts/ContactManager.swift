@@ -48,26 +48,35 @@ struct ContactRequest: Hashable {
 
 class ContactManager: NSObject {
 
-    static private var contactSet = Set<Contact>()
-    static private var contactMap = [String: Contact]()
-    static private var contactIdMap = [Int: Contact]()
-    static private var requestSet = Set<ContactRequest>()
-    static private var initialized = false
+    static private var theInstance: ContactManager?
+    static var instance: ContactManager {
+        get {
+            if let contactManager = ContactManager.theInstance {
+                return contactManager
+            }
+            else {
+                ContactManager.theInstance = ContactManager()
+                return ContactManager.theInstance!
+            }
+        }
+    }
+    
+    private var contactSet = Set<Contact>()
+    private var contactMap = [String: Contact]()
+    private var contactIdMap = [Int: Contact]()
+    private var requestSet = Set<ContactRequest>()
 
     var sessionState = SessionState()
     var config = Configurator()
-    var pendingRequests: Set<ContactRequest> {
-        loadContacts()
-        return ContactManager.requestSet
+    var pendingRequests: [ContactRequest] {
+        return Array(requestSet)
     }
     var contactList: [Contact] {
-        loadContacts()
-        return Array(ContactManager.contactSet)
+        return Array(contactSet)
     }
     var visibleContactList: [Contact] {
-        loadContacts()
         var visible = [Contact]()
-        for contact in ContactManager.contactSet {
+        for contact in contactSet {
             if contact.status != "ignored" {
                 visible.append(contact)
             }
@@ -75,6 +84,15 @@ class ContactManager: NSObject {
         return visible
     }
  
+    private override init() {
+
+        super.init()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
+                                               name: Notifications.AuthComplete, object: nil)
+
+    }
+    
     func acknowledgeRequest(contactRequest: ContactRequest, response: String) {
 
         let request = AcknowledgeRequest(requestingId: contactRequest.publicId, response: response)
@@ -87,15 +105,15 @@ class ContactManager: NSObject {
 
     func addContact(_ contact: Contact) {
 
-        if ContactManager.contactMap[contact.publicId] != nil {
+        if contactMap[contact.publicId] != nil {
             print("Duplicate contact: \(contact.displayName)")
 //            alertPresenter.errorAlert(title: "Contact Error", message: "Attempted to add duplicate contact")
         }
         else {
             contact.contactId = config.newContactId()
-            ContactManager.contactMap[contact.publicId] = contact
-            ContactManager.contactIdMap[contact.contactId] = contact
-            ContactManager.contactSet.insert(contact)
+            contactMap[contact.publicId] = contact
+            contactIdMap[contact.contactId] = contact
+            contactSet.insert(contact)
         }
 
         do {
@@ -136,7 +154,7 @@ class ContactManager: NSObject {
         var newRequests = [ContactRequest]()
         for request in requests {
             if let contactRequest = ContactRequest(request: request) {
-                let result = ContactManager.requestSet.insert(contactRequest)
+                let result = requestSet.insert(contactRequest)
                 if result.inserted {
                     newRequests.append(contactRequest)
                 }
@@ -148,7 +166,7 @@ class ContactManager: NSObject {
     func allContactIds() -> [Int] {
 
         var allIds = [Int]()
-        for contact in ContactManager.contactSet {
+        for contact in contactSet {
             allIds.append(contact.contactId)
         }
         return allIds
@@ -157,16 +175,15 @@ class ContactManager: NSObject {
 
     func clearContacts() {
 
-        ContactManager.contactSet.removeAll()
-        ContactManager.contactMap.removeAll()
-        ContactManager.contactIdMap.removeAll()
-        ContactManager.initialized = false
+        contactSet.removeAll()
+        contactMap.removeAll()
+        contactIdMap.removeAll()
 
     }
 
     func clearRequests() {
 
-        ContactManager.requestSet.removeAll()
+        requestSet.removeAll()
 
     }
 
@@ -182,8 +199,8 @@ class ContactManager: NSObject {
 
     func deleteContact(contact: Contact) {
 
-        ContactManager.contactMap.removeValue(forKey: contact.publicId)
-        ContactManager.contactSet.remove(contact)
+        contactMap.removeValue(forKey: contact.publicId)
+        contactSet.remove(contact)
 
         let realm = try! Realm()
         if let dbContact = realm.objects(DatabaseContact.self).filter("contactId = %ld", contact.contactId).first {
@@ -196,7 +213,7 @@ class ContactManager: NSObject {
     
     func deleteContactRequest(_ contactRequest: ContactRequest) {
         
-        ContactManager.requestSet.remove(contactRequest)
+        requestSet.remove(contactRequest)
     
     }
 
@@ -212,19 +229,19 @@ class ContactManager: NSObject {
     
     func getContact(publicId: String) -> Contact? {
 
-        return ContactManager.contactMap[publicId]
+        return contactMap[publicId]
 
     }
 
     func getContact(contactId: Int) -> Contact? {
 
-        return ContactManager.contactIdMap[contactId]
+        return contactIdMap[contactId]
 
     }
 
     func getContactId(_ publicId: String) -> Int {
 
-        if let contact = ContactManager.contactMap[publicId] {
+        if let contact = contactMap[publicId] {
             return contact.contactId
         }
         else {
@@ -246,16 +263,11 @@ class ContactManager: NSObject {
     func getRequestStatus(/* retry: Bool, publicId: String? */) {
         
         var pending = [String]()
-        //if retry {
-        //    pending.append(publicId!)
-        //}
-        //else {
-            for contact in ContactManager.contactSet {
-                if contact.status == "pending" {
-                    pending.append(contact.publicId)
-                }
+        for contact in contactSet {
+            if contact.status == "pending" {
+                pending.append(contact.publicId)
             }
-        //}
+        }
         
         let request = GetRequestStatusRequest(requestedIds: pending)
         let delegate = GetRequestStatusDelegate(request: request /*, publicId: publicId, retry: retry */)
@@ -265,34 +277,12 @@ class ContactManager: NSObject {
         
     }
 
-    func loadContacts() {
-
-        if (config.authenticated && !ContactManager.initialized) {
-            let realm = try! Realm()
-            ContactManager.initialized = true
-            let dbContacts = realm.objects(DatabaseContact.self)
-            for dbContact in dbContacts {
-                do {
-                    let contact = try decodeContact(dbContact.encoded!)
-                    contact.contactId = dbContact.contactId
-                    contact.version = dbContact.version
-                    ContactManager.contactSet.insert(contact)
-                }
-                catch {
-                    print("Error decoding contact: \(error)")
-                }
-            }
-            mapContacts()
-        }
-
-    }
-
     func mapContacts() {
         
-        ContactManager.contactMap.removeAll()
-        for contact in ContactManager.contactSet {
-            ContactManager.contactMap[contact.publicId] = contact
-            ContactManager.contactIdMap[contact.contactId] = contact
+        contactMap.removeAll()
+        for contact in contactSet {
+            contactMap[contact.publicId] = contact
+            contactIdMap[contact.contactId] = contact
         }
         
     }
@@ -310,11 +300,7 @@ class ContactManager: NSObject {
     @discardableResult
     func requestContact(publicId: String, directoryId: String?, retry: Bool) -> Bool {
 
-//        if ContactManager.contactMap[publicId] != nil && !retry {
-//            alertPresenter.errorAlert(title: "ContactError", message: "This contact already exists in your contact list")
-//        }
-//        else {
-        if ContactManager.contactMap[publicId] == nil || retry {
+        if contactMap[publicId] == nil || retry {
             let request = RequestContactRequest(requestedId: publicId, retry: retry)
             let delegate = RequestContactDelegate(request: request, retry: retry, directoryId: directoryId)
             let reqTask = EnclaveTask<RequestContactRequest, RequestContactResponse>(delegate: delegate)
@@ -331,7 +317,7 @@ class ContactManager: NSObject {
     func searchContacts(_ fragment:String) -> [Contact] {
 
         var result = [Contact]()
-        for contact in ContactManager.contactSet {
+        for contact in contactSet {
             let pCompare = contact.publicId.uppercased()
             if (pCompare.contains(fragment)) {
                 result.append(contact)
@@ -359,7 +345,7 @@ class ContactManager: NSObject {
 
     func setDirectoryId(contactId: Int, directoryId: String?) {
 
-        guard let contact = ContactManager.contactIdMap[contactId] else { return }
+        guard let contact = contactIdMap[contactId] else { return }
         contact.directoryId = directoryId
         let realm = try! Realm()
         if let dbContact = realm.objects(DatabaseContact.self).filter("contactId = %ld", contact.contactId).first {
@@ -388,8 +374,8 @@ class ContactManager: NSObject {
 
     func updateContact(_ update: Contact) throws {
 
-        ContactManager.contactMap[update.publicId] = update
-        ContactManager.contactSet.update(with: update)
+        contactMap[update.publicId] = update
+        contactSet.update(with: update)
         try updateContacts([update])
 
     }
@@ -399,7 +385,7 @@ class ContactManager: NSObject {
         var updates = [Contact]()
 
         for serverContact in serverContacts {
-            if let contact = ContactManager.contactMap[serverContact.publicId!] {
+            if let contact = contactMap[serverContact.publicId!] {
                 contact.status = serverContact.status!
                 contact.timestamp = Int64(serverContact.timestamp!)
                 if contact.status == "accepted" {
@@ -432,7 +418,30 @@ class ContactManager: NSObject {
         setTask.sendRequest(request)
         
     }
+
+    // Notifications
     
+    @objc func authComplete(_ notification: Notification) {
+
+        if (config.authenticated) {
+            let realm = try! Realm()
+            let dbContacts = realm.objects(DatabaseContact.self)
+            for dbContact in dbContacts {
+                do {
+                    let contact = try decodeContact(dbContact.encoded!)
+                    contact.contactId = dbContact.contactId
+                    contact.version = dbContact.version
+                    contactSet.insert(contact)
+                }
+                catch {
+                    print("Error decoding contact: \(error)")
+                }
+            }
+            mapContacts()
+        }
+        
+    }
+
 }
 
 // Database and encoding functions

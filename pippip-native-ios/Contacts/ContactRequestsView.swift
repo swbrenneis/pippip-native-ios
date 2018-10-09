@@ -15,7 +15,7 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
     @IBOutlet weak var tableView: UITableView!
 
     var blurController: ControllerBlurProtocol!
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var contactRequests: [ContactRequest]!
     var acknowledgeRequestView: AcknowledgeRequestView?
     var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))

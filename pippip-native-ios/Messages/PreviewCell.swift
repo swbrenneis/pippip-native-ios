@@ -19,7 +19,7 @@ class PreviewCell: PippipTableViewCell {
     @IBOutlet weak var previewLabel: UILabel!
     @IBOutlet weak var timestampLabel: UILabel!
 
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var textMessage: TextMessage?
 
     override func awakeFromNib() {

@@ -12,7 +12,7 @@ class RequestContactDelegate: EnclaveDelegate<RequestContactRequest, RequestCont
 
     var retry: Bool
     var directoryId: String?
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
 
     init(request: RequestContactRequest, retry: Bool, directoryId: String?) {
         

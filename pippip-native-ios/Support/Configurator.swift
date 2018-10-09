@@ -117,6 +117,20 @@ class Configurator: NSObject {
             }
         }
     }
+    var uuid: String {
+        get {
+            let config = getConfig()
+            return config.uuid
+        }
+        set {
+            let config = getConfig()
+            let realm = try! Realm()
+            try! realm.write {
+                config.uuid = newValue
+                config.version = Configurator.currentVersion
+            }
+        }
+    }
 
     var sessionState = SessionState()
 

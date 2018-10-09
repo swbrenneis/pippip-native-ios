@@ -36,7 +36,7 @@ import UIKit
         
     }
     
-    class func notify(name: NSNotification.Name, object: Any) {
+    class func notify(name: NSNotification.Name, object: Any?) {
         
         DispatchQueue.global(qos: .userInitiated).async {
             NotificationCenter.default.post(name: name, object: object, userInfo: nil)

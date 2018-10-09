@@ -45,6 +45,18 @@ class DeleteAccountView: UIView {
         
     }
     
+    func dismiss() {
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.center.y = 0.0
+            self.alpha = 0.0
+            self.settingsViewController?.blurView.alpha = 0.0
+        }, completion: { completed in
+            self.removeFromSuperview()
+        })
+        
+    }
+    
     @IBAction func yesTapped(_ sender: Any) {
 
         UIView.animate(withDuration: 0.3, animations: {

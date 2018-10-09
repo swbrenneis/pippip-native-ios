@@ -11,37 +11,97 @@ import UserNotifications
 import RealmSwift
 import LocalAuthentication
 
+enum AccountSessionState {
+    case appStarted
+    case willTerminate
+    case terminated
+    case willSuspend
+    case suspended
+    case willResume
+    case active
+}
+
+enum AuthState {
+    case notAuthenticated
+    case authenticated
+    case loggedOut
+}
+
+enum UpdateState {
+    case gettingMessages
+    case gettingRequests
+    case gettingStatus
+    case idle
+}
+
 class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     static let production = true
-    static var firstRun = true
-    static var accountName: String?
+    private static var theInstance: AccountSession?
     
     @objc var deviceToken: Data?
-    private var sessionActive = false
-    var suspended = false
-    var contactManager = ContactManager()
+    private var accountSessionState: AccountSessionState
+    private var authState: AuthState
+    private var updateState: UpdateState
+    var contactManager = ContactManager.instance
     var messageManager = MessageManager()
     var sessionState = SessionState()
     var config = Configurator()
-    var updatesInProgress = false
+    var firstRun = true
+    private var realAccountName: String?
+    var accountName: String {
+        get {
+            return realAccountName!
+        }
+    }
+    var accountLoaded: Bool {
+        get {
+            return realAccountName != nil
+        }
+    }
+    var authenticated: Bool {
+        get {
+            return authState == .authenticated
+        }
+    }
+    
+    @objc static var instance: AccountSession {
+        get {
+            if let accountSession = AccountSession.theInstance {
+                return accountSession
+            }
+            else {
+                AccountSession.theInstance = AccountSession()
+                return AccountSession.theInstance!
+            }
+        }
+    }
 
-    override init() {
+    private override init() {
+
+        accountSessionState = .terminated
+        authState = .notAuthenticated
+        updateState = .idle
+
         super.init()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(newSession(_:)),
-                                               name: Notifications.NewSession, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
+                                               name: Notifications.AuthComplete, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(sessionEnded(_:)),
                                                name: Notifications.SessionEnded, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(getStatusComplete(_:)),
+                                               name: Notifications.GetStatusComplete, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(getRequestsComplete(_:)),
+                                               name: Notifications.GetRequestsComplete, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(getMessagesComplete(_:)),
+                                               name: Notifications.GetMessagesComplete, object: nil)
 
     }
 
     func doUpdates() {
 
-        if !suspended {
-            updatesInProgress = true
-            NotificationCenter.default.addObserver(self, selector: #selector(getMessagesComplete(_:)),
-                                                   name: Notifications.GetMessagesComplete, object: nil)
+        if updateState == .idle && authState == .authenticated {
+            updateState = .gettingMessages
             messageManager.getNewMessages()
         }
 
@@ -63,7 +123,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
                                                          includingPropertiesForKeys: nil,
                                                          options: .skipsHiddenFiles)
         if !vaults.isEmpty {
-            AccountSession.accountName = vaults[0].lastPathComponent
+            realAccountName = vaults[0].lastPathComponent
             loadConfig()
         }
         
@@ -78,8 +138,9 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         
     }
     
-    func setDefaultConfig() {
+    func setDefaultConfig(accountName: String) {
         
+        realAccountName = accountName
         setRealmConfiguration()
         let config = AccountConfig()
         let laContext = LAContext()
@@ -105,78 +166,118 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
         var realmConfig = Realm.Configuration()
         realmConfig.fileURL = realmConfig.fileURL?.deletingLastPathComponent()
-            .appendingPathComponent("\(AccountSession.accountName!).realm")
-        realmConfig.schemaVersion = 20
+            .appendingPathComponent("\(realAccountName!).realm")
+        realmConfig.schemaVersion = 21
         realmConfig.migrationBlock = { (migration, oldSchemaVersion) in
             if oldSchemaVersion < 15 {
                 migration.enumerateObjects(ofType: AccountConfig.className()) { (oldObject, newObject) in
                     newObject!["directoryId"] = oldObject!["nickname"]
                 }
-                /*
-                migration.enumerateObjects(ofType: DatabaseContactRequest.className()) { (oldObject, newObject) in
-                    newObject!["directoryId"] = oldObject!["nickname"]
-                }
- */
             }
         }
         Realm.Configuration.defaultConfiguration = realmConfig
         
     }
 
+    @objc func appStarted() {
+
+        accountSessionState = .appStarted
+
+    }
+
+    @objc func willResume() {
+
+        if accountSessionState == .suspended {
+            accountSessionState = .willResume
+            NotificationCenter.default.post(name: Notifications.AppWillResume, object: nil)
+        }
+
+    }
+
+    @objc func resume() {
+        
+        if accountSessionState == .willResume {
+            accountSessionState = .active
+            self.doUpdates()
+            NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
+        }
+
+    }
+    
+    @objc func willSuspend() {
+        
+        if accountSessionState == .active {
+            accountSessionState = .willSuspend
+            NotificationCenter.default.post(name: Notifications.AppWillSuspend, object: nil)
+        }
+        
+    }
+    
+    @objc func suspend() {
+
+        if accountSessionState == .willSuspend {
+            accountSessionState = .suspended
+            NotificationCenter.default.post(name: Notifications.AppSuspended, object: nil)
+        }
+
+    }
+
+    @objc func willTerminate() {
+        
+        accountSessionState = .willTerminate
+        NotificationCenter.default.post(name: Notifications.AppWillTerminate, object: nil)
+
+    }
+    
     // Notifications
     
-    @objc func resume() {
+    @objc func authComplete(_ notification: Notification) {
 
-        if suspended && config.authenticated && sessionActive {
-            suspended = false
-            NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
+        authState = .authenticated
+        accountSessionState = .active
+        doUpdates()
+        
+    }
+    
+    @objc func getMessagesComplete(_ notification: Notification) {
+
+        if updateState == .gettingMessages && authState == .authenticated {
+            updateState = .gettingRequests
+            contactManager.getPendingRequests()
+        }
+ 
+    }
+ 
+    @objc func getRequestsComplete(_ notification: Notification) {
+
+        if updateState == .gettingRequests && authState == .authenticated {
+            updateState = .gettingStatus
+            contactManager.getRequestStatus()
+        }
+
+    }
+    
+    @objc func getStatusComplete(_ notification: Notification) {
+
+        if updateState == .gettingStatus {
+            updateState = .idle
             DispatchQueue.main.async {
-//                if UIApplication.shared.applicationIconBadgeNumber > 0 {
-                    self.doUpdates()
-//                }
+                UIApplication.shared.applicationIconBadgeNumber = 0
             }
         }
 
     }
 
-    @objc func suspend() {
-        
-        suspended = true
-        NotificationCenter.default.post(name: Notifications.AppSuspended, object: nil)
-
-    }
-
-    @objc func getMessagesComplete(_ notification: Notification) {
-
-        NotificationCenter.default.removeObserver(self, name: Notifications.GetMessagesComplete, object: nil)
-        contactManager.getPendingRequests()
-        contactManager.getRequestStatus(/* retry: false, publicId: nil */)
-        DispatchQueue.main.async {
-            UIApplication.shared.applicationIconBadgeNumber = 0
-        }
-        updatesInProgress = false
-
-    }
-    
-    @objc func newSession(_ notification: Notification) {
-        sessionActive = true
-        doUpdates()
-    }
-
     @objc func sessionEnded(_ notification: Notification) {
 
-        sessionActive = false
-        //contactManager.clearContacts()
-        //ConversationCache.clearCache()
-
+        authState = .loggedOut
+        
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
         print("Notification received")
-        if sessionActive && !updatesInProgress {
-            doUpdates()
-        }
+        doUpdates()
         completionHandler(.badge)
 
     }

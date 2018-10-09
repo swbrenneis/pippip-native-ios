@@ -19,7 +19,7 @@ class AcknowledgeRequestView: UIView {
     @IBOutlet weak var rejectButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
 
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var blurController: ControllerBlurProtocol?
     var contactRequest: ContactRequest? {
         didSet {

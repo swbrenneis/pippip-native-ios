@@ -11,7 +11,7 @@ import RealmSwift
 
 class MessageManager: NSObject {
 
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var config = Configurator()
 
     func acknowledgeMessages(_ textMessages: [TextMessage]) {

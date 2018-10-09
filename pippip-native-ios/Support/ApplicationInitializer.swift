@@ -10,7 +10,7 @@ import UIKit
 
 class ApplicationInitializer: NSObject {
 
-    @objc static var accountSession = AccountSession()
+    @objc static var accountSession = AccountSession.instance
 
     @objc static func InitializeApp() {
 

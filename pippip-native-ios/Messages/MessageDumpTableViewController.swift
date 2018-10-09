@@ -11,7 +11,7 @@ import ChameleonFramework
 
 class MessageDumpTableViewController: UITableViewController {
 
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var messageManager = MessageManager()
     var textMessages = [Int: [TextMessage]]()
     var contactIds = [Int]()

@@ -10,7 +10,7 @@ import UIKit
 
 class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesResponse> {
 
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var messageManager = MessageManager()
 
     override init(request: GetMessagesRequest) {
@@ -24,7 +24,9 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
 
     func getComplete(response: GetMessagesResponse) {
 
-        NotificationCenter.default.post(name: Notifications.GetMessagesComplete, object: nil)
+        if response.messages!.count == 0 {
+            AsyncNotifier.notify(name: Notifications.GetMessagesComplete, object: nil)
+        }
         print("\(response.messages!.count) new messages returned")
         var textMessages = [TextMessage]()
         for message in response.messages! {
@@ -43,21 +45,6 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
         if !textMessages.isEmpty {
             messageManager.addTextMessages(textMessages)
             messageManager.acknowledgeMessages(textMessages)
-        }
-        if !response.rejected!.isEmpty {
-            var contacts = [Contact]()
-            for reject in response.rejected! {
-                if let contact = contactManager.getContact(publicId: reject) {
-                    if contact.status == "accepted" {
-                        contacts.append(contact)
-                    }
-                }
-            }
-            if !contacts.isEmpty {
-                DispatchQueue.global().async {
-                    self.contactManager.syncContacts(contacts: contacts, action: "add")
-                }
-            }
         }
 
     }

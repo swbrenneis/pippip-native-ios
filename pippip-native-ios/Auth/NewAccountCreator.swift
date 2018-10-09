@@ -16,6 +16,7 @@ class NewAccountCreator: NSObject {
     var alertPresenter = AlertPresenter()
     var sessionState = SessionState()
     var delegate: AuthenticationDelegateProtocol?
+    var biometricsEnabled: Bool!
 
     override init() {
         super.init()
@@ -29,9 +30,15 @@ class NewAccountCreator: NSObject {
 
         do {
             try storeVault()
-            ApplicationInitializer.accountSession.setDefaultConfig()
+            AccountSession.instance.setDefaultConfig(accountName: accountName)
             let config = Configurator()
             config.authenticated = true
+            config.useLocalAuth = biometricsEnabled
+            config.uuid = NSUUID().uuidString
+            if biometricsEnabled {
+                let localAuth = LocalAuthenticator()
+                localAuth.setKeychainPassphrase(uuid: config.uuid , passphrase: passphrase)
+            }
             delegate?.authenticated()
         }
         catch {
@@ -42,11 +49,11 @@ class NewAccountCreator: NSObject {
 
     }
 
-    func createAccount(accountName: String, passphrase: String) {
+    func createAccount(accountName: String, passphrase: String, biometricsEnabled: Bool) {
 
-        AccountSession.accountName = accountName
         self.passphrase = passphrase
         self.accountName = accountName
+        self.biometricsEnabled = biometricsEnabled
         DispatchQueue.global().async {
             let parameterGenerator = ParameterGenerator()
             parameterGenerator.generateParameters(accountName)

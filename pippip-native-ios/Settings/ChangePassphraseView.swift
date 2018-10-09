@@ -18,8 +18,8 @@ class ChangePassphraseView: UIView {
     @IBOutlet weak var cancelButton: UIButton!
     
     var settingsViewController: SettingsTableViewController?
+    var accountName: String!
     var alertPresenter = AlertPresenter()
-    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
     var oldPassphrase = ""
     var newPassphrase = ""
 
@@ -50,12 +50,6 @@ class ChangePassphraseView: UIView {
         cancelButton.backgroundColor = PippipTheme.cancelButtonColor
         cancelButton.setTitleColor(PippipTheme.cancelButtonTextColor, for: .normal)
         
-        let frame = self.bounds
-        blurView.frame = frame
-        blurView.alpha = 0.0
-        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        addSubview(blurView)
-
     }
     
     @IBAction func changePassphraseTapped(_ sender: Any) {
@@ -63,38 +57,38 @@ class ChangePassphraseView: UIView {
         oldPassphrase = oldPassphraseTextView.text ?? ""
         newPassphrase = newPassphraseTextView.text ?? ""
         do {
-            if try UserVault.validatePassphrase(oldPassphrase) {
-                dismiss(changePassphrase: true)
+            if try UserVault.validatePassphrase(accountName: accountName, passphrase: oldPassphrase) {
+                let vault = UserVault()
+                do {
+                    try vault.changePassphrase(accountName: self.accountName, oldPassphrase: self.oldPassphrase,
+                                               newPassphrase: self.newPassphrase)
+                    self.alertPresenter.successAlert(title: "Passphrase Changed", message: "Your local passphrase has been changed")
+                }
+                catch {
+                    self.alertPresenter.errorAlert(title: "Change Passphrase Error", message: "An error has occurred, please try again")
+                }
+                dismiss()
             }
         }
         catch {
             alertPresenter.errorAlert(title: "Invalid Old Passphrase",
                                       message: "The old passphrase you entered is invalid")
             // Dismiss here to make brute force harder
-            dismiss(changePassphrase: false)
+            dismiss()
         }
 
     }
     
-    func dismiss(changePassphrase: Bool) {
+    func dismiss() {
         
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.blurView.alpha = 0.0
             self.settingsViewController?.blurView.alpha = 0.0
         }, completion: { completed in
+            self.oldPassphraseTextView.resignFirstResponder()
+            self.newPassphraseTextView.resignFirstResponder()
             self.removeFromSuperview()
-            if changePassphrase {
-                let vault = UserVault()
-                do {
-                    try vault.changePassphrase(oldPassphrase: self.oldPassphrase, newPassphrase: self.newPassphrase)
-                    self.alertPresenter.successAlert(title: "Passphrase Changed", message: "Your local passphrase has been changed")
-                }
-                catch {
-                    self.alertPresenter.errorAlert(title: "Change Passphrase Error", message: "An error has occurred, please try again")
-                }
-            }
         })
         
     }

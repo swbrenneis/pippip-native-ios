@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,9 +12,12 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NewAccountView" customModule="pippip_native_ios" customModuleProvider="target">
             <connections>
                 <outlet property="accountNameTextField" destination="wqq-V4-hee" id="otn-YG-kM6"/>
+                <outlet property="biometricsLabel" destination="gel-AL-Ggm" id="S97-JF-DH9"/>
                 <outlet property="cancelButton" destination="A5P-Ij-sK5" id="qiv-FB-hqh"/>
                 <outlet property="contentView" destination="iN0-l3-epB" id="dI8-y0-zRK"/>
                 <outlet property="createAccountButton" destination="iGd-56-Zzd" id="tKM-HX-14k"/>
+                <outlet property="enableBiometricsButton" destination="Acr-Ej-PlW" id="jA4-z5-P57"/>
+                <outlet property="laStackView" destination="fj7-Xb-39C" id="Aaf-1K-Cvm"/>
                 <outlet property="passphraseTextField" destination="QRL-yB-dpq" id="Xmy-Je-Rc4"/>
                 <outlet property="titleLabel" destination="ctR-Zw-8bZ" id="zQr-7u-dA2"/>
             </connections>
@@ -38,13 +40,13 @@
                     <rect key="frame" x="25" y="75" width="325" height="535"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter an account name and a passphrase" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FYi-gu-MJT">
-                            <rect key="frame" x="0.0" y="0.0" width="325" height="95"/>
+                            <rect key="frame" x="0.0" y="0.0" width="325" height="76.5"/>
                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Account Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wqq-V4-hee">
-                            <rect key="frame" x="0.0" y="110" width="325" height="95"/>
+                            <rect key="frame" x="0.0" y="91.5" width="325" height="77"/>
                             <nil key="textColor"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
@@ -53,7 +55,7 @@
                             </connections>
                         </textField>
                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Passphrase" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="QRL-yB-dpq">
-                            <rect key="frame" x="0.0" y="220" width="325" height="95"/>
+                            <rect key="frame" x="0.0" y="183.5" width="325" height="76.5"/>
                             <nil key="textColor"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
@@ -62,7 +64,7 @@
                             </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iGd-56-Zzd">
-                            <rect key="frame" x="0.0" y="330" width="325" height="95"/>
+                            <rect key="frame" x="0.0" y="275" width="325" height="76.5"/>
                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                             <state key="normal" title="Create Account"/>
                             <userDefinedRuntimeAttributes>
@@ -75,7 +77,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A5P-Ij-sK5">
-                            <rect key="frame" x="0.0" y="440" width="325" height="95"/>
+                            <rect key="frame" x="0.0" y="366.5" width="325" height="77"/>
                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                             <state key="normal" title="Cancel"/>
                             <userDefinedRuntimeAttributes>
@@ -87,6 +89,24 @@
                                 <action selector="cancelTapped:" destination="-1" eventType="touchUpInside" id="jVb-YT-w7S"/>
                             </connections>
                         </button>
+                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fj7-Xb-39C">
+                            <rect key="frame" x="0.0" y="458.5" width="325" height="76.5"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enable Touch ID" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gel-AL-Ggm">
+                                    <rect key="frame" x="0.0" y="0.0" width="276" height="76.5"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Acr-Ej-PlW">
+                                    <rect key="frame" x="276" y="0.0" width="51" height="76.5"/>
+                                </switch>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="gel-AL-Ggm" firstAttribute="centerY" secondItem="fj7-Xb-39C" secondAttribute="centerY" id="Ahz-My-j6j"/>
+                                <constraint firstItem="Acr-Ej-PlW" firstAttribute="centerY" secondItem="fj7-Xb-39C" secondAttribute="centerY" id="ar6-7q-b7E"/>
+                            </constraints>
+                        </stackView>
                     </subviews>
                 </stackView>
             </subviews>

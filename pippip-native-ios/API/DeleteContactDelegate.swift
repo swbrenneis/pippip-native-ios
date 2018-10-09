@@ -10,7 +10,7 @@ import UIKit
 
 class DeleteContactDelegate: EnclaveDelegate<DeleteContactRequest, DeleteContactResponse> {
 
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var messageManager = MessageManager()
 
     override init(request: DeleteContactRequest) {

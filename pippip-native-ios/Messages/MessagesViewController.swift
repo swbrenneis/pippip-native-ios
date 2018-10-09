@@ -14,7 +14,7 @@ import Sheriff
 import MessageUI
 import ImageSlideshow
 
-class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
+class MessagesViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageSearch: UISearchBar!
@@ -26,12 +26,10 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
     var settingsView: SettingsTableViewController!
     var previews = [TextMessage]()
     var searched = [Conversation]()
-    var contactManager: ContactManager!
     var sessionState = SessionState()
     var headingView: UIView!
     var accountDeleted = false
     var config = Configurator()
-    var authenticator = Authenticator()
     var localAuth: LocalAuthenticator!
     var alertPresenter = AlertPresenter()
     var contactBarButton: UIBarButtonItem!
@@ -54,26 +52,24 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        PippipTheme.setTheme()
+        PippipGeometry.setGeometry()
+        SecommAPI.initializeAPI()
+        
+        try! AccountSession.instance.loadAccount()
+
         self.view.backgroundColor = PippipTheme.viewColor
         self.navigationController?.navigationBar.barTintColor = PippipTheme.navBarColor
         self.navigationController?.navigationBar.tintColor = PippipTheme.navBarTint
         messageSearch.backgroundImage = UIImage()
         messageSearch.backgroundColor = PippipTheme.lightBarColor
         messageSearch.barTintColor = PippipTheme.navBarColor
-        //messageSearch.alpha = 0.4
-        //let cancelButton = UIButton.appearance(whenContainedInInstancesOf: [UISearchBar.self])
-        //cancelButton.setTitleColor(PippipTheme.navBarColor.darken(byPercentage: 0.2), for: .normal)
-//        let attributes: [NSAttributedStringKey: Any] = [NSAttributedStringKey.foregroundColor: PippipTheme.navBarColor]
-//        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes,
-//                                                                                                          for: .normal)
 
         let headingFrame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 10)
         headingView = UIView(frame: headingFrame)
         headingView.backgroundColor = .clear
         
-        contactManager = ContactManager()
-        localAuth = LocalAuthenticator(viewController: self, view: self.view)
-        authenticator.delegate = self
+        localAuth = LocalAuthenticator(viewController: self, initial: true)
 
         let bounds = self.view.bounds
         slideshow = ImageSlideshow(frame: bounds)
@@ -84,9 +80,6 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         self.view.addSubview(slideshow)
         
         // Do any additional setup after loading the view.
-//        let sidebarImages = [ UIImage(named: "help")!, UIImage(named: "contacts")!,
-//                              UIImage(named: "compose")!, UIImage(named: "settings")!,
-//                              UIImage(named: "exit")! ]
         let sidebarImages = [ UIImage(named: "help")!, UIImage(named: "settings")!,
                               UIImage(named: "exit")! ]
         sidebar = FrostedSidebar(itemImages: sidebarImages, colors: nil, selectionStyle: .single)
@@ -155,21 +148,17 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
-        localAuth.listening = true
+        localAuth.viewWillAppear()
 
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
-                                               name: Notifications.LocalAuthComplete, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
+                                               name: Notifications.AuthComplete, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(setContactBadge(_:)),
                                                name: Notifications.SetContactBadge, object: nil)
 
-        getMostRecentMessages()
-        tableView.reloadData()
-        contactBadge.badgeValue =  contactManager.pendingRequests.count + config.statusUpdates
-
     }
-
+/*
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -179,18 +168,23 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
                                                                 height: bounds.height + 6.0)
 
     }
-
+*/
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
-        localAuth.listening = false
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.LocalAuthComplete, object: nil)
 
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        localAuth.viewDidDisappear()
+        
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -215,7 +209,7 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
     
     #if targetEnvironment(simulator)
     @objc func pollServer(_ sender: Any) {
-        ApplicationInitializer.accountSession.doUpdates()
+        AccountSession.instance.doUpdates()
     }
     #endif
 
@@ -250,7 +244,7 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
     func getMostRecentMessages() {
 
         previews.removeAll()
-        let contactList = contactManager.contactList
+        let contactList = ContactManager.instance.contactList
         for contact in contactList {
             let conversation = ConversationCache.getConversation(contact.contactId)
             if let message = conversation.mostRecentMessage {
@@ -266,7 +260,7 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
     func signOut() {
         
         previews.removeAll()
-        authenticator.logout()
+        Authenticator().logout()
 
     }
 
@@ -275,7 +269,7 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
     @objc func setContactBadge(_ notification: Notification) {
 
         DispatchQueue.main.async {
-            self.contactBadge.badgeValue = self.contactManager.pendingRequests.count + self.config.statusUpdates
+            self.contactBadge.badgeValue = ContactManager.instance.pendingRequests.count + self.config.statusUpdates
         }
 
     }
@@ -289,29 +283,12 @@ class MessagesViewController: UIViewController, AuthenticationDelegateProtocol {
         
     }
 
-    @objc func localAuthComplete(_ notification: Notification) {
+    @objc func authComplete(_ notification: Notification) {
 
         DispatchQueue.main.async {
-            self.localAuth.showAuthView = false
-        }
-
-    }
-
-    // Authentication delegate
-    
-    func authenticated() {
-        // Nothing to do
-    }
-    
-    func authenticationFailed(reason: String) {
-        // Nothing to do
-    }
-
-    func loggedOut() {
-
-        AsyncNotifier.notify(name: Notifications.SessionEnded)
-        DispatchQueue.main.async {
-            self.navigationController?.performSegue(withIdentifier: "AuthViewSegue", sender: nil)
+            self.getMostRecentMessages()
+            self.tableView.reloadData()
+            self.contactBadge.badgeValue =  ContactManager.instance.pendingRequests.count + self.config.statusUpdates
         }
 
     }
@@ -401,7 +378,7 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
         let message = previews[indexPath.item]
         // This is code necessary to allow for a bug that stores a message before the contact
         // has been accepted. It can be removed when general beta begins.
-        if let contact = contactManager.getContact(contactId: message.contactId) {
+        if let contact = ContactManager.instance.getContact(contactId: message.contactId) {
             if contact.status == "accepted" {
                 cell.configure(textMessage: message)
             }
@@ -421,7 +398,7 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
         self.view.endEditing(true)
         let contactId = previews[indexPath.item].contactId
         let viewController = ChattoViewController()
-        viewController.contact = contactManager.getContact(contactId: contactId)
+        viewController.contact = ContactManager.instance.getContact(contactId: contactId)
         self.navigationController?.pushViewController(viewController, animated: true)
 
     }

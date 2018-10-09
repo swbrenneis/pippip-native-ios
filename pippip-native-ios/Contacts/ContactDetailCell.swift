@@ -19,7 +19,7 @@ class ContactDetailCell: PippipTableViewCell, UITextFieldDelegate {
     @IBOutlet weak var displayNameText: UITextField!
     @IBOutlet weak var displayNameLabel: UILabel!
     
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var publicId: String!
     var alertPresenter = AlertPresenter()
     var contact: Contact!
@@ -125,8 +125,7 @@ class ContactDetailCell: PippipTableViewCell, UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 
         if textField.text != contact.directoryId {
-            let contactManager = ContactManager()
-            contactManager.setDirectoryId(contactId: contact.contactId, directoryId: textField.text)
+            ContactManager.instance.setDirectoryId(contactId: contact.contactId, directoryId: textField.text)
             contact.directoryId = textField.text
             displayNameLabel.text = contact.displayName
         }

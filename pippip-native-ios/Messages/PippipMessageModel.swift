@@ -20,7 +20,7 @@ class PippipMessageModel: MessageModelProtocol {
 
     init(message: Message) {
 
-        let contactManager = ContactManager()
+        let contactManager = ContactManager.instance
         let contact = contactManager.getContact(contactId: message.contactId)!
 
         senderId = contact.displayName

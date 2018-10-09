@@ -12,12 +12,12 @@ import Foundation
 
     var sessionState = SessionState()
 
-    @objc func changePassphrase(oldPassphrase: String, newPassphrase: String) throws {
+    @objc func changePassphrase(accountName: String, oldPassphrase: String, newPassphrase: String) throws {
 
         let docsURLs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let docURL = docsURLs[0]
         let vaultsURL = docURL.appendingPathComponent("PippipVaults", isDirectory: true)
-        let vaultURL = vaultsURL.appendingPathComponent(AccountSession.accountName!)
+        let vaultURL = vaultsURL.appendingPathComponent(accountName)
         let vaultData = try Data(contentsOf: vaultURL)
 
         try decode(vaultData, passphrase: oldPassphrase)
@@ -26,12 +26,12 @@ import Foundation
 
     }
 
-    static func validatePassphrase(_ passphrase: String) throws -> Bool {
+    static func validatePassphrase(accountName: String, passphrase: String) throws -> Bool {
 
         let docsURLs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let docURL = docsURLs[0]
         let vaultsURL = docURL.appendingPathComponent("PippipVaults", isDirectory: true)
-        let vaultUrl = vaultsURL.appendingPathComponent(AccountSession.accountName!)
+        let vaultUrl = vaultsURL.appendingPathComponent(accountName)
         let vaultData = try Data(contentsOf: vaultUrl)
 
         let digest = CKSHA256()

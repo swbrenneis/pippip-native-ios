@@ -15,8 +15,7 @@ class AccountDeleter: NSObject {
         deleteDirectoryId()
         let authenticator = Authenticator()
         authenticator.logout()
-        let accountName = AccountSession.accountName!
-        AccountSession.accountName = nil
+        let accountName = AccountSession.instance.accountName
 
         let realmURL = Realm.Configuration.defaultConfiguration.fileURL!
         let realmURLs = [
@@ -40,8 +39,7 @@ class AccountDeleter: NSObject {
 
         let config = Configurator()
         if let directoryId = config.directoryId {
-            let contactManager = ContactManager()
-            contactManager.updateDirectoryId(newDirectoryId: nil, oldDirectoryId: directoryId)
+            ContactManager.instance.updateDirectoryId(newDirectoryId: nil, oldDirectoryId: directoryId)
         }
 
     }

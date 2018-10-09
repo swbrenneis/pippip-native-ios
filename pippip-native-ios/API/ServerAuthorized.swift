@@ -36,7 +36,7 @@ class ServerAuthorized: NSObject, APIRequestProtocol {
         let encoded = codec.encrypt(sessionState.serverPublicKey!)
         data = encoded.base64EncodedString()
         // Will be nil if simulator
-        deviceToken = ApplicationInitializer.accountSession.deviceToken?.base64EncodedString()
+        deviceToken = AccountSession.instance.deviceToken?.base64EncodedString()
         #if DEBUG
         developer = true
         #else

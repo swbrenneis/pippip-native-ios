@@ -27,7 +27,7 @@ class Message: NSObject, Comparable {
     var failed = false
 
     var config = Configurator()
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
 
     init(serverMessage: ServerMessage) {
 
@@ -53,7 +53,7 @@ class Message: NSObject, Comparable {
         sequence = contact.currentSequence + 1
         contact.currentSequence = sequence
 
-        let contactManager = ContactManager()
+        let contactManager = ContactManager.instance
         do {
             try contactManager.updateContact(contact)
         }

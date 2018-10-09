@@ -18,7 +18,7 @@ class SelectContactView: UIView {
     @IBOutlet weak var searchTextWidth: NSLayoutConstraint!
     
     var contactList = [Contact]()
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var lastPartialLength = 0
     var selected: Contact?
     var selectedRow: Int = -1

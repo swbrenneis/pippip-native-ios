@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import LocalAuthentication
 
 class NewAccountView: UIView {
 
@@ -16,12 +17,16 @@ class NewAccountView: UIView {
     @IBOutlet weak var passphraseTextField: UITextField!
     @IBOutlet weak var createAccountButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
+    @IBOutlet weak var enableBiometricsButton: UISwitch!
+    @IBOutlet weak var biometricsLabel: UILabel!
+    @IBOutlet weak var laStackView: UIStackView!
     
     var blurController: ControllerBlurProtocol?
     var alertPresenter = AlertPresenter()
     var accountName = ""
     var passphrase = ""
-    var createCompletion = { (accountName: String, passphrase: String) in }
+    var createCompletion = { (accountName: String, passphrase: String, enableBiometrics: Bool) in }
+    var biometricsAvailable = true
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -56,6 +61,32 @@ class NewAccountView: UIView {
         cancelButton.backgroundColor = PippipTheme.cancelButtonColor
         cancelButton.setTitleColor(PippipTheme.cancelButtonTextColor, for: .normal)
 
+        let laContext = LAContext()
+        var authError: NSError? = nil
+        if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)) {
+            var laType = ""
+            switch laContext.biometryType {
+            case .none:
+                biometricsAvailable = false
+                break
+            case .touchID:
+                laType = "Enable touch ID"
+                break
+            case .faceID:
+                laType = "Enable face ID"
+                break
+            }
+            if biometricsAvailable {
+                biometricsLabel.text = laType
+            }
+            else {
+                laStackView.isHidden = true
+            }
+        }
+        else {
+            laStackView.isHidden = true
+        }
+ 
     }
     
     func enableCreateButton() {
@@ -79,8 +110,7 @@ class NewAccountView: UIView {
             self.blurController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
-            self.createCompletion(self.accountName, self.passphrase)
-//            self.authViewController?.doNewAccount(accountName: self.accountName, passphrase: self.passphrase)
+            self.createCompletion(self.accountName, self.passphrase, self.enableBiometricsButton.isOn)
         })
         
     }

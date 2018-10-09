@@ -10,7 +10,7 @@ import UIKit
 
 class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPendingRequestsResponse> {
 
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
 
     override init(request: GetPendingRequests) {
         super.init(request: request)
@@ -23,6 +23,7 @@ class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPending
 
     func getComplete(response: GetPendingRequestsResponse) {
         
+        AsyncNotifier.notify(name: Notifications.GetRequestsComplete, object: nil)
         print("\(response.requests!.count) pending requests returned")
         if response.requests!.count > 0 {
             contactManager.addRequests(response.requests!)
@@ -36,6 +37,7 @@ class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPending
     }
 
     func getError(_ reason: String) {
+        AsyncNotifier.notify(name: Notifications.GetRequestsComplete, object: nil)
         print("Get pending requests error: \(reason)")
     }
 

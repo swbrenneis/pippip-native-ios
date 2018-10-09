@@ -19,6 +19,8 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
     @IBOutlet weak var logoTop: NSLayoutConstraint!
     @IBOutlet weak var logoLeading: NSLayoutConstraint!
     @IBOutlet weak var authButton: UIButton!
+    @IBOutlet weak var authButtonLeading: NSLayoutConstraint!
+    @IBOutlet weak var authButtonTrailing: NSLayoutConstraint!
     @IBOutlet weak var quickstartButton: UIButton!
     @IBOutlet weak var versionLabel: UILabel!
     @IBOutlet weak var secommLabel: UILabel!
@@ -26,6 +28,8 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
     var accountName: String?
     var authView: AuthView!
     var alertPresenter = AlertPresenter()
+    var localAuthenticator: LocalAuthenticator!
+    var localAuth = true
     var authenticator = Authenticator()
     var newAccountCreator = NewAccountCreator()
     var signInView: SignInView?
@@ -50,27 +54,27 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        try! ApplicationInitializer.accountSession.loadAccount()
+        try! AccountSession.instance.loadAccount()
+        /*
+         * Do this here if the account gets screwed up during debug
+        let deleter = AccountDeleter()
+        try! deleter.deleteAccount()
+        */
         
         PippipTheme.setTheme()
+        PippipGeometry.setGeometry()
         SecommAPI.initializeAPI()
 
+        localAuthenticator = LocalAuthenticator(viewController: self, initial: false)
         authenticator.delegate = self
         newAccountCreator.delegate = self
 
         // Do any additional setup after loading the view.
         let bounds = self.view.bounds
-        let logoWidth = bounds.width * 0.7
-        logoLeading.constant = (bounds.width - logoWidth) / 2
-        logoTrailing.constant = (bounds.width - logoWidth) / 2
         let backgroundColor = PippipTheme.splashColor
         self.view.backgroundColor = backgroundColor
         authButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         authButton.backgroundColor = PippipTheme.buttonColor
-        let device = Device()
-        if device == .iPhoneSE {
-            authButton.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
-        }
         quickstartButton.setTitleColor(ContrastColorOf(backgroundColor!, returnFlat: false), for: .normal)
         quickstartButton.backgroundColor = .clear
         quickstartButton.isHidden = false
@@ -89,8 +93,6 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
         self.view.addSubview(slideshow)
 
         authView = AuthView(frame: bounds)
-        authView.logoLeading.constant = (bounds.width - logoWidth) / 2
-        authView.logoTrailing.constant = (bounds.width - logoWidth) / 2
         authView.contentView.backgroundColor = PippipTheme.splashColor
         authView.versionLabel.textColor = UIColor.flatSand
         authView.secommLabel.textColor = UIColor.flatSand
@@ -101,26 +103,31 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
-        accountName = AccountSession.accountName
+        accountName = AccountSession.instance.accountName
+
+        NotificationCenter.default.addObserver(self, selector: #selector(passphraseReady(_:)),
+                                               name: Notifications.PassphraseReady, object: nil)
+        authButton.alpha = 0.0
         if accountName == nil {
             authButton.setTitle("Create A New Account", for: .normal)
+            let screenWidth = self.view.bounds.width
+            let abWidth = screenWidth * PippipGeometry.newAccountButtonWidthRatio
+            let abConstraint = (screenWidth - abWidth) / 2
+            authButtonLeading.constant = abConstraint
+            authButtonTrailing.constant = abConstraint
+            authButton.alpha = 1.0
         }
-            /*
-        else if config.authenticated && config.useLocalAuth {
-            self.view.addSubview(authView)
-            doThumbprint()
-        }
- */
         else {
-            authButton.setTitle("Sign In", for: .normal)
+            localAuthenticator.getKeychainPassphrase(uuid: config.uuid)
         }
-
+        
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
+        NotificationCenter.default.removeObserver(self, name: Notifications.PassphraseReady, object: nil)
         
     }
 
@@ -128,37 +135,7 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    /*
-    func doThumbprint() {
-        
-        assert(Thread.isMainThread)
-        
-        let device = Device()
-        var reason = "Please provide your thumbprint to open Pippip"
-        if device == .iPhoneX {
-            reason = "Please use face ID to open Pippip"
-        }
-        
-        let laContext = LAContext()
-        var authError: NSError? = nil
-        if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)) {
-            laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
-                                     localizedReason: reason, reply: { (success : Bool, error : Error? ) -> Void in
-                                        DispatchQueue.main.async {
-                                            if (success) {
-                                                self.authView.removeFromSuperview()
-                                                self.authenticated()
-                                            }
-                                            else {
-                                                guard let theError = error else { return }
-                                                print("Local authentication failed: \(theError)")
-                                            }
-                                        }
-            })
-        }
-        
-    }
-    */
+
     @IBAction func quickstartPressed(_ sender: Any) {
 
         UIView.animate(withDuration: 0.3, animations: {
@@ -167,14 +144,35 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
 
     }
     
+    @objc func passphraseReady(_ notification: Notification) {
+        
+        DispatchQueue.main.async {
+            if let passphrase = notification.object as! String? {
+                self.doAuthenticate(passphrase: passphrase)
+            }
+            else {
+                self.authButton.alpha = 1.0
+                self.authButton.setTitle("Sign In", for: .normal)
+                let screenWidth = self.view.bounds.width
+                let abWidth = screenWidth * PippipGeometry.signInButtonWidthRatio
+                let abConstraint = (screenWidth - abWidth) / 2
+                self.authButtonLeading.constant = abConstraint
+                self.authButtonTrailing.constant = abConstraint
+            }
+        }
+        
+    }
+    
     func showAuthenticateView() {
 
         let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.45)
+        let viewRect = CGRect(x: 0.0, y: 0.0,
+                              width: frame.width * PippipGeometry.signInViewWidthRatio,
+                              height: frame.height * PippipGeometry.signInViewHeightRatio)
         signInView = SignInView(frame: viewRect)
-        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 100)
+        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - PippipGeometry.signInViewOffset)
         signInView?.center = viewCenter
-        signInView?.alpha = 0.3
+        signInView?.alpha = 0.0
 
         signInView?.accountName = accountName!
         signInView?.blurController = self
@@ -194,14 +192,16 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
     func showNewAccountView() {
 
         let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.5)
+        let viewRect = CGRect(x: 0.0, y: 0.0,
+                              width: frame.width * PippipGeometry.newAccountViewWidthRatio,
+                              height: frame.height * PippipGeometry.newAccountViewHeightRatio)
         newAccountView = NewAccountView(frame: viewRect)
-        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 100)
+        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - PippipGeometry.newAccountViewOffset)
         newAccountView?.center = viewCenter
-        newAccountView?.alpha = 0.3
+        newAccountView?.alpha = 0.0
         
         newAccountView?.blurController = self
-        newAccountView?.createCompletion = doNewAccount(accountName:passphrase:)
+        newAccountView?.createCompletion = doNewAccount(accountName:passphrase:biometricsEnabled:)
         
         self.view.addSubview(self.newAccountView!)
         
@@ -226,10 +226,13 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
         hud.label.textColor = UIColor.flatTealDark
         hud.label.text = "Authenticating...";
         authenticator.authenticate(accountName: self.accountName!, passphrase: passphrase)
+        DispatchQueue.main.async {
+            self.authButton.alpha = 0.0
+        }
         
     }
     
-    func doNewAccount(accountName: String, passphrase: String) {
+    func doNewAccount(accountName: String, passphrase: String, biometricsEnabled: Bool) {
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),
                                                name: Notifications.UpdateProgress, object: nil)
@@ -240,7 +243,7 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
         hud.contentColor = PippipTheme.buttonColor
         hud.label.textColor = UIColor.flatTealDark
         hud.label.text = "Creating...";
-        newAccountCreator.createAccount(accountName: accountName, passphrase: passphrase)
+        newAccountCreator.createAccount(accountName: accountName, passphrase: passphrase, biometricsEnabled: biometricsEnabled)
         
     }
     
@@ -248,11 +251,9 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
 
         if accountName != nil {
             showAuthenticateView()
-            // doAuthenticateAlerts()
         }
         else {
             showNewAccountView()
-            //doNewAccountAlerts()
         }
 
     }
@@ -290,9 +291,10 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
         
         NotificationCenter.default.removeObserver(self, name: Notifications.UpdateProgress, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
+        NotificationCenter.default.post(name: Notifications.AuthComplete, object: nil)
         DispatchQueue.main.async {
             MBProgressHUD.hide(for: self.view, animated: true)
-            NotificationCenter.default.post(name: Notifications.NewSession, object: nil)
+            NotificationCenter.default.post(name: Notifications.AuthComplete, object: nil)
             self.authButton.setTitle("Sign In", for: .normal)
             self.performSegue(withIdentifier: "AuthCompleteSegue", sender: nil)
         }

@@ -14,7 +14,7 @@ class SendMessageDelegate: EnclaveDelegate<SendMessageRequest, SendMessageRespon
     static var sendSoundId: SystemSoundID = 0
     var textMessage: TextMessage
     var messageManager = MessageManager()
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
 
     init(request: SendMessageRequest, textMessage: TextMessage) {
         

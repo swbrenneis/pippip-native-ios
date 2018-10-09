@@ -17,7 +17,7 @@ class WhitelistViewController: UIViewController {
     var config = Configurator()
     var directoryId = ""
     var publicId = ""
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var sessionState = SessionState()
     var suspended = false
     var localAuth: LocalAuthenticator!
@@ -46,7 +46,7 @@ class WhitelistViewController: UIViewController {
             print("Error loading whitelist: \(error)")
         }
 
-        localAuth = LocalAuthenticator(viewController: self, view: self.view)
+        localAuth = LocalAuthenticator(viewController: self, initial: false)
 
         let addWhitelistEntry = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addWhitelistEntry(_:)))
         rightBarItems.append(addWhitelistEntry)
@@ -58,22 +58,25 @@ class WhitelistViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
 
-        localAuth.listening = true
+        localAuth.viewWillAppear()
         alertPresenter.present = true
-        NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
-                                               name: Notifications.LocalAuthComplete, object: nil)
 
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        localAuth.listening = false
         alertPresenter.present = false
-        NotificationCenter.default.removeObserver(self, name: Notifications.LocalAuthComplete, object: nil)
 
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        localAuth.viewDidDisappear()
+    
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -239,7 +242,7 @@ class WhitelistViewController: UIViewController {
         }
 
     }
-
+/*
     @objc func localAuthComplete(_ notification: Notification) {
         
         DispatchQueue.main.async {
@@ -247,7 +250,7 @@ class WhitelistViewController: UIViewController {
         }
         
     }
-
+*/
     @IBAction func done(_ sender: Any) {
 
         dismiss(animated: true, completion: nil)

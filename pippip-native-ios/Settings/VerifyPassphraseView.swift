@@ -18,6 +18,7 @@ class VerifyPassphraseView: UIView {
 
     var settingsViewController: SettingsTableViewController?
     var alertPresenter = AlertPresenter()
+    var accountName: String!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -55,7 +56,7 @@ class VerifyPassphraseView: UIView {
         let passphrase = passphraseTextField.text ?? ""
         let accountDeleter = AccountDeleter()
         do {
-            if try UserVault.validatePassphrase(passphrase) {
+            if try UserVault.validatePassphrase(accountName: accountName, passphrase: passphrase) {
                 try accountDeleter.deleteAccount()
                 self.alertPresenter.infoAlert(title: "Account Deleted",
                                                  message: "This account has been deleted")
@@ -73,6 +74,18 @@ class VerifyPassphraseView: UIView {
 
     }
 
+    func dismiss() {
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.center.y = 0.0
+            self.alpha = 0.0
+            self.settingsViewController?.blurView.alpha = 0.0
+        }, completion: { completed in
+            self.removeFromSuperview()
+        })
+        
+    }
+    
     @IBAction func verifyTapped(_ sender: Any) {
 
         UIView.animate(withDuration: 0.3, animations: {

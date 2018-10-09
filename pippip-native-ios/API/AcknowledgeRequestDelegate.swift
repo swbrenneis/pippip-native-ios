@@ -11,7 +11,7 @@ import UIKit
 class AcknowledgeRequestDelegate: EnclaveDelegate<AcknowledgeRequest, AcknowledgeRequestResponse> {
 
     var contactRequest: ContactRequest
-    var contactManager = ContactManager()
+    var contactManager = ContactManager.instance
     var alertPresenter = AlertPresenter()
 
     init(request: RequestT, contactRequest: ContactRequest) {
