@@ -26,7 +26,7 @@ class AuthView: UIView, ControllerBlurProtocol {
     var config = Configurator()
     var signInView: SignInView?
     var newAccountView: NewAccountView?
-    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
+    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
     var slideshow: ImageSlideshow!
     let slides = [ImageSource(imageString: "quickstart01")!,
                   ImageSource(imageString: "quickstart02")!,

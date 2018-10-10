@@ -10,6 +10,7 @@ import UIKit
 import UserNotifications
 import RealmSwift
 import LocalAuthentication
+import CocoaLumberjack
 
 enum AccountSessionState {
     case appStarted
@@ -79,6 +80,13 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     private override init() {
 
+        DDLog.add(DDOSLogger.sharedInstance) // Uses os_log
+        
+        let fileLogger: DDFileLogger = DDFileLogger() // File Logger
+        fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
+        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
+        DDLog.add(fileLogger)
+
         accountSessionState = .terminated
         authState = .notAuthenticated
         updateState = .idle
@@ -134,7 +142,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         setRealmConfiguration()
         let realm = try! Realm()
         let config = realm.objects(AccountConfig.self).first
-        print("AccountConfig version \(config!.version)")
+        DDLogDebug("AccountConfig version \(config!.version)")
         
     }
     
@@ -157,7 +165,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
             }
         }
         catch {
-            print("Error writing initial config to database: \(error)")
+            DDLogError("Error writing initial config to database: \(error)")
         }
         
     }
@@ -276,7 +284,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
-        print("Notification received")
+        DDLogVerbose("Notification received")
         doUpdates()
         completionHandler(.badge)
 

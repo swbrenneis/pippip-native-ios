@@ -24,7 +24,7 @@ class WhitelistViewController: UIViewController {
     var alertPresenter = AlertPresenter()
     var rightBarItems = [UIBarButtonItem]()
     var addIdView: AddToWhitelistView?
-    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
+    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -307,7 +307,7 @@ extension WhitelistViewController: UITableViewDelegate, UITableViewDataSource {
 
     }
 
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle,
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle,
                    forRowAt indexPath: IndexPath) {
 
         if editingStyle == .delete {

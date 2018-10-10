@@ -20,14 +20,12 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
     var signInView: SignInView?
     var alertPresenter = AlertPresenter()
     var authPrompt: String = ""
-    var accountName: String
     var authenticator: Authenticator
     var newAccountCreator: NewAccountCreator
 
     @objc init(viewController: UIViewController, initial: Bool) {
 
         self.viewController = viewController
-        accountName = AccountSession.instance.accountName
         authenticator = Authenticator()
         newAccountCreator = NewAccountCreator()
 
@@ -56,7 +54,6 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
 
     override init() {   // Used when setting up keychain biometrics
         
-        accountName = AccountSession.instance.accountName
         authenticator = Authenticator()
         newAccountCreator = NewAccountCreator()
 
@@ -125,7 +122,7 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
             }
         }
         else {
-            authenticator.authenticate(accountName: accountName, passphrase: passphrase)
+            authenticator.authenticate(accountName: AccountSession.instance.accountName, passphrase: passphrase)
         }
 
     }
@@ -173,52 +170,7 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
         }
         
     }
-    /*
-    func showSignInView() {
 
-        guard let view = viewController?.view else { return }
-        let frame = view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0,
-                              width: frame.width * PippipGeometry.signInViewWidthRatio,
-                              height: frame.height * PippipGeometry.signInViewHeightRatio)
-        signInView = SignInView(frame: viewRect)
-        let viewCenter = CGPoint(x: view.center.x, y: view.center.y - PippipGeometry.signInViewOffset)
-        signInView?.center = viewCenter
-        signInView?.alpha = 0.3
-        
-        signInView?.accountName = accountName
-        signInView?.blurController = authView
-        signInView?.signInCompletion = validatePassphrase(passphrase:)
-        
-        view.addSubview(signInView!)
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.authView!.blurView.alpha = 0.6
-            self.signInView?.alpha = 1.0
-        }, completion: { complete in
-            self.signInView?.passphraseTextField.becomeFirstResponder()
-        })
-        
-    }
-
-    func validatePassphrase(passphrase: String) {
-
-        var validated = false
-        do {
-            validated = try UserVault.validatePassphrase(accountName: accountName, passphrase: passphrase)
-        }
-        catch {
-            print("Passphrase validation error: \(error)")
-        }
-        if (validated) {
-            NotificationCenter.default.post(name: Notifications.AuthComplete, object: nil)
-        }
-        else {
-            alertPresenter.errorAlert(title: "Invalid Passphrase", message: "The passphrase you entered is invalid")
-        }
-
-    }
-*/
     func viewWillAppear() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),

@@ -28,7 +28,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     var contactRequests = [ContactRequest]()
     var addContactView: AddContactView?
     var requestsView: ContactRequestsView?
-    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
+    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -452,7 +452,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
 
     }
 
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle,
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle,
                    forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {

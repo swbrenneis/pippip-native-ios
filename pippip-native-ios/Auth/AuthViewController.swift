@@ -34,7 +34,7 @@ class AuthViewController: UIViewController, AuthenticationDelegateProtocol, Cont
     var newAccountCreator = NewAccountCreator()
     var signInView: SignInView?
     var newAccountView: NewAccountView?
-    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
+    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
     var config = Configurator()
     var slideshow: ImageSlideshow!
     let slides = [ImageSource(imageString: "quickstart01")!,

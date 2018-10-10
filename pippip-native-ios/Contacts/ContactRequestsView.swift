@@ -18,7 +18,7 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
     var contactManager = ContactManager.instance
     var contactRequests: [ContactRequest]!
     var acknowledgeRequestView: AcknowledgeRequestView?
-    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
+    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
 
     override init(frame: CGRect) {
         super.init(frame: frame)
