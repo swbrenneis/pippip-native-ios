@@ -13,8 +13,7 @@ class AccountDeleter: NSObject {
     func deleteAccount() throws {
 
         deleteDirectoryId()
-        let authenticator = Authenticator()
-        authenticator.logout()
+        AccountSession.instance.signOut()
         let accountName = AccountSession.instance.accountName
 
         let realmURL = Realm.Configuration.defaultConfiguration.fileURL!

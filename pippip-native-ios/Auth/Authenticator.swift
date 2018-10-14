@@ -56,18 +56,6 @@ class Authenticator: NSObject {
         
     }
 
-    @objc func logout() {
-
-        //secommAPI.queuePost(delegate: APIResponseDelegate(request: Logout(),
-        //                                                  responseComplete: self.logoutComplete,
-        //                                                  responseError: self.logoutError))
-        let config = Configurator()
-        config.authenticated = false
-        delegate?.loggedOut()
-        NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
-
-    }
-
     func openVault(accountName: String, passphrase: String) -> Bool {
 
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)

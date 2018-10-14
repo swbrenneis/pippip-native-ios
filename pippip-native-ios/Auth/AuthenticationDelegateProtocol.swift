@@ -14,6 +14,4 @@ protocol AuthenticationDelegateProtocol {
     
     func authenticationFailed(reason: String);
 
-    func loggedOut();
-
 }

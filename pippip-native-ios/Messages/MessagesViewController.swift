@@ -106,7 +106,7 @@ class MessagesViewController: UIViewController {
         sidebar.actionForIndex[2] = {
             self.sidebarOn = false
             self.sidebar.dismissAnimated(true, completion: nil)
-            self.signOut()
+            AccountSession.instance.signOut()
         }
 
         var rightBarItems = [UIBarButtonItem]()
@@ -254,13 +254,6 @@ class MessagesViewController: UIViewController {
         previews.sort(by: { (message1, message2) -> Bool in
             return message1.timestamp > message2.timestamp
         })
-
-    }
-
-    func signOut() {
-        
-        previews.removeAll()
-        Authenticator().logout()
 
     }
 

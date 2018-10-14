@@ -49,6 +49,8 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
 
         authenticator.delegate = self
         newAccountCreator.delegate = self
+        NotificationCenter.default.addObserver(self, selector: #selector(sessionEnded(_:)),
+                                               name: Notifications.SessionEnded, object: nil)                // Used to dismiss the HUD
 
     }
 
@@ -99,7 +101,7 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
 
     func doAuthenticate(passphrase: String) {
 
-        if AccountSession.instance.authenticated {
+        if AccountSession.instance.serverAuthenticated || AccountSession.instance.loggedOut {
             var success = false
             do {
                 success = try UserVault.validatePassphrase(accountName: AccountSession.instance.accountName, passphrase: passphrase)
@@ -112,10 +114,11 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
                     self.viewController?.navigationController?.isNavigationBarHidden = false
                     self.authView?.dismiss(completion: {(completed) in })
                 }
+                NotificationCenter.default.post(name: Notifications.AuthComplete, object: nil)
             }
             else {
                 alertPresenter.errorAlert(title: "Authentication Error", message: "Biometric authentication failed")
-                authenticator.logout()
+                AccountSession.instance.signOut()
                 DispatchQueue.global().async {
                     self.authView?.enableAuthentication()
                }
@@ -175,7 +178,7 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
         
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                name: Notifications.AppSuspended, object: nil)                // Used to dismiss the HUD
-        if !AccountSession.instance.authenticated {
+        if !AccountSession.instance.serverAuthenticated || AccountSession.instance.loggedOut {
             showAuthView(suspending: false)
         }
 
@@ -212,6 +215,17 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
         
     }
 
+    @objc func sessionEnded(_ notification: Notification) {
+        
+        DispatchQueue.main.async {
+            self.viewController?.navigationController?.isNavigationBarHidden = true
+            self.authView?.present(completion: { (completed) in
+                self.authView?.enableAuthentication()
+            })
+        }
+        
+    }
+    
     // Authentication delegate
 
     func authenticated() {
@@ -227,12 +241,6 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
     
     func authenticationFailed(reason: String) {
         
-    }
-    
-    func loggedOut() {
-        
-        authView?.alpha = 1.0
-
     }
     
 }

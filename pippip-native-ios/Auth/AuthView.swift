@@ -68,7 +68,7 @@ class AuthView: UIView, ControllerBlurProtocol {
         secommLabel.textColor = UIColor.flatSand
         authButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         authButton.backgroundColor = PippipTheme.buttonColor
-        authButton.alpha = 0.0
+        authButton.isHidden = true
         quickstartButton.setTitleColor(ContrastColorOf(backgroundColor!, returnFlat: false), for: .normal)
         quickstartButton.backgroundColor = .clear
         quickstartButton.isHidden = false
@@ -89,17 +89,17 @@ class AuthView: UIView, ControllerBlurProtocol {
         
         assert(Thread.isMainThread)
         if AccountSession.instance.accountLoaded {
-            if config.useLocalAuth {
+            if !AccountSession.instance.loggedOut && config.useLocalAuth {
                 localAuthenticator.getKeychainPassphrase(uuid: config.uuid)
             }
             else {
-                self.authButton.alpha = 1.0
                 self.authButton.setTitle("Sign In", for: .normal)
                 let screenWidth = self.bounds.width
                 let abWidth = screenWidth * PippipGeometry.signInButtonWidthRatio
                 let abConstraint = (screenWidth - abWidth) / 2
-                self.authButtonLeading.constant = abConstraint
-                self.authButtonTrailing.constant = abConstraint
+                authButtonLeading.constant = abConstraint
+                authButtonTrailing.constant = abConstraint
+                authButton.isHidden = false
             }
         }
         else {
@@ -109,7 +109,7 @@ class AuthView: UIView, ControllerBlurProtocol {
             let abConstraint = (screenWidth - abWidth) / 2
             authButtonLeading.constant = abConstraint
             authButtonTrailing.constant = abConstraint
-            authButton.alpha = 1.0
+            authButton.isHidden = false
         }
 
     }
@@ -120,6 +120,7 @@ class AuthView: UIView, ControllerBlurProtocol {
         NotificationCenter.default.removeObserver(self, name: Notifications.UpdateProgress, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
         DispatchQueue.main.async {
+            self.authButton.isHidden = true
             UIView.animate(withDuration: 0.3, animations: {
                 self.center.y = 0.0
                 self.alpha = 0.0
@@ -134,7 +135,9 @@ class AuthView: UIView, ControllerBlurProtocol {
 
     func doAuthenticate(passphrase: String) {
 
-        if !AccountSession.instance.authenticated {
+        assert(Thread.isMainThread)
+        authButton.isHidden = true
+        if !AccountSession.instance.serverAuthenticated && !AccountSession.instance.loggedOut {
             NotificationCenter.default.addObserver(self, selector: #selector(updateProgress(_:)),
                                                    name: Notifications.UpdateProgress, object: nil)
             //NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
@@ -151,6 +154,8 @@ class AuthView: UIView, ControllerBlurProtocol {
     
     func doNewAccount(accountName: String, passphrase: String, enableBiometrics: Bool) {
         
+        assert(Thread.isMainThread)
+        authButton.isHidden = true
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),
                                                name: Notifications.UpdateProgress, object: nil)
         //NotificationCenter.default.addObserver(self, selector: #selector(self.presentAlert(_:)),
@@ -161,6 +166,19 @@ class AuthView: UIView, ControllerBlurProtocol {
         hud.label.textColor = UIColor.flatTealDark
         hud.label.text = "Creating...";
         localAuthenticator.doNewAccount(accountName: accountName, passphrase: passphrase, biometricsEnabled: enableBiometrics)
+        
+    }
+    
+    func present(completion: @escaping (Bool) -> Void) {
+        
+        assert(Thread.isMainThread)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.center = self.superview!.center
+            self.alpha = 1.0
+            self.blurController?.blurView.alpha = 0.6
+        }, completion: { (completed) in
+            completion(completed)
+        })
         
     }
     
@@ -222,13 +240,13 @@ class AuthView: UIView, ControllerBlurProtocol {
                 self.doAuthenticate(passphrase: passphrase)
             }
             else {
-                self.authButton.alpha = 1.0
                 self.authButton.setTitle("Sign In", for: .normal)
                 let screenWidth = self.bounds.width
                 let abWidth = screenWidth * PippipGeometry.signInButtonWidthRatio
                 let abConstraint = (screenWidth - abWidth) / 2
                 self.authButtonLeading.constant = abConstraint
                 self.authButtonTrailing.constant = abConstraint
+                self.authButton.isHidden = false
             }
         }
         
@@ -263,17 +281,6 @@ class AuthView: UIView, ControllerBlurProtocol {
     }
 
     // Notifications
-
-    // This is just used to dismiss the HUD
-    /*
-    @objc func presentAlert(_ notification: Notification) {
-        
-        DispatchQueue.main.async {
-            MBProgressHUD.hide(for: self, animated: true)
-        }
-        
-    }
- */
 
     @objc func updateProgress(_ notification: Notification) {
         

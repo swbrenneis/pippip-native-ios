@@ -424,6 +424,7 @@ class ContactManager: NSObject {
     @objc func authComplete(_ notification: Notification) {
 
         if (config.authenticated) {
+            contactSet.removeAll()
             let realm = try! Realm()
             let dbContacts = realm.objects(DatabaseContact.self)
             for dbContact in dbContacts {

@@ -23,9 +23,9 @@ enum AccountSessionState {
 }
 
 enum AuthState {
-    case notAuthenticated
-    case authenticated
-    case loggedOut
+    case notAuthenticated       // No auth complete
+    case serverAuthenticated    // Authentication with server done
+    case loggedOut              // Server authenticated, app logged out
 }
 
 enum UpdateState {
@@ -60,12 +60,17 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
             return realAccountName != nil
         }
     }
-    var authenticated: Bool {
+    var serverAuthenticated: Bool {
         get {
-            return authState == .authenticated
+            return authState == .serverAuthenticated
         }
     }
-    
+    var loggedOut: Bool {
+        get {
+            return authState == .loggedOut
+        }
+    }
+
     @objc static var instance: AccountSession {
         get {
             if let accountSession = AccountSession.theInstance {
@@ -95,8 +100,6 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
         NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
                                                name: Notifications.AuthComplete, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(sessionEnded(_:)),
-                                               name: Notifications.SessionEnded, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(getStatusComplete(_:)),
                                                name: Notifications.GetStatusComplete, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(getRequestsComplete(_:)),
@@ -108,7 +111,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     func doUpdates() {
 
-        if updateState == .idle && authState == .authenticated {
+        if updateState == .idle && authState == .serverAuthenticated {
             updateState = .gettingMessages
             messageManager.getNewMessages()
         }
@@ -187,6 +190,14 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         
     }
 
+    func signOut() {
+        
+        config.authenticated = false
+        authState = .loggedOut
+        NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
+        
+    }
+    
     @objc func appStarted() {
 
         accountSessionState = .appStarted
@@ -241,7 +252,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     
     @objc func authComplete(_ notification: Notification) {
 
-        authState = .authenticated
+        authState = .serverAuthenticated
         accountSessionState = .active
         doUpdates()
         
@@ -249,7 +260,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     
     @objc func getMessagesComplete(_ notification: Notification) {
 
-        if updateState == .gettingMessages && authState == .authenticated {
+        if updateState == .gettingMessages && authState == .serverAuthenticated {
             updateState = .gettingRequests
             contactManager.getPendingRequests()
         }
@@ -258,7 +269,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
  
     @objc func getRequestsComplete(_ notification: Notification) {
 
-        if updateState == .gettingRequests && authState == .authenticated {
+        if updateState == .gettingRequests && authState == .serverAuthenticated {
             updateState = .gettingStatus
             contactManager.getRequestStatus()
         }
@@ -274,12 +285,6 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
             }
         }
 
-    }
-
-    @objc func sessionEnded(_ notification: Notification) {
-
-        authState = .loggedOut
-        
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
