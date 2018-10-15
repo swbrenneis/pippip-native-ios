@@ -16,7 +16,7 @@ class DirectoryIdCellItem: MultiCellItemProtocol {
 
 }
 
-class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol {
+class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol, UITextFieldDelegate {
 
     @IBOutlet weak var directoryIdTextField: UITextField!
     @IBOutlet weak var setDirectoryIdButton: UIButton!
@@ -40,6 +40,7 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol {
             directoryIdTextField.text = ""
         }
         setDirectoryIdButton.isHidden = true
+        directoryIdTextField.delegate = self
 
     }
 
@@ -51,31 +52,7 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol {
         }
 
     }
-/*
-    override func setDarkTheme() {
-        
-        directoryIdTextField.textColor = PippipTheme.darkTextColor
-        setDirectoryIdButton.setTitleColor(PippipTheme.buttonDarkTextColor, for: .normal)
-        super.setDarkTheme()
-        
-    }
-    
-    override func setMediumTheme() {
-        
-        directoryIdTextField.textColor = PippipTheme.mediumTextColor
-        setDirectoryIdButton.setTitleColor(PippipTheme.buttonMediumTextColor, for: .normal)
-        super.setMediumTheme()
-        
-    }
-    
-    override func setLightTheme() {
-        
-        directoryIdTextField.textColor = PippipTheme.lightTextColor
-        setDirectoryIdButton.setTitleColor(PippipTheme.buttonLightTextColor, for: .normal)
-        super.setLightTheme()
-        
-    }
-*/
+
     @objc func directoryIdMatched(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
@@ -117,6 +94,7 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol {
         alertPresenter.successAlert(title: "Directory ID Set", message: message)
         DispatchQueue.main.async {
             self.setDirectoryIdButton.isHidden = true
+            self.directoryIdTextField.resignFirstResponder()
         }
 
     }
@@ -143,4 +121,11 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol {
 
     }
 
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+
+        directoryIdTextField.resignFirstResponder()
+        return true
+
+    }
+    
 }

@@ -89,6 +89,7 @@ class ChangePassphraseView: UIView {
             self.oldPassphraseTextView.resignFirstResponder()
             self.newPassphraseTextView.resignFirstResponder()
             self.removeFromSuperview()
+            self.settingsViewController?.navigationController?.setNavigationBarHidden(false, animated: true)
         })
         
     }
@@ -100,7 +101,10 @@ class ChangePassphraseView: UIView {
             self.alpha = 0.0
             self.settingsViewController?.blurView.alpha = 0.0
         }, completion: { completed in
+            self.oldPassphraseTextView.resignFirstResponder()
+            self.newPassphraseTextView.resignFirstResponder()
             self.removeFromSuperview()
+            self.settingsViewController?.navigationController?.setNavigationBarHidden(false, animated: true)
         })
         
     }

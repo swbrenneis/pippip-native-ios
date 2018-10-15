@@ -11,5 +11,6 @@ import Foundation
 protocol ControllerBlurProtocol {
     
     var blurView: UIVisualEffectView { get set }
+    var navigationController: UINavigationController? { get }
 
 }

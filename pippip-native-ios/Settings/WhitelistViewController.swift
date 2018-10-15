@@ -142,11 +142,13 @@ class WhitelistViewController: UIViewController {
     @objc func addWhitelistEntry(_ sender: Any) {
 
         let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.8, height: frame.height * 0.5)
+        let viewRect = CGRect(x: 0.0, y: 0.0,
+                              width: frame.width * PippipGeometry.addToWhitelistViewWidthRatio,
+                              height: frame.height * PippipGeometry.addToWhitelistViewHeightRatio)
         addIdView = AddToWhitelistView(frame: viewRect)
-        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 30)
+        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - PippipGeometry.addToWhitelistViewOffset)
         addIdView?.center = viewCenter
-        addIdView?.alpha = 0.3
+        addIdView?.alpha = 0.0
         
         addIdView?.whitelistViewController = self
         

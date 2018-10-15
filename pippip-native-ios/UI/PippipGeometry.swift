@@ -28,12 +28,26 @@ class PippipGeometry: NSObject {
     static var changePassphraseViewHeightRatio: CGFloat!
     static var changePassphraseViewWidthRatio: CGFloat!
     static var changePassphraseViewOffset: CGFloat!
+    static var changePassphraseViewHideNavBar: Bool!
     static var deleteAccountViewHeightRatio: CGFloat!
     static var deleteAccountViewWidthRatio: CGFloat!
     static var deleteAccountViewOffset: CGFloat!
     static var addToWhitelistViewWidthRatio: CGFloat!
     static var addToWhitelistViewHeightRatio: CGFloat!
     static var addToWhitelistViewOffset: CGFloat!
+    static var addContactViewWidthRatio: CGFloat!
+    static var addContactViewHeightRatio: CGFloat!
+    static var addContactViewOffset: CGFloat!
+    static var addContactViewHideNavBar: Bool!
+    static var contactDetailViewWidthRatio: CGFloat!
+    static var contactDetailViewHeightRatio: CGFloat!
+    static var contactDetailViewNoRetryRatio: CGFloat!
+    static var contactDetailViewOffset: CGFloat!
+    static var ackRequestViewWidthRatio: CGFloat!
+    static var ackRequestViewHeightRatio: CGFloat!
+    static var ackRequestViewOffset: CGFloat!
+    static var contactRequestsViewWidthRatio: CGFloat!
+    static var contactRequestsViewHeightRatio: CGFloat!
 
     static func setGeometry() {
 
@@ -55,7 +69,7 @@ class PippipGeometry: NSObject {
             set6_1InchGeometry()
             break
         case .iPhoneXsMax:
-            set6_8InchGeometry()
+            set6_5InchGeometry()
             break
         default:
             setSimulatorGeometry()
@@ -80,14 +94,27 @@ class PippipGeometry: NSObject {
         storePassphraseViewHeightRatio = 0.5
         storePassphraseViewOffset = 30.0
         changePassphraseViewWidthRatio = 0.8
-        changePassphraseViewHeightRatio = 0.52
-        changePassphraseViewOffset = 15.0
+        changePassphraseViewHeightRatio = 0.6
+        changePassphraseViewOffset = 10.0
+        changePassphraseViewHideNavBar = true
         deleteAccountViewWidthRatio = 0.8
         deleteAccountViewHeightRatio = 0.4
         deleteAccountViewOffset = 30.0
         addToWhitelistViewWidthRatio = 0.8
-        addToWhitelistViewHeightRatio = 0.5
-        addToWhitelistViewOffset = 30.0
+        addToWhitelistViewHeightRatio = 0.6
+        addToWhitelistViewOffset = 60.0
+        addContactViewWidthRatio = 0.8
+        addContactViewHeightRatio = 0.6
+        addContactViewOffset = 90.0
+        addContactViewHideNavBar = true
+        contactDetailViewWidthRatio = 0.9
+        contactDetailViewHeightRatio = 0.3
+        contactDetailViewNoRetryRatio = 0.23
+        contactDetailViewOffset = 70.0
+        contactRequestsViewWidthRatio = 0.85
+        contactRequestsViewHeightRatio = 0.7
+        ackRequestViewWidthRatio = 0.9
+        ackRequestViewHeightRatio = 0.85
 
     }
     
@@ -110,10 +137,26 @@ class PippipGeometry: NSObject {
         changePassphraseViewWidthRatio = 0.8
         changePassphraseViewHeightRatio = 0.55
         changePassphraseViewOffset = 15.0
+        changePassphraseViewHideNavBar = false
         deleteAccountViewWidthRatio = 0.7
         deleteAccountViewHeightRatio = 0.4
         deleteAccountViewOffset = 65.0
-        
+        addToWhitelistViewWidthRatio = 0.8
+        addToWhitelistViewHeightRatio = 0.55
+        addToWhitelistViewOffset = 60.0
+        addContactViewWidthRatio = 0.8
+        addContactViewHeightRatio = 0.55
+        addContactViewOffset = 80.0
+        addContactViewHideNavBar = false
+        contactDetailViewWidthRatio = 0.9
+        contactDetailViewHeightRatio = 0.27
+        contactDetailViewNoRetryRatio = 0.2
+        contactDetailViewOffset = 70.0
+        contactRequestsViewWidthRatio = 0.85
+        contactRequestsViewHeightRatio = 0.7
+        ackRequestViewWidthRatio = 0.9
+        ackRequestViewHeightRatio = 0.8
+
     }
     
     static func set5_5InchGeometry() {
@@ -122,8 +165,8 @@ class PippipGeometry: NSObject {
         newAccountViewWidthRatio = 0.7
         newAccountViewHeightRatio = 0.5
         newAccountViewOffset = 95.0
-        signInButtonWidthRatio = 0.3
-        signInViewWidthRatio = 0.75
+        signInButtonWidthRatio = 0.4
+        signInViewWidthRatio = 0.7
         signInViewHeightRatio = 0.45
         signInViewOffset = 114.0
         verifyPassphraseViewWidthRatio = 0.7
@@ -135,10 +178,26 @@ class PippipGeometry: NSObject {
         changePassphraseViewWidthRatio = 0.7
         changePassphraseViewHeightRatio = 0.44
         changePassphraseViewOffset = 15.0
+        changePassphraseViewHideNavBar = false
         deleteAccountViewWidthRatio = 0.7
         deleteAccountViewHeightRatio = 0.3
         deleteAccountViewOffset = 65.0
-        
+        addToWhitelistViewWidthRatio = 0.7
+        addToWhitelistViewHeightRatio = 0.5
+        addToWhitelistViewOffset = 65.0
+        addContactViewWidthRatio = 0.8
+        addContactViewHeightRatio = 0.55
+        addContactViewOffset = 80.0
+        addContactViewHideNavBar = false
+        contactDetailViewWidthRatio = 0.9
+        contactDetailViewHeightRatio = 0.24
+        contactDetailViewNoRetryRatio = 0.18
+        contactDetailViewOffset = 70.0
+        contactRequestsViewWidthRatio = 0.85
+        contactRequestsViewHeightRatio = 0.7
+        ackRequestViewWidthRatio = 0.9
+        ackRequestViewHeightRatio = 0.8
+
     }
     
     static func set5_8InchGeometry() {
@@ -147,7 +206,7 @@ class PippipGeometry: NSObject {
         newAccountViewWidthRatio = 0.7
         newAccountViewHeightRatio = 0.45
         newAccountViewOffset = 115.0
-        signInButtonWidthRatio = 0.35
+        signInButtonWidthRatio = 0.4
         signInViewWidthRatio = 0.7
         signInViewHeightRatio = 0.4
         signInViewOffset = 125.0
@@ -160,10 +219,14 @@ class PippipGeometry: NSObject {
         changePassphraseViewWidthRatio = 0.75
         changePassphraseViewHeightRatio = 0.44
         changePassphraseViewOffset = 15.0
+        changePassphraseViewHideNavBar = false
         deleteAccountViewWidthRatio = 0.75
         deleteAccountViewHeightRatio = 0.3
         deleteAccountViewOffset = 65.0
-        
+        addToWhitelistViewWidthRatio = 0.75
+        addToWhitelistViewHeightRatio = 0.44
+        addToWhitelistViewOffset = 80.0
+
     }
     
     static func set6_1InchGeometry() {
@@ -172,7 +235,7 @@ class PippipGeometry: NSObject {
         newAccountViewWidthRatio = 0.75
         newAccountViewHeightRatio = 0.43
         newAccountViewOffset = 145.0
-        signInButtonWidthRatio = 0.3
+        signInButtonWidthRatio = 0.4
         signInViewWidthRatio = 0.7
         signInViewHeightRatio = 0.38
         signInViewOffset = 175.0
@@ -185,10 +248,14 @@ class PippipGeometry: NSObject {
         changePassphraseViewWidthRatio = 0.75
         changePassphraseViewHeightRatio = 0.42
         changePassphraseViewOffset = 35.0
+        changePassphraseViewHideNavBar = false
         deleteAccountViewWidthRatio = 0.75
         deleteAccountViewHeightRatio = 0.3
         deleteAccountViewOffset = 65.0
-        
+        addToWhitelistViewWidthRatio = 0.75
+        addToWhitelistViewHeightRatio = 0.4
+        addToWhitelistViewOffset = 90.0
+
     }
     
     static func set6_5InchGeometry() {
@@ -196,33 +263,8 @@ class PippipGeometry: NSObject {
         newAccountButtonWidthRatio = 0.65
         newAccountViewWidthRatio = 0.75
         newAccountViewHeightRatio = 0.43
-        newAccountViewOffset = 145.0
-        signInButtonWidthRatio = 0.3
-        signInViewWidthRatio = 0.7
-        signInViewHeightRatio = 0.38
-        signInViewOffset = 175.0
-        verifyPassphraseViewWidthRatio = 0.75
-        verifyPassphraseViewHeightRatio = 0.35
-        verifyPassphraseViewOffset = 50.0
-        storePassphraseViewWidthRatio = 0.75
-        storePassphraseViewHeightRatio = 0.35
-        storePassphraseViewOffset = 50.0
-        changePassphraseViewWidthRatio = 0.75
-        changePassphraseViewHeightRatio = 0.42
-        changePassphraseViewOffset = 35.0
-        deleteAccountViewWidthRatio = 0.75
-        deleteAccountViewHeightRatio = 0.3
-        deleteAccountViewOffset = 65.0
-
-    }
-    
-    static func set6_8InchGeometry() {
-        
-        newAccountButtonWidthRatio = 0.65
-        newAccountViewWidthRatio = 0.75
-        newAccountViewHeightRatio = 0.43
         newAccountViewOffset = 150.0
-        signInButtonWidthRatio = 0.3
+        signInButtonWidthRatio = 0.4
         signInViewWidthRatio = 0.7
         signInViewHeightRatio = 0.38
         signInViewOffset = 175.0
@@ -235,10 +277,14 @@ class PippipGeometry: NSObject {
         changePassphraseViewWidthRatio = 0.75
         changePassphraseViewHeightRatio = 0.42
         changePassphraseViewOffset = 65.0
+        changePassphraseViewHideNavBar = false
         deleteAccountViewWidthRatio = 0.75
         deleteAccountViewHeightRatio = 0.3
         deleteAccountViewOffset = 65.0
-        
+        addToWhitelistViewWidthRatio = 0.75
+        addToWhitelistViewHeightRatio = 0.4
+        addToWhitelistViewOffset = 100.0
+
     }
     
     static func setSimulatorGeometry() {
@@ -261,7 +307,7 @@ class PippipGeometry: NSObject {
             set6_1InchGeometry()
             break
         case "iPhone11,4", "iPhone11,6":                                                        // iPhone XsMax
-            set6_8InchGeometry()
+            set6_5InchGeometry()
             break
         default:
             set6_1InchGeometry()

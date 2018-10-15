@@ -19,6 +19,7 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
     var contactRequests: [ContactRequest]!
     var acknowledgeRequestView: AcknowledgeRequestView?
     var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
+    var navigationController: UINavigationController?   // This is to satisfy the protocol. DO NOT USE!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -58,6 +59,26 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
 
     }
     
+    func showAckRequestsView(contactRequest: ContactRequest) {
+        
+        let frame = contentView.frame
+        let viewRect = CGRect(x: 0.0, y: 0.0,
+                              width: frame.width * PippipGeometry.ackRequestViewWidthRatio,
+                              height: frame.height * PippipGeometry.ackRequestViewHeightRatio)
+        acknowledgeRequestView = AcknowledgeRequestView(frame: viewRect)
+        acknowledgeRequestView!.blurController = self
+        acknowledgeRequestView!.alpha = 0.0
+        acknowledgeRequestView!.center = contentView.center
+        acknowledgeRequestView?.contactRequest = contactRequest
+        
+        addSubview(acknowledgeRequestView!)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.blurView.alpha = 0.6
+            self.acknowledgeRequestView!.alpha = 1.0
+        })
+   
+    }
     
     @IBAction func cancelTapped(_ sender: Any) {
 
@@ -122,18 +143,8 @@ extension ContactRequestsView: UITableViewDelegate, UITableViewDataSource  {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        let frame = contentView.frame
-        let viewRect = CGRect(x: 0.0, y: 0.0, width: frame.width * 0.9, height: frame.height * 0.7)
-        acknowledgeRequestView = AcknowledgeRequestView(frame: viewRect)
-        acknowledgeRequestView!.blurController = self
-        acknowledgeRequestView!.alpha = 0.0
-        acknowledgeRequestView!.center = contentView.center
-        acknowledgeRequestView?.contactRequest = Array(contactManager.pendingRequests)[indexPath.row]
-        addSubview(acknowledgeRequestView!)
-        UIView.animate(withDuration: 0.3, animations: {
-            self.blurView.alpha = 0.6
-            self.acknowledgeRequestView!.alpha = 1.0
-        }, completion: nil)
+        showAckRequestsView(contactRequest: Array(contactManager.pendingRequests)[indexPath.row])
+        
     }
 
 }

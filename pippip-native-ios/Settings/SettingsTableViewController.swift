@@ -109,11 +109,13 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         changePassphraseView?.settingsViewController = self
         
         self.view.addSubview(self.changePassphraseView!)
-        changePassphraseView?.oldPassphraseTextView.becomeFirstResponder()
         
         UIView.animate(withDuration: 0.3, animations: {
             self.blurView.alpha = 0.6
             self.changePassphraseView?.alpha = 1.0
+        }, completion: { completed in
+            self.navigationController?.setNavigationBarHidden(PippipGeometry.changePassphraseViewHideNavBar, animated: true)
+            self.changePassphraseView?.oldPassphraseTextView.becomeFirstResponder()
         })
         
     }

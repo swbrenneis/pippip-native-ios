@@ -57,7 +57,6 @@
 		55187ED220BE4A1C00F94792 /* ClientAuthorized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55187ED120BE4A1C00F94792 /* ClientAuthorized.swift */; };
 		55187ED420BE4C8900F94792 /* ServerAuthorized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55187ED320BE4C8900F94792 /* ServerAuthorized.swift */; };
 		551DBDD320D40858005D88D0 /* QuickStart.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DBDD220D40858005D88D0 /* QuickStart.storyboard */; };
-		551DBDD820D4A149005D88D0 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551DBDD720D4A149005D88D0 /* AuthViewController.swift */; };
 		55206DA92075486000B0B246 /* SelectContactView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55206DA82075486000B0B246 /* SelectContactView.xib */; };
 		55206DAD20755E1500B0B246 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */; };
 		55206DB12076A5EA00B0B246 /* MessageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DB02076A5EA00B0B246 /* MessageManager.swift */; };
@@ -202,6 +201,9 @@
 		55C49BFA21402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C49BF921402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift */; };
 		55C49BFC2140303400EEED14 /* PippipTextMessagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C49BFB2140303400EEED14 /* PippipTextMessagePresenter.swift */; };
 		55C49BFE2141B25400EEED14 /* PippipTextCellStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C49BFD2141B25400EEED14 /* PippipTextCellStyle.swift */; };
+		55C8075B2173BAE400336028 /* ContactDetailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55C8075A2173BAE400336028 /* ContactDetailView.xib */; };
+		55C8075D2173BB2100336028 /* ContactDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C8075C2173BB2100336028 /* ContactDetailView.swift */; };
+		55C8075F2174D7B900336028 /* ContactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C8075E2174D7B900336028 /* ContactCell.swift */; };
 		55C88DCF20707F6B00D58BCA /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C88DCE20707F6B00D58BCA /* Contact.swift */; };
 		55CB2803212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CB2802212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift */; };
 		55CB280721305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CB280621305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift */; };
@@ -316,7 +318,6 @@
 		55187ED120BE4A1C00F94792 /* ClientAuthorized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientAuthorized.swift; sourceTree = "<group>"; };
 		55187ED320BE4C8900F94792 /* ServerAuthorized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerAuthorized.swift; sourceTree = "<group>"; };
 		551DBDD220D40858005D88D0 /* QuickStart.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = QuickStart.storyboard; sourceTree = "<group>"; };
-		551DBDD720D4A149005D88D0 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		55206DA82075486000B0B246 /* SelectContactView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectContactView.xib; sourceTree = "<group>"; };
 		55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
 		55206DB02076A5EA00B0B246 /* MessageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageManager.swift; sourceTree = "<group>"; };
@@ -540,6 +541,9 @@
 		55C49BF921402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessagePresenterBuilder.swift; sourceTree = "<group>"; };
 		55C49BFB2140303400EEED14 /* PippipTextMessagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessagePresenter.swift; sourceTree = "<group>"; };
 		55C49BFD2141B25400EEED14 /* PippipTextCellStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextCellStyle.swift; sourceTree = "<group>"; };
+		55C8075A2173BAE400336028 /* ContactDetailView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactDetailView.xib; sourceTree = "<group>"; };
+		55C8075C2173BB2100336028 /* ContactDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailView.swift; sourceTree = "<group>"; };
+		55C8075E2174D7B900336028 /* ContactCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCell.swift; sourceTree = "<group>"; };
 		55C88DCE20707F6B00D58BCA /* Contact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		55CB2802212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessageViewModelBuilder.swift; sourceTree = "<group>"; };
 		55CB280621305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipMessageCollectionViewCellStyle.swift; sourceTree = "<group>"; };
@@ -641,7 +645,6 @@
 				5506D7BD216BBD3D0042FE73 /* AuthenticatedControllerProtocol.swift */,
 				55245F4220BCD62D00E6ECB6 /* Authenticator.swift */,
 				55E970AA20AE2C11008C2F39 /* AuthView.swift */,
-				551DBDD720D4A149005D88D0 /* AuthViewController.swift */,
 				5506D7B7216AA85A0042FE73 /* Keychain.swift */,
 				55E970AC20AE6927008C2F39 /* LocalAuthenticator.swift */,
 				55F2758C20C1A2CB002687C9 /* NewAccountCreator.swift */,
@@ -678,7 +681,9 @@
 				5593C945212B63AE0053011E /* AcknowledgeRequestView.swift */,
 				5557B466211DE1D800FE1775 /* AddContactView.swift */,
 				55C88DCE20707F6B00D58BCA /* Contact.swift */,
+				55C8075E2174D7B900336028 /* ContactCell.swift */,
 				55006BAA20B9889B0040C2DD /* ContactDetailCell.swift */,
+				55C8075C2173BB2100336028 /* ContactDetailView.swift */,
 				554D01C7207D0E2500C19373 /* ContactManager.swift */,
 				55FEC68A21683323002132DC /* ContactRequestsView.swift */,
 				5536A68C206897D200B7E6D8 /* ContactsViewController.swift */,
@@ -913,6 +918,7 @@
 				552BC4632124BB9E00694CB4 /* Alert2ButtonView.xib */,
 				55E970A820AE28F0008C2F39 /* AuthView.xib */,
 				55AD26F92121CF9E00FD8A9A /* ChangePassphraseView.xib */,
+				55C8075A2173BAE400336028 /* ContactDetailView.xib */,
 				55FEC688216832D4002132DC /* ContactRequestsView.xib */,
 				55E970B620B09DD2008C2F39 /* ContactTableViewCell.xib */,
 				5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */,
@@ -1211,6 +1217,7 @@
 				5592A5971F8BBB4400F08BF5 /* LaunchScreen.storyboard in Resources */,
 				5557B469211DE2DD00FE1775 /* AddContactView.xib in Resources */,
 				5557B46D211E087000FE1775 /* AddToWhitelistView.xib in Resources */,
+				55C8075B2173BAE400336028 /* ContactDetailView.xib in Resources */,
 				551DBDD320D40858005D88D0 /* QuickStart.storyboard in Resources */,
 				5557B461211CCE4000FE1775 /* NewAccountView.xib in Resources */,
 				55206DA92075486000B0B246 /* SelectContactView.xib in Resources */,
@@ -1348,6 +1355,7 @@
 				5511E9D620C32A500080C0DF /* SetDirectoryIdResponse.swift in Sources */,
 				5593C946212B63AE0053011E /* AcknowledgeRequestView.swift in Sources */,
 				55FB2F62202A6D7B005E3730 /* CKIVGenerator.mm in Sources */,
+				55C8075D2173BB2100336028 /* ContactDetailView.swift in Sources */,
 				55AA55011FA14C1300A7026B /* CKSHA256.mm in Sources */,
 				55AA54FC1FA14C1300A7026B /* CKRSAKeyPair.m in Sources */,
 				55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */,
@@ -1390,7 +1398,6 @@
 				55E06BFD20BC961D0034C652 /* SecommAPI.swift in Sources */,
 				554D01C6207C54A900C19373 /* LocalPasswordCell.swift in Sources */,
 				5511E9E620C40DA50080C0DF /* APIResponseDelegate.swift in Sources */,
-				551DBDD820D4A149005D88D0 /* AuthViewController.swift in Sources */,
 				55AA54FE1FA14C1300A7026B /* CKSecureRandom.mm in Sources */,
 				55721A1A20C9A5F5008FE9F6 /* RequestContactDelegate.swift in Sources */,
 				55FA874E1FD5F10500FB96C0 /* CKHMAC.mm in Sources */,
@@ -1454,6 +1461,7 @@
 				5511E9D820C3367F0080C0DF /* AcknowledgeMessagesRequest.swift in Sources */,
 				55721A1620C9956E008FE9F6 /* GetPendingRequestsDelegate.swift in Sources */,
 				55AA54DF1FA14B1E00A7026B /* Int32.cc in Sources */,
+				55C8075F2174D7B900336028 /* ContactCell.swift in Sources */,
 				554D01C4207C0CEC00C19373 /* UserVault.swift in Sources */,
 				55AA554E1FA14D7100A7026B /* GCM.cc in Sources */,
 				5586B882206428A400641514 /* PublicIdCell.swift in Sources */,

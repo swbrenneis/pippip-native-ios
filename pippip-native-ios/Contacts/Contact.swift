@@ -34,7 +34,7 @@ class Contact: NSObject {
     var authData: Data?
     var nonce: Data?
     var messageKeys: [ Data ]?
-    override var hashValue: Int {
+    override var hash: Int {
         return contactId
     }
 
