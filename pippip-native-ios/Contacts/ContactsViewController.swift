@@ -21,7 +21,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     var localAuth: LocalAuthenticator!
     var debugging = false
     var suspended = false
-    var alertPresenter = AlertPresenter()
+    var alertPresenter: AlertPresenter!
     var contactList: [Contact]!
     var rightBarItems = [UIBarButtonItem]()
     var contactRequests = [ContactRequest]()
@@ -33,6 +33,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        alertPresenter = AlertPresenter(view: self.view)
         self.view.backgroundColor = PippipTheme.viewColor
         let frame = self.view.bounds
         blurView.frame = frame
@@ -42,12 +43,6 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
-
-        let nib = UINib(nibName: "SectionFooterView", bundle: nil)
-        tableView.register(nib, forHeaderFooterViewReuseIdentifier: "SectionFooterView")
-
-        //let footerBounds = CGRect(x: 0.0, y: 0.0, width: self.view.bounds.width, height: 25.0)
-        //footerView = SectionFooterView(frame: footerBounds)
 
         localAuth = LocalAuthenticator(viewController: self, initial: false)
 
@@ -79,8 +74,6 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
                                                name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestStatusUpdated(_:)),
                                                name: Notifications.RequestStatusUpdated, object: nil)
-        //NotificationCenter.default.addObserver(self, selector: #selector(localAuthComplete(_:)),
-        //                                       name: Notifications.LocalAuthComplete, object: nil)
 
         if config.showIgnoredContacts {
             contactList = contactManager.contactList
@@ -94,7 +87,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
             if self.config.statusUpdates > 0 {
                 let suffix: String = self.config.statusUpdates > 1 ? "updates" : "update"
                 let message = "You have \(self.config.statusUpdates) contact status \(suffix)"
-                self.alertPresenter.infoAlert(title: "Contact Status Updates", message: message)
+                self.alertPresenter.infoAlert(title: "Contact Status Updates", message: message, toast: true)
             }
             self.config.statusUpdates = 0
             NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
@@ -408,22 +401,6 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
         else {
             return UITableViewCell()
         }
-        /*
-        if contactRequests.count > 0 && indexPath.row == 0 {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "PendingRequestsCell", for: indexPath)
-                as? PendingRequestsCell else { return UITableViewCell() }
-            //cell.setMediumTheme()
-            return cell
-        }
-        else {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "ContactCell", for: indexPath)
-                as? ContactCell else { return UITableViewCell() }
-            cell.setMediumTheme()
-            let increment = contactRequests.count > 0 ? 1 : 0
-            cell.configure(contact: contactList[indexPath.row - increment])
-            return cell
-        }
- */
 
     }
 

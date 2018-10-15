@@ -207,7 +207,7 @@ class PippipGeometry: NSObject {
         newAccountViewHeightRatio = 0.45
         newAccountViewOffset = 115.0
         signInButtonWidthRatio = 0.4
-        signInViewWidthRatio = 0.7
+        signInViewWidthRatio = 0.75
         signInViewHeightRatio = 0.4
         signInViewOffset = 125.0
         verifyPassphraseViewWidthRatio = 0.75
@@ -226,6 +226,18 @@ class PippipGeometry: NSObject {
         addToWhitelistViewWidthRatio = 0.75
         addToWhitelistViewHeightRatio = 0.44
         addToWhitelistViewOffset = 80.0
+        addContactViewWidthRatio = 0.77
+        addContactViewHeightRatio = 0.47
+        addContactViewOffset = 90.0
+        addContactViewHideNavBar = false
+        contactDetailViewWidthRatio = 0.9
+        contactDetailViewHeightRatio = 0.21
+        contactDetailViewNoRetryRatio = 0.16
+        contactDetailViewOffset = 70.0
+        contactRequestsViewWidthRatio = 0.85
+        contactRequestsViewHeightRatio = 0.7
+        ackRequestViewWidthRatio = 0.9
+        ackRequestViewHeightRatio = 0.65
 
     }
     
@@ -236,7 +248,7 @@ class PippipGeometry: NSObject {
         newAccountViewHeightRatio = 0.43
         newAccountViewOffset = 145.0
         signInButtonWidthRatio = 0.4
-        signInViewWidthRatio = 0.7
+        signInViewWidthRatio = 0.75
         signInViewHeightRatio = 0.38
         signInViewOffset = 175.0
         verifyPassphraseViewWidthRatio = 0.75
@@ -255,6 +267,18 @@ class PippipGeometry: NSObject {
         addToWhitelistViewWidthRatio = 0.75
         addToWhitelistViewHeightRatio = 0.4
         addToWhitelistViewOffset = 90.0
+        addContactViewWidthRatio = 0.77
+        addContactViewHeightRatio = 0.42
+        addContactViewOffset = 90.0
+        addContactViewHideNavBar = false
+        contactDetailViewWidthRatio = 0.9
+        contactDetailViewHeightRatio = 0.2
+        contactDetailViewNoRetryRatio = 0.15
+        contactDetailViewOffset = 70.0
+        contactRequestsViewWidthRatio = 0.85
+        contactRequestsViewHeightRatio = 0.7
+        ackRequestViewWidthRatio = 0.9
+        ackRequestViewHeightRatio = 0.62
 
     }
     
@@ -265,7 +289,7 @@ class PippipGeometry: NSObject {
         newAccountViewHeightRatio = 0.43
         newAccountViewOffset = 150.0
         signInButtonWidthRatio = 0.4
-        signInViewWidthRatio = 0.7
+        signInViewWidthRatio = 0.75
         signInViewHeightRatio = 0.38
         signInViewOffset = 175.0
         verifyPassphraseViewWidthRatio = 0.75
@@ -284,6 +308,18 @@ class PippipGeometry: NSObject {
         addToWhitelistViewWidthRatio = 0.75
         addToWhitelistViewHeightRatio = 0.4
         addToWhitelistViewOffset = 100.0
+        addContactViewWidthRatio = 0.77
+        addContactViewHeightRatio = 0.42
+        addContactViewOffset = 90.0
+        addContactViewHideNavBar = false
+        contactDetailViewWidthRatio = 0.9
+        contactDetailViewHeightRatio = 0.2
+        contactDetailViewNoRetryRatio = 0.14
+        contactDetailViewOffset = 70.0
+        contactRequestsViewWidthRatio = 0.85
+        contactRequestsViewHeightRatio = 0.7
+        ackRequestViewWidthRatio = 0.9
+        ackRequestViewHeightRatio = 0.62
 
     }
     

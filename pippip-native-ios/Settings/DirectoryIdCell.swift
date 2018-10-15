@@ -91,7 +91,7 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol, UITextFieldDelega
         else {
             message = "Your directory ID has been cleared"
         }
-        alertPresenter.successAlert(title: "Directory ID Set", message: message)
+        alertPresenter.successAlert(title: "Directory ID Set", message: message, toast: true)
         DispatchQueue.main.async {
             self.setDirectoryIdButton.isHidden = true
             self.directoryIdTextField.resignFirstResponder()

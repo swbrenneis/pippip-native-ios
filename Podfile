@@ -18,6 +18,7 @@ target 'pippip-native-ios' do
   pod 'DeviceKit', '~> 1.3'
   pod 'ImageSlideshow', '~> 1.6'
   pod 'CocoaLumberjack/Swift'
+  pod 'Toast-Swift', '~> 4.0.0'
 
   target 'pippip-native-iosTests' do
     inherit! :search_paths

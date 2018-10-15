@@ -25,6 +25,11 @@
 import UIKit
 
 final class PhotosInputCameraPicker: ImagePickerDelegate {
+    
+    func imagePickerDidFinish(_ picker: ImagePicker, mediaInfo: [String : Any]) {
+        
+    }
+
     private weak var presentingController: UIViewController?
     private var imagePicker: ImagePicker?
     private var completionBlocks: (onImageTaken: (UIImage?) -> Void, onCameraPickerDismissed: () -> Void)?
@@ -45,8 +50,9 @@ final class PhotosInputCameraPicker: ImagePickerDelegate {
         presentingController.present(imagePicker.controller, animated: true, completion: nil)
     }
 
-    func imagePickerDidFinish(_ picker: ImagePicker, mediaInfo: [String: Any]) {
-        let image = mediaInfo[UIImagePickerControllerOriginalImage] as? UIImage
+    func imagePickerDidFinish(_ picker: ImagePicker, mediaInfo: [UIImagePickerController.InfoKey: Any]) {
+        let image = mediaInfo[.originalImage] as? UIImage
+//        let image = mediaInfo[UIImagePickerControllerOriginalImage] as? UIImage
         self.finishPickingImage(image, fromPicker: picker.controller)
     }
 

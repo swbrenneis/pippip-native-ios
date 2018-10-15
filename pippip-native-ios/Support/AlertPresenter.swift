@@ -9,9 +9,11 @@
 import UIKit
 import RKDropdownAlert
 import ChameleonFramework
+import Toast_Swift
 
 class AlertPresenter: NSObject {
 
+    var view: UIView?
     var present: Bool = false {
         didSet {
             if present {
@@ -24,33 +26,42 @@ class AlertPresenter: NSObject {
         }
     }
 
-    @objc func infoAlert(title: String, message: String) {
+    override init() {
+        super.init()
+    }
+
+    init(view: UIView) {
+        self.view = view
+        super.init()
+    }
+    
+    @objc func infoAlert(title: String, message: String, toast: Bool = false) {
         
         var info = [AnyHashable: Any]()
         info["title"] = title
         info["message"] = message
         info["color"] = PippipTheme.infoAlertColor
-        NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+        NotificationCenter.default.post(name: Notifications.PresentAlert, object: toast, userInfo: info)
         
     }
     
-    @objc func errorAlert(title: String, message: String) {
+    @objc func errorAlert(title: String, message: String, toast: Bool = false) {
         
         var info = [AnyHashable: Any]()
         info["title"] = title
         info["message"] = message
         info["color"] = PippipTheme.errorAlertColor
-        NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+        NotificationCenter.default.post(name: Notifications.PresentAlert, object: toast, userInfo: info)
         
     }
     
-    @objc func successAlert(title: String, message: String) {
+    @objc func successAlert(title: String, message: String, toast: Bool = false) {
         
         var info = [AnyHashable: Any]()
         info["title"] = title
         info["message"] = message
         info["color"] = PippipTheme.successAlertColor
-        NotificationCenter.default.post(name: Notifications.PresentAlert, object: nil, userInfo: info)
+        NotificationCenter.default.post(name: Notifications.PresentAlert, object: toast, userInfo: info)
         
     }
 
@@ -60,10 +71,16 @@ class AlertPresenter: NSObject {
         guard let title = info["title"] as? String else { return }
         guard let message = info["message"] as? String else { return }
         guard let alertColor = info["color"] as? UIColor else { return }
+        guard let toast = notification.object as? Bool else { return }
         DispatchQueue.main.async {
-            RKDropdownAlert.title(title, message: message, backgroundColor: alertColor,
-                                  textColor: ContrastColorOf(alertColor, returnFlat: true),
-                                  delegate: nil)
+            if toast {
+                self.view?.makeToast(message, duration: 2.0, position: .top)
+            }
+            else {
+                RKDropdownAlert.title(title, message: message, backgroundColor: alertColor,
+                                      textColor: ContrastColorOf(alertColor, returnFlat: true),
+                                      delegate: nil)
+            }
         }
         
     }

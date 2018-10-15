@@ -8,6 +8,7 @@
 
 import UIKit
 import ChameleonFramework
+import Toast_Swift
 
 class PippipTheme: NSObject {
 
@@ -63,6 +64,11 @@ class PippipTheme: NSObject {
         incomingTextColor = UIColor.flatBlack
         outgoingMessageBubbleColor = UIColor.flatTealDark
         outgoingTextColor = ContrastColorOf(outgoingMessageBubbleColor, returnFlat: true)
+
+        var style = ToastStyle()
+        style.backgroundColor = UIColor.flatTealDark
+        style.messageColor = ContrastColorOf(style.backgroundColor, returnFlat: true)
+        ToastManager.shared.style = style
 
     }
 

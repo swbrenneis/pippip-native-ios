@@ -91,9 +91,11 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
             catch {
                 print("Error retrieving keychain passphrase: \(error)")
             }
+            /*
             if passphrase == nil  && !keychain.canceled {
                 self.config.useLocalAuth = false
             }
+ */
             NotificationCenter.default.post(name: Notifications.PassphraseReady, object: passphrase)
         }
 
@@ -240,7 +242,7 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
     }
     
     func authenticationFailed(reason: String) {
-        
+        authView?.authenticationFailed(reason: reason)
     }
     
 }

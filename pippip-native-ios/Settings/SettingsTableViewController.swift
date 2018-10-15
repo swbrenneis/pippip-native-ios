@@ -14,7 +14,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
     var cellItems = [Int: [MultiCellItemProtocol]]()
     var accountName: String!
     var config = Configurator()
-    var alertPresenter = AlertPresenter()
+    var alertPresenter: AlertPresenter!
     var localAuth: LocalAuthenticator!
     var deleteAccountView: DeleteAccountView?
     var verifyPassphraseView: VerifyPassphraseView?
@@ -34,6 +34,8 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         self.view.addSubview(blurView)
         self.navigationItem.title = "Settings"
 
+        alertPresenter = AlertPresenter(view: self.view)
+    
         self.tableView.dataSource = self
         self.tableView.delegate = self
 

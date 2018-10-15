@@ -262,7 +262,7 @@ open class FrostedSidebar: UIViewController {
         
         var blurFrame = CGRect(x: showFromRight ? view.bounds.size.width : 0, y: 0, width: 0, height: view.bounds.size.height)
         blurView.frame = blurFrame
-        blurView.contentMode = showFromRight ? UIViewContentMode.topRight : UIViewContentMode.topLeft
+        blurView.contentMode = showFromRight ? UIView.ContentMode.topRight : UIView.ContentMode.topLeft
         blurView.clipsToBounds = true
         view.insertSubview(blurView, belowSubview: contentView)
         
@@ -282,7 +282,7 @@ open class FrostedSidebar: UIViewController {
         }
         
         if animated{
-            UIView.animate(withDuration: TimeInterval(animationDuration), delay: 0, options: UIViewAnimationOptions(), animations: animations, completion: completion)
+            UIView.animate(withDuration: TimeInterval(animationDuration), delay: 0, options: UIView.AnimationOptions(), animations: animations, completion: completion)
         } else{
             animations()
             completion(true)
@@ -322,7 +322,7 @@ open class FrostedSidebar: UIViewController {
             var blurFrame = blurView.frame
             blurFrame.origin.x = showFromRight ? parentWidth : 0
             blurFrame.size.width = 0
-            UIView.animate(withDuration: TimeInterval(animationDuration), delay: 0, options: UIViewAnimationOptions.beginFromCurrentState, animations: {
+            UIView.animate(withDuration: TimeInterval(animationDuration), delay: 0, options: UIView.AnimationOptions.beginFromCurrentState, animations: {
                 self.contentView.frame = contentFrame
                 self.blurView.frame = blurFrame
                 self.dimView.alpha = 0
@@ -387,7 +387,7 @@ open class FrostedSidebar: UIViewController {
             let animation = CAAnimationGroup()
             animation.animations = [scaleAnimation, alphaAnimation]
             animation.duration = 0.5
-            animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+            animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
             circleShape.add(animation, forKey: nil)
         }
         if let action = actionForIndex[index]{
@@ -415,7 +415,7 @@ open class FrostedSidebar: UIViewController {
         
         init(index: Int){
             imageView.backgroundColor = UIColor.clear
-            imageView.contentMode = UIViewContentMode.scaleAspectFit
+            imageView.contentMode = UIView.ContentMode.scaleAspectFit
             itemIndex = index
             super.init(frame: CGRect.zero)
             addSubview(imageView)
@@ -465,7 +465,7 @@ open class FrostedSidebar: UIViewController {
             delay: delay,
             usingSpringWithDamping: 10.0,
             initialSpringVelocity: 50.0,
-            options: UIViewAnimationOptions.beginFromCurrentState,
+            options: UIView.AnimationOptions.beginFromCurrentState,
             animations: {
                 view.layer.transform = CATransform3DIdentity
                 view.alpha = 1
@@ -535,9 +535,9 @@ open class FrostedSidebar: UIViewController {
         if callingAppearanceMethods{
             beginAppearanceTransition(true, animated: false)
         }
-        viewController.addChildViewController(self)
+        viewController.addChild(self)
         viewController.view.addSubview(view)
-        didMove(toParentViewController: self)
+        didMove(toParent: self)
         if callingAppearanceMethods{
             endAppearanceTransition()
         }
@@ -548,9 +548,9 @@ open class FrostedSidebar: UIViewController {
         if callAppearanceMethods{
             beginAppearanceTransition(false, animated: false)
         }
-        willMove(toParentViewController: nil)
+        willMove(toParent: nil)
         view.removeFromSuperview()
-        removeFromParentViewController()
+        removeFromParent()
         if callAppearanceMethods{
             endAppearanceTransition()
         }

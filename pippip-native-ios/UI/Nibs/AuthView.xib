@@ -50,7 +50,7 @@
                         <constraint firstAttribute="height" constant="50" id="Q3z-vY-qhb"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="19"/>
-                    <state key="normal" title="Button"/>
+                    <state key="normal" title="Sign In"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
                             <integer key="value" value="7"/>

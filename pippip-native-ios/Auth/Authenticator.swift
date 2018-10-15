@@ -28,6 +28,7 @@ class Authenticator: NSObject {
         }
         else {
             alertPresenter.errorAlert(title: "Sign In Error", message: "Invalid Passphrase")
+            delegate?.authenticationFailed(reason: "Invalid passphrase")
         }
 
     }

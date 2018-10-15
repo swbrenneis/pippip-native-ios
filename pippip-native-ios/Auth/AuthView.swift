@@ -86,6 +86,13 @@ class AuthView: UIView, ControllerBlurProtocol {
     
     }
 
+    func authenticationFailed(reason: String) {
+        
+        MBProgressHUD.hide(for: self, animated: true)
+        enableAuthentication()
+
+    }
+    
     func enableAuthentication() {
         
         assert(Thread.isMainThread)
