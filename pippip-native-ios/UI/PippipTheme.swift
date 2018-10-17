@@ -68,6 +68,8 @@ class PippipTheme: NSObject {
         var style = ToastStyle()
         style.backgroundColor = UIColor.flatTealDark
         style.messageColor = ContrastColorOf(style.backgroundColor, returnFlat: true)
+        style.activityBackgroundColor = .clear
+        style.activityIndicatorColor = UIColor.flatWhite
         ToastManager.shared.style = style
 
     }

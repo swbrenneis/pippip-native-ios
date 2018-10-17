@@ -150,6 +150,11 @@ class MessagesViewController: UIViewController {
         alertPresenter.present = true
         localAuth.viewWillAppear()
 
+        if AccountSession.instance.serverAuthenticated {
+            getMostRecentMessages()
+            tableView.reloadData()
+        }
+
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
@@ -158,17 +163,7 @@ class MessagesViewController: UIViewController {
                                                name: Notifications.SetContactBadge, object: nil)
 
     }
-/*
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
 
-        let bounds = self.navigationController!.navigationBar.bounds
-        self.navigationController?.navigationBar.frame = CGRect(x: 0, y: 0,
-                                                                width: bounds.width,
-                                                                height: bounds.height + 6.0)
-
-    }
-*/
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 

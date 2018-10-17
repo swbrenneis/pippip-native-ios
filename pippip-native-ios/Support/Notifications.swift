@@ -46,7 +46,6 @@ struct Notifications {
     static let SessionEnded = NSNotification.Name("SessionEnded")
     static let SessionStarted = NSNotification.Name("SessionStarted")
     static let SetContactBadge = NSNotification.Name("SetContactBadge")
-    static let UpdateProgress = NSNotification.Name("UpdateProgress")
     static let WhitelistEntryAdded = NSNotification.Name("WhitelistEntryAdded")
     static let WhitelistEntryDeleted = NSNotification.Name("WhitelistEntryDeleted")
 

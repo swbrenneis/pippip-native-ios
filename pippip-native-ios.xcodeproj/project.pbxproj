@@ -98,7 +98,6 @@
 		5557B471211F0A2C00FE1775 /* DeleteAccountView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */; };
 		5557B473212066A700FE1775 /* VerifyPassphraseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5557B472212066A700FE1775 /* VerifyPassphraseView.swift */; };
 		5557B475212066CE00FE1775 /* VerifyPassphraseView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B474212066CE00FE1775 /* VerifyPassphraseView.xib */; };
-		555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 555B0D40204C887B00D99807 /* MBProgressHUD.m */; };
 		555B0D45204CD80000D99807 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 555B0D44204CD80000D99807 /* UserNotifications.framework */; };
 		55721A0A20C86876008FE9F6 /* EnclaveDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0920C86876008FE9F6 /* EnclaveDelegate.swift */; };
 		55721A0C20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0B20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift */; };
@@ -358,8 +357,6 @@
 		5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DeleteAccountView.xib; sourceTree = "<group>"; };
 		5557B472212066A700FE1775 /* VerifyPassphraseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyPassphraseView.swift; sourceTree = "<group>"; };
 		5557B474212066CE00FE1775 /* VerifyPassphraseView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VerifyPassphraseView.xib; sourceTree = "<group>"; };
-		555B0D40204C887B00D99807 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
-		555B0D41204C887B00D99807 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		555B0D43204CA4E300D99807 /* pippip-native-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "pippip-native-ios.entitlements"; sourceTree = "<group>"; };
 		555B0D44204CD80000D99807 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		55721A0920C86876008FE9F6 /* EnclaveDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnclaveDelegate.swift; sourceTree = "<group>"; };
@@ -823,15 +820,6 @@
 			path = API;
 			sourceTree = "<group>";
 		};
-		555B0D3F204C885900D99807 /* MBProgressHUD */ = {
-			isa = PBXGroup;
-			children = (
-				555B0D41204C887B00D99807 /* MBProgressHUD.h */,
-				555B0D40204C887B00D99807 /* MBProgressHUD.m */,
-			);
-			path = MBProgressHUD;
-			sourceTree = "<group>";
-		};
 		557C2B6C20961D7D0069336D /* SortedArray */ = {
 			isa = PBXGroup;
 			children = (
@@ -852,7 +840,6 @@
 		5592A57B1F8BBB4400F08BF5 = {
 			isa = PBXGroup;
 			children = (
-				555B0D3F204C885900D99807 /* MBProgressHUD */,
 				55AA556D1FA1527C00A7026B /* libgmp.a */,
 				5592A5861F8BBB4400F08BF5 /* pippip-native-ios */,
 				5592A5A21F8BBB4500F08BF5 /* pippip-native-iosTests */,
@@ -1415,7 +1402,6 @@
 				55F7B58520BF36930083AE01 /* NewAccountResponse.swift in Sources */,
 				55169793209B7282002BB4C1 /* LocalAuthCell.swift in Sources */,
 				55AA555E1FA14D7100A7026B /* SHA384.cc in Sources */,
-				555B0D42204C887B00D99807 /* MBProgressHUD.m in Sources */,
 				557C2B742096A03D0069336D /* PippipMessageViewModel.swift in Sources */,
 				5511E9CC20C301720080C0DF /* RequestContactRequest.swift in Sources */,
 				55C49BFE2141B25400EEED14 /* PippipTextCellStyle.swift in Sources */,

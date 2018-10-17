@@ -21,9 +21,6 @@ class Authenticator: NSObject {
         NotificationCenter.default.addObserver(self, selector: #selector(sessionStarted(_:)),
                                                name: Notifications.SessionStarted, object: nil)
         if openVault(accountName: accountName, passphrase: passphrase) {
-            var info = [AnyHashable: Any]()
-            info["progress"] = 0.2
-            NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
             secommAPI.startSession()
         }
         else {
@@ -88,10 +85,6 @@ class Authenticator: NSObject {
 
     func authChallengeComplete(_ authChallenge: ServerAuthChallenge) {
         
-        var info = [AnyHashable: Any]()
-        info["progress"] = 0.8
-        NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
-
         DispatchQueue.global(qos: .userInitiated).async {
             do {
                 try authChallenge.processResponse()
@@ -112,10 +105,6 @@ class Authenticator: NSObject {
     
     func authorizedComplete(_ authorized: ClientAuthorized) {
         
-        var info = [AnyHashable: Any]()
-        info["progress"] = 1.0
-        NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
-
         do {
             try authorized.processResponse()
             let config = Configurator()
@@ -141,10 +130,6 @@ class Authenticator: NSObject {
     }
 
     func authRequestComplete(_ authResponse: AuthenticationResponse) {
-
-        var info = [AnyHashable: Any]()
-        info["progress"] = 0.6
-        NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
 
         DispatchQueue.global(qos: .userInitiated).async {
             do {
@@ -183,9 +168,6 @@ class Authenticator: NSObject {
             sessionState.sessionId = sessionResponse.sessionId!
             let pem = CKPEMCodec()
             sessionState.serverPublicKey = pem.decodePublicKey(sessionResponse.serverPublicKey!)
-            var info = [AnyHashable: Any]()
-            info["progress"] = 0.4
-            NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
             DispatchQueue.global().async {
                 self.requestAuth()
             }

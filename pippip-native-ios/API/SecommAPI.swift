@@ -44,7 +44,7 @@ class SecommAPI: NSObject {
             SecommAPI.apiState.sessionPath = "/authenticator/session-request"
         }
         else {
-            SecommAPI.apiState.hostPath = "https://dev.secomm.org:8443/secomm-api-rest-2.0.0"
+            SecommAPI.apiState.hostPath = "https://api.secomm.org:8443/secomm-api-rest-2.0.0"
             SecommAPI.apiState.sessionPath = "/session-request"
         }
         SecommAPI.apiState.sessionActive = true

@@ -58,9 +58,6 @@ class NewAccountCreator: NSObject {
             let parameterGenerator = ParameterGenerator()
             parameterGenerator.generateParameters(accountName)
         }
-        var info = [AnyHashable: Any]()
-        info["progress"] = 0.25
-        NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
 
     }
 
@@ -99,10 +96,6 @@ class NewAccountCreator: NSObject {
 
     func accountFinishComplete(_ accountFinal: NewAccountFinal) {
 
-        var info = [AnyHashable: Any]()
-        info["progress"] = 1.0
-        NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
-        
         DispatchQueue.global(qos: .userInitiated).async {
             do {
                 try accountFinal.processResponse()
@@ -123,10 +116,6 @@ class NewAccountCreator: NSObject {
 
     func accountRequestComplete(_ accountResponse: NewAccountResponse) {
 
-        var info = [AnyHashable: Any]()
-        info["progress"] = 0.75
-        NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
-        
         DispatchQueue.global(qos: .userInitiated).async {
             do {
                 try accountResponse.processResponse()
@@ -168,7 +157,6 @@ class NewAccountCreator: NSObject {
             sessionState.serverPublicKey = pem.decodePublicKey(sessionResponse.serverPublicKey!)
             var info = [AnyHashable: Any]()
             info["progress"] = 0.5
-            NotificationCenter.default.post(name: Notifications.UpdateProgress, object: nil, userInfo: info)
             DispatchQueue.global().async {
                 self.requestNewAccount()
             }

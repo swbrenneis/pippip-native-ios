@@ -9,6 +9,7 @@
 import UIKit
 import ChameleonFramework
 import ImageSlideshow
+import Toast_Swift
 
 class AuthView: UIView, ControllerBlurProtocol {
 
@@ -88,7 +89,8 @@ class AuthView: UIView, ControllerBlurProtocol {
 
     func authenticationFailed(reason: String) {
         
-        MBProgressHUD.hide(for: self, animated: true)
+        self.hideToastActivity()
+        //MBProgressHUD.hide(for: self, animated: true)
         enableAuthentication()
 
     }
@@ -98,6 +100,7 @@ class AuthView: UIView, ControllerBlurProtocol {
         assert(Thread.isMainThread)
         if AccountSession.instance.accountLoaded {
             if !AccountSession.instance.loggedOut && config.useLocalAuth {
+                self.makeToastActivity(.center)
                 localAuthenticator.getKeychainPassphrase(uuid: config.uuid)
             }
             else {
@@ -125,7 +128,6 @@ class AuthView: UIView, ControllerBlurProtocol {
     func dismiss(completion: @escaping (Bool) -> Void) {
         
         assert(Thread.isMainThread)
-        NotificationCenter.default.removeObserver(self, name: Notifications.UpdateProgress, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
         DispatchQueue.main.async {
             self.authButton.isHidden = true
@@ -134,7 +136,7 @@ class AuthView: UIView, ControllerBlurProtocol {
                 self.alpha = 0.0
                 self.blurController?.blurView.alpha = 0.0
             }, completion: { (completed) in
-                MBProgressHUD.hide(for: self, animated: true)
+                self.hideToastActivity()
                 completion(completed)
             })
         }
@@ -145,6 +147,8 @@ class AuthView: UIView, ControllerBlurProtocol {
 
         assert(Thread.isMainThread)
         authButton.isHidden = true
+        self.makeToastActivity(.center)
+        /*
         if !AccountSession.instance.serverAuthenticated && !AccountSession.instance.loggedOut {
             NotificationCenter.default.addObserver(self, selector: #selector(updateProgress(_:)),
                                                    name: Notifications.UpdateProgress, object: nil)
@@ -156,6 +160,7 @@ class AuthView: UIView, ControllerBlurProtocol {
             hud.label.textColor = UIColor.flatTealDark
             hud.label.text = "Authenticating...";
         }
+ */
         localAuthenticator.doAuthenticate(passphrase: passphrase)
 
     }
@@ -164,6 +169,8 @@ class AuthView: UIView, ControllerBlurProtocol {
         
         assert(Thread.isMainThread)
         authButton.isHidden = true
+        self.makeToastActivity(.center)
+        /*
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),
                                                name: Notifications.UpdateProgress, object: nil)
         //NotificationCenter.default.addObserver(self, selector: #selector(self.presentAlert(_:)),
@@ -173,6 +180,7 @@ class AuthView: UIView, ControllerBlurProtocol {
         hud.contentColor = PippipTheme.buttonColor
         hud.label.textColor = UIColor.flatTealDark
         hud.label.text = "Creating...";
+ */
         localAuthenticator.doNewAccount(accountName: accountName, passphrase: passphrase, biometricsEnabled: enableBiometrics)
         
     }
@@ -289,16 +297,5 @@ class AuthView: UIView, ControllerBlurProtocol {
     }
 
     // Notifications
-
-    @objc func updateProgress(_ notification: Notification) {
-        
-        let userInfo = notification.userInfo!
-        let p = userInfo[AnyHashable("progress")] as! NSNumber
-        DispatchQueue.main.async {
-            MBProgressHUD(for: self)?.progress = p.floatValue
-        }
-        
-    }
-
 
 }
