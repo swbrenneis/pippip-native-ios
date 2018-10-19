@@ -62,7 +62,7 @@ class ChangePassphraseView: UIView {
                 do {
                     try vault.changePassphrase(accountName: self.accountName, oldPassphrase: self.oldPassphrase,
                                                newPassphrase: self.newPassphrase)
-                    self.alertPresenter.successAlert(title: "Passphrase Changed", message: "Your local passphrase has been changed")
+                    self.alertPresenter.successAlert(message: "Your local passphrase has been changed")
                 }
                 catch {
                     self.alertPresenter.errorAlert(title: "Change Passphrase Error", message: "An error has occurred, please try again")

@@ -80,7 +80,7 @@
 		553C30A020DD6B7C00203B2E /* AuthenticationDelegateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553C309F20DD6B7C00203B2E /* AuthenticationDelegateProtocol.swift */; };
 		554D01C2207BE35400C19373 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C1207BE35400C19373 /* SessionState.swift */; };
 		554D01C4207C0CEC00C19373 /* UserVault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C3207C0CEC00C19373 /* UserVault.swift */; };
-		554D01C6207C54A900C19373 /* LocalPasswordCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C5207C54A900C19373 /* LocalPasswordCell.swift */; };
+		554D01C6207C54A900C19373 /* LocalPassphraseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C5207C54A900C19373 /* LocalPassphraseCell.swift */; };
 		554D01C8207D0E2500C19373 /* ContactManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C7207D0E2500C19373 /* ContactManager.swift */; };
 		554D01CA207D5BB000C19373 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C9207D5BB000C19373 /* Conversation.swift */; };
 		554D01CC207D9C2300C19373 /* ContactPolicyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01CB207D9C2300C19373 /* ContactPolicyCell.swift */; };
@@ -339,7 +339,7 @@
 		553C309F20DD6B7C00203B2E /* AuthenticationDelegateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationDelegateProtocol.swift; sourceTree = "<group>"; };
 		554D01C1207BE35400C19373 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
 		554D01C3207C0CEC00C19373 /* UserVault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserVault.swift; sourceTree = "<group>"; };
-		554D01C5207C54A900C19373 /* LocalPasswordCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPasswordCell.swift; sourceTree = "<group>"; };
+		554D01C5207C54A900C19373 /* LocalPassphraseCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPassphraseCell.swift; sourceTree = "<group>"; };
 		554D01C7207D0E2500C19373 /* ContactManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactManager.swift; sourceTree = "<group>"; };
 		554D01C9207D5BB000C19373 /* Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
 		554D01CB207D9C2300C19373 /* ContactPolicyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactPolicyCell.swift; sourceTree = "<group>"; };
@@ -735,7 +735,7 @@
 				55FD018D20B0D1930028435E /* DirectoryIdCell.swift */,
 				5586B8842064826000641514 /* EditWhitelistCell.swift */,
 				55169792209B7282002BB4C1 /* LocalAuthCell.swift */,
-				554D01C5207C54A900C19373 /* LocalPasswordCell.swift */,
+				554D01C5207C54A900C19373 /* LocalPassphraseCell.swift */,
 				55FD018B20B0CA120028435E /* MultiCellProtocol.swift */,
 				55FD018720B0C7880028435E /* MultiCellItemProtocol.swift */,
 				5586B881206428A400641514 /* PublicIdCell.swift */,
@@ -1385,7 +1385,7 @@
 				5557B45F211CCDD400FE1775 /* NewAccountView.swift in Sources */,
 				550007BC2078203B00103882 /* EnclaveTask.swift in Sources */,
 				55E06BFD20BC961D0034C652 /* SecommAPI.swift in Sources */,
-				554D01C6207C54A900C19373 /* LocalPasswordCell.swift in Sources */,
+				554D01C6207C54A900C19373 /* LocalPassphraseCell.swift in Sources */,
 				5511E9E620C40DA50080C0DF /* APIResponseDelegate.swift in Sources */,
 				55AA54FE1FA14C1300A7026B /* CKSecureRandom.mm in Sources */,
 				55721A1A20C9A5F5008FE9F6 /* RequestContactDelegate.swift in Sources */,

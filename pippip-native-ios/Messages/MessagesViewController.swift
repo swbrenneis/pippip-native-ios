@@ -31,7 +31,7 @@ class MessagesViewController: UIViewController {
     var accountDeleted = false
     var config = Configurator()
     var localAuth: LocalAuthenticator!
-    var alertPresenter = AlertPresenter()
+    var alertPresenter: AlertPresenter!
     var contactBarButton: UIBarButtonItem!
     var contactBadge = GIBadgeView()
     var slideshow: ImageSlideshow!
@@ -58,6 +58,8 @@ class MessagesViewController: UIViewController {
         
         try! AccountSession.instance.loadAccount()
 
+        alertPresenter = AlertPresenter(view: self.view)
+        
         self.view.backgroundColor = PippipTheme.viewColor
         self.navigationController?.navigationBar.barTintColor = PippipTheme.navBarColor
         self.navigationController?.navigationBar.tintColor = PippipTheme.navBarTint
@@ -273,6 +275,7 @@ class MessagesViewController: UIViewController {
 
     @objc func authComplete(_ notification: Notification) {
 
+        alertPresenter.present = true
         DispatchQueue.main.async {
             self.getMostRecentMessages()
             self.tableView.reloadData()

@@ -313,6 +313,11 @@
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                             <state key="normal" title="Set"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                    <integer key="value" value="7"/>
+                                                </userDefinedRuntimeAttribute>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="setDirectoyId:" destination="cSf-AN-swi" eventType="touchUpInside" id="hTQ-6T-xku"/>
                                             </connections>
@@ -365,7 +370,7 @@
                                     <outlet property="titleLabel" destination="dak-BI-myn" id="qmC-un-n44"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="LocalPasswordCell" rowHeight="65" id="kQB-6E-gfI" customClass="LocalPasswordCell" customModule="pippip_native_ios" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="LocalPasswordCell" rowHeight="65" id="kQB-6E-gfI" customClass="LocalPassphraseCell" customModule="pippip_native_ios" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="324.5" width="375" height="65"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="kQB-6E-gfI" id="NVr-ah-wOS">

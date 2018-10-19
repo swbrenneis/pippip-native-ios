@@ -55,28 +55,26 @@ class AlertPresenter: NSObject {
         
     }
     
-    @objc func successAlert(title: String, message: String, toast: Bool = false) {
+    @objc func successAlert(message: String) {
         
         var info = [AnyHashable: Any]()
-        info["title"] = title
         info["message"] = message
-        info["color"] = PippipTheme.successAlertColor
-        NotificationCenter.default.post(name: Notifications.PresentAlert, object: toast, userInfo: info)
+        NotificationCenter.default.post(name: Notifications.PresentAlert, object: true, userInfo: info)
         
     }
 
     @objc func presentAlert(_ notification: Notification) {
 
         guard let info = notification.userInfo else { return }
-        guard let title = info["title"] as? String else { return }
-        guard let message = info["message"] as? String else { return }
-        guard let alertColor = info["color"] as? UIColor else { return }
         guard let toast = notification.object as? Bool else { return }
+        guard let message = info["message"] as? String else { return }
         DispatchQueue.main.async {
             if toast {
-                self.view?.makeToast(message, duration: 2.0, position: .top)
+                self.view?.makeToast(message, duration: 3.0, position: .top)
             }
             else {
+                guard let title = info["title"] as? String else { return }
+                guard let alertColor = info["color"] as? UIColor else { return }
                 RKDropdownAlert.title(title, message: message, backgroundColor: alertColor,
                                       textColor: ContrastColorOf(alertColor, returnFlat: true),
                                       delegate: nil)

@@ -14,6 +14,7 @@
                 <outlet property="authButton" destination="4u4-LA-3Xt" id="VFd-AJ-Wht"/>
                 <outlet property="authButtonLeading" destination="Cln-mc-F0A" id="rde-eX-rKA"/>
                 <outlet property="authButtonTrailing" destination="ZUE-FN-bqp" id="gCq-Rj-Ymn"/>
+                <outlet property="contactServerLabel" destination="c7r-Qv-Pk6" id="3Xv-x0-hvW"/>
                 <outlet property="contentView" destination="iN0-l3-epB" id="ZGs-mQ-8B5"/>
                 <outlet property="logoImage" destination="nUB-J6-IOn" id="LtC-R3-3EM"/>
                 <outlet property="quickstartButton" destination="qzD-E3-Llh" id="V9I-c8-DmA"/>
@@ -67,6 +68,12 @@
                         <action selector="quickstartPressed:" destination="-1" eventType="touchUpInside" id="TjB-Tz-5lf"/>
                     </connections>
                 </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Contacting The Server" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c7r-Qv-Pk6">
+                    <rect key="frame" x="128.5" y="546.5" width="118" height="13.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <constraints>
                 <constraint firstItem="1yC-of-Msj" firstAttribute="top" secondItem="wDk-ZI-Lt8" secondAttribute="bottom" constant="15" id="Cer-AC-2Cl"/>
@@ -74,7 +81,9 @@
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="nUB-J6-IOn" secondAttribute="trailing" constant="55" id="DKi-o7-Z4I"/>
                 <constraint firstItem="qzD-E3-Llh" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Jhr-2k-sg1"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="1yC-of-Msj" secondAttribute="bottom" constant="50" id="QWJ-gN-yzj"/>
+                <constraint firstItem="wDk-ZI-Lt8" firstAttribute="top" secondItem="c7r-Qv-Pk6" secondAttribute="bottom" constant="15" id="Uhs-ES-Y3v"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="4u4-LA-3Xt" secondAttribute="trailing" constant="70" id="ZUE-FN-bqp"/>
+                <constraint firstItem="c7r-Qv-Pk6" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="cNt-0w-rvA"/>
                 <constraint firstItem="qzD-E3-Llh" firstAttribute="top" secondItem="4u4-LA-3Xt" secondAttribute="bottom" constant="96" id="pQS-Fy-o0c"/>
                 <constraint firstItem="wDk-ZI-Lt8" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="qqs-Zv-cAM"/>
                 <constraint firstItem="1yC-of-Msj" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="vgZ-YJ-Kdi"/>

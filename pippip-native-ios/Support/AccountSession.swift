@@ -19,6 +19,7 @@ enum AccountSessionState {
     case willSuspend
     case suspended
     case willResume
+    case wasSuspended
     case active
 }
 
@@ -216,7 +217,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     @objc func resume() {
         
         if accountSessionState == .willResume {
-            accountSessionState = .active
+            accountSessionState = .wasSuspended
             self.doUpdates()
             NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
         }
@@ -253,9 +254,11 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     @objc func authComplete(_ notification: Notification) {
 
         authState = .serverAuthenticated
+        if accountSessionState != .wasSuspended {
+            doUpdates()
+        }
         accountSessionState = .active
-        doUpdates()
-        
+
     }
     
     @objc func getMessagesComplete(_ notification: Notification) {

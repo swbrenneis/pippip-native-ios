@@ -127,6 +127,8 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
             }
         }
         else {
+            assert(Thread.isMainThread)
+            authView?.contactServerLabel.isHidden = false
             authenticator.authenticate(accountName: AccountSession.instance.accountName, passphrase: passphrase)
         }
 
@@ -134,6 +136,8 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
     
     func doNewAccount(accountName: String, passphrase: String, biometricsEnabled: Bool) {
         
+        assert(Thread.isMainThread)
+        authView?.contactServerLabel.isHidden = false
         newAccountCreator.createAccount(accountName: accountName, passphrase: passphrase, biometricsEnabled: biometricsEnabled)
         
     }

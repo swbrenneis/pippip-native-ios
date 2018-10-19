@@ -44,7 +44,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         var items = [MultiCellItemProtocol]()
         items.append(PublicIdCell.cellItem)
         items.append(DirectoryIdCell.cellItem)
-        items.append(LocalPasswordCell.cellItem)
+        items.append(LocalPassphraseCell.cellItem)
         items.append(LocalAuthCell.cellItem)
         items.append(ShowIgnoredCell.cellItem)
         items.append(ContactPolicyCell.cellItem)
@@ -68,6 +68,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
 
         localAuth.viewWillAppear()
         alertPresenter.present = true
+
         NotificationCenter.default.addObserver(self, selector: #selector(policyChanged(_:)),
                                                name: Notifications.PolicyChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(accountDeleted(_:)),
@@ -84,6 +85,11 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         storePassphraseView?.dismiss()
         changePassphraseView?.dismiss()
         deleteAccountView?.dismiss()
+
+        if let idCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? DirectoryIdCell {
+            idCell.resetCell()
+        }
+        
         NotificationCenter.default.removeObserver(self, name: Notifications.PolicyChanged, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AccountDeleted, object: nil)
 

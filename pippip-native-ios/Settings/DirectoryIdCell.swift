@@ -23,7 +23,7 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol, UITextFieldDelega
 
     static var cellItem: MultiCellItemProtocol = DirectoryIdCellItem()
     var viewController: UITableViewController?
-    var currentDirectoryId: String?
+    var currentDirectoryId: String!
     var pendingDirectoryId: String?
     var config = Configurator()
     var contactManager = ContactManager.instance
@@ -32,14 +32,11 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol, UITextFieldDelega
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        currentDirectoryId = config.directoryId
-        if currentDirectoryId != nil {
-            directoryIdTextField.text = currentDirectoryId
-        }
-        else {
-            directoryIdTextField.text = ""
-        }
+        currentDirectoryId = config.directoryId ?? ""
+        directoryIdTextField.text = currentDirectoryId
         setDirectoryIdButton.isHidden = true
+        setDirectoryIdButton.backgroundColor = PippipTheme.buttonColor
+        setDirectoryIdButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         directoryIdTextField.delegate = self
 
     }
@@ -47,12 +44,17 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol, UITextFieldDelega
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        if selected {
-            directoryIdTextField.becomeFirstResponder()
-        }
-
     }
 
+    func resetCell() {
+
+        currentDirectoryId = config.directoryId ?? ""
+        directoryIdTextField.text = currentDirectoryId
+        directoryIdTextField.resignFirstResponder()
+        setDirectoryIdButton.isHidden = true
+
+    }
+    
     @objc func directoryIdMatched(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
@@ -91,7 +93,7 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol, UITextFieldDelega
         else {
             message = "Your directory ID has been cleared"
         }
-        alertPresenter.successAlert(title: "Directory ID Set", message: message, toast: true)
+        alertPresenter.successAlert(message: message)
         DispatchQueue.main.async {
             self.setDirectoryIdButton.isHidden = true
             self.directoryIdTextField.resignFirstResponder()

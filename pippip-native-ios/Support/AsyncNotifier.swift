@@ -20,22 +20,30 @@ import UIKit
         
     }
     
-    class func notify(_ name: String) {
+    class func notify(_ name: String, toast: Bool = false) {
         
         DispatchQueue.global(qos: .userInitiated).async {
-            NotificationCenter.default.post(name: NSNotification.Name(name), object: nil, userInfo: nil)
+            NotificationCenter.default.post(name: NSNotification.Name(name), object: toast, userInfo: nil)
         }
         
     }
 
-    class func notify(name: NSNotification.Name) {
+    class func notify(name: NSNotification.Name, toast: Bool = false) {
         
         DispatchQueue.global(qos: .userInitiated).async {
-            NotificationCenter.default.post(name: name, object: nil, userInfo: nil)
+            NotificationCenter.default.post(name: name, object: toast, userInfo: nil)
         }
         
     }
-    
+
+    class func notify(name: NSNotification.Name, userInfo: [String: Any], toast: Bool = false) {
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            NotificationCenter.default.post(name: name, object: toast, userInfo: userInfo)
+        }
+        
+    }
+
     class func notify(name: NSNotification.Name, object: Any?) {
         
         DispatchQueue.global(qos: .userInitiated).async {

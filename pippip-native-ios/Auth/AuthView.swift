@@ -21,7 +21,9 @@ class AuthView: UIView, ControllerBlurProtocol {
     @IBOutlet weak var authButtonLeading: NSLayoutConstraint!
     @IBOutlet weak var authButtonTrailing: NSLayoutConstraint!
     @IBOutlet weak var quickstartButton: UIButton!
+    @IBOutlet weak var contactServerLabel: UILabel!
     
+    var newAccount = false
     var blurController: ControllerBlurProtocol?
     var localAuthenticator: LocalAuthenticator!
     var config = Configurator()
@@ -68,6 +70,8 @@ class AuthView: UIView, ControllerBlurProtocol {
         contentView.backgroundColor = backgroundColor
         versionLabel.textColor = UIColor.flatSand
         secommLabel.textColor = UIColor.flatSand
+        contactServerLabel.textColor = UIColor.flatWhite
+        contactServerLabel.isHidden = true
         authButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         authButton.backgroundColor = PippipTheme.buttonColor
         authButton.isHidden = true
@@ -90,9 +94,75 @@ class AuthView: UIView, ControllerBlurProtocol {
     func authenticationFailed(reason: String) {
         
         self.hideToastActivity()
-        //MBProgressHUD.hide(for: self, animated: true)
         enableAuthentication()
 
+    }
+    
+    func doAuthenticate(passphrase: String) {
+
+        assert(Thread.isMainThread)
+        authButton.isHidden = true
+        self.makeToastActivity(.center)
+        /*
+        if !AccountSession.instance.serverAuthenticated && !AccountSession.instance.loggedOut {
+            NotificationCenter.default.addObserver(self, selector: #selector(updateProgress(_:)),
+                                                   name: Notifications.UpdateProgress, object: nil)
+            //NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
+            //                                       name: Notifications.PresentAlert, object: nil)
+            let hud = MBProgressHUD.showAdded(to: self, animated: true)
+            hud.mode = .annularDeterminate;
+            hud.contentColor = PippipTheme.buttonColor
+            hud.label.textColor = UIColor.flatTealDark
+            hud.label.text = "Authenticating...";
+        }
+ */
+        localAuthenticator.doAuthenticate(passphrase: passphrase)
+
+    }
+    
+    func doNewAccount(accountName: String, passphrase: String, enableBiometrics: Bool) {
+        
+        assert(Thread.isMainThread)
+        authButton.isHidden = true
+        self.makeToastActivity(.center)
+        newAccount = true
+        /*
+        NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),
+                                               name: Notifications.UpdateProgress, object: nil)
+        //NotificationCenter.default.addObserver(self, selector: #selector(self.presentAlert(_:)),
+        //                                       name: Notifications.PresentAlert, object: nil)
+        let hud = MBProgressHUD.showAdded(to: self, animated: true)
+        hud.mode = .annularDeterminate;
+        hud.contentColor = PippipTheme.buttonColor
+        hud.label.textColor = UIColor.flatTealDark
+        hud.label.text = "Creating...";
+ */
+        localAuthenticator.doNewAccount(accountName: accountName, passphrase: passphrase, biometricsEnabled: enableBiometrics)
+        
+    }
+    
+    func dismiss(completion: @escaping (Bool) -> Void) {
+        
+        assert(Thread.isMainThread)
+        NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
+        DispatchQueue.main.async {
+            self.authButton.isHidden = true
+            UIView.animate(withDuration: 0.3, animations: {
+                self.center.y = 0.0
+                self.alpha = 0.0
+                self.blurController?.blurView.alpha = 0.0
+            }, completion: { (completed) in
+                self.hideToastActivity()
+                self.contactServerLabel.isHidden = true
+                if self.newAccount {
+                    AsyncNotifier.notify(name: Notifications.PresentAlert, userInfo: ["message": "Your account has been created"],
+                                         toast: true)
+                    self.newAccount = false
+                }
+                completion(completed)
+            })
+        }
+        
     }
     
     func enableAuthentication() {
@@ -122,66 +192,6 @@ class AuthView: UIView, ControllerBlurProtocol {
             authButtonTrailing.constant = abConstraint
             authButton.isHidden = false
         }
-
-    }
-    
-    func dismiss(completion: @escaping (Bool) -> Void) {
-        
-        assert(Thread.isMainThread)
-        NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
-        DispatchQueue.main.async {
-            self.authButton.isHidden = true
-            UIView.animate(withDuration: 0.3, animations: {
-                self.center.y = 0.0
-                self.alpha = 0.0
-                self.blurController?.blurView.alpha = 0.0
-            }, completion: { (completed) in
-                self.hideToastActivity()
-                completion(completed)
-            })
-        }
-        
-    }
-
-    func doAuthenticate(passphrase: String) {
-
-        assert(Thread.isMainThread)
-        authButton.isHidden = true
-        self.makeToastActivity(.center)
-        /*
-        if !AccountSession.instance.serverAuthenticated && !AccountSession.instance.loggedOut {
-            NotificationCenter.default.addObserver(self, selector: #selector(updateProgress(_:)),
-                                                   name: Notifications.UpdateProgress, object: nil)
-            //NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
-            //                                       name: Notifications.PresentAlert, object: nil)
-            let hud = MBProgressHUD.showAdded(to: self, animated: true)
-            hud.mode = .annularDeterminate;
-            hud.contentColor = PippipTheme.buttonColor
-            hud.label.textColor = UIColor.flatTealDark
-            hud.label.text = "Authenticating...";
-        }
- */
-        localAuthenticator.doAuthenticate(passphrase: passphrase)
-
-    }
-    
-    func doNewAccount(accountName: String, passphrase: String, enableBiometrics: Bool) {
-        
-        assert(Thread.isMainThread)
-        authButton.isHidden = true
-        self.makeToastActivity(.center)
-        /*
-        NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),
-                                               name: Notifications.UpdateProgress, object: nil)
-        //NotificationCenter.default.addObserver(self, selector: #selector(self.presentAlert(_:)),
-        //                                       name: Notifications.PresentAlert, object: nil)
-        let hud = MBProgressHUD.showAdded(to: self, animated: true)
-        hud.mode = .annularDeterminate;
-        hud.contentColor = PippipTheme.buttonColor
-        hud.label.textColor = UIColor.flatTealDark
-        hud.label.text = "Creating...";
- */
-        localAuthenticator.doNewAccount(accountName: accountName, passphrase: passphrase, biometricsEnabled: enableBiometrics)
         
     }
     
@@ -193,6 +203,7 @@ class AuthView: UIView, ControllerBlurProtocol {
             self.alpha = 1.0
             self.blurController?.blurView.alpha = 0.6
         }, completion: { (completed) in
+            self.blurController?.navigationController?.setNavigationBarHidden(true, animated: true)
             completion(completed)
         })
         

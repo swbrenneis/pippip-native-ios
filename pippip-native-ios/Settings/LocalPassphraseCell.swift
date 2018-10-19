@@ -17,7 +17,7 @@ class LocalPasswordCellItem: MultiCellItemProtocol {
 
 }
 
-class LocalPasswordCell: PippipTableViewCell, MultiCellProtocol {
+class LocalPassphraseCell: PippipTableViewCell, MultiCellProtocol {
 
     @IBOutlet weak var changePassphraseLabel: UILabel!
     

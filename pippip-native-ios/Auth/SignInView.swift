@@ -75,6 +75,7 @@ class SignInView: UIView {
 
     @IBAction func signInTapped(_ sender: Any) {
 
+        self.passphraseTextField.resignFirstResponder()
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
@@ -83,7 +84,6 @@ class SignInView: UIView {
             self.removeFromSuperview()
             let passphrase = self.passphraseTextField.text ?? ""
             self.signInCompletion(passphrase)
-//            self.authViewController?.doAuthenticate(passphrase: passphrase)
         })
         
     }
