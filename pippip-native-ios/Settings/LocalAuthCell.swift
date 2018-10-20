@@ -76,7 +76,7 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
             }
         }
         else {
-            let keychain = Keychain(service: "io.pippip.token")
+            let keychain = Keychain(service: Keychain.PIPPIP_TOKEN_SERVICE)
             do {
                 try keychain.remove(key: config.uuid)
                 config.useLocalAuth = false

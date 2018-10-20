@@ -81,7 +81,7 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
 
     func getKeychainPassphrase(uuid: String) {
 
-        let keychain = Keychain(service: "io.pippip.token")
+        let keychain = Keychain(service: Keychain.PIPPIP_TOKEN_SERVICE)
         var passphrase: String?
         DispatchQueue.global().async {
             do {
@@ -144,7 +144,7 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
     
     func setKeychainPassphrase(uuid: String, passphrase: String) {
         
-        let keychain = Keychain(service: "io.pippip.token")
+        let keychain = Keychain(service: Keychain.PIPPIP_TOKEN_SERVICE)
         DispatchQueue.global().async {
             do {
                 try keychain.accessibility(protection: .passcodeSetThisDeviceOnly, createFlag: .userPresence)

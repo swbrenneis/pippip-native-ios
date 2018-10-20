@@ -62,6 +62,11 @@ class ChangePassphraseView: UIView {
                 do {
                     try vault.changePassphrase(accountName: self.accountName, oldPassphrase: self.oldPassphrase,
                                                newPassphrase: self.newPassphrase)
+                    let keychain = Keychain(service: Keychain.PIPPIP_TOKEN_SERVICE)
+                    let config = Configurator()
+                    if config.useLocalAuth {
+                        try keychain.update(passphrase: self.newPassphrase, key: config.uuid)
+                    }
                     self.alertPresenter.successAlert(message: "Your local passphrase has been changed")
                 }
                 catch {

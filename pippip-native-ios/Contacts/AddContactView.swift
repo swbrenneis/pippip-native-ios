@@ -18,15 +18,27 @@ class AddContactView: UIView {
     @IBOutlet weak var cancelButton: UIButton!
     
     var contactsViewController: ContactsViewController?
+    var directoryIdBlank = true
+    var publicIdBlank = true
+    var publicIdValid = false
+    var publicIdRegex: NSRegularExpression
 
     override init(frame: CGRect) {
+        
+        publicIdRegex = try! NSRegularExpression(pattern: "[a-fA-F0-9]{40}", options: .caseInsensitive)
+        
         super.init(frame: frame)
         commonInit()
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
+        
+        publicIdRegex = try! NSRegularExpression(pattern: "[a-fA-F0-9]{40}", options: .caseInsensitive)
+        
         super.init(coder: aDecoder)
         commonInit()
+        
     }
     
     private func commonInit() {
@@ -42,6 +54,7 @@ class AddContactView: UIView {
         titleLabel.backgroundColor = PippipTheme.lightBarColor
         addContactButton.backgroundColor = PippipTheme.buttonColor
         addContactButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
+        addContactButton.isEnabled = false
         cancelButton.backgroundColor = PippipTheme.cancelButtonColor
         cancelButton.setTitleColor(PippipTheme.cancelButtonTextColor, for: .normal)
 
@@ -87,6 +100,25 @@ class AddContactView: UIView {
             self.removeFromSuperview()
             self.contactsViewController?.navigationController?.setNavigationBarHidden(false, animated: true)
         })
+        
+    }
+    @IBAction func directoryIdChanged(_ sender: Any) {
+
+        if let directoryId = directoryIdTextField.text {
+            directoryIdBlank = directoryId.count == 0
+        }
+        addContactButton.isEnabled = (!directoryIdBlank && publicIdBlank) || (directoryIdBlank && publicIdValid)
+        
+    }
+    
+    @IBAction func publicIdChanged(_ sender: Any) {
+        
+        if let publicId = publicIdTextField.text {
+            publicIdBlank = publicId.count == 0
+            let matches = publicIdRegex.matches(in: publicId, options: [], range: NSRange(location: 0, length: publicId.utf8.count))
+            publicIdValid = matches.count == 1
+        }
+        addContactButton.isEnabled = (!directoryIdBlank && publicIdBlank) || (directoryIdBlank && publicIdValid)
         
     }
 

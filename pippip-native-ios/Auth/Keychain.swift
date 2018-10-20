@@ -34,6 +34,8 @@ class KeychainError: Error {
 
 class Keychain: NSObject {
 
+    static let PIPPIP_TOKEN_SERVICE = "io.pippip.token"
+
     var service: String
     var authPrompt: String?
     var protection: PassphraseProtectionTypes?
@@ -135,6 +137,17 @@ class Keychain: NSObject {
         let result = SecItemAdd(query as CFDictionary, nil)
         guard result != errSecParam else { throw KeychainError(error: "Invalid parameter") }
         guard result != errSecDuplicateItem else { return }     // Hmm.
+        guard result == errSecSuccess else { throw KeychainError(status: result) }
+
+    }
+
+    func update(passphrase: String, key: String) throws {
+        
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
+                                    kSecAttrAccount as String: key]
+        let updates: [String: Any] = [kSecValueData as String: passphrase.data(using: .utf8, allowLossyConversion: false) as Any]
+        let result = SecItemUpdate(query as CFDictionary, updates as CFDictionary)
+        guard result != errSecParam else { throw KeychainError(error: "Invalid parameter") }
         guard result == errSecSuccess else { throw KeychainError(status: result) }
 
     }

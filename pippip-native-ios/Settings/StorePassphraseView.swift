@@ -96,7 +96,7 @@ class StorePassphraseView: UIView {
     @IBAction func storeTapped(_ sender: Any) {
         
         let passphrase = passphraseTextField.text!
-        let keychain = Keychain(service: "io.pippip.token")
+        let keychain = Keychain(service: Keychain.PIPPIP_TOKEN_SERVICE)
         DispatchQueue.global().async {
             do {
                 if try UserVault.validatePassphrase(accountName: self.accountName, passphrase: passphrase) {
@@ -121,8 +121,10 @@ class StorePassphraseView: UIView {
             catch {
                 self.alertPresenter.errorAlert(title: "Invalid Passphrase",
                                                message: "Please provide the passphrase that is used to sign in")
-                self.config.useLocalAuth = false
-                self.cell?.localAuthSwitch.setOn(false, animated: true)
+                DispatchQueue.main.async {
+                    self.config.useLocalAuth = false
+                    self.cell?.localAuthSwitch.setOn(false, animated: true)
+                }
             }
         }
 
