@@ -168,6 +168,8 @@ class MessagesViewController: UIViewController {
                                                name: Notifications.AuthComplete, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(setContactBadge(_:)),
                                                name: Notifications.SetContactBadge, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(conversationDeleted(_:)),
+                                               name: Notifications.ConversationDeleted, object: nil)
 
     }
 
@@ -179,6 +181,7 @@ class MessagesViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AuthComplete, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.SetContactBadge, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.ConversationDeleted, object: nil)
 
     }
 
@@ -250,7 +253,7 @@ class MessagesViewController: UIViewController {
         previews.removeAll()
         let contactList = ContactManager.instance.contactList
         for contact in contactList {
-            let conversation = ConversationCache.getConversation(contact.contactId)
+            let conversation = ConversationCache.instance.getConversation(contactId: contact.contactId)
             if let message = conversation.mostRecentMessage {
                 previews.append(message)
             }
@@ -262,6 +265,24 @@ class MessagesViewController: UIViewController {
     }
 
     // Notifications
+
+    @objc func conversationDeleted(_ notification: Notification) {
+        
+        guard let contactId = notification.object as? Int else { return }
+        var path = IndexPath(row: -1, section: 0)
+        for index in 0..<previews.count {
+            if contactId == previews[index].contactId {
+                path.row = index
+            }
+        }
+        if path.row >= 0 {
+            previews.remove(at: path.row)
+            DispatchQueue.main.async {
+                self.tableView.deleteRows(at: [path], with: .left)
+            }
+        }
+    
+    }
     
     @objc func setContactBadge(_ notification: Notification) {
 
@@ -333,7 +354,7 @@ extension MessagesViewController: UISearchBarDelegate {
 
     func searchCache(_ fragment: String) {
 
-        searched = ConversationCache.searchConversations(fragment)
+        searched = ConversationCache.instance.searchConversations(fragment: fragment)
         previews.removeAll()
         for conversation in searched {
             previews.append(conversation.findMessageText(fragment)!)
@@ -401,4 +422,18 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
 
     }
 
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle,
+                   forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete {
+            let preview = previews[indexPath.row]
+            ConversationCache.instance.deleteConversation(contactId: preview.contactId)
+        }
+        
+    }
+    
 }

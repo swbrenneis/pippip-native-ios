@@ -21,6 +21,7 @@ struct Notifications {
     static let ContactDeleted = NSNotification.Name("ContactDeleted")
     static let ContactRequested = NSNotification.Name("ContactRequested")
     static let ContactSelected = NSNotification.Name("ContactSelected")
+    static let ConversationDeleted = NSNotification.Name("ConversationDeleted")
     static let DirectoryIdMatched = NSNotification.Name("DirectoryIdMatched")
     static let DirectoryIdSet = NSNotification.Name("DirectoryIdSet")       // Posted when contact directory ID set
     static let DirectoryIdUpdated = NSNotification.Name("DirectoryIdUpdated")

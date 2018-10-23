@@ -10,33 +10,57 @@ import UIKit
 
 class ConversationCache: NSObject {
 
-    private static var conversations = [Int: Conversation]()
+    static var instance: ConversationCache {
+        get {
+            if let cache = ConversationCache.theInstance {
+                return cache
+            }
+            else {
+                ConversationCache.theInstance = ConversationCache()
+                return ConversationCache.theInstance!
+            }
+        }
+    }
+    private static var theInstance: ConversationCache?
+    private var conversations = [Int: Conversation]()
     
-    static func getConversation(_ contactId: Int) -> Conversation {
+    private override init() {
+        super.init()
+    }
 
-        if let conversation = ConversationCache.conversations[contactId] {
+    func getConversation(contactId: Int) -> Conversation {
+
+        if let conversation = conversations[contactId] {
             return conversation
         }
         else {
             let contactManager = ContactManager.instance
             let contact = contactManager.getContact(contactId: contactId)!
             let newConversation = Conversation(contact: contact, windowSize: 15)
-            ConversationCache.conversations[contactId] = newConversation
+            conversations[contactId] = newConversation
             return newConversation
         }
 
     }
 
-    @objc static func clearCache() {
+    @objc func clearCache() {
 
-        ConversationCache.conversations.removeAll()
+        conversations.removeAll()
 
     }
 
-    static func newMessages(_ textMessages: [TextMessage]) {
+    func deleteConversation(contactId: Int) {
+
+        conversations[contactId]?.clearMessages()
+        conversations.removeValue(forKey: contactId)
+        AsyncNotifier.notify(name: Notifications.ConversationDeleted, object: contactId)
+        
+    }
+    
+    func newMessages(textMessages: [TextMessage]) {
 
         for textMessage in textMessages {
-            if let conversation = ConversationCache.conversations[textMessage.contactId] {
+            if let conversation = conversations[textMessage.contactId] {
                 conversation.addTextMessage(textMessage)
             }
             else {
@@ -46,7 +70,7 @@ class ConversationCache: NSObject {
 
     }
 
-    static func searchConversations(_ fragment: String) -> [Conversation] {
+    func searchConversations(fragment: String) -> [Conversation] {
 
         var found = [Conversation]()
         for contactId in conversations.keys {

@@ -69,7 +69,7 @@ class ChattoViewController: BaseChatViewController {
         alertPresenter.present = true
         localAuth.viewWillAppear()
         if contact != nil {
-            dataSource = ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
+            dataSource = ChattoDataSource(conversation: ConversationCache.instance.getConversation(contactId: contact!.contactId))
             chatDataSource = dataSource
             self.navigationItem.title = contact!.displayName
         }
@@ -196,7 +196,7 @@ class ChattoViewController: BaseChatViewController {
         
         contact = notification.object as? Contact
         dataSource =
-            ChattoDataSource(conversation: ConversationCache.getConversation(contact!.contactId))
+            ChattoDataSource(conversation: ConversationCache.instance.getConversation(contactId: contact!.contactId))
         dataSource?.visible = true
         DispatchQueue.main.async {
             self.chatDataSource = self.dataSource
