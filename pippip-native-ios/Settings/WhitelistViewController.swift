@@ -8,6 +8,7 @@
 
 import UIKit
 import ChameleonFramework
+import CocoaLumberjack
 
 class WhitelistViewController: UIViewController {
 
@@ -15,8 +16,8 @@ class WhitelistViewController: UIViewController {
     @IBOutlet weak var tableBottom: NSLayoutConstraint!
     
     var config = Configurator()
-    var directoryId = ""
-    var publicId = ""
+    //var directoryId = ""
+    //var publicId = ""
     var contactManager = ContactManager.instance
     var sessionState = SessionState()
     var suspended = false
@@ -84,6 +85,37 @@ class WhitelistViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    func addToWhitelist(publicId: String, directoryId: String?) {
+
+        if checkContactExists(publicId: publicId) {
+            self.alertPresenter.errorAlert(title: "Add Permitted ID Error",
+                                           message: "You already added that ID")
+            NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryAdded, object: nil)
+        }
+        else {
+            do {
+                try contactManager.addWhitelistEntry(publicId: publicId, directoryId: directoryId)
+                DispatchQueue.main.async {
+                    self.addIdView?.dismiss()
+                }
+            }
+            catch {
+                DDLogError("Error adding ID to whitelist: \(error.localizedDescription)")
+                self.alertPresenter.errorAlert(title: "Add Permitted ID Error",
+                                               message: "An error occurred, please try again")
+                NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryAdded, object: nil)
+            }
+        }
+
+    }
+    
+    func checkContactExists(publicId: String) -> Bool {
+        
+        guard let _ = config.whitelistIndexOf(publicId: publicId) else { return false }
+        return true
+        
+    }
+    
     func checkSelfAdd(directoryId: String?, publicId: String?) -> Bool {
         
         if let nick = directoryId {
@@ -104,39 +136,21 @@ class WhitelistViewController: UIViewController {
         
     }
 
-    func verifyAndAdd(directoryId: String, publicId: String) {
+    func verifyAndAdd(directoryId: String?, publicId: String?) {
 
-        self.directoryId = directoryId
-        self.publicId = publicId
-
-        if !self.checkSelfAdd(directoryId: directoryId, publicId: publicId) {
-            if directoryId.utf8.count > 0 {
-                NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
-                                                       name: Notifications.DirectoryIdMatched, object: nil)                
-                contactManager.matchDirectoryId(directoryId: directoryId, publicId: nil)
-            }
-            else if publicId.utf8.count > 0 {
-                let regex = try! NSRegularExpression(pattern: "[^A-Fa-f0-9]", options: [])
-                if let match = regex.firstMatch(in: publicId,
-                                                options: [],
-                                                range: NSMakeRange(0, publicId.utf8.count)) {
-                    if match.numberOfRanges > 0 || publicId.utf8.count < 40 {
-                        alertPresenter.errorAlert(title: "Contact Request Error", message: "Not a valid public ID")
-                    }
-                }
-                else {
-                    NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
-                                                           name: Notifications.WhitelistEntryAdded, object: nil)
-                    if contactManager.addWhitelistEntry(publicId) {
-                        addIdView?.dismiss()
-                    }
-                    else {
-                        self.alertPresenter.errorAlert(title: "Add Permitted ID Error",
-                                                   message: "You already added that ID")
-                        NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryAdded, object: nil)
-                    }
-                }
-            }
+        guard !self.checkSelfAdd(directoryId: directoryId, publicId: publicId) else { return }
+        if let dId = directoryId {
+            NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
+                                                   name: Notifications.DirectoryIdMatched, object: nil)
+            contactManager.matchDirectoryId(directoryId: dId, publicId: nil)
+        }
+        else if let pId = publicId {
+            NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
+                                                   name: Notifications.WhitelistEntryAdded, object: nil)
+            addToWhitelist(publicId: pId, directoryId: directoryId)
+        }
+        else {
+            DDLogError("Verify and add error: No valid IDs provided")
         }
 
     }
@@ -170,18 +184,14 @@ class WhitelistViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
         guard let response = notification.object as? MatchDirectoryIdResponse else { return }
         if response.result == "found" {
-            publicId = response.publicId!
-            NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
-                                                   name: Notifications.WhitelistEntryAdded, object: nil)
-            if contactManager.addWhitelistEntry(publicId) {
-                DispatchQueue.main.async {
-                    self.addIdView?.dismiss()
-                }
+            if let publicId = response.publicId {
+                NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
+                                                       name: Notifications.WhitelistEntryAdded, object: nil)
+                addToWhitelist(publicId: publicId, directoryId: response.directoryId)
             }
             else {
-                self.alertPresenter.errorAlert(title: "Add Permitted ID Error",
-                                               message: "You already added that ID")
-                NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryAdded, object: nil)
+                alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "Invalid response from server")
+                DDLogError("Server did not return public ID on match")
             }
         }
         else {
@@ -213,18 +223,19 @@ class WhitelistViewController: UIViewController {
     @objc func whitelistEntryAdded(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryAdded, object: nil)
-        let entity = Entity(publicId: publicId, directoryId: directoryId)
+        guard let userInfo = notification.userInfo else { return }
+        guard let publicId = userInfo["publicId"] as? String else { return }
+        let entity = Entity(publicId: publicId, directoryId: userInfo["directoryId"] as? String)
         do {
             try config.addWhitelistEntry(entity)
             DispatchQueue.main.async {
                 self.tableView.insertRows(at: [IndexPath(row: self.config.whitelist.count-1, section: 0)],
                                           with: .left)
-//                self.alertPresenter.successAlert(title: "Permitted ID Added",
-//                                                 message: "This ID has been added to your permitted contacts list")
             }
         }
         catch {
-            print("Error adding whitelist entry: \(error)")
+            DDLogError("Error adding whitelist entry: \(error.localizedDescription)")
+            alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "And error occurred, please try again")
         }
 
     }
@@ -232,13 +243,13 @@ class WhitelistViewController: UIViewController {
     @objc func whitelistEntryDeleted(_ notification:Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryDeleted, object: nil)
+        guard let userInfo = notification.userInfo else { return }
+        guard let publicId = userInfo["publicId"] as? String else { return }
         do {
-            let row = try config.deleteWhitelistEntry(self.publicId)
+            let row = try config.deleteWhitelistEntry(publicId)
             assert(row != NSNotFound)
             DispatchQueue.main.async {
                 self.tableView.deleteRows(at: [IndexPath(row: row, section: 0)], with: .top)
-//                self.alertPresenter.successAlert(title: "Permitted ID Deleted",
-//                                                 message: "This ID has been deleted from your permitted contacts list")
             }
         }
         catch {
@@ -317,8 +328,8 @@ extension WhitelistViewController: UITableViewDelegate, UITableViewDataSource {
         if editingStyle == .delete {
             NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryDeleted(_:)),
                                                    name: Notifications.WhitelistEntryDeleted, object: nil)
-            publicId = config.whitelist[indexPath.row].publicId
-            contactManager.deleteWhitelistEntry(publicId)
+            let publicId = config.whitelist[indexPath.row].publicId
+            contactManager.deleteWhitelistEntry(publicId: publicId)
         }
 
     }

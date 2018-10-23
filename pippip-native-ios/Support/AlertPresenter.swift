@@ -35,13 +35,11 @@ class AlertPresenter: NSObject {
         super.init()
     }
     
-    @objc func infoAlert(title: String, message: String, toast: Bool = false) {
+    @objc func infoAlert(message: String) {
         
         var info = [AnyHashable: Any]()
-        info["title"] = title
         info["message"] = message
-        info["color"] = PippipTheme.infoAlertColor
-        NotificationCenter.default.post(name: Notifications.PresentAlert, object: toast, userInfo: info)
+        NotificationCenter.default.post(name: Notifications.PresentAlert, object: true, userInfo: info)
         
     }
     

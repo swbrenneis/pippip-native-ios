@@ -31,12 +31,12 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
         AsyncNotifier.notify(name: Notifications.GetStatusComplete, object: nil)
         if response.contacts!.count > 0 {
             do {
-                let updated = try contactManager.updateContacts(response.contacts!)
-                NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updated)
-                print("\(updated.count) contacts updated")
-                config.statusUpdates = config.statusUpdates + updated.count
+                let updates = try contactManager.updateContacts(response.contacts!)
+                print("\(updates.count) contacts updated")
+                config.statusUpdates = updates.count
+                NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updates)
                 NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
-                print("Status updated on \(updated.count) requests")
+                print("Status updated on \(updates.count) requests")
             }
             catch {
                 print("Error updating contacts: \(error)")

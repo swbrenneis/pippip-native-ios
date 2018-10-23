@@ -144,6 +144,7 @@ class MessagesViewController: UIViewController {
         tableView.dataSource = self
         messageSearch.delegate = self
 
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -157,6 +158,10 @@ class MessagesViewController: UIViewController {
             tableView.reloadData()
         }
 
+        let p = ContactManager.instance.pendingRequests.count
+        let s = config.statusUpdates
+        contactBadge.badgeValue = p + s
+        
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
@@ -172,6 +177,8 @@ class MessagesViewController: UIViewController {
         alertPresenter.present = false
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.AuthComplete, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.SetContactBadge, object: nil)
 
     }
 

@@ -18,7 +18,7 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
     var contactManager = ContactManager.instance
     var contactRequests: [ContactRequest]!
     var acknowledgeRequestView: AcknowledgeRequestView?
-    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
+    var blurView = GestureBlurView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
     var navigationController: UINavigationController?   // This is to satisfy the protocol. DO NOT USE!
 
     override init(frame: CGRect) {
@@ -80,8 +80,8 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
    
     }
     
-    @IBAction func cancelTapped(_ sender: Any) {
-
+    func dismiss() {
+        
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
@@ -89,6 +89,12 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
         }, completion: { completed in
             self.removeFromSuperview()
         })
+        
+    }
+    
+    @IBAction func cancelTapped(_ sender: Any) {
+    
+        dismiss()
         
     }
     

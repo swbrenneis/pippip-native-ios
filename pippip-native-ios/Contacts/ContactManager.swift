@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import CocoaLumberjack
 
 struct ContactRequest: Hashable {
 
@@ -72,7 +73,7 @@ class ContactManager: NSObject {
         return Array(requestSet)
     }
     var contactList: [Contact] {
-        return Array(contactSet)
+        return contactSet.sorted()
     }
     var visibleContactList: [Contact] {
         var visible = [Contact]()
@@ -81,7 +82,7 @@ class ContactManager: NSObject {
                 visible.append(contact)
             }
         }
-        return visible
+        return visible.sorted()
     }
  
     private override init() {
@@ -133,20 +134,19 @@ class ContactManager: NSObject {
 
     }
     
-    func addWhitelistEntry(_ publicId:String) -> Bool {
+    func addWhitelistEntry(publicId: String, directoryId: String?) throws {
 
-        if let _ = config.whitelistIndexOf(publicId) {
-            return false
+        if let _ = config.whitelistIndexOf(publicId: publicId) {
+            throw ContactError(error: "Whitelist entry exists")
         }
-        else {
-            let request = UpdateWhitelistRequest(id: publicId, action: "add")
-            let delegate = UpdateWhitelistDelegate(request: request, updateType: .addEntry)
-            let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>(delegate: delegate)
-            addTask.errorTitle = "Permitted Contact List Error"
-            addTask.sendRequest(request)
-            return true
-        }
-
+        let request = UpdateWhitelistRequest(id: publicId, action: "add")
+        let delegate = UpdateWhitelistDelegate(request: request, updateType: .addEntry)
+        delegate.publicId = publicId
+        delegate.directoryId = directoryId
+        let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>(delegate: delegate)
+        addTask.errorTitle = "Permitted Contact List Error"
+        addTask.sendRequest(request)
+        
     }
 
     func addRequests(_ requests: [[String: String]]) {
@@ -217,10 +217,11 @@ class ContactManager: NSObject {
     
     }
 
-    func deleteWhitelistEntry(_ publicId: String) {
+    func deleteWhitelistEntry(publicId: String) {
 
         let request = UpdateWhitelistRequest(id: publicId, action: "delete")
         let delegate = UpdateWhitelistDelegate(request: request, updateType: .deleteEntry)
+        delegate.publicId = publicId
         let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>(delegate: delegate)
         addTask.errorTitle = "Permitted Contact List Error"
         addTask.sendRequest(request)
@@ -352,9 +353,10 @@ class ContactManager: NSObject {
             try! realm.write {
                 dbContact.encoded = try encodeContact(contact)
             }
+            AsyncNotifier.notify(name: Notifications.DirectoryIdSet, object: contact)
         }
         else {
-            print("Contact \(contact.displayName) not found in database")
+            DDLogError("Contact \(contact.displayName) not found in database")
         }
         
     }

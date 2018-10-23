@@ -28,7 +28,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     var addContactView: AddContactView?
     var contactDetailView: ContactDetailView?
     var requestsView: ContactRequestsView?
-    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
+    var blurView = GestureBlurView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,6 +74,10 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
                                                name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestStatusUpdated(_:)),
                                                name: Notifications.RequestStatusUpdated, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
+                                               name: Notifications.AppSuspended, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(directoryIdSet(_:)),
+                                               name: Notifications.DirectoryIdSet, object: nil)
 
         if config.showIgnoredContacts {
             contactList = contactManager.contactList
@@ -87,7 +91,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
             if self.config.statusUpdates > 0 {
                 let suffix: String = self.config.statusUpdates > 1 ? "updates" : "update"
                 let message = "You have \(self.config.statusUpdates) contact status \(suffix)"
-                self.alertPresenter.infoAlert(title: "Contact Status Updates", message: message, toast: true)
+                self.alertPresenter.infoAlert(message: message)
             }
             self.config.statusUpdates = 0
             NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
@@ -102,6 +106,8 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         contactDetailView?.dismiss()
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestStatusUpdated, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdSet, object: nil)
 
     }
 
@@ -163,7 +169,8 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         
         contactDetailView?.blurController = self
         
-        self.view.addSubview(self.contactDetailView!)
+        blurView.toDismiss = contactDetailView
+        self.view.addSubview(contactDetailView!)
         
         UIView.animate(withDuration: 0.3, animations: {
             self.blurView.alpha = 0.6
@@ -214,6 +221,13 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         
     }
 
+    @objc func appSuspended(_ notification: Notification) {
+        
+        requestsView?.dismiss()
+        contactDetailView?.dismiss()
+
+    }
+    
     @objc func contactDeleted(_ notification: Notification) {
 
         guard let publicId = notification.object as? String else { return }
@@ -235,11 +249,11 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
 
+        guard let contact = notification.object as? Contact else { return }
+        contactList.append(contact)
+        contactList = self.contactList.sorted()
         DispatchQueue.main.async {
-            guard let contact = notification.object as? Contact else { return }
-            self.contactList.append(contact)
-            self.tableView.insertRows(at: [IndexPath(row: self.contactList.count-1, section: 1)],
-                                      with: .right)
+            self.tableView.reloadSections(IndexSet(integer: 1), with: .top)
         }
   
     }
@@ -285,15 +299,30 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         
     }
 
+    @objc func directoryIdSet(_ notification: Notification) {
+        
+        guard let contact = notification.object as? Contact else { return }
+        DispatchQueue.main.async {
+            for index in 0..<self.contactList.count {
+                if contact.contactId == self.contactList[index].contactId {
+                    self.contactList[index] = contact
+                    if let contactCell = self.tableView.cellForRow(at: IndexPath(row: index, section: 1)) as? ContactCell {
+                        contactCell.displayNameLabel.text = contact.displayName
+                    }
+                }
+            }
+        }
+
+    }
+
     @objc func requestAcknowledged(_ notification: Notification) {
 
         guard let contact = notification.object as? Contact else { return }
         contactRequests = Array(contactManager.pendingRequests)
+        contactList.append(contact)
+        contactList = contactList.sorted()
         DispatchQueue.main.async {
-            self.tableView.reloadSections(IndexSet(integer: 0), with: .left)
-            self.contactList.append(contact)
-            self.tableView.insertRows(at: [IndexPath(row: self.contactList.count-1, section: 1)],
-                                      with: .right)
+            self.tableView.reloadSections(IndexSet(integer: 0), with: .top)
         }
         
     }
@@ -310,19 +339,17 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     @objc func requestStatusUpdated(_ notification: Notification) {
 
         guard let updates = notification.object as? [Contact] else { return }
-        var paths = [IndexPath]()
         for updated in updates {
-            for index in 0..<contactList.count {
-                let contact = contactList[index]
-                if contact.publicId == updated.publicId {
-                    paths.append(IndexPath(row: index, section: 1))
+            for contact in contactList {
+                if updated.contactId == contact.contactId {
+                    contact.status = updated.status
                 }
             }
         }
-        if !paths.isEmpty {
-            DispatchQueue.main.async {
-                self.tableView.reloadRows(at: paths, with: .none)
-            }
+        contactList = contactList.sorted()
+        config.statusUpdates = 0
+        DispatchQueue.main.async {
+            self.tableView.reloadSections(IndexSet(integer: 1), with: .top)
         }
 
     }
@@ -376,7 +403,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
         if section == 0 {
-            return contactRequests.count
+            return contactRequests.count > 0 ? 1 : 0
         }
         else {
             return contactList.count

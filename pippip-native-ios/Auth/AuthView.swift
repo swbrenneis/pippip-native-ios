@@ -29,7 +29,7 @@ class AuthView: UIView, ControllerBlurProtocol {
     var config = Configurator()
     var signInView: SignInView?
     var newAccountView: NewAccountView?
-    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
+    var blurView = GestureBlurView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
     var navigationController: UINavigationController?   // This is to satisfy the protocol. DO NOT USE!
     var slideshow: ImageSlideshow!
     let slides = [ImageSource(imageString: "quickstart01")!,
@@ -93,8 +93,10 @@ class AuthView: UIView, ControllerBlurProtocol {
 
     func authenticationFailed(reason: String) {
         
-        self.hideToastActivity()
-        enableAuthentication()
+        DispatchQueue.main.async {
+            self.hideToastActivity()
+            self.enableAuthentication()
+        }
 
     }
     

@@ -258,7 +258,7 @@ class Configurator: NSObject {
 
     }
 
-    func whitelistIndexOf(_ publicId: String) -> Int? {
+    func whitelistIndexOf(publicId: String) -> Int? {
 
         return privateWhitelist.index(where: {(entry) -> Bool in
             return publicId == entry.publicId

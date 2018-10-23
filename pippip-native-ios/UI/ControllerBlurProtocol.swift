@@ -10,7 +10,7 @@ import UIKit
 
 protocol ControllerBlurProtocol {
     
-    var blurView: UIVisualEffectView { get set }
+    var blurView: GestureBlurView { get set }
     var navigationController: UINavigationController? { get }
 
 }

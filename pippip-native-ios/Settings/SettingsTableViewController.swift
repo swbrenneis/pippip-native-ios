@@ -20,7 +20,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
     var verifyPassphraseView: VerifyPassphraseView?
     var changePassphraseView: ChangePassphraseView?
     var storePassphraseView: StorePassphraseView?
-    var blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
+    var blurView = GestureBlurView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
 
     override func viewDidLoad() {
         super.viewDidLoad()

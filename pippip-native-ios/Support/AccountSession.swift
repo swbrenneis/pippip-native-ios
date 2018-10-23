@@ -218,7 +218,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         
         if accountSessionState == .willResume {
             accountSessionState = .wasSuspended
-            self.doUpdates()
+//            self.doUpdates()
             NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
         }
 
@@ -254,9 +254,9 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     @objc func authComplete(_ notification: Notification) {
 
         authState = .serverAuthenticated
-        if accountSessionState != .wasSuspended {
+//        if accountSessionState != .wasSuspended {
             doUpdates()
-        }
+//        }
         accountSessionState = .active
 
     }
@@ -292,7 +292,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
-        DDLogVerbose("Notification received")
+        print("Notification received")
         doUpdates()
         completionHandler(.badge)
 

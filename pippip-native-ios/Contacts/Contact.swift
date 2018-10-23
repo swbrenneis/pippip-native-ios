@@ -8,22 +8,100 @@
 
 import UIKit
 
-class Contact: NSObject {
+class Contact: NSObject, Comparable {
+    
+    static func < (lhs: Contact, rhs: Contact) -> Bool {
+
+        switch lhs.status {
+        case "pending":
+            switch rhs.status {
+            case "pending":
+                return lhs.displayName.uppercased().utf8.first! < rhs.displayName.uppercased().utf8.first!
+            case "accepted":
+                return true
+            case "rejected":
+                return true
+            case "ignored":
+                return true
+            default:
+                assert(false, "Invalid contact status in comparator")
+            }
+        case "accepted":
+            switch rhs.status {
+            case "pending":
+                return false
+            case "accepted":
+                return lhs.displayName.uppercased().utf8.first! < rhs.displayName.uppercased().utf8.first!
+            case "rejected":
+                return true
+            case "ignored":
+                return true
+            default:
+                assert(false, "Invalid contact status in comparator")
+            }
+        case "rejected":
+            switch rhs.status {
+            case "pending":
+                return false
+            case "accepted":
+                return false
+            case "rejected":
+                return lhs.displayName.uppercased().utf8.first! < rhs.displayName.uppercased().utf8.first!
+            case "ignored":
+                return true
+            default:
+                assert(false, "Invalid contact status in comparator")
+            }
+        case "ignored":
+            switch rhs.status {
+            case "pending":
+                return false
+            case "accepted":
+                return false
+            case "rejected":
+                return false
+            case "ignored":
+                return lhs.displayName.uppercased().utf8.first! < rhs.displayName.uppercased().utf8.first!
+            default:
+                assert(false, "Invalid contact status in comparator")
+            }
+        default:
+            assert(false, "Invalid contact status in comparator")
+        }
+
+    }
 
     static let currentVersion: Float = 2.0
 
     var version: Float = Contact.currentVersion
     var contactId: Int = 0
     var publicId: String = ""
-    var directoryId: String?
+    private var realDirectoryId: String?
+    var directoryId: String? {
+        get {
+            return realDirectoryId
+        }
+        set {
+            if let did = newValue {
+                if did.utf8.count == 0 {
+                    realDirectoryId =  nil
+                }
+                else {
+                    realDirectoryId = did
+                }
+            }
+            else {
+                realDirectoryId = newValue
+            }
+        }
+    }
     var displayName: String {
         get {
-            if let did = directoryId {
+            if let did = realDirectoryId {
                 return did
             }
             else {
-                let shortened = publicId.prefix(10) + "..."
-                return "\(shortened)"
+                return publicId
             }
         }
     }

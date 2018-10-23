@@ -62,6 +62,7 @@ class AddToWhitelistView: UIView {
     
     func dismiss() {
 
+        assert(Thread.isMainThread)
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
@@ -76,7 +77,10 @@ class AddToWhitelistView: UIView {
 
     @IBAction func addIdTapped(_ sender: Any) {
 
-        let directoryId = directoryIdTextField.text ?? ""
+        var directoryId = directoryIdTextField.text
+        if directoryId?.utf8.count == 0 {
+            directoryId = nil
+        }
         let publicId = publicIdTextField.text ?? ""
         whitelistViewController?.verifyAndAdd(directoryId: directoryId, publicId: publicId)
 

@@ -10,7 +10,6 @@
 		344BAD4BA2839C4607732E00 /* Pods_pippip_native_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EAF080C88C70EE3FD9244478 /* Pods_pippip_native_ios.framework */; };
 		550007BC2078203B00103882 /* EnclaveTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550007BB2078203B00103882 /* EnclaveTask.swift */; };
 		55006BA720B48BA80040C2DD /* Configurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55006BA620B48BA80040C2DD /* Configurator.swift */; };
-		55006BAB20B9889B0040C2DD /* ContactDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55006BAA20B9889B0040C2DD /* ContactDetailCell.swift */; };
 		5500D16A207405190016AC71 /* DeleteAccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500D169207405190016AC71 /* DeleteAccountCell.swift */; };
 		5500D172207455450016AC71 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500D171207455450016AC71 /* TextMessage.swift */; };
 		5506D7B8216AA85A0042FE73 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5506D7B7216AA85A0042FE73 /* Keychain.swift */; };
@@ -71,7 +70,9 @@
 		552BC4642124BB9E00694CB4 /* Alert2ButtonView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 552BC4632124BB9E00694CB4 /* Alert2ButtonView.xib */; };
 		552BC46B2124BCE800694CB4 /* Alert2ButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552BC46A2124BCE800694CB4 /* Alert2ButtonView.swift */; };
 		552BC46D2124C00C00694CB4 /* ControllerBlurProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552BC46C2124C00C00694CB4 /* ControllerBlurProtocol.swift */; };
-		55316C8B206AD21800EB1AF7 /* PendingRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55316C8A206AD21800EB1AF7 /* PendingRequestCell.swift */; };
+		552F1C24217BA0BF00679E9B /* ContactError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552F1C23217BA0BF00679E9B /* ContactError.swift */; };
+		552F1C26217CA9C000679E9B /* GestureBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552F1C25217CA9C000679E9B /* GestureBlurView.swift */; };
+		552F1C28217CAC2E00679E9B /* Dismissable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552F1C27217CAC2E00679E9B /* Dismissable.swift */; };
 		5536A6832067559400B7E6D8 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A6822067559400B7E6D8 /* Notifications.swift */; };
 		5536A68D206897D200B7E6D8 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A68C206897D200B7E6D8 /* ContactsViewController.swift */; };
 		5538184E215D3679001061E7 /* pippip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5538184D215D3679001061E7 /* pippip.mp3 */; };
@@ -270,7 +271,6 @@
 		4FD6FDE140DF1C87A98B2C7C /* Pods-pippip-native-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pippip-native-ios.release.xcconfig"; path = "Pods/Target Support Files/Pods-pippip-native-ios/Pods-pippip-native-ios.release.xcconfig"; sourceTree = "<group>"; };
 		550007BB2078203B00103882 /* EnclaveTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnclaveTask.swift; sourceTree = "<group>"; };
 		55006BA620B48BA80040C2DD /* Configurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configurator.swift; sourceTree = "<group>"; };
-		55006BAA20B9889B0040C2DD /* ContactDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailCell.swift; sourceTree = "<group>"; };
 		5500D169207405190016AC71 /* DeleteAccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountCell.swift; sourceTree = "<group>"; };
 		5500D171207455450016AC71 /* TextMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessage.swift; sourceTree = "<group>"; };
 		5506D7B7216AA85A0042FE73 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
@@ -331,7 +331,9 @@
 		552BC4632124BB9E00694CB4 /* Alert2ButtonView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Alert2ButtonView.xib; sourceTree = "<group>"; };
 		552BC46A2124BCE800694CB4 /* Alert2ButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert2ButtonView.swift; sourceTree = "<group>"; };
 		552BC46C2124C00C00694CB4 /* ControllerBlurProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControllerBlurProtocol.swift; sourceTree = "<group>"; };
-		55316C8A206AD21800EB1AF7 /* PendingRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingRequestCell.swift; sourceTree = "<group>"; };
+		552F1C23217BA0BF00679E9B /* ContactError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactError.swift; sourceTree = "<group>"; };
+		552F1C25217CA9C000679E9B /* GestureBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureBlurView.swift; sourceTree = "<group>"; };
+		552F1C27217CAC2E00679E9B /* Dismissable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dismissable.swift; sourceTree = "<group>"; };
 		5536A6822067559400B7E6D8 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		5536A68C206897D200B7E6D8 /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
 		5538184D215D3679001061E7 /* pippip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = pippip.mp3; sourceTree = "<group>"; };
@@ -627,6 +629,8 @@
 				552BC46A2124BCE800694CB4 /* Alert2ButtonView.swift */,
 				55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */,
 				552BC46C2124C00C00694CB4 /* ControllerBlurProtocol.swift */,
+				552F1C27217CAC2E00679E9B /* Dismissable.swift */,
+				552F1C25217CA9C000679E9B /* GestureBlurView.swift */,
 				5524DBCD216A62720062DA1E /* PippipGeometry.swift */,
 				55E970B020B07D14008C2F39 /* PippipTableViewCell.swift */,
 				55E970B220B07DAE008C2F39 /* PippipTheme.swift */,
@@ -661,6 +665,7 @@
 				55FD018F20B102510028435E /* AlertPresenter.swift */,
 				5592334920667094008AEEAE /* AsyncNotifier.swift */,
 				55006BA620B48BA80040C2DD /* Configurator.swift */,
+				552F1C23217BA0BF00679E9B /* ContactError.swift */,
 				5511E9AB20C1B6060080C0DF /* CryptoError.swift */,
 				5586B8912064A7AF00641514 /* ErrorDelegate.swift */,
 				5586B8932065190B00641514 /* NotificationErrorDelegate.swift */,
@@ -679,13 +684,11 @@
 				5557B466211DE1D800FE1775 /* AddContactView.swift */,
 				55C88DCE20707F6B00D58BCA /* Contact.swift */,
 				55C8075E2174D7B900336028 /* ContactCell.swift */,
-				55006BAA20B9889B0040C2DD /* ContactDetailCell.swift */,
 				55C8075C2173BB2100336028 /* ContactDetailView.swift */,
 				554D01C7207D0E2500C19373 /* ContactManager.swift */,
 				55FEC68A21683323002132DC /* ContactRequestsView.swift */,
 				5536A68C206897D200B7E6D8 /* ContactsViewController.swift */,
 				55BFD36020CE14A80084C555 /* DatabaseContact.swift */,
-				55316C8A206AD21800EB1AF7 /* PendingRequestCell.swift */,
 				5593C941212B4EC80053011E /* PendingRequestsCell.swift */,
 			);
 			path = Contacts;
@@ -1360,6 +1363,7 @@
 				55721A2020C9F973008FE9F6 /* SetDirectoryIdDelegate.swift in Sources */,
 				5511E9C420C2D1AC0080C0DF /* GetPendingRequests.swift in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
+				552F1C28217CAC2E00679E9B /* Dismissable.swift in Sources */,
 				557C2B592093B8360069336D /* PippipTextMessageModel.swift in Sources */,
 				557C2B692093F5F50069336D /* TextMessageDecorator.swift in Sources */,
 				5511E9E420C3414C0080C0DF /* SendMessageResponse.swift in Sources */,
@@ -1375,7 +1379,6 @@
 				5586B8872064882B00641514 /* SessionStateActual.swift in Sources */,
 				5511E9AC20C1B6060080C0DF /* CryptoError.swift in Sources */,
 				557C2B652093CE7C0069336D /* PippipTextMessageInteractionHandler.swift in Sources */,
-				55316C8B206AD21800EB1AF7 /* PendingRequestCell.swift in Sources */,
 				5592334A20667094008AEEAE /* AsyncNotifier.swift in Sources */,
 				55187ECA20BE275700F94792 /* APIRequestProtocol.swift in Sources */,
 				55BFD36920D052FC0084C555 /* AccountSession.swift in Sources */,
@@ -1432,12 +1435,12 @@
 				5511E9B420C1F1C90080C0DF /* AcknowledgeRequest.swift in Sources */,
 				5511E9DE20C33B8D0080C0DF /* GetMessagesResponse.swift in Sources */,
 				5511E9C820C2DFA10080C0DF /* MatchDirectoryIdRequest.swift in Sources */,
+				552F1C26217CA9C000679E9B /* GestureBlurView.swift in Sources */,
 				55BFD36520CF18300084C555 /* DatabaseMessage.swift in Sources */,
 				55AA55591FA14D7100A7026B /* SHA1.cc in Sources */,
 				55214AC5214D6D290013B1EC /* SyncResponse.swift in Sources */,
 				55AA55641FA14D7100A7026B /* RSACodec.cc in Sources */,
 				55006BA720B48BA80040C2DD /* Configurator.swift in Sources */,
-				55006BAB20B9889B0040C2DD /* ContactDetailCell.swift in Sources */,
 				5586B8852064826000641514 /* EditWhitelistCell.swift in Sources */,
 				5511E9BE20C2C57C0080C0DF /* DeleteContactResponse.swift in Sources */,
 				5536A6832067559400B7E6D8 /* Notifications.swift in Sources */,
@@ -1448,6 +1451,7 @@
 				55AA54FF1FA14C1300A7026B /* CKRSAPrivateKey.m in Sources */,
 				5511E9D820C3367F0080C0DF /* AcknowledgeMessagesRequest.swift in Sources */,
 				55721A1620C9956E008FE9F6 /* GetPendingRequestsDelegate.swift in Sources */,
+				552F1C24217BA0BF00679E9B /* ContactError.swift in Sources */,
 				55AA54DF1FA14B1E00A7026B /* Int32.cc in Sources */,
 				55C8075F2174D7B900336028 /* ContactCell.swift in Sources */,
 				554D01C4207C0CEC00C19373 /* UserVault.swift in Sources */,

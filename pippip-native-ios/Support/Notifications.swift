@@ -22,6 +22,7 @@ struct Notifications {
     static let ContactRequested = NSNotification.Name("ContactRequested")
     static let ContactSelected = NSNotification.Name("ContactSelected")
     static let DirectoryIdMatched = NSNotification.Name("DirectoryIdMatched")
+    static let DirectoryIdSet = NSNotification.Name("DirectoryIdSet")       // Posted when contact directory ID set
     static let DirectoryIdUpdated = NSNotification.Name("DirectoryIdUpdated")
     static let EnclaveRequestComplete = NSNotification.Name("EnclaveRequestComplete")
     static let GetMessagesComplete = NSNotification.Name("GetMessagesComplete")

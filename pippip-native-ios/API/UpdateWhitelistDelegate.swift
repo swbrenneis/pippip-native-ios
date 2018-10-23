@@ -7,17 +7,19 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 enum WhitelistUpdateType { case addEntry, deleteEntry }
 
 class UpdateWhitelistDelegate: EnclaveDelegate<UpdateWhitelistRequest, UpdateWhitelistResponse> {
 
     var updateType: WhitelistUpdateType
+    var publicId: String!
+    var directoryId: String?
     
     init(request: UpdateWhitelistRequest, updateType: WhitelistUpdateType) {
         
         self.updateType = updateType
-        
         super.init(request: request)
 
         requestComplete = self.updateComplete
@@ -31,18 +33,28 @@ class UpdateWhitelistDelegate: EnclaveDelegate<UpdateWhitelistRequest, UpdateWhi
         switch updateType {
         case .addEntry:
             if  response.action == "add", response.result == "added" || response.result == "exists" {
-                NotificationCenter.default.post(name: Notifications.WhitelistEntryAdded, object: response)
+                var userInfo = [String: Any]()
+                userInfo["publicId"] = publicId
+                if directoryId != nil {
+                    userInfo["directoryId"] = directoryId
+                }
+                NotificationCenter.default.post(name: Notifications.WhitelistEntryAdded, object: nil, userInfo: userInfo)
             }
             else {
-                print("Invalid response from server to add whitelist entry update")
+                DDLogError("Invalid response from server to add whitelist entry update")
             }
             break
         case .deleteEntry:
             if  response.action == "delete", response.result == "deleted" || response.result == "not found" {
-                NotificationCenter.default.post(name: Notifications.WhitelistEntryDeleted, object: nil)
+                var userInfo = [String: Any]()
+                userInfo["publicId"] = publicId
+                if directoryId != nil {
+                    userInfo["directoryId"] = directoryId
+                }
+                NotificationCenter.default.post(name: Notifications.WhitelistEntryDeleted, object: nil, userInfo: userInfo)
             }
             else {
-                print("Invalid response from server to delete whitelist entry update")
+                DDLogError("Invalid response from server to delete whitelist entry update")
             }
             break
         }
@@ -50,7 +62,7 @@ class UpdateWhitelistDelegate: EnclaveDelegate<UpdateWhitelistRequest, UpdateWhi
     }
 
     func updateError(_ reason: String) {
-        print("Update whitelist error: \(reason)")
+        DDLogError("Update whitelist error: \(reason)")
     }
 
 }
