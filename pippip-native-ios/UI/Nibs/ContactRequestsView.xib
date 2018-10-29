@@ -14,6 +14,7 @@
                 <outlet property="cancelButton" destination="LEC-v6-leJ" id="F3t-kb-8pc"/>
                 <outlet property="contentView" destination="iN0-l3-epB" id="Nxy-JK-aNO"/>
                 <outlet property="tableView" destination="Rbs-db-E2O" id="Jmj-mj-M4U"/>
+                <outlet property="titleLabel" destination="hqF-VE-17u" id="wXa-uZ-7ZH"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -22,7 +23,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LEC-v6-leJ">
-                    <rect key="frame" x="80" y="32" width="215" height="30"/>
+                    <rect key="frame" x="80" y="90" width="215" height="30"/>
                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
                     <state key="normal" title="Cancel"/>
                     <userDefinedRuntimeAttributes>
@@ -35,22 +36,35 @@
                     </connections>
                 </button>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Rbs-db-E2O">
-                    <rect key="frame" x="10" y="82" width="355" height="585"/>
+                    <rect key="frame" x="10" y="140" width="355" height="527"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </tableView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Contact Requests" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hqF-VE-17u">
+                    <rect key="frame" x="0.0" y="20" width="375" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="Jw6-RN-Hpj"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="hqF-VE-17u" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="09l-3i-iOI"/>
+                <constraint firstItem="LEC-v6-leJ" firstAttribute="top" secondItem="hqF-VE-17u" secondAttribute="bottom" constant="20" id="60U-US-ZPc"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="Rbs-db-E2O" secondAttribute="bottom" id="A0H-hN-5dP"/>
                 <constraint firstItem="Rbs-db-E2O" firstAttribute="top" secondItem="LEC-v6-leJ" secondAttribute="bottom" constant="20" id="GXa-f8-PcG"/>
-                <constraint firstItem="LEC-v6-leJ" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="12" id="V1R-YT-l31"/>
+                <constraint firstItem="hqF-VE-17u" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="Y3n-P9-RGL"/>
                 <constraint firstItem="Rbs-db-E2O" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="10" id="YId-sI-bok"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Rbs-db-E2O" secondAttribute="trailing" constant="10" id="Zfp-gu-ExP"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="LEC-v6-leJ" secondAttribute="trailing" constant="80" id="k2H-rN-se8"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="hqF-VE-17u" secondAttribute="trailing" id="vJC-Yo-SVg"/>
                 <constraint firstItem="LEC-v6-leJ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="80" id="wRy-LS-PYR"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="109.59999999999999" y="216.34182908545728"/>
         </view>
     </objects>
 </document>

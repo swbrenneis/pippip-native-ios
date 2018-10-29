@@ -86,8 +86,11 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         changePassphraseView?.dismiss()
         deleteAccountView?.dismiss()
 
-        if let idCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? DirectoryIdCell {
-            idCell.resetCell()
+        // Need to check this in case the account has been deleted.
+        if AccountSession.instance.serverAuthenticated {
+            if let idCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? DirectoryIdCell {
+                idCell.resetCell()
+            }
         }
         
         NotificationCenter.default.removeObserver(self, name: Notifications.PolicyChanged, object: nil)
@@ -202,7 +205,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
     @objc func accountDeleted(_ notification: Notification) {
 
         DispatchQueue.main.async {
-            self.navigationController?.performSegue(withIdentifier: "AuthViewSegue", sender: nil)
+            self.navigationController?.popViewController(animated: true)
         }
 
     }

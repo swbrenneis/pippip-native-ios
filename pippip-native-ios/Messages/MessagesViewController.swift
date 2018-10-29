@@ -153,14 +153,19 @@ class MessagesViewController: UIViewController {
         alertPresenter.present = true
         localAuth.viewWillAppear()
 
+        /*
+         *  ***** CAUTION! *****
+         *
+         * The app is not necessarily initialized when it gets here.
+         *
+         */
         if AccountSession.instance.serverAuthenticated {
             getMostRecentMessages()
             tableView.reloadData()
+            let p = ContactManager.instance.pendingRequests.count
+            let s = config.statusUpdates
+            contactBadge.badgeValue = p + s
         }
-
-        let p = ContactManager.instance.pendingRequests.count
-        let s = config.statusUpdates
-        contactBadge.badgeValue = p + s
         
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)

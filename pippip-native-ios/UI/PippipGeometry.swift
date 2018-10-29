@@ -71,6 +71,51 @@ class PippipGeometry: NSObject {
         case .iPhoneXsMax:
             set6_5InchGeometry()
             break
+        case .iPad2:
+            set6_5InchGeometry()
+            break
+        case .iPad3:
+            set6_5InchGeometry()
+            break
+        case .iPad4:
+            set6_5InchGeometry()
+            break
+        case .iPad5:
+            set6_5InchGeometry()
+            break
+        case .iPad6:
+            set6_5InchGeometry()
+            break
+        case .iPadAir:
+            set6_5InchGeometry()
+            break
+        case .iPadAir2:
+            set6_5InchGeometry()
+            break
+        case .iPadMini:
+            set6_5InchGeometry()
+            break
+        case .iPadMini2:
+            set6_5InchGeometry()
+            break
+        case .iPadMini3:
+            set6_5InchGeometry()
+            break
+        case .iPadMini4:
+            set6_5InchGeometry()
+            break
+        case .iPadPro9Inch:
+            set6_5InchGeometry()
+            break
+        case .iPadPro10Inch:
+            set6_5InchGeometry()
+            break
+        case .iPadPro12Inch:
+            set6_5InchGeometry()
+            break
+        case .iPadPro12Inch2:
+            set6_5InchGeometry()
+            break
         default:
             setSimulatorGeometry()
             break

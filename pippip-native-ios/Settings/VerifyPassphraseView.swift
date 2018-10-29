@@ -59,8 +59,7 @@ class VerifyPassphraseView: UIView {
             if try UserVault.validatePassphrase(accountName: accountName, passphrase: passphrase) {
                 try accountDeleter.deleteAccount()
                 self.alertPresenter.infoAlert(message: "This account has been deleted")
-                NotificationCenter.default.post(name: Notifications.AccountDeleted,
-                                                object: nil)
+                AsyncNotifier.notify(name: Notifications.AccountDeleted)
             }
             else {
                 self.alertPresenter.errorAlert(title: "Invalid Passphrase",

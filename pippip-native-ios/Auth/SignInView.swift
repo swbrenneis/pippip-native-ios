@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Toast_Swift
 
 class SignInView: UIView {
 
@@ -69,6 +70,7 @@ class SignInView: UIView {
 
     @IBAction func cancelTapped(_ sender: Any) {
 
+        self.superview?.hideToastActivity()
         dismiss()
 
     }

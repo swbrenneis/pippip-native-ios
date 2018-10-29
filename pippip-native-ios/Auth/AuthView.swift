@@ -102,9 +102,10 @@ class AuthView: UIView, ControllerBlurProtocol {
     
     func doAuthenticate(passphrase: String) {
 
-        assert(Thread.isMainThread)
-        authButton.isHidden = true
-        self.makeToastActivity(.center)
+        DispatchQueue.main.async {
+            self.makeToastActivity(.center)
+            self.authButton.isHidden = true
+        }
         /*
         if !AccountSession.instance.serverAuthenticated && !AccountSession.instance.loggedOut {
             NotificationCenter.default.addObserver(self, selector: #selector(updateProgress(_:)),
@@ -126,7 +127,6 @@ class AuthView: UIView, ControllerBlurProtocol {
         
         assert(Thread.isMainThread)
         authButton.isHidden = true
-        self.makeToastActivity(.center)
         newAccount = true
         /*
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),
@@ -172,7 +172,6 @@ class AuthView: UIView, ControllerBlurProtocol {
         assert(Thread.isMainThread)
         if AccountSession.instance.accountLoaded {
             if !AccountSession.instance.loggedOut && config.useLocalAuth {
-                self.makeToastActivity(.center)
                 localAuthenticator.getKeychainPassphrase(uuid: config.uuid)
             }
             else {
@@ -263,12 +262,12 @@ class AuthView: UIView, ControllerBlurProtocol {
     }
     
   @objc func passphraseReady(_ notification: Notification) {
-        
-        DispatchQueue.main.async {
-            if let passphrase = notification.object as! String? {
-                self.doAuthenticate(passphrase: passphrase)
-            }
-            else {
+    
+        if let passphrase = notification.object as! String? {
+            self.doAuthenticate(passphrase: passphrase)
+        }
+        else {
+            DispatchQueue.main.async {
                 self.authButton.setTitle("Sign In", for: .normal)
                 let screenWidth = self.bounds.width
                 let abWidth = screenWidth * PippipGeometry.signInButtonWidthRatio
@@ -278,7 +277,7 @@ class AuthView: UIView, ControllerBlurProtocol {
                 self.authButton.isHidden = false
             }
         }
-        
+    
     }
     
 
@@ -292,6 +291,7 @@ class AuthView: UIView, ControllerBlurProtocol {
 
     @IBAction func authPressed(_ sender: Any) {
     
+        self.makeToastActivity(.center)
         if AccountSession.instance.accountLoaded {
             showSignInView(accountName: AccountSession.instance.accountName)
         }

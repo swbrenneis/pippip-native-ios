@@ -13,8 +13,9 @@ class AccountDeleter: NSObject {
     func deleteAccount() throws {
 
         deleteDirectoryId()
-        AccountSession.instance.signOut()
+        // Order is important! AccountSession.accountDelete nils the account name
         let accountName = AccountSession.instance.accountName
+        AccountSession.instance.accountDeleted()
 
         let realmURL = Realm.Configuration.defaultConfiguration.fileURL!
         let realmURLs = [

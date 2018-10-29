@@ -89,7 +89,8 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
                                          .get(key: uuid)
             }
             catch {
-                print("Error retrieving keychain passphrase: \(error)")
+                self.authView?.hideToastActivity()
+                print("Error retrieving keychain passphrase: \(error.localizedDescription)")
             }
             /*
             if passphrase == nil  && !keychain.canceled {
@@ -127,8 +128,9 @@ class LocalAuthenticator: NSObject, AuthenticationDelegateProtocol {
             }
         }
         else {
-            assert(Thread.isMainThread)
-            authView?.contactServerLabel.isHidden = false
+            DispatchQueue.main.async {
+                self.authView?.contactServerLabel.isHidden = false
+            }
             authenticator.authenticate(accountName: AccountSession.instance.accountName, passphrase: passphrase)
         }
 

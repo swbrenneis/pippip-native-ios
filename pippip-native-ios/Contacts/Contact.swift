@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class Contact: NSObject, Comparable {
     
@@ -24,7 +25,7 @@ class Contact: NSObject, Comparable {
             case "ignored":
                 return true
             default:
-                assert(false, "Invalid contact status in comparator")
+                DDLogError("Invalid contact status in comparator")
             }
         case "accepted":
             switch rhs.status {
@@ -37,7 +38,7 @@ class Contact: NSObject, Comparable {
             case "ignored":
                 return true
             default:
-                assert(false, "Invalid contact status in comparator")
+                DDLogError("Invalid contact status in comparator")
             }
         case "rejected":
             switch rhs.status {
@@ -50,7 +51,7 @@ class Contact: NSObject, Comparable {
             case "ignored":
                 return true
             default:
-                assert(false, "Invalid contact status in comparator")
+                DDLogError("Invalid contact status in comparator")
             }
         case "ignored":
             switch rhs.status {
@@ -63,12 +64,14 @@ class Contact: NSObject, Comparable {
             case "ignored":
                 return lhs.displayName.uppercased().utf8.first! < rhs.displayName.uppercased().utf8.first!
             default:
-                assert(false, "Invalid contact status in comparator")
+                DDLogError("Invalid contact status in comparator")
             }
         default:
-            assert(false, "Invalid contact status in comparator")
+            DDLogError("Invalid contact status in comparator")
         }
 
+        return true
+        
     }
 
     static let currentVersion: Float = 2.0

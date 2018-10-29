@@ -110,6 +110,16 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     }
 
+    func accountDeleted() {
+
+        config.authenticated = false
+        accountSessionState = .terminated
+        authState = .notAuthenticated
+        updateState = .idle
+        realAccountName = nil
+
+    }
+    
     func doUpdates() {
 
         if updateState == .idle && authState == .serverAuthenticated {

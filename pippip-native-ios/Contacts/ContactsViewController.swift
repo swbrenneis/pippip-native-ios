@@ -318,11 +318,16 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     @objc func requestAcknowledged(_ notification: Notification) {
 
         guard let contact = notification.object as? Contact else { return }
-        contactRequests = Array(contactManager.pendingRequests)
-        contactList.append(contact)
-        contactList = contactList.sorted()
         DispatchQueue.main.async {
-            self.tableView.reloadSections(IndexSet(integer: 0), with: .top)
+            // Do these in order because both sections are validated after inserts and deletes to any section
+            self.contactRequests = Array(self.contactManager.pendingRequests)
+            if self.contactRequests.count == 0 {
+                self.tableView.deleteRows(at: [IndexPath(row: 0, section: 0)], with: .right)
+            }
+            self.contactList.append(contact)
+            self.contactList = self.contactList.sorted()
+            guard let row = self.contactList.firstIndex(of: contact) else { return }
+            self.tableView.insertRows(at: [IndexPath(row: row, section: 1)], with: .left)
         }
         
     }
