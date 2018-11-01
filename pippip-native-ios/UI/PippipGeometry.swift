@@ -175,7 +175,7 @@ class PippipGeometry: NSObject {
         signInViewOffset = 80.0
         verifyPassphraseViewWidthRatio = 0.8
         verifyPassphraseViewHeightRatio = 0.5
-        verifyPassphraseViewOffset = 90.0
+        verifyPassphraseViewOffset = 120.0
         storePassphraseViewWidthRatio = 0.8
         storePassphraseViewHeightRatio = 0.5
         storePassphraseViewOffset = 30.0
@@ -216,7 +216,7 @@ class PippipGeometry: NSObject {
         signInViewOffset = 114.0
         verifyPassphraseViewWidthRatio = 0.7
         verifyPassphraseViewHeightRatio = 0.4
-        verifyPassphraseViewOffset = 30.0
+        verifyPassphraseViewOffset = 100.0
         storePassphraseViewWidthRatio = 0.7
         storePassphraseViewHeightRatio = 0.4
         storePassphraseViewOffset = 30.0

@@ -8,6 +8,7 @@
 
 import UIKit
 import ObjectMapper
+import CocoaLumberjack
 
 class NewAccountResponse: NSObject, APIResponseProtocol {
     
@@ -37,21 +38,26 @@ class NewAccountResponse: NSObject, APIResponseProtocol {
         
     }
     
-    func processResponse() throws {
+    func processResponse() -> String? {
 
-        if error != nil {
-            alertPresenter.errorAlert(title: "New Account Error", message: error!)
-            throw APIResponseError.responseError(error: error!)
+        if let _ = error {
+            return error
         }
 
         if let encoded = Data(base64Encoded: data!) {
-            let codec = CKRSACodec(data: encoded)
-            try codec.decrypt(sessionState.userPrivateKey!)
-            sessionState.accountRandom = codec.getBlock()
+            do {
+                let codec = CKRSACodec(data: encoded)
+                try codec.decrypt(sessionState.userPrivateKey!)
+                sessionState.accountRandom = codec.getBlock()
+                return nil
+            }
+            catch {
+                DDLogError("Error decrypting new account response: \(error.localizedDescription)")
+                return "Invalid response from server"
+            }
         }
         else {
-            alertPresenter.errorAlert(title: "New Account Error", message: "Invalid response encoding")
-            throw APIResponseError.responseError(error: "Response encoding error")
+            return "Server response encoding error"
         }
         
     }

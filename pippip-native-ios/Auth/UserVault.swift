@@ -26,24 +26,26 @@ import Foundation
 
     }
 
-    static func validatePassphrase(accountName: String, passphrase: String) throws -> Bool {
+    static func validatePassphrase(passphrase: String) -> Bool {
 
         let docsURLs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let docURL = docsURLs[0]
         let vaultsURL = docURL.appendingPathComponent("PippipVaults", isDirectory: true)
-        let vaultUrl = vaultsURL.appendingPathComponent(accountName)
-        let vaultData = try Data(contentsOf: vaultUrl)
-
-        let digest = CKSHA256()
-        guard let authData = passphrase.data(using: .utf8)
-            else { throw CryptoError(error: "Invalid passphrase encoding") }
-        let vaultKey = digest.digest(authData)
+        let vaultUrl = vaultsURL.appendingPathComponent(AccountSession.instance.accountName)
         
-        let codec = CKGCMCodec(data: vaultData)
-        try codec.decrypt(vaultKey, withAuthData: authData)
+        do {
+            let vaultData = try Data(contentsOf: vaultUrl)            
+            let digest = CKSHA256()
+            guard let authData = passphrase.data(using: .utf8) else { return false }
+            let vaultKey = digest.digest(authData)
+            let codec = CKGCMCodec(data: vaultData)
+            try codec.decrypt(vaultKey, withAuthData: authData)
+            return true
+        }
+        catch {
+            return false
+        }
         
-        return true
-
     }
 
     @objc func decode(_ vaultData: Data, passphrase: String) throws {

@@ -8,6 +8,7 @@
 
 import UIKit
 import ObjectMapper
+import CocoaLumberjack
 
 class EnclaveResponse: NSObject, APIResponseProtocol {
 
@@ -49,28 +50,32 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
 
     }
     
-    func processResponse() throws {
+    func processResponse() -> String? {
 
-        if error != nil {
-            alertPresenter.errorAlert(title: "Enclave Error", message: error!)
-            throw APIResponseError.responseError(error: error!)
+        if let _ = error {
+            return error
         }
-        
+
         if sessionId != sessionState.sessionId || authToken != sessionState.authToken {
             print("Current session ID: \(sessionState.sessionId)")
             print("Current auth token: \(sessionState.authToken)")
-            alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid authentication! Please sign off immediately!")
-            throw APIResponseError.responseError(error: "Mismatched authentication tokens")
+            return "Invalid authentication! Please sign off immediately!"
         }
 
         if let responseData = Data(base64Encoded: response!) {
-            let codec = CKGCMCodec(data: responseData)
-            try codec.decrypt(sessionState.enclaveKey!, withAuthData: sessionState.authData!)
-            json = codec.getString()
+            do {
+                let codec = CKGCMCodec(data: responseData)
+                try codec.decrypt(sessionState.enclaveKey!, withAuthData: sessionState.authData!)
+                json = codec.getString()
+                return  nil
+            }
+            catch {
+                DDLogError("Error decrypting enclave response: \(error.localizedDescription)")
+                return "Invalid response from server"
+            }
         }
         else {
-            alertPresenter.errorAlert(title: "Enclave Error", message: "Invalid server response")
-            throw APIResponseError.responseError(error: "Invalid response encoding")
+            return "Server response encoding error"
         }
 
     }

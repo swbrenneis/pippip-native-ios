@@ -56,32 +56,30 @@ class ChangePassphraseView: UIView {
         
         oldPassphrase = oldPassphraseTextView.text ?? ""
         newPassphrase = newPassphraseTextView.text ?? ""
-        do {
-            if try UserVault.validatePassphrase(accountName: accountName, passphrase: oldPassphrase) {
-                let vault = UserVault()
-                do {
-                    try vault.changePassphrase(accountName: self.accountName, oldPassphrase: self.oldPassphrase,
-                                               newPassphrase: self.newPassphrase)
-                    let keychain = Keychain(service: Keychain.PIPPIP_TOKEN_SERVICE)
-                    let config = Configurator()
-                    if config.useLocalAuth {
-                        try keychain.update(passphrase: self.newPassphrase, key: config.uuid)
-                    }
-                    self.alertPresenter.successAlert(message: "Your local passphrase has been changed")
+        if UserVault.validatePassphrase(passphrase: oldPassphrase) {
+            let vault = UserVault()
+            do {
+                try vault.changePassphrase(accountName: self.accountName, oldPassphrase: self.oldPassphrase,
+                                           newPassphrase: self.newPassphrase)
+                let keychain = Keychain(service: Keychain.PIPPIP_TOKEN_SERVICE)
+                let config = Configurator()
+                if config.useLocalAuth {
+                    try keychain.update(passphrase: self.newPassphrase, key: config.uuid)
                 }
-                catch {
-                    self.alertPresenter.errorAlert(title: "Change Passphrase Error", message: "An error has occurred, please try again")
-                }
-                dismiss()
+                self.alertPresenter.successAlert(message: "Your local passphrase has been changed")
             }
+            catch {
+                self.alertPresenter.errorAlert(title: "Change Passphrase Error", message: "An error has occurred, please try again")
+            }
+            dismiss()
         }
-        catch {
+        else {
             alertPresenter.errorAlert(title: "Invalid Old Passphrase",
                                       message: "The old passphrase you entered is invalid")
             // Dismiss here to make brute force harder
             dismiss()
         }
-
+        
     }
     
     func dismiss() {

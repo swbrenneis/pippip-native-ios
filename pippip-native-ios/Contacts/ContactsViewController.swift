@@ -18,7 +18,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     var contactManager = ContactManager.instance
     var config = Configurator()
     var sessionState = SessionState()
-    var localAuth: LocalAuthenticator!
+    var authenticator: Authenticator!
     var debugging = false
     var suspended = false
     var alertPresenter: AlertPresenter!
@@ -44,7 +44,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
-        localAuth = LocalAuthenticator(viewController: self, initial: false)
+        authenticator = Authenticator(viewController: self)
 
         let addContact = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addContact(_:)))
         rightBarItems.append(addContact)
@@ -63,12 +63,14 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
                                                name: Notifications.ContactDeleted, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestAcknowledged(_:)),
                                                name: Notifications.RequestAcknowledged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(resetControllers(_:)),
+                                               name: Notifications.ResetControllers, object: nil)
 
     }
 
     override func viewWillAppear(_ animated: Bool) {
 
-        localAuth.viewWillAppear()
+        authenticator.viewWillAppear()
         alertPresenter.present = true
         NotificationCenter.default.addObserver(self, selector: #selector(requestsUpdated(_:)),
                                                name: Notifications.RequestsUpdated, object: nil)
@@ -102,6 +104,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     override func viewWillDisappear(_ animated: Bool) {
 
         alertPresenter.present = false
+        authenticator.viewWillDisappear()
         addContactView?.dismiss(completion: nil)
         contactDetailView?.dismiss()
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestsUpdated, object: nil)
@@ -110,14 +113,14 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdSet, object: nil)
 
     }
-
+/*
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
         localAuth.viewDidDisappear()
         
     }
-    
+*/
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -359,6 +362,16 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
     }
 
+    @objc func resetControllers(_ notification: Notification) {
+        
+        contactList.removeAll()
+        contactRequests.removeAll()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+
+    }
+    
     @objc func addContact(_ item: Any) {
 
         let frame = self.view.bounds

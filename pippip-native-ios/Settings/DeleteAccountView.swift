@@ -44,40 +44,56 @@ class DeleteAccountView: UIView {
         noButton.setTitleColor(PippipTheme.cancelButtonTextColor, for: .normal)
         
     }
-    
-    func dismiss() {
+
+    func dismiss(blurViewOff: Bool) {
 
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.settingsViewController?.blurView.alpha = 0.0
+            if blurViewOff {
+                self.settingsViewController?.blurView.alpha = 0.0
+            }
         }, completion: { completed in
             self.removeFromSuperview()
+        })
+        
+    }
+    
+    func showVerifyPassphraseView() {
+        
+        guard let viewController = settingsViewController else { return }
+        let frame = viewController.view.bounds
+        let viewRect = CGRect(x: 0.0, y: 0.0,
+                              width: frame.width * PippipGeometry.verifyPassphraseViewWidthRatio,
+                              height: frame.height * PippipGeometry.verifyPassphraseViewHeightRatio)
+        let verifyPassphraseView = VerifyPassphraseView(frame: viewRect)
+        verifyPassphraseView.center = CGPoint(x: viewController.view.center.x,
+                                              y: viewController.view.center.y - PippipGeometry.verifyPassphraseViewOffset)
+        verifyPassphraseView.alpha = 0.0
+        verifyPassphraseView.settingsViewController = settingsViewController
+        settingsViewController?.verifyPassphraseView = verifyPassphraseView
+        
+        settingsViewController?.view.addSubview(verifyPassphraseView)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            verifyPassphraseView.alpha = 1.0
+            // viewController.blurView.alpha = 0.6      Not needed. Set in DeleteAccountCell
+        }, completion: { completed in
+            verifyPassphraseView.passphraseTextField.becomeFirstResponder()
         })
         
     }
     
     @IBAction func yesTapped(_ sender: Any) {
 
-        UIView.animate(withDuration: 0.3, animations: {
-            self.center.y = 0.0
-            self.alpha = 0.0
-        }, completion: { completed in
-            self.removeFromSuperview()
-            self.settingsViewController?.showVerifyPassphraseView()
-        })
+        showVerifyPassphraseView()
+        dismiss(blurViewOff: false)
         
     }
 
     @IBAction func noTapped(_ sender: Any) {
 
-        UIView.animate(withDuration: 0.3, animations: {
-            self.center.y = 0.0
-            self.alpha = 0.0
-            self.settingsViewController?.blurView.alpha = 0.0
-        }, completion: { completed in
-            self.removeFromSuperview()
-        })
+        dismiss(blurViewOff: true)
         
     }
 

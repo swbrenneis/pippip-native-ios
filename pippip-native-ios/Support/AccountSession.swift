@@ -13,14 +13,12 @@ import LocalAuthentication
 import CocoaLumberjack
 
 enum AccountSessionState {
+    case initializing
     case appStarted
-    case willTerminate
-    case terminated
+    case active
     case willSuspend
     case suspended
     case willResume
-    case wasSuspended
-    case active
 }
 
 enum AuthState {
@@ -49,7 +47,8 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     var messageManager = MessageManager()
     var sessionState = SessionState()
     var config = Configurator()
-    var firstRun = true
+    private var biometricsInProgress = false
+//    var firstRun = true
     private var realAccountName: String?
     var accountName: String {
         get {
@@ -69,6 +68,24 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     var loggedOut: Bool {
         get {
             return authState == .loggedOut
+        }
+    }
+    var newAccount: Bool {
+        get {
+            return realAccountName == nil
+        }
+    }
+    var starting: Bool {
+        get {
+            return accountSessionState == .appStarted
+        }
+    }
+    var biometricsRunning: Bool {
+        get {
+            return biometricsInProgress
+        }
+        set {
+            biometricsInProgress = newValue
         }
     }
 
@@ -93,7 +110,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
         DDLog.add(fileLogger)
 
-        accountSessionState = .terminated
+        accountSessionState = .initializing
         authState = .notAuthenticated
         updateState = .idle
 
@@ -110,13 +127,61 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     }
 
+    func accountCreated(accountName: String) {
+
+        realAccountName = accountName
+        accountSessionState = .active
+        authState = .serverAuthenticated
+
+    }
+
     func accountDeleted() {
 
         config.authenticated = false
-        accountSessionState = .terminated
+        accountSessionState = .appStarted
         authState = .notAuthenticated
         updateState = .idle
         realAccountName = nil
+        NotificationCenter.default.post(name: Notifications.ResetControllers, object: nil)
+
+    }
+    
+    func authenticated() {
+        
+        authState = .serverAuthenticated
+        accountSessionState = .active
+
+    }
+
+    // DEBUG ONLY!
+    private func deleteAccount(name: String) {
+
+        do {
+            let realmURL = Realm.Configuration.defaultConfiguration.fileURL!
+            let realmURLs = [
+                realmURL,
+                realmURL.appendingPathExtension("lock"),
+                realmURL.appendingPathExtension("note"),
+                realmURL.appendingPathExtension("management")
+            ]
+            for URL in realmURLs {
+                try FileManager.default.removeItem(at: URL)
+            }
+        }
+        catch {
+            print("No Realm files present")
+        }
+        
+        do {
+            let docsURLs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+            let docURL = docsURLs[0]
+            let vaultsURL = docURL.appendingPathComponent("PippipVaults", isDirectory: true)
+            let vaultUrl = vaultsURL.appendingPathComponent(name)
+            try FileManager.default.removeItem(at: vaultUrl)
+        }
+        catch {
+            print("no vault file present")
+        }
 
     }
     
@@ -145,6 +210,8 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
                                                          includingPropertiesForKeys: nil,
                                                          options: .skipsHiddenFiles)
         if !vaults.isEmpty {
+            // Debug delete bad accounts here
+            //deleteAccount(name: vaults[0].lastPathComponent)
             realAccountName = vaults[0].lastPathComponent
             loadConfig()
         }
@@ -208,7 +275,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
         
     }
-    
+
     @objc func appStarted() {
 
         accountSessionState = .appStarted
@@ -226,8 +293,8 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     @objc func resume() {
         
-        if accountSessionState == .willResume {
-            accountSessionState = .wasSuspended
+        if accountSessionState == .willResume && !biometricsInProgress {
+            accountSessionState = .active
 //            self.doUpdates()
             NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
         }
@@ -236,7 +303,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     
     @objc func willSuspend() {
         
-        if accountSessionState == .active {
+        if accountSessionState == .active && !biometricsInProgress {
             accountSessionState = .willSuspend
             NotificationCenter.default.post(name: Notifications.AppWillSuspend, object: nil)
         }
@@ -254,7 +321,6 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     @objc func willTerminate() {
         
-        accountSessionState = .willTerminate
         NotificationCenter.default.post(name: Notifications.AppWillTerminate, object: nil)
 
     }

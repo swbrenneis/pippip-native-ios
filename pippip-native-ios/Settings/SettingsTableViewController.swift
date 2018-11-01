@@ -15,7 +15,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
     var accountName: String!
     var config = Configurator()
     var alertPresenter: AlertPresenter!
-    var localAuth: LocalAuthenticator!
+    var authenticator: Authenticator!
     var deleteAccountView: DeleteAccountView?
     var verifyPassphraseView: VerifyPassphraseView?
     var changePassphraseView: ChangePassphraseView?
@@ -39,7 +39,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         self.tableView.dataSource = self
         self.tableView.delegate = self
 
-        localAuth = LocalAuthenticator(viewController: self, initial: false)
+        authenticator = Authenticator(viewController: self)
 
         var items = [MultiCellItemProtocol]()
         items.append(PublicIdCell.cellItem)
@@ -66,13 +66,11 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        localAuth.viewWillAppear()
+        authenticator.viewWillAppear()
         alertPresenter.present = true
 
         NotificationCenter.default.addObserver(self, selector: #selector(policyChanged(_:)),
                                                name: Notifications.PolicyChanged, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(accountDeleted(_:)),
-                                               name: Notifications.AccountDeleted, object: nil)
 
     }
 
@@ -80,11 +78,12 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
-        
+        authenticator.viewWillDisappear()
+
         verifyPassphraseView?.dismiss()
         storePassphraseView?.dismiss()
         changePassphraseView?.dismiss()
-        deleteAccountView?.dismiss()
+        deleteAccountView?.dismiss(blurViewOff: true)
 
         // Need to check this in case the account has been deleted.
         if AccountSession.instance.serverAuthenticated {
@@ -94,14 +93,20 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         }
         
         NotificationCenter.default.removeObserver(self, name: Notifications.PolicyChanged, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.AccountDeleted, object: nil)
 
     }
-
+/*
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
         localAuth.viewDidDisappear()
+        
+    }
+*/
+    func accountDeleted() {
+        
+        assert(Thread.isMainThread, "accountDeleted must be called from main thread")
+        navigationController?.popViewController(animated: true)
         
     }
     
@@ -131,28 +136,6 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         
     }
 
-    func showDeleteAccountView() {
-        
-        let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0,
-                              width: frame.width * PippipGeometry.deleteAccountViewWidthRatio,
-                              height: frame.height * PippipGeometry.deleteAccountViewHeightRatio)
-        deleteAccountView = DeleteAccountView(frame: viewRect)
-        let viewCenter = CGPoint(x: self.view.center.x, y: deleteAccountView!.center.y + PippipGeometry.deleteAccountViewOffset)
-        deleteAccountView?.center = viewCenter
-        deleteAccountView?.alpha = 0.3
-        
-        deleteAccountView?.settingsViewController = self
-        
-        self.view.addSubview(self.deleteAccountView!)
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.blurView.alpha = 0.6
-            self.deleteAccountView?.alpha = 1.0
-        })
-        
-    }
-    
     func showStorePassphraseView(cell: LocalAuthCell) {
         
         let frame = self.view.bounds
@@ -176,38 +159,6 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
             self.storePassphraseView?.center = viewCenter
         })
         
-    }
-    
-    func showVerifyPassphraseView() {
-        
-        let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0,
-                              width: frame.width * PippipGeometry.verifyPassphraseViewWidthRatio,
-                              height: frame.height * PippipGeometry.verifyPassphraseViewHeightRatio)
-        verifyPassphraseView = VerifyPassphraseView(frame: viewRect)
-        verifyPassphraseView?.accountName = accountName
-        verifyPassphraseView?.alpha = 0.0
-        
-        verifyPassphraseView?.settingsViewController = self
-        
-        self.view.addSubview(self.verifyPassphraseView!)
-
-        UIView.animate(withDuration: 0.3, animations: {
-            self.verifyPassphraseView?.alpha = 1.0
-            self.blurView.alpha = 0.6
-            self.verifyPassphraseView?.passphraseTextField.becomeFirstResponder()
-            let viewCenter = CGPoint(x: self.view.center.x, y: self.verifyPassphraseView!.center.y + PippipGeometry.verifyPassphraseViewOffset)
-            self.verifyPassphraseView?.center = viewCenter
-        })
-        
-    }
-    
-    @objc func accountDeleted(_ notification: Notification) {
-
-        DispatchQueue.main.async {
-            self.navigationController?.popViewController(animated: true)
-        }
-
     }
 
     @objc func policyChanged(_ notification: Notification) {

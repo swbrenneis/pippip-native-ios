@@ -10,6 +10,8 @@ import UIKit
 import ChameleonFramework
 import ImageSlideshow
 import Toast_Swift
+import LocalAuthentication
+import CocoaLumberjack
 
 class AuthView: UIView, ControllerBlurProtocol {
 
@@ -23,14 +25,18 @@ class AuthView: UIView, ControllerBlurProtocol {
     @IBOutlet weak var quickstartButton: UIButton!
     @IBOutlet weak var contactServerLabel: UILabel!
     
-    var newAccount = false
+    //var newAccount = false
     var blurController: ControllerBlurProtocol?
-    var localAuthenticator: LocalAuthenticator!
+    var authenticator: Authenticator?
     var config = Configurator()
     var signInView: SignInView?
+    var serverAuthenticator: ServerAuthenticator?
     var newAccountView: NewAccountView?
+    var alertPresenter = AlertPresenter()
     var blurView = GestureBlurView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
-    var navigationController: UINavigationController?   // This is to satisfy the protocol. DO NOT USE!
+    var navigationController: UINavigationController?
+    var authPrompt: String = ""
+    var resumePassphraseInvalid = false
     var slideshow: ImageSlideshow!
     let slides = [ImageSource(imageString: "quickstart01")!,
                   ImageSource(imageString: "quickstart02")!,
@@ -86,40 +92,93 @@ class AuthView: UIView, ControllerBlurProtocol {
         slideshow.alpha = 0.0
         addSubview(slideshow)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(passphraseReady(_:)),
-                                               name: Notifications.PassphraseReady, object: nil)
-    
-    }
-
-    func authenticationFailed(reason: String) {
-        
-        DispatchQueue.main.async {
-            self.hideToastActivity()
-            self.enableAuthentication()
+        let laContext = LAContext()
+        var authError: NSError?
+        if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)) {
+            switch laContext.biometryType {
+            case .none:
+                DDLogInfo("Local authentication not supported")
+                break
+            case .touchID:
+                authPrompt = "Please provide your thumbprint to open Pippip"
+                break
+            case .faceID:
+                authPrompt = "Please use face ID to open Pippip"
+                break
+            }
         }
 
     }
+
+    func accountCreated(success: Bool, _ reason: String?) {
+        
+        DispatchQueue.main.async {
+            self.hideToastActivity()
+            self.authButton.isHidden = success
+            if let message = reason {
+                self.alertPresenter.errorAlert(title: "New Account Error", message: message)
+            }
+            self.dismiss()
+        }
+
+    }
+
+    func authenticated(success: Bool, _ reason: String?) {
+        
+        NotificationCenter.default.post(name: Notifications.AuthComplete, object: nil)  // For messages view controller
+        DispatchQueue.main.async {
+            self.hideToastActivity()
+            self.authButton.isHidden = success
+            if let message = reason {
+                self.alertPresenter.errorAlert(title: "Sign In Error", message: message)
+            }
+            if success {
+                self.dismiss()
+            }
+        }
+        
+    }
     
+    func biometricAuthenticate(local: Bool) {
+        
+        AccountSession.instance.biometricsRunning = true
+        if let passhrase = getKeychainPassphrase(uuid: config.uuid) {
+            self.makeToastActivity(.center)
+            if local {
+                if UserVault.validatePassphrase(passphrase: passhrase) {
+                    dismiss()
+                }
+                else {
+                    self.hideToastActivity()
+                    authButton.isHidden = false
+                }
+            }
+            else {
+                self.contactServerLabel.isHidden = false
+                serverAuthenticator = ServerAuthenticator(authView: self)
+                serverAuthenticator?.authenticate(passphrase: passhrase)
+            }
+        }
+        AccountSession.instance.biometricsRunning = false
+
+    }
+    
+   func creatingAccount() {
+
+        assert(Thread.isMainThread)
+        authButton.isHidden = true
+        contactServerLabel.isHidden = false
+        self.makeToastActivity(.center)
+
+    }
+/*
     func doAuthenticate(passphrase: String) {
 
         DispatchQueue.main.async {
             self.makeToastActivity(.center)
             self.authButton.isHidden = true
         }
-        /*
-        if !AccountSession.instance.serverAuthenticated && !AccountSession.instance.loggedOut {
-            NotificationCenter.default.addObserver(self, selector: #selector(updateProgress(_:)),
-                                                   name: Notifications.UpdateProgress, object: nil)
-            //NotificationCenter.default.addObserver(self, selector: #selector(presentAlert(_:)),
-            //                                       name: Notifications.PresentAlert, object: nil)
-            let hud = MBProgressHUD.showAdded(to: self, animated: true)
-            hud.mode = .annularDeterminate;
-            hud.contentColor = PippipTheme.buttonColor
-            hud.label.textColor = UIColor.flatTealDark
-            hud.label.text = "Authenticating...";
-        }
- */
-        localAuthenticator.doAuthenticate(passphrase: passphrase)
+        authenticator?.doAuthenticate(passphrase: passphrase)
 
     }
     
@@ -127,86 +186,60 @@ class AuthView: UIView, ControllerBlurProtocol {
         
         assert(Thread.isMainThread)
         authButton.isHidden = true
-        newAccount = true
-        /*
-        NotificationCenter.default.addObserver(self, selector: #selector(self.updateProgress(_:)),
-                                               name: Notifications.UpdateProgress, object: nil)
-        //NotificationCenter.default.addObserver(self, selector: #selector(self.presentAlert(_:)),
-        //                                       name: Notifications.PresentAlert, object: nil)
-        let hud = MBProgressHUD.showAdded(to: self, animated: true)
-        hud.mode = .annularDeterminate;
-        hud.contentColor = PippipTheme.buttonColor
-        hud.label.textColor = UIColor.flatTealDark
-        hud.label.text = "Creating...";
- */
-        localAuthenticator.doNewAccount(accountName: accountName, passphrase: passphrase, biometricsEnabled: enableBiometrics)
+        //newAccount = true
+        authenticator?.doNewAccount(accountName: accountName, passphrase: passphrase, biometricsEnabled: enableBiometrics)
         
     }
-    
-    func dismiss(completion: @escaping (Bool) -> Void) {
-        
-        assert(Thread.isMainThread)
-        NotificationCenter.default.removeObserver(self, name: Notifications.PresentAlert, object: nil)
-        DispatchQueue.main.async {
-            self.authButton.isHidden = true
-            UIView.animate(withDuration: 0.3, animations: {
-                self.center.y = 0.0
-                self.alpha = 0.0
-                self.blurController?.blurView.alpha = 0.0
-            }, completion: { (completed) in
-                self.hideToastActivity()
-                self.contactServerLabel.isHidden = true
-                if self.newAccount {
-                    AsyncNotifier.notify(name: Notifications.PresentAlert, userInfo: ["message": "Your account has been created"],
-                                         toast: true)
-                    self.newAccount = false
-                }
-                completion(completed)
-            })
-        }
-        
-    }
-    
-    func enableAuthentication() {
-        
-        assert(Thread.isMainThread)
-        if AccountSession.instance.accountLoaded {
-            if !AccountSession.instance.loggedOut && config.useLocalAuth {
-                localAuthenticator.getKeychainPassphrase(uuid: config.uuid)
-            }
-            else {
-                self.authButton.setTitle("Sign In", for: .normal)
-                let screenWidth = self.bounds.width
-                let abWidth = screenWidth * PippipGeometry.signInButtonWidthRatio
-                let abConstraint = (screenWidth - abWidth) / 2
-                authButtonLeading.constant = abConstraint
-                authButtonTrailing.constant = abConstraint
-                authButton.isHidden = false
-            }
-        }
-        else {
-            authButton.setTitle("Create A New Account", for: .normal)
-            let screenWidth = self.bounds.width
-            let abWidth = screenWidth * PippipGeometry.newAccountButtonWidthRatio
-            let abConstraint = (screenWidth - abWidth) / 2
-            authButtonLeading.constant = abConstraint
-            authButtonTrailing.constant = abConstraint
-            authButton.isHidden = false
-        }
-        
-    }
-    
-    func present(completion: @escaping (Bool) -> Void) {
-        
+*/
+    func dismiss() {
+
         assert(Thread.isMainThread)
         UIView.animate(withDuration: 0.3, animations: {
-            self.center = self.superview!.center
-            self.alpha = 1.0
-            self.blurController?.blurView.alpha = 0.6
+            self.center.y = 0.0
+            self.alpha = 0.0
+            self.blurController?.blurView.alpha = 0.0
         }, completion: { (completed) in
-            self.blurController?.navigationController?.setNavigationBarHidden(true, animated: true)
-            completion(completed)
+            self.navigationController?.setNavigationBarHidden(false, animated: true)
+            self.contactServerLabel.isHidden = true
         })
+        
+    }
+
+    private func getKeychainPassphrase(uuid: String) -> String? {
+        
+        let keychain = Keychain(service: Keychain.PIPPIP_TOKEN_SERVICE)
+        var passphrase: String?
+        do {
+            passphrase = try keychain.authenticationPrompt(self.authPrompt).get(key: uuid)
+        }
+        catch {
+            DDLogError("Error retrieving keychain passphrase: \(error.localizedDescription)")
+        }
+        return passphrase
+        
+    }
+    
+    func setNewAccount() {
+
+        authButton.setTitle("Create A New Account", for: .normal)
+        let screenWidth = self.bounds.width
+        let abWidth = screenWidth * PippipGeometry.newAccountButtonWidthRatio
+        let abConstraint = (screenWidth - abWidth) / 2
+        authButtonLeading.constant = abConstraint
+        authButtonTrailing.constant = abConstraint
+        authButton.isHidden = false
+
+    }
+
+    func setSignIn() {
+        
+        authButton.setTitle("Sign In", for: .normal)
+        let screenWidth = self.bounds.width
+        let abWidth = screenWidth * PippipGeometry.signInButtonWidthRatio
+        let abConstraint = (screenWidth - abWidth) / 2
+        authButtonLeading.constant = abConstraint
+        authButtonTrailing.constant = abConstraint
+        authButton.isHidden = config.useLocalAuth
         
     }
     
@@ -222,20 +255,19 @@ class AuthView: UIView, ControllerBlurProtocol {
         newAccountView?.alpha = 0.0
         
         newAccountView?.blurController = self
-        newAccountView?.createCompletion = doNewAccount(accountName:passphrase:enableBiometrics:)
         
         addSubview(self.newAccountView!)
         
         UIView.animate(withDuration: 0.3, animations: {
             self.blurView.alpha = 0.3
             self.newAccountView?.alpha = 1.0
-        }, completion: { complete in
+        }, completion: { completed in
             self.newAccountView?.accountNameTextField.becomeFirstResponder()
         })
         
     }
-    
-    func showSignInView(accountName: String) {
+
+    func showSignInView(local: Bool) {
         
         let frame = self.bounds
         let viewRect = CGRect(x: 0.0, y: 0.0,
@@ -245,42 +277,28 @@ class AuthView: UIView, ControllerBlurProtocol {
         let viewCenter = CGPoint(x: self.center.x, y: self.center.y - PippipGeometry.signInViewOffset)
         signInView?.center = viewCenter
         signInView?.alpha = 0.3
-        
-        signInView?.accountName = accountName
         signInView?.blurController = self
-        signInView?.signInCompletion = doAuthenticate(passphrase:)
-        
+        signInView?.authView = self
+        signInView?.local = local
         addSubview(signInView!)
         
         UIView.animate(withDuration: 0.3, animations: {
             self.blurView.alpha = 0.6
             self.signInView?.alpha = 1.0
-        }, completion: { complete in
+        }, completion: { completed in
             self.signInView?.passphraseTextField.becomeFirstResponder()
         })
         
     }
-    
-  @objc func passphraseReady(_ notification: Notification) {
-    
-        if let passphrase = notification.object as! String? {
-            self.doAuthenticate(passphrase: passphrase)
-        }
-        else {
-            DispatchQueue.main.async {
-                self.authButton.setTitle("Sign In", for: .normal)
-                let screenWidth = self.bounds.width
-                let abWidth = screenWidth * PippipGeometry.signInButtonWidthRatio
-                let abConstraint = (screenWidth - abWidth) / 2
-                self.authButtonLeading.constant = abConstraint
-                self.authButtonTrailing.constant = abConstraint
-                self.authButton.isHidden = false
-            }
-        }
-    
+
+    func signingIn() {
+        
+        authButton.isHidden = true
+        contactServerLabel.isHidden = false
+        self.makeToastActivity(.center)
+
     }
     
-
     @IBAction func quickstartPressed(_ sender: Any) {
 
         UIView.animate(withDuration: 0.3, animations: {
@@ -290,13 +308,12 @@ class AuthView: UIView, ControllerBlurProtocol {
     }
 
     @IBAction func authPressed(_ sender: Any) {
-    
-        self.makeToastActivity(.center)
-        if AccountSession.instance.accountLoaded {
-            showSignInView(accountName: AccountSession.instance.accountName)
+
+        if AccountSession.instance.newAccount {
+            showNewAccountView()
         }
         else {
-            showNewAccountView()
+            showSignInView(local: resumePassphraseInvalid)
         }
 
     }

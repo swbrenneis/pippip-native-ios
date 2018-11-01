@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class VerifyPassphraseView: UIView {
 
@@ -18,7 +19,6 @@ class VerifyPassphraseView: UIView {
 
     var settingsViewController: SettingsTableViewController?
     var alertPresenter = AlertPresenter()
-    var accountName: String!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -52,26 +52,22 @@ class VerifyPassphraseView: UIView {
     }
 
     func verifyandDelete() {
-
+        
         let passphrase = passphraseTextField.text ?? ""
-        let accountDeleter = AccountDeleter()
-        do {
-            if try UserVault.validatePassphrase(accountName: accountName, passphrase: passphrase) {
-                try accountDeleter.deleteAccount()
-                self.alertPresenter.infoAlert(message: "This account has been deleted")
-                AsyncNotifier.notify(name: Notifications.AccountDeleted)
-            }
-            else {
-                self.alertPresenter.errorAlert(title: "Invalid Passphrase",
-                                              message: "Invalid passphrase, account not deleted")
-            }
+        if UserVault.validatePassphrase(passphrase: passphrase) {
+            let accountDeleter = AccountDeleter()
+            accountDeleter.deleteAccount()
+            AccountSession.instance.accountDeleted()
+            dismiss()
+            settingsViewController?.accountDeleted()
         }
-        catch {
-            print("Error while deleting account: \(error)")
+        else {
+            self.alertPresenter.errorAlert(title: "Invalid Passphrase",
+                                           message: "Invalid passphrase, account not deleted")
         }
-
+        
     }
-
+    
     func dismiss() {
 
         UIView.animate(withDuration: 0.3, animations: {

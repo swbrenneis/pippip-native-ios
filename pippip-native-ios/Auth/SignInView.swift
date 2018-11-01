@@ -23,7 +23,10 @@ class SignInView: UIView {
         }
     }
     var blurController: ControllerBlurProtocol?
-    var signInCompletion = { (passphrase: String) in }
+    var serverAuthenticator: ServerAuthenticator?
+    var authView: AuthView?
+    var alertPresenter = AlertPresenter()
+    var local = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -51,6 +54,7 @@ class SignInView: UIView {
         passphraseTextField.rightViewMode = .always
         signInButton.backgroundColor = PippipTheme.buttonColor
         signInButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
+        signInButton.isEnabled = false
         cancelButton.backgroundColor = PippipTheme.cancelButtonColor
         cancelButton.setTitleColor(PippipTheme.cancelButtonTextColor, for: .normal)
 
@@ -63,6 +67,7 @@ class SignInView: UIView {
             self.alpha = 0.0
             self.blurController?.blurView.alpha = 0.0
         }, completion: { completed in
+            self.passphraseTextField.resignFirstResponder()
             self.removeFromSuperview()
         })
         
@@ -77,16 +82,35 @@ class SignInView: UIView {
 
     @IBAction func signInTapped(_ sender: Any) {
 
-        self.passphraseTextField.resignFirstResponder()
-        UIView.animate(withDuration: 0.3, animations: {
-            self.center.y = 0.0
-            self.alpha = 0.0
-            self.blurController?.blurView.alpha = 0.0
-        }, completion: { completed in
-            self.removeFromSuperview()
-            let passphrase = self.passphraseTextField.text ?? ""
-            self.signInCompletion(passphrase)
-        })
-        
+        let passphrase = self.passphraseTextField.text ?? ""
+        if local {
+            if UserVault.validatePassphrase(passphrase: passphrase) {
+                authView?.resumePassphraseInvalid = false
+                authView?.dismiss()
+            }
+            else {
+                authView?.resumePassphraseInvalid = true
+                alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid passphrase")
+            }
+        }
+        else {
+            authView?.signingIn()
+            serverAuthenticator = ServerAuthenticator(authView: authView!)
+            serverAuthenticator?.authenticate(passphrase: passphrase)
+        }
+        dismiss()
+
     }
+
+
+    @IBAction func passphraseChanged(_ sender: UITextField) {
+
+        guard let text = sender.text else {
+            signInButton.isEnabled = false
+            return
+        }
+        signInButton.isEnabled = text.utf8.count > 0
+
+    }
+
 }

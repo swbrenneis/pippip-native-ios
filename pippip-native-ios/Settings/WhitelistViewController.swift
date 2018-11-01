@@ -16,12 +16,10 @@ class WhitelistViewController: UIViewController {
     @IBOutlet weak var tableBottom: NSLayoutConstraint!
     
     var config = Configurator()
-    //var directoryId = ""
-    //var publicId = ""
     var contactManager = ContactManager.instance
     var sessionState = SessionState()
     var suspended = false
-    var localAuth: LocalAuthenticator!
+    var authenticator: Authenticator!
     var alertPresenter = AlertPresenter()
     var rightBarItems = [UIBarButtonItem]()
     var addIdView: AddToWhitelistView?
@@ -49,7 +47,7 @@ class WhitelistViewController: UIViewController {
             print("Error loading whitelist: \(error)")
         }
 
-        localAuth = LocalAuthenticator(viewController: self, initial: false)
+        authenticator = Authenticator(viewController: self)
 
         let addWhitelistEntry = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addWhitelistEntry(_:)))
         rightBarItems.append(addWhitelistEntry)
@@ -61,7 +59,7 @@ class WhitelistViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
 
-        localAuth.viewWillAppear()
+        authenticator.viewWillAppear()
         alertPresenter.present = true
 
     }
@@ -70,16 +68,17 @@ class WhitelistViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
+        authenticator.viewWillDisappear()
 
     }
-
+/*
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
         localAuth.viewDidDisappear()
     
     }
-    
+*/
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -199,7 +198,7 @@ class WhitelistViewController: UIViewController {
         }
         
     }
-    
+
     @objc func editWhitelist(_ sender: Any) {
 
         tableView.setEditing(true, animated: true)

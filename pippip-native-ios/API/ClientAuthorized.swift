@@ -35,12 +35,9 @@ class ClientAuthorized: NSObject, APIResponseProtocol {
 
     }
     
-    func processResponse() throws {
+    func processResponse() -> String? {
 
-        if error != nil {
-            alertPresenter.errorAlert(title: "Authentication Error", message: error!)
-            throw APIResponseError.responseError(error: error!)
-        }
+        return error
 
     }
     

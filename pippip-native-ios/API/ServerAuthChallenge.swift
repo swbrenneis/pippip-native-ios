@@ -44,33 +44,26 @@ class ServerAuthChallenge: NSObject, APIResponseProtocol {
 
     }
     
-    func processResponse() throws {
+    func processResponse() -> String? {
 
-        if error != nil {
-            alertPresenter.errorAlert(title: "Authentication Error", message: error!)
-            throw APIResponseError.responseError(error: error!)
+        if let _ = error {
+            return error
         }
 
-        guard let sigData = Data(base64Encoded: signature!) else {
-            alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid response encoding")
-            throw APIResponseError.responseError(error: "Response encoding error")
-        }
-        guard let hmacData = Data(base64Encoded: hmac!) else {
-            alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid response encoding")
-            throw APIResponseError.responseError(error: "Response encoding error")
-        }
+        guard let sigData = Data(base64Encoded: signature!) else { return "Server response encoding error" }
+        guard let hmacData = Data(base64Encoded: hmac!) else { return "Server response encoding error" }
 
         let sig = CKSignature(sha256: ())
         if !sig.verify(sessionState.serverPublicKey!, withMessage: hmacData, withSignature: sigData) {
-            alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid server signature")
-            throw APIResponseError.responseError(error: "HMAC signature failed to verify")
+            return "HMAC signature failed to verify"
         }
 
         if !validateHMAC(hmacData) {
-            alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid server MAC")
-            throw APIResponseError.responseError(error: "HMAC failed to validate")
+            return "HMAC failed to validate"
         }
 
+        return nil
+        
     }
 
     func validateHMAC(_ hmacData: Data) -> Bool {

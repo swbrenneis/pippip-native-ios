@@ -11,6 +11,7 @@ import ObjectMapper
 
 class NewAccountFinish: NSObject, APIRequestProtocol {
     
+    
     var path: String {
         if AccountSession.production {
             return "/authenticator/new-account-finish";
@@ -21,7 +22,7 @@ class NewAccountFinish: NSObject, APIRequestProtocol {
     }
     var timeout: Double = 20.0
     var sessionId: Int32?
-    var authToken: Int64?
+    var authToken: Int64?       // Required by the protocol, not used
     var data: String?
     var deviceToken: String?
     var developer: Bool?

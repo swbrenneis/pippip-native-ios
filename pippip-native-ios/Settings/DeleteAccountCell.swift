@@ -23,9 +23,6 @@ class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
     
     static var cellItem: MultiCellItemProtocol = DeleteAccountCellItem()
     var viewController: UITableViewController?
-    var accountDeleter = AccountDeleter()
-    var sessionState = SessionState()
-    var alertPresenter = AlertPresenter()
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -41,69 +38,33 @@ class DeleteAccountCell: PippipTableViewCell, MultiCellProtocol {
         super.setSelected(selected, animated: animated)
 
         if selected {
-            if let settingsViewController = viewController as? SettingsTableViewController {
-                settingsViewController.showDeleteAccountView()
-            }
-            //validateDelete()
+            showDeleteAccountView()
         }
 
     }
-/*
-    func validateDelete() {
-
-        let alert = PMAlertController(title: "CAUTION!",
-                                      description: "You are about to delete your account\n"
-                                                    + "This action cannot be undone\n"
-                                                    + "Proceed?",
-                                      image: nil,
-                                      style: PMAlertControllerStyle.alert)
-        alert.addAction(PMAlertAction(title: "Yes",
-                                      style: .cancel, action: { () in
-                                        DispatchQueue.main.async {
-                                            self.checkPassphrase()
-                                        }
-        }))
-        alert.addAction(PMAlertAction(title: "No", style: .default))
-        viewController?.present(alert, animated: true, completion: nil)
-
-    }
-
-    func checkPassphrase() {
-
-        let accountName = AccountSession.accountName
-        let alert = PMAlertController(title: "Delete Account",
-                                      description: "Enter your passphrase",
-                                      image: nil,
-                                      style: PMAlertControllerStyle.alert)
-        alert.addTextField({ (textField) in
-            textField?.placeholder = "Passphrase"
-            textField?.autocorrectionType = .no
-            textField?.spellCheckingType = .no
-            textField?.autocapitalizationType = .none
+    
+    func showDeleteAccountView() {
+        
+        guard let settingsViewController = viewController as? SettingsTableViewController else { return }
+        let frame = settingsViewController.view.bounds
+        let viewRect = CGRect(x: 0.0, y: 0.0,
+                              width: frame.width * PippipGeometry.deleteAccountViewWidthRatio,
+                              height: frame.height * PippipGeometry.deleteAccountViewHeightRatio)
+        let deleteAccountView = DeleteAccountView(frame: viewRect)
+        let viewCenter = CGPoint(x: settingsViewController.view.center.x,
+                                 y: deleteAccountView.center.y + PippipGeometry.deleteAccountViewOffset)
+        deleteAccountView.center = viewCenter
+        deleteAccountView.alpha = 0.3
+        deleteAccountView.settingsViewController = settingsViewController
+        
+        settingsViewController.deleteAccountView = deleteAccountView
+        settingsViewController.view.addSubview(deleteAccountView)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            settingsViewController.blurView.alpha = 0.6
+            deleteAccountView.alpha = 1.0
         })
-        alert.addAction(PMAlertAction(title: "OK",
-                                      style: .default, action: { () in
-                                        let passphrase = alert.textFields[0].text ?? ""
-                                        do {
-                                            if try UserVault.validatePassphrase(passphrase) {
-                                                try self.accountDeleter.deleteAccount()
-                                                self.alertPresenter.successAlert(title: "Account Deleted",
-                                                                                 message: "This account has been deleted and you will now be logged out")
-                                                NotificationCenter.default.post(name: Notifications.AccountDeleted,
-                                                                                object: nil)
-                                            }
-                                            else {
-                                                self.alertPresenter.infoAlert(title: "Invalid Passphrase",
-                                                                              message: "Invalid passphrase, account not deleted")
-                                            }
-                                        }
-                                        catch {
-                                            print("Error while deleting account: \(error)")
-                                        }
-        }))
-        alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
-        viewController?.present(alert, animated: true, completion: nil)
         
     }
-*/
+
 }

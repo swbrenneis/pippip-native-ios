@@ -10,7 +10,6 @@ import Foundation
 
 struct Notifications {
 
-    static let AccountDeleted = NSNotification.Name("AccountDeleted")
     static let AppWillResume = NSNotification.Name("AppWillResume")
     static let AppResumed = NSNotification.Name("AppResumed")
     static let AppWillSuspend = NSNotification.Name("AppWillSuspend")
@@ -44,6 +43,7 @@ struct Notifications {
     static let RequestAcknowledged = NSNotification.Name("RequestsAcknowledged")
     static let RequestStatusUpdated = NSNotification.Name("RequestStatusUpdated")
     static let RequestsUpdated = NSNotification.Name("RequestsUpdated")
+    static let ResetControllers = NSNotification.Name("ResetControllers")
     static let RetryMessage = NSNotification.Name("RetryMessage")
     static let SessionEnded = NSNotification.Name("SessionEnded")
     static let SessionStarted = NSNotification.Name("SessionStarted")

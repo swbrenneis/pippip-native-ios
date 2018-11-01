@@ -21,7 +21,7 @@ class ChattoViewController: BaseChatViewController {
     var dataSource: ChattoDataSource?
     var messageManager = MessageManager()
     var alertPresenter = AlertPresenter()
-    var localAuth: LocalAuthenticator!
+    var authenticator: Authenticator!
     var chatInputBar: ChatInputBar!
 
     override func viewDidLoad() {
@@ -40,7 +40,7 @@ class ChattoViewController: BaseChatViewController {
         #endif
         self.navigationItem.rightBarButtonItems = items
 
-        localAuth = LocalAuthenticator(viewController: self, initial: false)
+        authenticator = Authenticator(viewController: self)
         if ChattoViewController.receiveSoundId == 0 {
             if let receiveUrl = Bundle.main.url(forResource: "iphone_receive_sms", withExtension: "mp3") {
                 AudioServicesCreateSystemSoundID(receiveUrl as CFURL, &ChattoViewController.receiveSoundId)
@@ -67,7 +67,7 @@ class ChattoViewController: BaseChatViewController {
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
-        localAuth.viewWillAppear()
+        authenticator.viewWillAppear()
         if contact != nil {
             dataSource = ChattoDataSource(conversation: ConversationCache.instance.getConversation(contactId: contact!.contactId))
             chatDataSource = dataSource
@@ -95,20 +95,21 @@ class ChattoViewController: BaseChatViewController {
 
         alertPresenter.present = false
         dataSource?.visible = false
+        authenticator.viewWillDisappear()
 
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.RetryMessage, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.MessageBubbleTapped, object: nil)
 
     }
-    
+ /*
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
         localAuth.viewDidDisappear()
         
     }
-    
+*/
     override func createChatInputView() -> UIView {
 
         chatInputBar = ChatInputBar.loadNib()

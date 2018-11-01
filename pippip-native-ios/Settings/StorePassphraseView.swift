@@ -8,6 +8,7 @@
 
 import UIKit
 import LocalAuthentication
+import CocoaLumberjack
 
 class StorePassphraseView: UIView {
 
@@ -97,34 +98,30 @@ class StorePassphraseView: UIView {
         
         let passphrase = passphraseTextField.text!
         let keychain = Keychain(service: Keychain.PIPPIP_TOKEN_SERVICE)
-        DispatchQueue.global().async {
+        if UserVault.validatePassphrase(passphrase: passphrase) {
             do {
-                if try UserVault.validatePassphrase(accountName: self.accountName, passphrase: passphrase) {
-                    do {
-                        try keychain.accessibility(protection: .passcodeSetThisDeviceOnly, createFlag: .userPresence)
-                                    .authenticationPrompt(self.authPrompt)
-                                    .set(passphrase: passphrase, key: self.config.uuid)
-                        self.config.useLocalAuth = true
-                        self.cell?.initialState = true
-                    }
-                    catch {
-                        print("Error storing passphrase in keychain: \(error.localizedDescription)")
-                        self.config.useLocalAuth = false
-                        self.alertPresenter.errorAlert(title: "Store Passphrase Error",
-                                                       message: "The passphrase could not be stored in the keychain")
-                        DispatchQueue.main.async {
-                            self.cell?.localAuthSwitch.setOn(false, animated: true)
-                        }
-                    }
-                }
+                try keychain.accessibility(protection: .passcodeSetThisDeviceOnly, createFlag: .userPresence)
+                    .authenticationPrompt(self.authPrompt)
+                    .set(passphrase: passphrase, key: self.config.uuid)
+                self.config.useLocalAuth = true
+                self.cell?.initialState = true
             }
             catch {
-                self.alertPresenter.errorAlert(title: "Invalid Passphrase",
-                                               message: "Please provide the passphrase that is used to sign in")
+                DDLogError("Error storing passphrase in keychain: \(error.localizedDescription)")
+                self.config.useLocalAuth = false
+                self.alertPresenter.errorAlert(title: "Store Passphrase Error",
+                                               message: "The passphrase could not be stored in the keychain")
                 DispatchQueue.main.async {
-                    self.config.useLocalAuth = false
                     self.cell?.localAuthSwitch.setOn(false, animated: true)
                 }
+            }
+        }
+        else {
+            self.alertPresenter.errorAlert(title: "Invalid Passphrase",
+                                           message: "Please provide the passphrase that is used to sign in")
+            DispatchQueue.main.async {
+                self.config.useLocalAuth = false
+                self.cell?.localAuthSwitch.setOn(false, animated: true)
             }
         }
 

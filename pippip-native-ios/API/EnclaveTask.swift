@@ -7,56 +7,48 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
-class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponseProtocol>:
-        NSObject, AuthenticationDelegateProtocol {
+class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponseProtocol>: NSObject {
 
     var delegate: EnclaveDelegate<RequestT, ResponseT>?
     var errorTitle: String?
     var secommAPI = SecommAPI()
     var alertPresenter = AlertPresenter()
     var request: EnclaveRequestProtocol!
-    var authenticator = Authenticator()
+//    var authenticator = ServerAuthenticator()
     var sessionState = SessionState()
 
     init(delegate: EnclaveDelegate<RequestT, ResponseT>) {
 
         self.delegate = delegate
+
         super.init()
-        
-        authenticator.delegate = self
         
     }
 
     func responseComplete(_ response: EnclaveResponse) {
-
+        
         if response.needsAuth! {
             if !sessionState.reauth {
                 sessionState.reauth = true
-                // NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
-                authenticator.reauthenticate()
             }
         }
         else {
-            do {
-                try response.processResponse()
-                if let enclaveResponse = ResponseT(JSONString: response.json) {
-                    self.delegate?.requestComplete(enclaveResponse)
-                }
-                else {
-                    print("Invalid JSON response from server")
-                    print(response.json)
-                    self.delegate?.responseError("Invalid response from the server")
-                }
+            if let error = response.processResponse() {
+                DDLogError("Enclave response error: \(error)")
+                self.delegate?.responseError(error)
             }
-            catch let error as APIResponseError {
-                print("Enclave response error: \(error.localizedDescription)")
+            else if let enclaveResponse = ResponseT(JSONString: response.json) {
+                self.delegate?.requestComplete(enclaveResponse)
             }
-            catch {
-                print("Enclave request unknown error: \(error)")
+            else {
+                DDLogError("Invalid JSON response from server")
+                DDLogError(response.json)
+                self.delegate?.responseError("Invalid response from the server")
             }
         }
-        
+    
     }
 
     func responseError(error: String) {

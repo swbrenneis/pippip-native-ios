@@ -23,9 +23,7 @@ class NewAccountView: UIView {
     
     var blurController: ControllerBlurProtocol?
     var alertPresenter = AlertPresenter()
-    var accountName = ""
-    var passphrase = ""
-    var createCompletion = { (accountName: String, passphrase: String, enableBiometrics: Bool) in }
+    var newAccountCreator: NewAccountCreator?
     var biometricsAvailable = true
 
     override init(frame: CGRect) {
@@ -91,6 +89,8 @@ class NewAccountView: UIView {
     
     func enableCreateButton() {
         
+        guard let accountName = accountNameTextField.text else { return }
+        guard let passphrase = passphraseTextField.text else { return }
         if accountName.utf8.count > 0 && passphrase.utf8.count > 0 {
             createAccountButton.backgroundColor = PippipTheme.buttonColor
             createAccountButton.isEnabled = true
@@ -102,7 +102,7 @@ class NewAccountView: UIView {
 
     }
 
-    @IBAction func createTapped(_ sender: Any) {
+    func dismiss() {
 
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
@@ -110,33 +110,38 @@ class NewAccountView: UIView {
             self.blurController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
-            self.createCompletion(self.accountName, self.passphrase, self.enableBiometricsButton.isOn)
         })
+        
+    }
+    
+    @IBAction func createTapped(_ sender: Any) {
+
+        guard let accountName = accountNameTextField.text else { return }
+        guard let passphrase = passphraseTextField.text else { return }
+        if let authView = blurController as? AuthView {
+            newAccountCreator = NewAccountCreator(authView: authView)
+            authView.creatingAccount()
+            newAccountCreator?.createAccount(accountName: accountName, passphrase: passphrase,
+                                             biometricsEnabled: enableBiometricsButton.isOn)
+        }
+        dismiss()
         
     }
     
     @IBAction func cancelTapped(_ sender: Any) {
 
-        UIView.animate(withDuration: 0.3, animations: {
-            self.center.y = 0.0
-            self.alpha = 0.0
-            self.blurController?.blurView.alpha = 0.0
-        }, completion: { completed in
-            self.removeFromSuperview()
-        })
+        dismiss()
         
     }
     
     @IBAction func accountNameChanged(_ sender: Any) {
 
-        accountName = accountNameTextField.text ?? ""
         enableCreateButton()
 
     }
     
     @IBAction func passphraseChanged(_ sender: Any) {
 
-        passphrase = passphraseTextField.text ?? ""
         enableCreateButton()
         
     }

@@ -8,6 +8,7 @@
 
 import UIKit
 import ObjectMapper
+import CocoaLumberjack
 
 class AuthenticationResponse: NSObject, APIResponseProtocol {
     
@@ -39,23 +40,28 @@ class AuthenticationResponse: NSObject, APIResponseProtocol {
 
     }
     
-    func processResponse() throws {
+    func processResponse() -> String? {
 
-        if error != nil {
-            alertPresenter.errorAlert(title: "Authentication Error", message: error!)
-            throw APIResponseError.responseError(error: error!)
+        if let _ = error {
+            return error
         }
 
         if let encoded = Data(base64Encoded: data!) {
-            let codec = CKRSACodec(data: encoded)
-            try codec.decrypt(sessionState.userPrivateKey!)
-            sessionState.serverAuthRandom = codec.getBlock()
+            do {
+                let codec = CKRSACodec(data: encoded)
+                try codec.decrypt(sessionState.userPrivateKey!)
+                sessionState.serverAuthRandom = codec.getBlock()
+                return nil
+            }
+            catch {
+                DDLogError("Error decrypting authentication response: \(error.localizedDescription)")
+                return "Invalid response from server"
+            }
         }
         else {
-            alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid response encoding")
-            throw APIResponseError.responseError(error: "Response encoding error")
+            return "Response encoding error"
         }
 
     }
-
+    
 }

@@ -30,7 +30,7 @@ class MessagesViewController: UIViewController {
     var headingView: UIView!
     var accountDeleted = false
     var config = Configurator()
-    var localAuth: LocalAuthenticator!
+    var authenticator: Authenticator!
     var alertPresenter: AlertPresenter!
     var contactBarButton: UIBarButtonItem!
     var contactBadge = GIBadgeView()
@@ -57,6 +57,7 @@ class MessagesViewController: UIViewController {
         SecommAPI.initializeAPI()
         
         try! AccountSession.instance.loadAccount()
+        authenticator = Authenticator(viewController: self)
 
         alertPresenter = AlertPresenter(view: self.view)
         
@@ -70,8 +71,6 @@ class MessagesViewController: UIViewController {
         let headingFrame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 10)
         headingView = UIView(frame: headingFrame)
         headingView.backgroundColor = .clear
-        
-        localAuth = LocalAuthenticator(viewController: self, initial: true)
 
         let bounds = self.view.bounds
         slideshow = ImageSlideshow(frame: bounds)
@@ -144,6 +143,8 @@ class MessagesViewController: UIViewController {
         tableView.dataSource = self
         messageSearch.delegate = self
 
+        NotificationCenter.default.addObserver(self, selector: #selector(resetControllers(_:)),
+                                               name: Notifications.ResetControllers, object: nil)
 
     }
 
@@ -151,7 +152,7 @@ class MessagesViewController: UIViewController {
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
-        localAuth.viewWillAppear()
+        authenticator.viewWillAppear()
 
         /*
          *  ***** CAUTION! *****
@@ -178,10 +179,18 @@ class MessagesViewController: UIViewController {
 
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        authenticator.viewDidAppear()
+
+    }
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
+        authenticator.viewWillDisappear()
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AuthComplete, object: nil)
@@ -189,19 +198,35 @@ class MessagesViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: Notifications.ConversationDeleted, object: nil)
 
     }
-
+/*
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        localAuth.viewDidDisappear()
+        authenticator.viewDidDisappear()
         
     }
-    
+*/
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 
+    func getMostRecentMessages() {
+        
+        previews.removeAll()
+        let contactList = ContactManager.instance.contactList
+        for contact in contactList {
+            let conversation = ConversationCache.instance.getConversation(contactId: contact.contactId)
+            if let message = conversation.mostRecentMessage {
+                previews.append(message)
+            }
+        }
+        previews.sort(by: { (message1, message2) -> Bool in
+            return message1.timestamp > message2.timestamp
+        })
+        
+    }
+    
     @objc func composeMessage(_ item: Any) {
 
         let chatto = ChattoViewController()
@@ -253,22 +278,6 @@ class MessagesViewController: UIViewController {
 
     }
 
-    func getMostRecentMessages() {
-
-        previews.removeAll()
-        let contactList = ContactManager.instance.contactList
-        for contact in contactList {
-            let conversation = ConversationCache.instance.getConversation(contactId: contact.contactId)
-            if let message = conversation.mostRecentMessage {
-                previews.append(message)
-            }
-        }
-        previews.sort(by: { (message1, message2) -> Bool in
-            return message1.timestamp > message2.timestamp
-        })
-
-    }
-
     // Notifications
 
     @objc func conversationDeleted(_ notification: Notification) {
@@ -289,6 +298,13 @@ class MessagesViewController: UIViewController {
     
     }
     
+    @objc func resetControllers(_ notification: Notification) {
+
+        ConversationCache.instance.clearCache()
+        previews.removeAll()
+
+    }
+
     @objc func setContactBadge(_ notification: Notification) {
 
         DispatchQueue.main.async {

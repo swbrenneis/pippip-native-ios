@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import CocoaLumberjack
 
 struct Entity {
     
@@ -213,9 +214,19 @@ class Configurator: NSObject {
 
     private func getConfig() -> AccountConfig {
         
-        let realm = try! Realm()
-        let config = realm.objects(AccountConfig.self).first!
-        return config
+        do {
+            let realm = try Realm()
+            if let config = realm.objects(AccountConfig.self).first {
+                return config
+            }
+            else {
+                return AccountConfig()
+            }
+        }
+        catch {
+            DDLogError("Error retrieving configuration: \(error.localizedDescription)")
+            return AccountConfig()
+        }
         
     }
     

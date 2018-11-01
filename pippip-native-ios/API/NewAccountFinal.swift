@@ -36,13 +36,14 @@ class NewAccountFinal: NSObject, APIResponseProtocol {
         
     }
     
-    func processResponse() throws {
+    func processResponse() -> String? {
 
-        if error != nil {
-            alertPresenter.errorAlert(title: "New Account Error", message: error!)
-            throw APIResponseError.responseError(error: error!)
+        if let _ = error {
+            return error
         }
+
         sessionState.authToken = authToken!
+        return nil
         
     }
     

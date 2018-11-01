@@ -1,178 +1,111 @@
 //
-//  SwiftAuthenticator.swift
+//  LocalAuthenticator.swift
 //  pippip-native-ios
 //
-//  Created by Steve Brenneis on 5/28/18.
+//  Created by Steve Brenneis on 5/17/18.
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
 import UIKit
+import ChameleonFramework
+import LocalAuthentication
 
 class Authenticator: NSObject {
 
-    var alertPresenter = AlertPresenter()
-    var secommAPI = SecommAPI()
-    var userVault = UserVault()
+    var viewController: UIViewController?
+    var authView: AuthView?
     var sessionState = SessionState()
-    var delegate: AuthenticationDelegateProtocol?
-    
-    func authenticate(accountName: String, passphrase: String) {
+    var config = Configurator()
+    var signInView: SignInView?
+    var alertPresenter = AlertPresenter()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(sessionStarted(_:)),
-                                               name: Notifications.SessionStarted, object: nil)
-        if openVault(accountName: accountName, passphrase: passphrase) {
-            secommAPI.startSession()
-        }
-        else {
-            alertPresenter.errorAlert(title: "Sign In Error", message: "Invalid Passphrase")
-            delegate?.authenticationFailed(reason: "Invalid passphrase")
-        }
+    @objc init(viewController: UIViewController) {
 
-    }
-
-    func reauthenticate() {
-
-        NotificationCenter.default.addObserver(self, selector: #selector(sessionStarted(_:)),
-                                               name: Notifications.SessionStarted, object: nil)
-        secommAPI.startSession()
-
-    }
-
-    func doAuthorized() {
-
-        secommAPI.queuePost(delegate: APIResponseDelegate(request: ServerAuthorized(),
-                                                          responseComplete: self.authorizedComplete,
-                                                          responseError: self.authorizedError))
-
-    }
-
-    func doChallenge() {
-
-        secommAPI.queuePost(delegate: APIResponseDelegate(request: ClientAuthChallenge(),
-                                                          responseComplete: self.authChallengeComplete,
-                                                          responseError: self.authChallengeError))
+        self.viewController = viewController
         
-    }
+        super.init()
 
-    func openVault(accountName: String, passphrase: String) -> Bool {
-
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        var vaultUrl = paths[0]
-        vaultUrl.appendPathComponent("PippipVaults", isDirectory: true)
-        vaultUrl.appendPathComponent(accountName)
-        do {
-            let vaultData = try Data(contentsOf: vaultUrl)
-            try userVault.decode(vaultData, passphrase: passphrase)
-            return true
-        }
-        catch {
-            print("Unable to open vault file: \(error)")
-            alertPresenter.errorAlert(title: "Sign In Error", message: "Invalid passphrase")
-        }
-        return false
-
-    }
-
-    func requestAuth() {
-
-        secommAPI.queuePost(delegate: APIResponseDelegate(request: AuthenticationRequest(),
-                                                          responseComplete: self.authRequestComplete,
-                                                          responseError: self.authRequestError))
-        
-    }
-
-    // Observer functions
-
-    func authChallengeComplete(_ authChallenge: ServerAuthChallenge) {
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                try authChallenge.processResponse()
-                self.doAuthorized()
-            }
-            catch {
-                print("Authentication challenge error: \(error)")
-                self.delegate?.authenticationFailed(reason: error.localizedDescription)
-            }
-        }
-        
-    }
-
-    func authChallengeError(error: String) {
-        print("Authentication challenge error: \(error)")
-        delegate?.authenticationFailed(reason: error)
     }
     
-    func authorizedComplete(_ authorized: ClientAuthorized) {
-        
-        do {
-            try authorized.processResponse()
-            let config = Configurator()
-            config.authenticated = true
-            sessionState.sessionId = authorized.sessionId!
-            sessionState.authToken = authorized.authToken!
-            delegate?.authenticated()
-        }
-        catch APIResponseError.responseError(let responseError) {
-            delegate?.authenticationFailed(reason: responseError)
-        }
-        catch{
-            print("Unknown authorization error : \(error)")
-            delegate?.authenticationFailed(reason: "Unexpected error")
-        }
-        sessionState.reauth = false
+    private func showAuthView() {
 
-    }
-
-    func authorizedError(error: String) {
-        print("Authorization error: \(error)")
-        delegate?.authenticationFailed(reason: error)
-    }
-
-    func authRequestComplete(_ authResponse: AuthenticationResponse) {
-
-        DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                try authResponse.processResponse()
-                self.doChallenge()
+        assert(Thread.isMainThread)
+        viewController?.navigationController?.isNavigationBarHidden = true
+        if authView == nil {
+            let bounds = viewController!.view.bounds;
+            authView = AuthView(frame: bounds)
+            authView?.authenticator = self
+            authView?.navigationController = viewController?.navigationController
+            if let blurController = viewController as? ControllerBlurProtocol {
+                authView?.blurController = blurController
             }
-            catch {
-                print("Authentication request error: \(error)")
-                self.delegate?.authenticationFailed(reason: error.localizedDescription)
-            }
+            viewController!.view.addSubview(authView!)
         }
+        authView?.blurController?.blurView.alpha = 0.6
+        authView?.alpha = 1.0
+        authView?.center = viewController!.view.center
 
-    }
-
-    func authRequestError(error: String) {
-        print("Authentication request error: \(error)")
-        delegate?.authenticationFailed(reason: error)
-    }
-
-    func logoutComplete(_ response: NullResponse) {
-        // Nothing to do here
-    }
-
-    func logoutError(error: String) {
-        // Nothing to do here
-    }
-
-    @objc func sessionStarted(_ notification: Notification) {
-
-        NotificationCenter.default.removeObserver(self, name: Notifications.SessionStarted, object: nil)
-        guard let sessionResponse = notification.object as? SessionResponse else { return }
-        if sessionResponse.error != nil {
-            alertPresenter.errorAlert(title: "Session Error", message: sessionResponse.error!)
+        if AccountSession.instance.newAccount {
+            authView?.setNewAccount()
         }
         else {
-            sessionState.sessionId = sessionResponse.sessionId!
-            let pem = CKPEMCodec()
-            sessionState.serverPublicKey = pem.decodePublicKey(sessionResponse.serverPublicKey!)
-            DispatchQueue.global().async {
-                self.requestAuth()
-            }
+            authView?.setSignIn()
         }
 
     }
 
+    func viewWillAppear() {
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
+                                               name: Notifications.AppSuspended, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
+                                               name: Notifications.AppResumed, object: nil)
+        
+
+        if AccountSession.instance.starting {
+            showAuthView()
+        }
+
+    }
+
+    func viewWillDisappear() {
+        
+        NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
+
+    }
+
+    func viewDidAppear() {
+        
+        if !AccountSession.instance.newAccount  && AccountSession.instance.starting {
+            if config.useLocalAuth {
+                authView?.biometricAuthenticate(local: false)
+            }
+        }
+        
+    }
+
+    // Notifications
+
+    @objc func appSuspended(_ notification: Notification) {
+        
+        DispatchQueue.main.async {
+            self.showAuthView()
+        }
+
+    }
+    
+    @objc func appResumed(_ notification: Notification) {
+        
+        DispatchQueue.main.async {
+            if self.config.useLocalAuth {
+                self.authView?.biometricAuthenticate(local: true)
+            }
+            else {
+                self.authView?.showSignInView(local: true)
+            }
+        }
+
+    }
+    
 }

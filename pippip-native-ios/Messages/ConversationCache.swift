@@ -28,22 +28,7 @@ class ConversationCache: NSObject {
         super.init()
     }
 
-    func getConversation(contactId: Int) -> Conversation {
-
-        if let conversation = conversations[contactId] {
-            return conversation
-        }
-        else {
-            let contactManager = ContactManager.instance
-            let contact = contactManager.getContact(contactId: contactId)!
-            let newConversation = Conversation(contact: contact, windowSize: 15)
-            conversations[contactId] = newConversation
-            return newConversation
-        }
-
-    }
-
-    @objc func clearCache() {
+    func clearCache() {
 
         conversations.removeAll()
 
@@ -54,6 +39,21 @@ class ConversationCache: NSObject {
         conversations[contactId]?.clearMessages()
         conversations.removeValue(forKey: contactId)
         AsyncNotifier.notify(name: Notifications.ConversationDeleted, object: contactId)
+        
+    }
+    
+    func getConversation(contactId: Int) -> Conversation {
+        
+        if let conversation = conversations[contactId] {
+            return conversation
+        }
+        else {
+            let contactManager = ContactManager.instance
+            let contact = contactManager.getContact(contactId: contactId)!
+            let newConversation = Conversation(contact: contact, windowSize: 15)
+            conversations[contactId] = newConversation
+            return newConversation
+        }
         
     }
     

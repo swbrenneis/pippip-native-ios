@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class NewAccountCreator: NSObject {
 
@@ -15,14 +16,14 @@ class NewAccountCreator: NSObject {
     var secommAPI = SecommAPI()
     var alertPresenter = AlertPresenter()
     var sessionState = SessionState()
-    var delegate: AuthenticationDelegateProtocol?
     var biometricsEnabled: Bool!
+    var authView: AuthView
 
-    override init() {
+    init(authView: AuthView) {
+
+        self.authView = authView
+        
         super.init()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(parametersGenerated(_:)),
-                                               name: Notifications.ParametersGenerated, object: nil)
 
     }
 
@@ -36,15 +37,18 @@ class NewAccountCreator: NSObject {
             config.useLocalAuth = biometricsEnabled
             config.uuid = NSUUID().uuidString
             if biometricsEnabled {
-                let localAuth = LocalAuthenticator()
-                localAuth.setKeychainPassphrase(uuid: config.uuid , passphrase: passphrase)
+                if setKeychainPassphrase(uuid: config.uuid , passphrase: passphrase) {
+                    authView.accountCreated(success: true, nil)
+                    AccountSession.instance.accountCreated(accountName: accountName)
+                }
+                else {
+                    authView.accountCreated(success: false, "Unable to store passphrase in keychain")
+                }
             }
-            delegate?.authenticated()
         }
         catch {
-            alertPresenter.errorAlert(title: "New Account Error", message: "Unable to store user vault")
-            print("Store user vault error: \(error)")
-            delegate?.authenticationFailed(reason: error.localizedDescription)
+            DDLogError("Store user vault error: \(error.localizedDescription)")
+            authView.accountCreated(success: false, "Unable to store user vault")
         }
 
     }
@@ -54,6 +58,9 @@ class NewAccountCreator: NSObject {
         self.passphrase = passphrase
         self.accountName = accountName
         self.biometricsEnabled = biometricsEnabled
+        NotificationCenter.default.addObserver(self, selector: #selector(parametersGenerated(_:)),
+                                               name: Notifications.ParametersGenerated, object: nil)
+        
         DispatchQueue.global().async {
             let parameterGenerator = ParameterGenerator()
             parameterGenerator.generateParameters(accountName)
@@ -77,6 +84,22 @@ class NewAccountCreator: NSObject {
         
     }
 
+    func setKeychainPassphrase(uuid: String, passphrase: String) -> Bool {
+        
+        let keychain = Keychain(service: Keychain.PIPPIP_TOKEN_SERVICE)
+        do {
+            try keychain.accessibility(protection: .passcodeSetThisDeviceOnly, createFlag: .userPresence)
+                .set(passphrase: passphrase, key: uuid)
+            return true
+        }
+        catch {
+            DDLogError("Error adding passphrase to keychain: \(error)")
+            self.alertPresenter.errorAlert(title: "Authentication Error", message: "Unable to store passphrase")
+            return false
+        }
+        
+    }
+    
     func storeVault() throws {
 
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -97,41 +120,43 @@ class NewAccountCreator: NSObject {
     func accountFinishComplete(_ accountFinal: NewAccountFinal) {
 
         DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                try accountFinal.processResponse()
-                self.accountCreated()
+            if let error = accountFinal.processResponse() {
+                DDLogError("New account finish error: \(error)")
+                self.alertPresenter.errorAlert(title: "New Account Error", message: error)
+                self.authView.accountCreated(success: false, error)
             }
-            catch {
-                print("New account finish error: \(error)")
-                self.delegate?.authenticationFailed(reason: error.localizedDescription)
+            else {
+                self.accountCreated()
             }
         }
         
     }
 
     func accountFinishError(error: String) {
-        print("Account finish error: \(error)")
-        delegate?.authenticationFailed(reason: error)
+        DDLogError("Account finish error: \(error)")
+        authView.accountCreated(success: false, error)
     }
 
     func accountRequestComplete(_ accountResponse: NewAccountResponse) {
 
         DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                try accountResponse.processResponse()
-                self.doFinish()
+            if let error = accountResponse.processResponse() {
+                DDLogError("New account request error: \(error)")
+                self.alertPresenter.errorAlert(title: "New Account Error", message: error)
+                self.authView.accountCreated(success: false, error)
             }
-            catch {
-                print("New account request error: \(error)")
-                self.delegate?.authenticationFailed(reason: error.localizedDescription)
+            else {
+                self.doFinish()
             }
         }
         
     }
 
     func accountRequestError(error: String) {
-        print("Account request error: \(error)")
-        delegate?.authenticationFailed(reason: error)
+        
+        DDLogError("Account request error: \(error)")
+        authView.accountCreated(success: false, error)
+    
     }
 
     // Notifications
