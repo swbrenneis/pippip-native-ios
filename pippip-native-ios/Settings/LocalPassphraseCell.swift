@@ -13,7 +13,7 @@ class LocalPasswordCellItem: MultiCellItemProtocol {
 
     var cellReuseId: String = "LocalPasswordCell"
     var cellHeight: CGFloat = 65.0
-    var currentCell: UITableViewCell?
+    var currentCell: PippipTableViewCell?
 
 }
 

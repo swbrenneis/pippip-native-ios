@@ -28,7 +28,7 @@ class MessagesViewController: UIViewController {
     var searched = [Conversation]()
     var sessionState = SessionState()
     var headingView: UIView!
-    var accountDeleted = false
+    var wasReset = false
     var config = Configurator()
     var authenticator: Authenticator!
     var alertPresenter: AlertPresenter!
@@ -155,6 +155,11 @@ class MessagesViewController: UIViewController {
         alertPresenter.present = true
         authenticator.viewWillAppear()
 
+        if wasReset {
+            wasReset = false
+            tableView.reloadData()
+        }
+        
         /*
          *  ***** CAUTION! *****
          *
@@ -281,6 +286,17 @@ class MessagesViewController: UIViewController {
 
     // Notifications
 
+    @objc func authComplete(_ notification: Notification) {
+        
+        alertPresenter.present = true
+        DispatchQueue.main.async {
+            self.getMostRecentMessages()
+            self.tableView.reloadData()
+            self.contactBadge.badgeValue =  ContactManager.instance.pendingRequests.count + self.config.statusUpdates
+        }
+        
+    }
+    
     @objc func conversationDeleted(_ notification: Notification) {
         
         guard let contactId = notification.object as? Int else { return }
@@ -299,10 +315,20 @@ class MessagesViewController: UIViewController {
     
     }
     
+    @objc func newMessages(_ notification: Notification) {
+        
+        getMostRecentMessages()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+        
+    }
+    
     @objc func resetControllers(_ notification: Notification) {
 
         ConversationCache.instance.clearCache()
         previews.removeAll()
+        wasReset = true
 
     }
 
@@ -314,26 +340,6 @@ class MessagesViewController: UIViewController {
 
     }
     
-    @objc func newMessages(_ notification: Notification) {
-
-        getMostRecentMessages()
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-        
-    }
-
-    @objc func authComplete(_ notification: Notification) {
-
-        alertPresenter.present = true
-        DispatchQueue.main.async {
-            self.getMostRecentMessages()
-            self.tableView.reloadData()
-            self.contactBadge.badgeValue =  ContactManager.instance.pendingRequests.count + self.config.statusUpdates
-        }
-
-    }
-
     /*
     // MARK: - Navigation
 

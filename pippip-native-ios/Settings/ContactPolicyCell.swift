@@ -12,7 +12,7 @@ class ContactPolicyCellItem: MultiCellItemProtocol {
 
     var cellReuseId: String = "ContactPolicyCell"
     var cellHeight: CGFloat = 65.0
-    var currentCell: UITableViewCell?
+    var currentCell: PippipTableViewCell?
 
 }
 
@@ -30,6 +30,17 @@ class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+
+    }
+
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+
+        // Configure the view for the selected state
+    }
+
+    override func configure() {
+        
         currentPolicy = config.contactPolicy
         if (currentPolicy == "public") {
             contactPolicySwitch.setOn(true, animated: true)
@@ -40,13 +51,14 @@ class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
         contactPolicySwitch.onTintColor = PippipTheme.buttonColor
 
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    // Reset to new account default
+    override func reset() {
+        
+        contactPolicySwitch.isOn = false
+        
     }
-
+    
     @objc func policyUpdated(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.PolicyUpdated, object: nil)
@@ -56,19 +68,19 @@ class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
             config.contactPolicy = currentPolicy
             NotificationCenter.default.post(name: Notifications.PolicyChanged, object: response.policy)
             DispatchQueue.main.async {
-                self.resetCell()
+                self.resetSwitch()
             }
         }
         else {
             alertPresenter.errorAlert(title: "PolicyError", message: "Invalid Server Response")
             DispatchQueue.main.async {
-                self.resetCell()
+                self.resetSwitch()
             }
         }
 
     }
 
-    func resetCell() {
+    func resetSwitch() {
 
         contactPolicySwitch.isEnabled = true
         if (currentPolicy == "public") {

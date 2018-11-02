@@ -12,7 +12,7 @@ class ShowIgnoredCellItem: MultiCellItemProtocol {
     
     var cellReuseId: String = "ShowIgnoredCell"
     var cellHeight: CGFloat = 65.0
-    var currentCell: UITableViewCell?
+    var currentCell: PippipTableViewCell?
     
 }
 
@@ -26,10 +26,6 @@ class ShowIgnoredCell: PippipTableViewCell, MultiCellProtocol {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-
-        ignoredSwitch.isOn = config.showIgnoredContacts
-        ignoredSwitch.onTintColor = PippipTheme.buttonColor
-
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -38,6 +34,20 @@ class ShowIgnoredCell: PippipTableViewCell, MultiCellProtocol {
         // Configure the view for the selected state
     }
 
+    override func configure() {
+
+        ignoredSwitch.isOn = config.showIgnoredContacts
+        ignoredSwitch.onTintColor = PippipTheme.buttonColor
+        
+    }
+    
+    // Reset to configuration default.
+    override func reset() {
+        
+        ignoredSwitch.isOn = false
+        
+    }
+    
     @IBAction func showIgnoredTapped(_ sender: UISwitch) {
 
         config.showIgnoredContacts = sender.isOn

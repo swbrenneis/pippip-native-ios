@@ -12,7 +12,7 @@ class PublicIdCellItem: MultiCellItemProtocol {
 
     var cellReuseId: String = "PublicIdCell"
     var cellHeight: CGFloat = 65.0
-    var currentCell: UITableViewCell?
+    var currentCell: PippipTableViewCell?
 
 }
 
@@ -34,9 +34,6 @@ class PublicIdCell: PippipTableViewCell, MultiCellProtocol {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        publicIdLabel.text = sessionState.publicId
-        attachTapHandler()
-
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -45,6 +42,20 @@ class PublicIdCell: PippipTableViewCell, MultiCellProtocol {
         // Configure the view for the selected state
     }
 
+    override func configure() {
+
+        publicIdLabel.text = sessionState.publicId
+        attachTapHandler()
+        
+    }
+    
+    // Reset to configuration default
+    override func reset() {
+        
+        publicIdLabel.text = "abc"
+
+    }
+    
     override func setTheme() {
 
         publicIdLabel.textColor = PippipTheme.mediumTextColor

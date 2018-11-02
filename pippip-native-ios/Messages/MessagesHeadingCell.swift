@@ -25,7 +25,7 @@ class MessagesHeadingCell: PippipTableViewCell {
         // Configure the view for the selected state
     }
 
-    @objc func configure() {
+    override func configure() {
 
         messageSearchTextField.backgroundColor = PippipTheme.mediumCellColor
         messageSearchTextField.textColor = PippipTheme.mediumTextColor

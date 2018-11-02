@@ -13,6 +13,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
 
     var cellItems = [Int: [MultiCellItemProtocol]]()
     var accountName: String!
+    var wasReset = false
     var config = Configurator()
     var alertPresenter: AlertPresenter!
     var authenticator: Authenticator!
@@ -56,6 +57,9 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         cellItems[1] = [MultiCellItemProtocol]()
         cellItems[1]?.append(DeleteAccountCell.cellItem)
 
+        NotificationCenter.default.addObserver(self, selector: #selector(resetControllers(_:)),
+                                               name: Notifications.ResetControllers, object: nil)
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -68,6 +72,11 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
 
         authenticator.viewWillAppear()
         alertPresenter.present = true
+
+        if wasReset {
+            wasReset = false
+            tableView.reloadData()
+        }
 
         NotificationCenter.default.addObserver(self, selector: #selector(policyChanged(_:)),
                                                name: Notifications.PolicyChanged, object: nil)
@@ -85,13 +94,6 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         changePassphraseView?.dismiss()
         deleteAccountView?.dismiss(blurViewOff: true)
 
-        // Need to check this in case the account has been deleted.
-        if AccountSession.instance.serverAuthenticated {
-            if let idCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? DirectoryIdCell {
-                idCell.resetCell()
-            }
-        }
-        
         NotificationCenter.default.removeObserver(self, name: Notifications.PolicyChanged, object: nil)
 
     }
@@ -161,6 +163,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         
     }
 
+    // Notifications
     @objc func policyChanged(_ notification: Notification) {
 
         guard let policy = notification.object as? String else { return }
@@ -176,15 +179,20 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         }
 
     }
-/*
-    @objc func localAuthComplete(_ notification: Notification) {
-        
+    
+    @objc func resetControllers(_ notification: Notification) {
+
         DispatchQueue.main.async {
-            self.localAuth.showAuthView = false
+            for section in self.cellItems.keys {
+                for item in self.cellItems[section]! {
+                    item.currentCell?.reset()
+                }
+            }
+            self.wasReset = true
         }
-        
+
     }
-*/
+    
    /*
     // MARK: - Navigation
 
@@ -216,12 +224,14 @@ extension SettingsTableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        guard let cellItem = cellItems[indexPath.section]?[indexPath.row] else { return UITableViewCell() }
+        guard var cellItem = cellItems[indexPath.section]?[indexPath.row] else { return UITableViewCell() }
         guard var cell = tableView.dequeueReusableCell(withIdentifier: cellItem.cellReuseId, for: indexPath)
                             as? MultiCellProtocol else { return UITableViewCell() }
         cell.viewController = self
         guard let pippipCell = cell as? PippipTableViewCell else { return UITableViewCell() }
+        pippipCell.configure()
         pippipCell.setTheme()
+        cellItem.currentCell = pippipCell
 
         return pippipCell
 

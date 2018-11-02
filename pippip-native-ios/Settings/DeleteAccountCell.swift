@@ -13,7 +13,7 @@ class DeleteAccountCellItem: MultiCellItemProtocol {
 
     var cellReuseId: String = "DeleteAccountCell"
     var cellHeight: CGFloat = 65.0
-    var currentCell: UITableViewCell?
+    var currentCell: PippipTableViewCell?
     
 }
 

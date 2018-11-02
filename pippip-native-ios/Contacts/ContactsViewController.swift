@@ -20,7 +20,6 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     var sessionState = SessionState()
     var authenticator: Authenticator!
     var debugging = false
-    var suspended = false
     var alertPresenter: AlertPresenter!
     var contactList: [Contact]!
     var rightBarItems = [UIBarButtonItem]()
@@ -366,9 +365,6 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         
         contactList.removeAll()
         contactRequests.removeAll()
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
 
     }
     

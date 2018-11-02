@@ -13,7 +13,7 @@ class LocalAuthCellItem: MultiCellItemProtocol {
 
     var cellReuseId: String = "LocalAuthCell"
     var cellHeight: CGFloat = 65.0
-    var currentCell: UITableViewCell?
+    var currentCell: PippipTableViewCell?
 
 }
 
@@ -30,6 +30,15 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+    }
+
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+
+        // Configure the view for the selected state
+    }
+
+    override func configure() {
 
         let laContext = LAContext()
         var authError: NSError? = nil
@@ -53,18 +62,19 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
             localAuthSwitch.setOn(false, animated: true)
             config.useLocalAuth = false
         }
-
+        
         initialState = config.useLocalAuth
         localAuthSwitch.onTintColor = PippipTheme.buttonColor
         
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    // Reset to configuration default
+    override func reset() {
+    
+        localAuthSwitch.isOn = true
+    
     }
-
+    
     @IBAction func localAuthChanged(_ sender: UISwitch) {
 
         if sender.isOn {

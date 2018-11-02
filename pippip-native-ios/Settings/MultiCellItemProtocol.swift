@@ -12,6 +12,6 @@ protocol MultiCellItemProtocol {
 
     var cellReuseId: String { get }
     var cellHeight: CGFloat { get }
-    var currentCell: UITableViewCell? { set get }
+    var currentCell: PippipTableViewCell? { set get }
 
 }

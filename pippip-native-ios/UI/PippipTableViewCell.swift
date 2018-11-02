@@ -26,6 +26,10 @@ class PippipTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
 
+    func configure() {
+        // Does nothing
+    }
+
     func reset() {
         // Does nothing.
     }

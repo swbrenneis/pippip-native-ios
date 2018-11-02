@@ -12,7 +12,7 @@ class EditWhitelistCellItem: MultiCellItemProtocol {
 
     var cellReuseId: String = "EditWhitelistCell"
     var cellHeight: CGFloat = 50.0
-    var currentCell: UITableViewCell?
+    var currentCell: PippipTableViewCell?
 
 }
 

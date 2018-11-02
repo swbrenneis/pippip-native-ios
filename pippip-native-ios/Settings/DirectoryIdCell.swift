@@ -12,7 +12,7 @@ class DirectoryIdCellItem: MultiCellItemProtocol {
 
     var cellReuseId: String = "DirectoryIdCell"
     var cellHeight: CGFloat = 65.0
-    var currentCell: UITableViewCell?
+    var currentCell: PippipTableViewCell?
 
 }
 
@@ -31,14 +31,6 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol, UITextFieldDelega
 
     override func awakeFromNib() {
         super.awakeFromNib()
-
-        currentDirectoryId = config.directoryId ?? ""
-        directoryIdTextField.text = currentDirectoryId
-        setDirectoryIdButton.isHidden = true
-        setDirectoryIdButton.backgroundColor = PippipTheme.buttonColor
-        setDirectoryIdButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
-        directoryIdTextField.delegate = self
-
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -46,12 +38,21 @@ class DirectoryIdCell: PippipTableViewCell, MultiCellProtocol, UITextFieldDelega
 
     }
 
-    func resetCell() {
-
+    override func configure() {
+        
         currentDirectoryId = config.directoryId ?? ""
         directoryIdTextField.text = currentDirectoryId
-        directoryIdTextField.resignFirstResponder()
         setDirectoryIdButton.isHidden = true
+        setDirectoryIdButton.backgroundColor = PippipTheme.buttonColor
+        setDirectoryIdButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
+        directoryIdTextField.delegate = self
+        
+    }
+
+    // Reset to configuration default.
+    override func reset() {
+
+        directoryIdTextField.text = ""
 
     }
     

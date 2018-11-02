@@ -18,7 +18,7 @@ class WhitelistViewController: UIViewController {
     var config = Configurator()
     var contactManager = ContactManager.instance
     var sessionState = SessionState()
-    var suspended = false
+    var wasReset = false
     var authenticator: Authenticator!
     var alertPresenter = AlertPresenter()
     var rightBarItems = [UIBarButtonItem]()
@@ -55,12 +55,20 @@ class WhitelistViewController: UIViewController {
         rightBarItems.append(editWhitelist)
         self.navigationItem.rightBarButtonItems = rightBarItems
 
+        NotificationCenter.default.addObserver(self, selector: #selector(resetControllers(_:)),
+                                               name: Notifications.ResetControllers, object: nil)
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
 
         authenticator.viewWillAppear()
         alertPresenter.present = true
+        
+        if wasReset {
+            wasReset = false
+            tableView.reloadData()
+        }
 
     }
 
@@ -178,27 +186,6 @@ class WhitelistViewController: UIViewController {
         
     }
 
-    @objc func directoryIdMatched(_ notification: Notification) {
-        
-        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
-        guard let response = notification.object as? MatchDirectoryIdResponse else { return }
-        if response.result == "found" {
-            if let publicId = response.publicId {
-                NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
-                                                       name: Notifications.WhitelistEntryAdded, object: nil)
-                addToWhitelist(publicId: publicId, directoryId: response.directoryId)
-            }
-            else {
-                alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "Invalid response from server")
-                DDLogError("Server did not return public ID on match")
-            }
-        }
-        else {
-            alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "That directory ID doesn't exist")
-        }
-        
-    }
-
     @objc func editWhitelist(_ sender: Any) {
 
         tableView.setEditing(true, animated: true)
@@ -219,6 +206,35 @@ class WhitelistViewController: UIViewController {
 
     }
 
+    // Notifications
+    
+    @objc func directoryIdMatched(_ notification: Notification) {
+        
+        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
+        guard let response = notification.object as? MatchDirectoryIdResponse else { return }
+        if response.result == "found" {
+            if let publicId = response.publicId {
+                NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
+                                                       name: Notifications.WhitelistEntryAdded, object: nil)
+                addToWhitelist(publicId: publicId, directoryId: response.directoryId)
+            }
+            else {
+                alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "Invalid response from server")
+                DDLogError("Server did not return public ID on match")
+            }
+        }
+        else {
+            alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "That directory ID doesn't exist")
+        }
+        
+    }
+    
+    @objc func resetControllers(_ notification: Notification) {
+
+        wasReset = true
+        
+    }
+    
     @objc func whitelistEntryAdded(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryAdded, object: nil)
