@@ -21,7 +21,6 @@ class SignInView: UIView {
     var serverAuthenticator: ServerAuthenticator?
     var authView: AuthView?
     var alertPresenter = AlertPresenter()
-    var local = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -79,20 +78,20 @@ class SignInView: UIView {
     @IBAction func signInTapped(_ sender: Any) {
 
         let passphrase = self.passphraseTextField.text ?? ""
-        if local {
-            if UserVault.validatePassphrase(passphrase: passphrase) {
-                authView?.resumePassphraseInvalid = false
-                authView?.dismiss()
-            }
-            else {
-                authView?.resumePassphraseInvalid = true
-                alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid passphrase")
-            }
-        }
-        else {
+        if AccountSession.instance.needsServerAuth {
             authView?.signingIn()
             serverAuthenticator = ServerAuthenticator(authView: authView!)
             serverAuthenticator?.authenticate(passphrase: passphrase)
+        }
+        else {
+            if UserVault.validatePassphrase(passphrase: passphrase) {
+                //authView?.resumePassphraseInvalid = false
+                authView?.dismiss()
+            }
+            else {
+                //authView?.resumePassphraseInvalid = true
+                alertPresenter.errorAlert(title: "Authentication Error", message: "Invalid passphrase")
+            }
         }
         dismiss()
 

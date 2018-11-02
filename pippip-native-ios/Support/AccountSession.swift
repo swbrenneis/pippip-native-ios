@@ -65,6 +65,11 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
             return authState == .serverAuthenticated
         }
     }
+    var needsServerAuth: Bool {
+        get {
+            return authState == .notAuthenticated
+        }
+    }
     var loggedOut: Bool {
         get {
             return authState == .loggedOut

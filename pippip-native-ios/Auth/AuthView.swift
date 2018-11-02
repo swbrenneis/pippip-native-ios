@@ -36,7 +36,7 @@ class AuthView: UIView, ControllerBlurProtocol {
     var blurView = GestureBlurView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
     var navigationController: UINavigationController?
     var authPrompt: String = ""
-    var resumePassphraseInvalid = false
+    //var resumePassphraseInvalid = false
     var slideshow: ImageSlideshow!
     let slides = [ImageSource(imageString: "quickstart01")!,
                   ImageSource(imageString: "quickstart02")!,
@@ -139,12 +139,17 @@ class AuthView: UIView, ControllerBlurProtocol {
         
     }
     
-    func biometricAuthenticate(local: Bool) {
+    func biometricAuthenticate() {
         
         AccountSession.instance.biometricsRunning = true
         if let passhrase = getKeychainPassphrase(uuid: config.uuid) {
             self.makeToastActivity(.center)
-            if local {
+            if AccountSession.instance.needsServerAuth {
+                self.contactServerLabel.isHidden = false
+                serverAuthenticator = ServerAuthenticator(authView: self)
+                serverAuthenticator?.authenticate(passphrase: passhrase)
+            }
+            else {
                 if UserVault.validatePassphrase(passphrase: passhrase) {
                     dismiss()
                 }
@@ -152,11 +157,6 @@ class AuthView: UIView, ControllerBlurProtocol {
                     self.hideToastActivity()
                     authButton.isHidden = false
                 }
-            }
-            else {
-                self.contactServerLabel.isHidden = false
-                serverAuthenticator = ServerAuthenticator(authView: self)
-                serverAuthenticator?.authenticate(passphrase: passhrase)
             }
         }
         AccountSession.instance.biometricsRunning = false
@@ -267,7 +267,7 @@ class AuthView: UIView, ControllerBlurProtocol {
         
     }
 
-    func showSignInView(local: Bool) {
+    func showSignInView() {
         
         let frame = self.bounds
         let viewRect = CGRect(x: 0.0, y: 0.0,
@@ -279,7 +279,6 @@ class AuthView: UIView, ControllerBlurProtocol {
         signInView?.alpha = 0.3
         signInView?.blurController = self
         signInView?.authView = self
-        signInView?.local = local
         addSubview(signInView!)
         
         UIView.animate(withDuration: 0.3, animations: {
@@ -313,7 +312,7 @@ class AuthView: UIView, ControllerBlurProtocol {
             showNewAccountView()
         }
         else {
-            showSignInView(local: resumePassphraseInvalid)
+            showSignInView()
         }
 
     }

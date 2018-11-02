@@ -113,21 +113,37 @@ class ChangePassphraseView: UIView {
     }
 
     @IBAction func newPassphraseChanged(_ sender: Any) {
-
-        guard let passphrase = newPassphraseTextView.text else {
-            changePassphraseButton.isEnabled = false
-            changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
-            return
-        }
-        if passphrase.utf8.count > 0 {
-            changePassphraseButton.isEnabled = true
-            changePassphraseButton.backgroundColor = PippipTheme.buttonColor
+        
+        if let newPassphrase = newPassphraseTextView.text {
+            if newPassphrase.utf8.count > 0 {
+                changePassphraseButton.isEnabled = true
+                changePassphraseButton.backgroundColor = PippipTheme.buttonColor
+            }
+            else {
+                changePassphraseButton.isEnabled = false
+                changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
+            }
         }
         else {
             changePassphraseButton.isEnabled = false
             changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
         }
-
+        
+        if let oldPassphrase = oldPassphraseTextView.text {
+            if oldPassphrase.utf8.count > 0 {
+                changePassphraseButton.isEnabled = true
+                changePassphraseButton.backgroundColor = PippipTheme.buttonColor
+            }
+            else {
+                changePassphraseButton.isEnabled = false
+                changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
+            }
+        }
+        else {
+            changePassphraseButton.isEnabled = false
+            changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
+        }
+        
     }
     
 }

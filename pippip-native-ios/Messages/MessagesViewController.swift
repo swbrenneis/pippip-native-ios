@@ -108,6 +108,7 @@ class MessagesViewController: UIViewController {
             self.sidebarOn = false
             self.sidebar.dismissAnimated(true, completion: nil)
             AccountSession.instance.signOut()
+            self.authenticator.showAuthView()
         }
 
         var rightBarItems = [UIBarButtonItem]()

@@ -27,7 +27,7 @@ class Authenticator: NSObject {
 
     }
     
-    private func showAuthView() {
+    func showAuthView() {
 
         assert(Thread.isMainThread)
         viewController?.navigationController?.isNavigationBarHidden = true
@@ -79,7 +79,7 @@ class Authenticator: NSObject {
         
         if !AccountSession.instance.newAccount  && AccountSession.instance.starting {
             if config.useLocalAuth {
-                authView?.biometricAuthenticate(local: false)
+                authView?.biometricAuthenticate()
             }
         }
         
@@ -99,10 +99,10 @@ class Authenticator: NSObject {
         
         DispatchQueue.main.async {
             if self.config.useLocalAuth {
-                self.authView?.biometricAuthenticate(local: true)
+                self.authView?.biometricAuthenticate()
             }
             else {
-                self.authView?.showSignInView(local: true)
+                self.authView?.showSignInView()
             }
         }
 

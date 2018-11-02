@@ -89,8 +89,8 @@ class ContactManager: NSObject {
 
         super.init()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
-                                               name: Notifications.AuthComplete, object: nil)
+        //NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
+        //                                       name: Notifications.AuthComplete, object: nil)
 
     }
     
@@ -422,7 +422,7 @@ class ContactManager: NSObject {
     }
 
     // Notifications
-    
+    /*
     @objc func authComplete(_ notification: Notification) {
 
         if (config.authenticated) {
@@ -444,7 +444,7 @@ class ContactManager: NSObject {
         }
         
     }
-
+*/
 }
 
 // Database and encoding functions
