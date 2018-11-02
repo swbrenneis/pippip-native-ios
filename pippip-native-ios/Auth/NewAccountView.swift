@@ -62,28 +62,22 @@ class NewAccountView: UIView {
         let laContext = LAContext()
         var authError: NSError? = nil
         if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)) {
-            var laType = ""
             switch laContext.biometryType {
             case .none:
+                biometricsLabel.text = "\(PippipTheme.leadingLAType!) not available"
                 biometricsAvailable = false
                 break
-            case .touchID:
-                laType = "Enable touch ID"
+            case .touchID, .faceID:
+                biometricsLabel.text = "Enable \(PippipTheme.localAuthType!)"
                 break
-            case .faceID:
-                laType = "Enable face ID"
-                break
-            }
-            if biometricsAvailable {
-                biometricsLabel.text = laType
-            }
-            else {
-                laStackView.isHidden = true
             }
         }
         else {
-            laStackView.isHidden = true
+            biometricsLabel.text = "\(PippipTheme.leadingLAType!) not available"
+            biometricsAvailable = false
         }
+        enableBiometricsButton.isOn = biometricsAvailable
+        enableBiometricsButton.isEnabled = biometricsAvailable
  
     }
     

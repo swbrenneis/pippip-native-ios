@@ -9,6 +9,7 @@
 import UIKit
 import ChameleonFramework
 import Toast_Swift
+import DeviceKit
 
 class PippipTheme: NSObject {
 
@@ -45,6 +46,9 @@ class PippipTheme: NSObject {
     static var lightTextColor: UIColor!
     //static var textFieldBorderColor: UIColor!
 
+    static var localAuthType: String!
+    static var leadingLAType: String!
+    
     static func setTheme() {
 
         splashColor = UIColor.flatTealDark
@@ -71,6 +75,16 @@ class PippipTheme: NSObject {
         style.activityBackgroundColor = .clear
         style.activityIndicatorColor = UIColor.flatWhite
         ToastManager.shared.style = style
+
+        let device = Device()
+        if device.isOneOf([.iPhoneX, .iPhoneXr, .iPhoneXs, .iPhoneXsMax]) {
+            localAuthType = "face ID"
+            leadingLAType = "Face ID"
+        }
+        else {
+            localAuthType = "touch ID"
+            leadingLAType = "Touch ID"
+        }
 
     }
 

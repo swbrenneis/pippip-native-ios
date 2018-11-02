@@ -17,11 +17,6 @@ class SignInView: UIView {
     @IBOutlet weak var signInButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
     
-    var accountName: String = "" {
-        didSet {
-            accountNameLabel.text = accountName
-        }
-    }
     var blurController: ControllerBlurProtocol?
     var serverAuthenticator: ServerAuthenticator?
     var authView: AuthView?
@@ -49,6 +44,7 @@ class SignInView: UIView {
 
         accountNameLabel.backgroundColor = PippipTheme.lightBarColor
         accountNameLabel.textColor = PippipTheme.titleColor
+        accountNameLabel.text = AccountSession.instance.accountName
         let lockImageView = UIImageView(image: UIImage(named: "passphrase"))
         passphraseTextField.rightView = lockImageView
         passphraseTextField.rightViewMode = .always

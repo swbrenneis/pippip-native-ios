@@ -34,24 +34,24 @@ class LocalAuthCell: PippipTableViewCell, MultiCellProtocol {
         let laContext = LAContext()
         var authError: NSError? = nil
         if (laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)) {
-            var laType = ""
             switch laContext.biometryType {
             case .none:
-                laType = "Biometry not supported"
+                localAuthLabel.text = "\(PippipTheme.leadingLAType!) not available"
                 localAuthSwitch.isEnabled = false
                 localAuthSwitch.setOn(false, animated: true)
                 config.useLocalAuth = false
                 break
-            case .touchID:
-                laType = "Enable touch ID"
-                localAuthSwitch.setOn(config.useLocalAuth, animated: true)
-                break
-            case .faceID:
-                laType = "Enable face ID"
+            case .touchID, .faceID:
+                localAuthLabel.text = "Enable \(PippipTheme.localAuthType!)"
                 localAuthSwitch.setOn(config.useLocalAuth, animated: true)
                 break
             }
-            localAuthLabel.text = laType
+        }
+        else {
+            localAuthLabel.text = "\(PippipTheme.leadingLAType!) not available"
+            localAuthSwitch.isEnabled = false
+            localAuthSwitch.setOn(false, animated: true)
+            config.useLocalAuth = false
         }
 
         initialState = config.useLocalAuth
