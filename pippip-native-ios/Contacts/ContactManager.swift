@@ -89,8 +89,8 @@ class ContactManager: NSObject {
 
         super.init()
         
-        //NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
-        //                                       name: Notifications.AuthComplete, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
+                                               name: Notifications.AuthComplete, object: nil)
 
     }
     
@@ -422,10 +422,10 @@ class ContactManager: NSObject {
     }
 
     // Notifications
-    /*
+
     @objc func authComplete(_ notification: Notification) {
 
-        if (config.authenticated) {
+        //if (config.authenticated) {
             contactSet.removeAll()
             let realm = try! Realm()
             let dbContacts = realm.objects(DatabaseContact.self)
@@ -441,10 +441,10 @@ class ContactManager: NSObject {
                 }
             }
             mapContacts()
-        }
+        //}
         
     }
-*/
+
 }
 
 // Database and encoding functions
