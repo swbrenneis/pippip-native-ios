@@ -167,8 +167,8 @@ class PippipGeometry: NSObject {
         
         newAccountButtonWidthRatio = 0.7
         newAccountViewWidthRatio = 0.8
-        newAccountViewHeightRatio = 0.7
-        newAccountViewOffset = 0.0
+        newAccountViewHeightRatio = 0.6
+        newAccountViewOffset = 80.0
         signInButtonWidthRatio = 0.4
         signInViewWidthRatio = 0.75
         signInViewHeightRatio = 0.5
@@ -257,7 +257,7 @@ class PippipGeometry: NSObject {
         signInViewOffset = 125.0
         verifyPassphraseViewWidthRatio = 0.75
         verifyPassphraseViewHeightRatio = 0.4
-        verifyPassphraseViewOffset = 30.0
+        verifyPassphraseViewOffset = 120.0
         storePassphraseViewWidthRatio = 0.75
         storePassphraseViewHeightRatio = 0.4
         storePassphraseViewOffset = 30.0
