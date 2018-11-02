@@ -31,7 +31,7 @@ class MessagesHeadingCell: PippipTableViewCell {
         messageSearchTextField.textColor = PippipTheme.mediumTextColor
         messagesLabel.textColor = PippipTheme.mediumTextColor
 
-        super.setMediumTheme()
+        super.setTheme()
 
     }
 

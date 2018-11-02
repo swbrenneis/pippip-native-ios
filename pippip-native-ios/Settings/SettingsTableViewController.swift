@@ -221,7 +221,7 @@ extension SettingsTableViewController {
                             as? MultiCellProtocol else { return UITableViewCell() }
         cell.viewController = self
         guard let pippipCell = cell as? PippipTableViewCell else { return UITableViewCell() }
-        pippipCell.setMediumTheme()
+        pippipCell.setTheme()
 
         return pippipCell
 

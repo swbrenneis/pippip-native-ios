@@ -32,24 +32,10 @@ class EditWhitelistCell: PippipTableViewCell, MultiCellProtocol {
         // Configure the view for the selected state
     }
 
-    override func setDarkTheme() {
-        
-        self.textLabel?.textColor = PippipTheme.darkTextColor
-        super.setDarkTheme()
-        
-    }
-    
-    override func setMediumTheme() {
+    override func setTheme() {
         
         self.textLabel?.textColor = PippipTheme.mediumTextColor
-        super.setMediumTheme()
-        
-    }
-    
-    override func setLightTheme() {
-        
-        self.textLabel?.textColor = PippipTheme.lightTextColor
-        super.setLightTheme()
+        super.setTheme()
         
     }
     

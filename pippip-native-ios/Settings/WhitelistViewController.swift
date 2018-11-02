@@ -302,7 +302,7 @@ extension WhitelistViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "WhitelistCell", for: indexPath)
             as? PippipTableViewCell else { return UITableViewCell() }
         let entity = config.whitelist[indexPath.row]
-        cell.setMediumTheme()
+        cell.setTheme()
         cell.textLabel?.text = entity.directoryId
         cell.detailTextLabel?.text = entity.publicId
         return cell

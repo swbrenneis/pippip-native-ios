@@ -439,7 +439,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
         else if indexPath.section == 1 {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "ContactCell", for: indexPath)
                 as? ContactCell else { return UITableViewCell() }
-            cell.setMediumTheme()
+            cell.setTheme()
             cell.configure(contact: contactList[indexPath.row])
             return cell
         }

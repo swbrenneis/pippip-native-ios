@@ -45,27 +45,10 @@ class PublicIdCell: PippipTableViewCell, MultiCellProtocol {
         // Configure the view for the selected state
     }
 
-    override func setDarkTheme() {
-        
-        publicIdLabel.textColor = PippipTheme.darkTextColor
-        // titleLabel.textColor = PippipTheme.darkTextColor
-        super.setDarkTheme()
-        
-    }
-    
-    override func setMediumTheme() {
-        
+    override func setTheme() {
+
         publicIdLabel.textColor = PippipTheme.mediumTextColor
-        //titleLabel.textColor = PippipTheme.mediumTextColor
-        super.setMediumTheme()
-        
-    }
-    
-    override func setLightTheme() {
-        
-        publicIdLabel.textColor = PippipTheme.lightTextColor
-        // titleLabel.textColor = PippipTheme.lightTextColor
-        super.setLightTheme()
+        super.setTheme()
         
     }
     

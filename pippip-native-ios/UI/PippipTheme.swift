@@ -35,16 +35,12 @@ class PippipTheme: NSObject {
     static var mediumCellColor: UIColor!
     static var lightCellColor: UIColor!
 
-    //static var buttonDarkTextColor: UIColor!
-    //static var buttonMediumTextColor: UIColor!
-    //static var buttonLightTextColor: UIColor!
     static var infoAlertColor = UIColor.flatSand
     static var errorAlertColor = UIColor.flatOrangeDark
     static var successAlertColor = UIColor.flatMintDark
     static var darkTextColor: UIColor!
     static var mediumTextColor: UIColor!
     static var lightTextColor: UIColor!
-    //static var textFieldBorderColor: UIColor!
 
     static var localAuthType: String!
     static var leadingLAType: String!

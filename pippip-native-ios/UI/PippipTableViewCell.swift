@@ -26,31 +26,15 @@ class PippipTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
 
-    func setDarkTheme() {
-        
-        self.backgroundColor = .clear
-        contentView.backgroundColor = PippipTheme.darkCellColor
-//        contentView.layer.cornerRadius = PippipTheme.cellCorners
-//        contentView.layer.masksToBounds = true
-
+    func reset() {
+        // Does nothing.
     }
     
-    func setMediumTheme() {
+    func setTheme() {
         
         self.backgroundColor = UIColor.flatWhite
         contentView.backgroundColor = UIColor.flatWhite
-//        contentView.layer.cornerRadius = PippipTheme.cellCorners
-//        contentView.layer.masksToBounds = true
 
-    }
-    
-    func setLightTheme() {
-        
-        self.backgroundColor = .clear
-        contentView.backgroundColor = PippipTheme.lightCellColor
-//        contentView.layer.cornerRadius = PippipTheme.cellCorners
-//        contentView.layer.masksToBounds = true
-        
     }
     
 }
