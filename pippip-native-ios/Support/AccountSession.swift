@@ -43,6 +43,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     private var accountSessionState: AccountSessionState
     private var authState: AuthState
     private var updateState: UpdateState
+    private var didUpdate = false                   // Update after suspend
     var contactManager = ContactManager.instance
     var messageManager = MessageManager()
     var sessionState = SessionState()
@@ -300,7 +301,10 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         
         if accountSessionState == .willResume && !biometricsInProgress {
             accountSessionState = .active
-//            self.doUpdates()
+            if !self.didUpdate {
+                self.doUpdates()
+                self.didUpdate = true
+            }
             NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
         }
 
@@ -319,6 +323,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
         if accountSessionState == .willSuspend {
             accountSessionState = .suspended
+            didUpdate = false
             NotificationCenter.default.post(name: Notifications.AppSuspended, object: nil)
         }
 
@@ -374,6 +379,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
         print("Notification received")
+        didUpdate = true
         doUpdates()
         completionHandler(.badge)
 

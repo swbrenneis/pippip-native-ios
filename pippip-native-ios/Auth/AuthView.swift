@@ -13,6 +13,12 @@ import Toast_Swift
 import LocalAuthentication
 import CocoaLumberjack
 
+enum AuthType {
+    case biometric
+    case newAccount
+    case passphrase
+}
+
 class AuthView: UIView, ControllerBlurProtocol {
 
     @IBOutlet var contentView: UIView!
@@ -36,6 +42,7 @@ class AuthView: UIView, ControllerBlurProtocol {
     var blurView = GestureBlurView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
     var navigationController: UINavigationController?
     var authPrompt: String = ""
+    var authType: AuthType = .newAccount
     //var resumePassphraseInvalid = false
     var slideshow: ImageSlideshow!
     let slides = [ImageSource(imageString: "quickstart01")!,
@@ -123,6 +130,22 @@ class AuthView: UIView, ControllerBlurProtocol {
 
     }
 
+    func authenticate() {
+        
+        switch authType {
+        case .biometric:
+            biometricAuthenticate()
+            break
+        case .newAccount:
+            showNewAccountView()
+            break
+        case .passphrase:
+            showSignInView()
+            break
+        }
+
+    }
+    
     func authenticated(success: Bool, _ reason: String?) {
         
         NotificationCenter.default.post(name: Notifications.AuthComplete, object: nil)  // For messages view controller
@@ -139,7 +162,7 @@ class AuthView: UIView, ControllerBlurProtocol {
         
     }
     
-    func biometricAuthenticate() {
+    private func biometricAuthenticate() {
         
         AccountSession.instance.biometricsRunning = true
         if let passhrase = getKeychainPassphrase(uuid: config.uuid) {
@@ -219,6 +242,13 @@ class AuthView: UIView, ControllerBlurProtocol {
         
     }
     
+    func setBiometrics() {
+
+        authButton.isHidden = true
+        authType = .biometric
+        
+    }
+    
     func setNewAccount() {
 
         authButton.setTitle("Create A New Account", for: .normal)
@@ -228,6 +258,7 @@ class AuthView: UIView, ControllerBlurProtocol {
         authButtonLeading.constant = abConstraint
         authButtonTrailing.constant = abConstraint
         authButton.isHidden = false
+        authType = .newAccount
 
     }
 
@@ -240,10 +271,11 @@ class AuthView: UIView, ControllerBlurProtocol {
         authButtonLeading.constant = abConstraint
         authButtonTrailing.constant = abConstraint
         authButton.isHidden = config.useLocalAuth
+        authType = .passphrase
         
     }
     
-    func showNewAccountView() {
+    private func showNewAccountView() {
         
         let frame = self.bounds
         let viewRect = CGRect(x: 0.0, y: 0.0,
@@ -267,7 +299,7 @@ class AuthView: UIView, ControllerBlurProtocol {
         
     }
 
-    func showSignInView() {
+    private func showSignInView() {
         
         let frame = self.bounds
         let viewRect = CGRect(x: 0.0, y: 0.0,
@@ -308,13 +340,8 @@ class AuthView: UIView, ControllerBlurProtocol {
 
     @IBAction func authPressed(_ sender: Any) {
 
-        if AccountSession.instance.newAccount {
-            showNewAccountView()
-        }
-        else {
-            showSignInView()
-        }
-
+        authenticate()
+        
     }
     
     @objc func didTap() {

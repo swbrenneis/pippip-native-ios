@@ -48,6 +48,9 @@ class Authenticator: NSObject {
         if AccountSession.instance.newAccount {
             authView?.setNewAccount()
         }
+        else if config.useLocalAuth {
+            authView?.setBiometrics()
+        }
         else {
             authView?.setSignIn()
         }
@@ -77,10 +80,8 @@ class Authenticator: NSObject {
 
     func viewDidAppear() {
         
-        if !AccountSession.instance.newAccount  && AccountSession.instance.starting {
-            if config.useLocalAuth {
-                authView?.biometricAuthenticate()
-            }
+        if AccountSession.instance.starting {
+            authView?.authenticate()
         }
         
     }
@@ -98,12 +99,7 @@ class Authenticator: NSObject {
     @objc func appResumed(_ notification: Notification) {
         
         DispatchQueue.main.async {
-            if self.config.useLocalAuth {
-                self.authView?.biometricAuthenticate()
-            }
-            else {
-                self.authView?.showSignInView()
-            }
+            self.authView?.authenticate()
         }
 
     }
