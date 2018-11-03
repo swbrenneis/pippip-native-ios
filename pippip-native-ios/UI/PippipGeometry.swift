@@ -208,7 +208,7 @@ class PippipGeometry: NSObject {
         
         newAccountButtonWidthRatio = 0.6
         newAccountViewWidthRatio = 0.7
-        newAccountViewHeightRatio = 0.5
+        newAccountViewHeightRatio = 0.6
         newAccountViewOffset = 95.0
         signInButtonWidthRatio = 0.4
         signInViewWidthRatio = 0.7
