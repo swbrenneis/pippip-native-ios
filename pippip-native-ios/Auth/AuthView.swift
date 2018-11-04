@@ -270,7 +270,7 @@ class AuthView: UIView, ControllerBlurProtocol {
         let abConstraint = (screenWidth - abWidth) / 2
         authButtonLeading.constant = abConstraint
         authButtonTrailing.constant = abConstraint
-        authButton.isHidden = config.useLocalAuth
+        authButton.isHidden = false
         authType = .passphrase
         
     }

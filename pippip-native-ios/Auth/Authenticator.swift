@@ -57,6 +57,13 @@ class Authenticator: NSObject {
 
     }
 
+    func signOut() {
+        
+        showAuthView()
+        authView?.setSignIn()
+        
+    }
+    
     func viewWillAppear() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
