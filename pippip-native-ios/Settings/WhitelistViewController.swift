@@ -154,7 +154,7 @@ class WhitelistViewController: UIViewController {
         else if let pId = publicId {
             NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
                                                    name: Notifications.WhitelistEntryAdded, object: nil)
-            addToWhitelist(publicId: pId, directoryId: directoryId)
+            addToWhitelist(publicId: pId, directoryId: nil)
         }
         else {
             DDLogError("Verify and add error: No valid IDs provided")

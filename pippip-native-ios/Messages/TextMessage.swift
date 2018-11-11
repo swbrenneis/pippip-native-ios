@@ -29,7 +29,7 @@ class TextMessage: Message {
         super.init(dbMessage: dbMessage)
     }
 
-    override init(serverMessage: ServerMessage) {
+    override init?(serverMessage: ServerMessage) {
         super.init(serverMessage: serverMessage)
     }
 

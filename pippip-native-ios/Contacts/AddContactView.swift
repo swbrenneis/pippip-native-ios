@@ -18,8 +18,8 @@ class AddContactView: UIView {
     @IBOutlet weak var cancelButton: UIButton!
     
     var contactsViewController: ContactsViewController?
-    var directoryIdBlank = true
-    var publicIdBlank = true
+    var directoryId = ""
+    var publicId = ""
     var publicIdValid = false
     var publicIdRegex: NSRegularExpression
 
@@ -52,7 +52,7 @@ class AddContactView: UIView {
         
         titleLabel.textColor = PippipTheme.titleColor
         titleLabel.backgroundColor = PippipTheme.lightBarColor
-        addContactButton.backgroundColor = PippipTheme.buttonColor
+        addContactButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
         addContactButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         addContactButton.isEnabled = false
         cancelButton.backgroundColor = PippipTheme.cancelButtonColor
@@ -60,7 +60,7 @@ class AddContactView: UIView {
 
     }
 
-    func dismiss(completion: ((Bool)->Void)?) {
+    func dismiss() {
         
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
@@ -70,10 +70,6 @@ class AddContactView: UIView {
             self.directoryIdTextField.resignFirstResponder()
             self.publicIdTextField.resignFirstResponder()
             self.removeFromSuperview()
-            self.contactsViewController?.navigationController?.setNavigationBarHidden(false, animated: true)
-            if let comp = completion {
-                comp(completed)
-            }
         })
         
     }
@@ -90,35 +86,37 @@ class AddContactView: UIView {
 
     @IBAction func cancelTapped(_ sender: Any) {
 
-        UIView.animate(withDuration: 0.3, animations: {
-            self.center.y = 0.0
-            self.alpha = 0.0
-            self.contactsViewController?.blurView.alpha = 0.0
-        }, completion: { completed in
-            self.directoryIdTextField.resignFirstResponder()
-            self.publicIdTextField.resignFirstResponder()
-            self.removeFromSuperview()
-            self.contactsViewController?.navigationController?.setNavigationBarHidden(false, animated: true)
-        })
+        dismiss()
         
     }
+    
     @IBAction func directoryIdChanged(_ sender: Any) {
 
-        if let directoryId = directoryIdTextField.text {
-            directoryIdBlank = directoryId.count == 0
+        directoryId = directoryIdTextField.text ?? ""
+        if (directoryId.count > 0 && publicId.count == 0) || (directoryId.count == 0 && publicIdValid)  {
+            addContactButton.isEnabled = true
+            addContactButton.backgroundColor = PippipTheme.buttonColor
         }
-        addContactButton.isEnabled = (!directoryIdBlank && publicIdBlank) || (directoryIdBlank && publicIdValid)
+        else {
+            addContactButton.isEnabled = false
+            addContactButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
+        }
         
     }
     
     @IBAction func publicIdChanged(_ sender: Any) {
         
-        if let publicId = publicIdTextField.text {
-            publicIdBlank = publicId.count == 0
-            let matches = publicIdRegex.matches(in: publicId, options: [], range: NSRange(location: 0, length: publicId.utf8.count))
-            publicIdValid = matches.count == 1
+        publicId = publicIdTextField.text ?? ""
+        let matches = publicIdRegex.matches(in: publicId, options: [], range: NSRange(location: 0, length: publicId.utf8.count))
+        publicIdValid = matches.count == 1
+        if (directoryId.count > 0 && publicId.count == 0) || (directoryId.count == 0 && publicIdValid)  {
+            addContactButton.isEnabled = true
+            addContactButton.backgroundColor = PippipTheme.buttonColor
         }
-        addContactButton.isEnabled = (!directoryIdBlank && publicIdBlank) || (directoryIdBlank && publicIdValid)
+        else {
+            addContactButton.isEnabled = false
+            addContactButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
+        }
         
     }
 

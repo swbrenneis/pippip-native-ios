@@ -50,38 +50,6 @@ class LocalPassphraseCell: PippipTableViewCell, MultiCellProtocol {
 
     }
 /*
-    func doChangePassphrase(oldPassphrase: String, newPassphrase: String) {
-
-        let vault = UserVault()
-        do {
-            try vault.changePassphrase(oldPassphrase: oldPassphrase, newPassphrase: newPassphrase)
-            alertPresenter.successAlert(title: "Passphrase Changed", message: "Your local passphrase has been changed")
-            resetCell()
-        }
-        catch {
-            alertPresenter.errorAlert(title: "Change Passphrase Error",
-                                      message: "An error has occurred, please try again")
-        }
-    }
-
-    func emptyPassphrase (oldPassphrase: String, newPassphrase: String) {
-
-        DispatchQueue.main.async {
-            let alert = PMAlertController(title: "Change Passphrase",
-                                          description: "Empty passphrases are not recommended\nProceed?",
-                                          image: nil,
-                                          style: .alert)
-            alert.addAction(PMAlertAction(title: "Yes", style: .default, action: { () in
-                self.doChangePassphrase(oldPassphrase: oldPassphrase, newPassphrase: newPassphrase)
-            }))
-            alert.addAction(PMAlertAction(title: "No", style: .cancel, action: { () in
-                self.resetCell()
-            }))
-            self.viewController?.present(alert, animated: true, completion: nil)
-        }
-
-    }
-
     func newPassphrase(_ oldPassphrase: String) {
 
         let passphrase = passphraseText.text!

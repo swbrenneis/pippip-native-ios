@@ -47,6 +47,7 @@ class StorePassphraseView: UIView {
         
         titleLabel.backgroundColor = PippipTheme.lightBarColor
         titleLabel.textColor = PippipTheme.titleColor
+        titleLabel.text = "Enable \(PippipTheme.leadingLAType!)"
         let lockImageView = UIImageView(image: UIImage(named: "passphrase"))
         passphraseTextField.rightView = lockImageView
         passphraseTextField.rightViewMode = .always

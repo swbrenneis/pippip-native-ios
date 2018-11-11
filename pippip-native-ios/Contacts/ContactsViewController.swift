@@ -104,8 +104,8 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
         alertPresenter.present = false
         authenticator.viewWillDisappear()
-        addContactView?.dismiss(completion: nil)
-        contactDetailView?.dismiss()
+        addContactView?.dismiss()
+        contactDetailView?.forceDismiss()
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestStatusUpdated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
@@ -125,34 +125,6 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         // Dispose of any resources that can be recreated.
     }
 
-    func validateAndRequest(publicId: String, directoryId: String) {
-        
-        if directoryId == config.directoryId || publicId == sessionState.publicId {
-            alertPresenter.errorAlert(title: "Add Contact Error", message: "Adding yourself is not allowed")
-        }
-        else if directoryId.utf8.count > 0 {
-            NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
-                                                   name: Notifications.DirectoryIdMatched, object: nil)
-            self.contactManager.matchDirectoryId(directoryId: directoryId, publicId: nil)
-        }
-        else if publicId.utf8.count > 0 {
-            let regex = try! NSRegularExpression(pattern: "[^A-Fa-f0-9]", options: [])
-            if let match = regex.firstMatch(in: publicId,
-                                            options: [],
-                                            range: NSMakeRange(0, publicId.utf8.count)) {
-                if match.numberOfRanges > 0 || publicId.utf8.count < 40 {
-                    alertPresenter.errorAlert(title: "Contact Request Error", message: "Not a valid public ID")
-                }
-            }
-            else {
-                addContactView?.dismiss(completion: { completed in
-                    self.contactManager.requestContact(publicId: publicId, directoryId: nil, retry: false)
-                })
-            }
-        }
-
-    }
-
     func showContactDetailView(contact: Contact) {
         
         let frame = self.view.bounds
@@ -164,12 +136,11 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
                               width: frame.width * PippipGeometry.contactDetailViewWidthRatio,
                               height: frame.height * heightRatio!)
         contactDetailView = ContactDetailView(frame: viewRect)
+        contactDetailView?.contactsViewController = self
         contactDetailView?.setDetail(contact: contact)
         let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - PippipGeometry.contactDetailViewOffset)
         contactDetailView?.center = viewCenter
         contactDetailView?.alpha = 0.0
-        
-        contactDetailView?.blurController = self
         
         blurView.toDismiss = contactDetailView
         self.view.addSubview(contactDetailView!)
@@ -189,7 +160,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
                               width: frame.width * PippipGeometry.contactRequestsViewWidthRatio,
                               height: frame.height * PippipGeometry.contactRequestsViewHeightRatio)
         requestsView = ContactRequestsView(frame: viewRect)
-        requestsView!.blurController = self
+        requestsView!.contactsViewController = self
         requestsView!.contactRequests = contactRequests
         requestsView!.alpha = 0.0
         requestsView!.center = self.view.center
@@ -201,6 +172,28 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
             self.requestsView!.alpha = 1.0
         }, completion: nil)
 
+    }
+    
+    func validateAndRequest(publicId: String, directoryId: String) {
+        
+        if directoryId == config.directoryId || publicId == sessionState.publicId {
+            alertPresenter.errorAlert(title: "Add Contact Error", message: "Adding yourself is not allowed")
+        }
+        else if directoryId.count > 0 {
+            NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
+                                                   name: Notifications.DirectoryIdMatched, object: nil)
+            self.contactManager.matchDirectoryId(directoryId: directoryId, publicId: nil)
+        }
+        else if publicId.count > 0 {
+            if let _ = contactManager.getContact(publicId: publicId) {
+                alertPresenter.errorAlert(title: "Add Contact Error", message: "That contact is already in your list")
+            }
+            else {
+                addContactView?.dismiss()
+                contactManager.requestContact(publicId: publicId, directoryId: nil, retry: false)
+            }
+        }
+        
     }
     
     @objc func editContacts(_ sender: Any) {
@@ -287,12 +280,15 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
         guard let response = notification.object as? MatchDirectoryIdResponse else { return }
         if response.result == "found" {
-            DispatchQueue.main.async {
-                self.addContactView?.dismiss(completion: { comleted in
-                    self.contactManager.requestContact(publicId: response.publicId!,
-                                                       directoryId: response.directoryId!,
-                                                       retry: false)
-                })
+            guard let publicId = response.publicId else { return }
+            if let _ = contactManager.getContact(publicId: publicId) {
+                alertPresenter.errorAlert(title: "Add Contact Error", message: "That contact is already in your list")
+            }
+            else {
+                contactManager.requestContact(publicId: publicId, directoryId: response.directoryId, retry: false)
+                DispatchQueue.main.async {
+                    self.addContactView?.dismiss()
+                }
             }
         }
         else {

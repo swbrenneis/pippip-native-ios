@@ -45,6 +45,7 @@ struct Notifications {
     static let RequestsUpdated = NSNotification.Name("RequestsUpdated")
     static let ResetControllers = NSNotification.Name("ResetControllers")
     static let RetryMessage = NSNotification.Name("RetryMessage")
+    static let ServerUnavailable = NSNotification.Name("ServerUnavailable")
     static let SessionEnded = NSNotification.Name("SessionEnded")
     static let SessionStarted = NSNotification.Name("SessionStarted")
     static let SetContactBadge = NSNotification.Name("SetContactBadge")

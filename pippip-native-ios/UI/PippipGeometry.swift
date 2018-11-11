@@ -48,6 +48,10 @@ class PippipGeometry: NSObject {
     static var ackRequestViewOffset: CGFloat!
     static var contactRequestsViewWidthRatio: CGFloat!
     static var contactRequestsViewHeightRatio: CGFloat!
+    
+    // Pixels
+    static var screenWidth: CGFloat!
+    static var screenHeight: CGFloat!
 
     static func setGeometry() {
 
@@ -124,6 +128,9 @@ class PippipGeometry: NSObject {
 
     static func set4InchGeomtery() {
         
+        screenWidth = 640.0
+        screenHeight = 1136.0
+
         newAccountButtonWidthRatio = 0.7
         newAccountViewWidthRatio = 0.8
         newAccountViewHeightRatio = 0.7
@@ -165,6 +172,9 @@ class PippipGeometry: NSObject {
     
     static func set4_7InchGeometry() {
         
+        screenWidth = 750.0
+        screenHeight = 1334.0
+
         newAccountButtonWidthRatio = 0.7
         newAccountViewWidthRatio = 0.8
         newAccountViewHeightRatio = 0.6
@@ -205,6 +215,9 @@ class PippipGeometry: NSObject {
     }
     
     static func set5_5InchGeometry() {
+        
+        screenWidth = 1080.0
+        screenHeight = 1920.0
         
         newAccountButtonWidthRatio = 0.6
         newAccountViewWidthRatio = 0.7
@@ -247,6 +260,9 @@ class PippipGeometry: NSObject {
     
     static func set5_8InchGeometry() {
         
+        screenWidth = 1125.0
+        screenHeight = 2436.0
+        
         newAccountButtonWidthRatio = 0.7
         newAccountViewWidthRatio = 0.7
         newAccountViewHeightRatio = 0.45
@@ -288,6 +304,9 @@ class PippipGeometry: NSObject {
     
     static func set6_1InchGeometry() {
         
+        screenWidth = 828.0
+        screenHeight = 1792.0
+        
         newAccountButtonWidthRatio = 0.65
         newAccountViewWidthRatio = 0.75
         newAccountViewHeightRatio = 0.43
@@ -328,6 +347,9 @@ class PippipGeometry: NSObject {
     }
     
     static func set6_5InchGeometry() {
+        
+        screenWidth = 1242.0
+        screenHeight = 2688.0
         
         newAccountButtonWidthRatio = 0.65
         newAccountViewWidthRatio = 0.75

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class Message: NSObject, Comparable {
 
@@ -29,10 +30,16 @@ class Message: NSObject, Comparable {
     var config = Configurator()
     var contactManager = ContactManager.instance
 
-    init(serverMessage: ServerMessage) {
+    init?(serverMessage: ServerMessage) {
 
         ciphertext = Data(base64Encoded: serverMessage.body!)
-        contactId = contactManager.getContactId(serverMessage.fromId!)
+        if let cid = contactManager.getContactId(publicId: serverMessage.fromId!) {
+            contactId = cid
+        }
+        else {
+            DDLogWarn("Contact ID for from ID \(serverMessage.fromId!) does not exist")
+            return nil
+        }
         keyIndex = serverMessage.keyIndex!
         messageType = serverMessage.messageType!
         originating = false

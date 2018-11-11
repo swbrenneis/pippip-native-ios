@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesResponse> {
 
@@ -27,19 +28,23 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
         if response.messages!.count == 0 {
             AsyncNotifier.notify(name: Notifications.GetMessagesComplete, object: nil)
         }
-        print("\(response.messages!.count) new messages returned")
+        DDLogError("\(response.messages!.count) new messages returned")
         var textMessages = [TextMessage]()
         for message in response.messages! {
             if let contact = contactManager.getContact(publicId: message.fromId!) {
                 if contact.status == "accepted" {
-                    let textMessage = TextMessage(serverMessage: message)
-                    textMessages.append(textMessage)
-                    contact.timestamp = textMessage.timestamp / 1000
-                    try! contactManager.updateContact(contact)
+                    if let textMessage = TextMessage(serverMessage: message) {
+                        textMessages.append(textMessage)
+                        contact.timestamp = textMessage.timestamp / 1000
+                        try! contactManager.updateContact(contact)
+                    }
+                    else {
+                        DDLogWarn("Invalid contact information in server message")
+                    }
                 }
             }
             else {
-                print("Invalid message sender: \(message.fromId!)")
+                DDLogError("Invalid message sender: \(message.fromId!)")
             }
         }
         if !textMessages.isEmpty {
@@ -51,7 +56,7 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
 
     func getError(_ reason: String) {
         NotificationCenter.default.post(name: Notifications.GetMessagesComplete, object: nil)
-        print("Get messages error: \(reason)")
+        DDLogError("Get messages error: \(reason)")
     }
 
 }

@@ -147,8 +147,8 @@ class AuthView: UIView, ControllerBlurProtocol {
     }
     
     func authenticated(success: Bool, _ reason: String?) {
-        
-        NotificationCenter.default.post(name: Notifications.AuthComplete, object: nil)  // For messages view controller
+
+        NotificationCenter.default.post(name: Notifications.AuthComplete, object: success)
         DispatchQueue.main.async {
             self.hideToastActivity()
             self.authButton.isHidden = success
@@ -181,12 +181,22 @@ class AuthView: UIView, ControllerBlurProtocol {
                     authButton.isHidden = false
                 }
             }
+            AccountSession.instance.biometricsRunning = false
         }
-        AccountSession.instance.biometricsRunning = false
+        else {
+            setSignIn()
+        }
 
     }
     
-   func creatingAccount() {
+    func cancelAuthentication() {
+
+        self.hideToastActivity()
+        contactServerLabel.isHidden = true
+        
+    }
+    
+    func creatingAccount() {
 
         assert(Thread.isMainThread)
         authButton.isHidden = true
@@ -194,26 +204,7 @@ class AuthView: UIView, ControllerBlurProtocol {
         self.makeToastActivity(.center)
 
     }
-/*
-    func doAuthenticate(passphrase: String) {
 
-        DispatchQueue.main.async {
-            self.makeToastActivity(.center)
-            self.authButton.isHidden = true
-        }
-        authenticator?.doAuthenticate(passphrase: passphrase)
-
-    }
-    
-    func doNewAccount(accountName: String, passphrase: String, enableBiometrics: Bool) {
-        
-        assert(Thread.isMainThread)
-        authButton.isHidden = true
-        //newAccount = true
-        authenticator?.doNewAccount(accountName: accountName, passphrase: passphrase, biometricsEnabled: enableBiometrics)
-        
-    }
-*/
     func dismiss() {
 
         assert(Thread.isMainThread)

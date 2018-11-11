@@ -134,8 +134,25 @@ class ContactManager: NSObject {
 
     }
     
-    func addWhitelistEntry(publicId: String, directoryId: String?) throws {
+    func addRequests(requests: [[String: String]]) {
 
+//        var newRequests = [ContactRequest]()
+        for request in requests {
+            if let contactRequest = ContactRequest(request: request) {
+                let result = requestSet.insert(contactRequest)
+                if !result.inserted {
+                    DDLogWarn("Duplicate request for public ID \(contactRequest.publicId)")
+                }
+//                if result.inserted {
+//                    newRequests.append(contactRequest)
+//                }
+            }
+        }
+
+    }
+
+    func addWhitelistEntry(publicId: String, directoryId: String?) throws {
+        
         if let _ = config.whitelistIndexOf(publicId: publicId) {
             throw ContactError(error: "Whitelist entry exists")
         }
@@ -148,21 +165,7 @@ class ContactManager: NSObject {
         addTask.sendRequest(request)
         
     }
-
-    func addRequests(_ requests: [[String: String]]) {
-
-        var newRequests = [ContactRequest]()
-        for request in requests {
-            if let contactRequest = ContactRequest(request: request) {
-                let result = requestSet.insert(contactRequest)
-                if result.inserted {
-                    newRequests.append(contactRequest)
-                }
-            }
-        }
-
-    }
-
+    
     func allContactIds() -> [Int] {
 
         var allIds = [Int]()
@@ -240,24 +243,37 @@ class ContactManager: NSObject {
 
     }
 
-    func getContactId(_ publicId: String) -> Int {
+    func getContactId(publicId: String) -> Int? {
 
         if let contact = contactMap[publicId] {
             return contact.contactId
         }
         else {
-            return NSNotFound
+            return nil
         }
 
     }
 
-    @objc func getPendingRequests() {
+    func getPendingRequests() {
         
         let request = GetPendingRequests()
         let delegate = GetPendingRequestsDelegate(request: request)
         let getTask = EnclaveTask<GetPendingRequests, GetPendingRequestsResponse>(delegate: delegate)
         getTask.errorTitle = "Contact Error"
         getTask.sendRequest(request)
+        
+    }
+    
+    func getPublicId(directoryId: String) -> String? {
+
+        if let index = contactList.firstIndex(where: { contact in
+            return contact.directoryId == directoryId
+        }) {
+            return contactList[index].publicId
+        }
+        else {
+            return nil
+        }
         
     }
     
@@ -425,7 +441,8 @@ class ContactManager: NSObject {
 
     @objc func authComplete(_ notification: Notification) {
 
-        //if (config.authenticated) {
+        guard let success = notification.object as? Bool else { return }
+        if success {
             contactSet.removeAll()
             let realm = try! Realm()
             let dbContacts = realm.objects(DatabaseContact.self)
@@ -441,7 +458,7 @@ class ContactManager: NSObject {
                 }
             }
             mapContacts()
-        //}
+        }
         
     }
 

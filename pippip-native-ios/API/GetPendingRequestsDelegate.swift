@@ -23,16 +23,17 @@ class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPending
 
     func getComplete(response: GetPendingRequestsResponse) {
         
-        AsyncNotifier.notify(name: Notifications.GetRequestsComplete, object: nil)
-        print("\(response.requests!.count) pending requests returned")
-        if response.requests!.count > 0 {
-            contactManager.addRequests(response.requests!)
+        AsyncNotifier.notify(name: Notifications.GetRequestsComplete, object: nil)  // Notifies account session to proceed with status updates
+        guard let requests = response.requests else { return }
+        print("\(requests.count) pending requests returned")
+        if requests.count > 0 {
+            contactManager.addRequests(requests: requests)
             NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
         }
         else {
             contactManager.clearRequests()
         }
-        NotificationCenter.default.post(name: Notifications.RequestsUpdated, object: response.requests!.count)
+        NotificationCenter.default.post(name: Notifications.RequestsUpdated, object: contactManager.pendingRequests.count)
 
     }
 

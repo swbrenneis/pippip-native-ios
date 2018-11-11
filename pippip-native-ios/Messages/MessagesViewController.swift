@@ -288,11 +288,14 @@ class MessagesViewController: UIViewController {
 
     @objc func authComplete(_ notification: Notification) {
         
-        alertPresenter.present = true
-        DispatchQueue.main.async {
-            self.getMostRecentMessages()
-            self.tableView.reloadData()
-            self.contactBadge.badgeValue =  ContactManager.instance.pendingRequests.count + self.config.statusUpdates
+        guard let success = notification.object as? Bool else { return }
+        if success {
+            alertPresenter.present = true
+            DispatchQueue.main.async {
+                self.getMostRecentMessages()
+                self.tableView.reloadData()
+                self.contactBadge.badgeValue =  ContactManager.instance.pendingRequests.count + self.config.statusUpdates
+            }
         }
         
     }

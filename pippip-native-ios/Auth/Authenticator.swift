@@ -70,7 +70,9 @@ class Authenticator: NSObject {
                                                name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(appResumed(_:)),
                                                name: Notifications.AppResumed, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(serverUnavailable(_:)),
+                                               name: Notifications.ServerUnavailable, object: nil)
+
 
         if AccountSession.instance.starting {
             showAuthView()
@@ -82,6 +84,7 @@ class Authenticator: NSObject {
         
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AppResumed, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.ServerUnavailable, object: nil)
 
     }
 
@@ -109,6 +112,15 @@ class Authenticator: NSObject {
             self.authView?.authenticate()
         }
 
+    }
+
+    @objc func serverUnavailable(_ notification: Notification) {
+        
+        DispatchQueue.main.async {
+            self.authView?.cancelAuthentication()
+            self.authView?.setSignIn()
+        }
+        
     }
     
 }

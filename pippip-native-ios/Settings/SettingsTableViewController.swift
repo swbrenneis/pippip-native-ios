@@ -94,6 +94,13 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         changePassphraseView?.dismiss()
         deleteAccountView?.dismiss(blurViewOff: true)
 
+        for section in self.cellItems.keys {
+            for item in self.cellItems[section]! {
+                item.currentCell?.reset()
+            }
+        }
+        self.wasReset = true
+
         NotificationCenter.default.removeObserver(self, name: Notifications.PolicyChanged, object: nil)
 
     }

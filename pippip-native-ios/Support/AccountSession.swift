@@ -122,8 +122,8 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
         super.init()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
-                                               name: Notifications.AuthComplete, object: nil)
+        //NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
+        //                                       name: Notifications.AuthComplete, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(getStatusComplete(_:)),
                                                name: Notifications.GetStatusComplete, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(getRequestsComplete(_:)),
@@ -156,6 +156,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         
         authState = .serverAuthenticated
         accountSessionState = .active
+        doUpdates()
 
     }
 
@@ -336,7 +337,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     }
     
     // Notifications
-    
+/*
     @objc func authComplete(_ notification: Notification) {
 
         authState = .serverAuthenticated
@@ -346,7 +347,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         accountSessionState = .active
 
     }
-    
+*/
     @objc func getMessagesComplete(_ notification: Notification) {
 
         if updateState == .gettingMessages && authState == .serverAuthenticated {

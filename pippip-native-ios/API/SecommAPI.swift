@@ -10,6 +10,7 @@ import UIKit
 import Alamofire
 import AlamofireObjectMapper
 import ObjectMapper
+import CocoaLumberjack
 
 struct APIPost {
 
@@ -75,7 +76,7 @@ class SecommAPI: NSObject {
                 DispatchQueue.global().async {
                     if response.error != nil {
                         delegate.responseError(response.error!.localizedDescription)
-                        print("API post failure: \(response.error!)")
+                        DDLogError("API post failure: \(response.error!)")
                     }
                     else if let postResponse = response.result.value {
                         delegate.responseComplete(postResponse)
@@ -88,7 +89,7 @@ class SecommAPI: NSObject {
             }
         }
         else {
-            print("Invalid resource: \(resource)")
+            DDLogError("Invalid resource: \(resource)")
         }
 
     }
@@ -125,20 +126,22 @@ class SecommAPI: NSObject {
             Alamofire.request(urlRequest).responseObject { (response: DataResponse<SessionResponse>) in
                 if response.error != nil {
                     self.alertPresenter.errorAlert(title: "Session Error", message: "Unable to establish session with server")
-                    print("API session request failure: \(response.error!)")
+                    DDLogError("API session request failure: \(response.error!)")
+                    AsyncNotifier.notify(name: Notifications.ServerUnavailable)
                 }
                 else if let sessionResponse = response.result.value {
                     SecommAPI.apiState.sessionActive = true
                     NotificationCenter.default.post(name: Notifications.SessionStarted, object: sessionResponse, userInfo: nil)
                 }
                 else {
-                    print("Invalid server response in startSession")
+                    DDLogError("Invalid server response in startSession")
                     self.alertPresenter.errorAlert(title: "Session Error", message: "Invalid response from the server")
+                    AsyncNotifier.notify(name: Notifications.ServerUnavailable)
                 }
             }
         }
         else {
-            print("Invalid resource: \(resource)")
+            DDLogError("Invalid resource: \(resource)")
         }
 
     }

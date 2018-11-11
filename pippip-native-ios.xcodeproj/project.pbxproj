@@ -226,6 +226,10 @@
 		55F7B58120BF364E0083AE01 /* NewAccountFinish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F7B58020BF364E0083AE01 /* NewAccountFinish.swift */; };
 		55F7B58320BF36720083AE01 /* NewAccountRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F7B58220BF36720083AE01 /* NewAccountRequest.swift */; };
 		55F7B58520BF36930083AE01 /* NewAccountResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F7B58420BF36930083AE01 /* NewAccountResponse.swift */; };
+		55F96AB92195C80300F6E096 /* DuplicateIdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F96AB82195C80300F6E096 /* DuplicateIdView.swift */; };
+		55F96ABB2195C82600F6E096 /* DuplicateIdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55F96ABA2195C82600F6E096 /* DuplicateIdView.xib */; };
+		55F96ABD219730B300F6E096 /* DuplicateIdConfirmationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55F96ABC219730B300F6E096 /* DuplicateIdConfirmationView.xib */; };
+		55F96ABF219730DD00F6E096 /* DuplicateIdConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F96ABE219730DD00F6E096 /* DuplicateIdConfirmationView.swift */; };
 		55FA873C1FD05E9800FB96C0 /* CKGCMCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */; };
 		55FA874E1FD5F10500FB96C0 /* CKHMAC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FA874D1FD5F10500FB96C0 /* CKHMAC.mm */; };
 		55FB2F62202A6D7B005E3730 /* CKIVGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55FB2F61202A6D7B005E3730 /* CKIVGenerator.mm */; };
@@ -565,6 +569,10 @@
 		55F7B58020BF364E0083AE01 /* NewAccountFinish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAccountFinish.swift; sourceTree = "<group>"; };
 		55F7B58220BF36720083AE01 /* NewAccountRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAccountRequest.swift; sourceTree = "<group>"; };
 		55F7B58420BF36930083AE01 /* NewAccountResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAccountResponse.swift; sourceTree = "<group>"; };
+		55F96AB82195C80300F6E096 /* DuplicateIdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateIdView.swift; sourceTree = "<group>"; };
+		55F96ABA2195C82600F6E096 /* DuplicateIdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DuplicateIdView.xib; sourceTree = "<group>"; };
+		55F96ABC219730B300F6E096 /* DuplicateIdConfirmationView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DuplicateIdConfirmationView.xib; sourceTree = "<group>"; };
+		55F96ABE219730DD00F6E096 /* DuplicateIdConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateIdConfirmationView.swift; sourceTree = "<group>"; };
 		55FA873A1FD05E9800FB96C0 /* CKGCMCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKGCMCodec.h; sourceTree = "<group>"; };
 		55FA873B1FD05E9800FB96C0 /* CKGCMCodec.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKGCMCodec.mm; sourceTree = "<group>"; };
 		55FA874C1FD5F10500FB96C0 /* CKHMAC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKHMAC.h; sourceTree = "<group>"; };
@@ -624,7 +632,6 @@
 		55316C8E206B32B300EB1AF7 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				55FD6C1C2186447A00B9C9BB /* AcknowledgeRequestTableViewCell.swift */,
 				552BC46A2124BCE800694CB4 /* Alert2ButtonView.swift */,
 				55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */,
 				552BC46C2124C00C00694CB4 /* ControllerBlurProtocol.swift */,
@@ -678,6 +685,7 @@
 		55579E5A202763F700131A54 /* Contacts */ = {
 			isa = PBXGroup;
 			children = (
+				55FD6C1C2186447A00B9C9BB /* AcknowledgeRequestTableViewCell.swift */,
 				5557B466211DE1D800FE1775 /* AddContactView.swift */,
 				55C88DCE20707F6B00D58BCA /* Contact.swift */,
 				55C8075E2174D7B900336028 /* ContactCell.swift */,
@@ -686,6 +694,8 @@
 				55FEC68A21683323002132DC /* ContactRequestsView.swift */,
 				5536A68C206897D200B7E6D8 /* ContactsViewController.swift */,
 				55BFD36020CE14A80084C555 /* DatabaseContact.swift */,
+				55F96ABE219730DD00F6E096 /* DuplicateIdConfirmationView.swift */,
+				55F96AB82195C80300F6E096 /* DuplicateIdView.swift */,
 				5593C941212B4EC80053011E /* PendingRequestsCell.swift */,
 			);
 			path = Contacts;
@@ -909,6 +919,8 @@
 				55FEC688216832D4002132DC /* ContactRequestsView.xib */,
 				55E970B620B09DD2008C2F39 /* ContactTableViewCell.xib */,
 				5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */,
+				55F96ABC219730B300F6E096 /* DuplicateIdConfirmationView.xib */,
+				55F96ABA2195C82600F6E096 /* DuplicateIdView.xib */,
 				5557B460211CCE4000FE1775 /* NewAccountView.xib */,
 				5557B464211CE41600FE1775 /* PassphraseAlertView.xib */,
 				55206DA82075486000B0B246 /* SelectContactView.xib */,
@@ -1203,6 +1215,7 @@
 				5557B471211F0A2C00FE1775 /* DeleteAccountView.xib in Resources */,
 				5592A5971F8BBB4400F08BF5 /* LaunchScreen.storyboard in Resources */,
 				55FD6C1F2186447A00B9C9BB /* AcknowledgeRequestTableViewCell.xib in Resources */,
+				55F96ABD219730B300F6E096 /* DuplicateIdConfirmationView.xib in Resources */,
 				5557B469211DE2DD00FE1775 /* AddContactView.xib in Resources */,
 				5557B46D211E087000FE1775 /* AddToWhitelistView.xib in Resources */,
 				55C8075B2173BAE400336028 /* ContactDetailView.xib in Resources */,
@@ -1213,6 +1226,7 @@
 				55E970B720B09DD2008C2F39 /* ContactTableViewCell.xib in Resources */,
 				55FEC689216832D4002132DC /* ContactRequestsView.xib in Resources */,
 				55E06BF920BC6EA20034C652 /* iphone_send_sms.mp3 in Resources */,
+				55F96ABB2195C82600F6E096 /* DuplicateIdView.xib in Resources */,
 				5557B465211CE41600FE1775 /* PassphraseAlertView.xib in Resources */,
 				5538184E215D3679001061E7 /* pippip.mp3 in Resources */,
 				5557B475212066CE00FE1775 /* VerifyPassphraseView.xib in Resources */,
@@ -1450,6 +1464,7 @@
 				55AA54DF1FA14B1E00A7026B /* Int32.cc in Sources */,
 				55C8075F2174D7B900336028 /* ContactCell.swift in Sources */,
 				554D01C4207C0CEC00C19373 /* UserVault.swift in Sources */,
+				55F96AB92195C80300F6E096 /* DuplicateIdView.swift in Sources */,
 				55AA554E1FA14D7100A7026B /* GCM.cc in Sources */,
 				5586B882206428A400641514 /* PublicIdCell.swift in Sources */,
 				5524DBCE216A62720062DA1E /* PippipGeometry.swift in Sources */,
@@ -1524,6 +1539,7 @@
 				552BC46B2124BCE800694CB4 /* Alert2ButtonView.swift in Sources */,
 				55721A1E20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift in Sources */,
 				55CB2803212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift in Sources */,
+				55F96ABF219730DD00F6E096 /* DuplicateIdConfirmationView.swift in Sources */,
 				55187ED020BE427700F94792 /* ServerAuthChallenge.swift in Sources */,
 				5511E9CE20C301850080C0DF /* RequestContactResponse.swift in Sources */,
 				55245F4120BCC9A100E6ECB6 /* SessionResponse.swift in Sources */,

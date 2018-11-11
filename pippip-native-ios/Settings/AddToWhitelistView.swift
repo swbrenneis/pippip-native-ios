@@ -18,9 +18,9 @@ class AddToWhitelistView: UIView {
     @IBOutlet weak var cancelButton: UIButton!
 
     var whitelistViewController: WhitelistViewController?
-    var publicIdBlank = true
+    var publicId = ""
     var publicIdValid = false
-    var directoryIdBlank = true
+    var directoryId = ""
     var publicIdRegex: NSRegularExpression
     
     override init(frame: CGRect) {
@@ -52,9 +52,9 @@ class AddToWhitelistView: UIView {
         
         titleLabel.textColor = PippipTheme.titleColor
         titleLabel.backgroundColor = PippipTheme.lightBarColor
-        addIdButton.backgroundColor = PippipTheme.buttonColor
         addIdButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         addIdButton.isEnabled = false
+        addIdButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
         cancelButton.backgroundColor = PippipTheme.cancelButtonColor
         cancelButton.setTitleColor(PippipTheme.cancelButtonTextColor, for: .normal)
         
@@ -77,12 +77,19 @@ class AddToWhitelistView: UIView {
 
     @IBAction func addIdTapped(_ sender: Any) {
 
-        var directoryId = directoryIdTextField.text
-        if directoryId?.utf8.count == 0 {
-            directoryId = nil
+        var dirId: String? = directoryId
+        if let did = dirId {
+            if did.count == 0 {
+                dirId = nil
+            }
         }
-        let publicId = publicIdTextField.text ?? ""
-        whitelistViewController?.verifyAndAdd(directoryId: directoryId, publicId: publicId)
+        var pId: String? = publicId
+        if let pid = pId {
+            if pid.count == 0 {
+                pId = nil
+            }
+        }
+        whitelistViewController?.verifyAndAdd(directoryId: dirId, publicId: pId)
 
     }
     
@@ -94,21 +101,31 @@ class AddToWhitelistView: UIView {
 
     @IBAction func directoryIdChanged(_ sender: Any) {
 
-        if let directoryId = directoryIdTextField.text {
-            directoryIdBlank = directoryId.count == 0
+        directoryId = directoryIdTextField.text ?? ""
+        if (directoryId.count > 0 && publicId.count == 0) || (directoryId.count == 0 && publicIdValid)  {
+            addIdButton.isEnabled = true
+            addIdButton.backgroundColor = PippipTheme.buttonColor
         }
-        addIdButton.isEnabled = (!directoryIdBlank && publicIdBlank) || (directoryIdBlank && publicIdValid)
+        else {
+            addIdButton.isEnabled = false
+            addIdButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
+        }
         
     }
 
     @IBAction func publicIdChanged(_ sender: Any) {
         
-        if let publicId = publicIdTextField.text {
-            publicIdBlank = publicId.count == 0
-            let matches = publicIdRegex.matches(in: publicId, options: [], range: NSRange(location: 0, length: publicId.utf8.count))
-            publicIdValid = matches.count == 1
+        publicId = publicIdTextField.text ?? ""
+        let matches = publicIdRegex.matches(in: publicId, options: [], range: NSRange(location: 0, length: publicId.utf8.count))
+        publicIdValid = matches.count == 1
+        if (directoryId.count > 0 && publicId.count == 0) || (directoryId.count == 0 && publicIdValid)  {
+            addIdButton.isEnabled = true
+            addIdButton.backgroundColor = PippipTheme.buttonColor
         }
-        addIdButton.isEnabled = (!directoryIdBlank && publicIdBlank) || (directoryIdBlank && publicIdValid)
+        else {
+            addIdButton.isEnabled = false
+            addIdButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
+        }
 
     }
     

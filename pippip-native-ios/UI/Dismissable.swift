@@ -11,5 +11,10 @@ import UIKit
 protocol Dismissable {
     
     func dismiss()
+    func forceDismiss()
     
+}
+
+extension Dismissable {
+    func forceDismiss() {}
 }

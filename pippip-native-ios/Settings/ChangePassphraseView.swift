@@ -112,12 +112,34 @@ class ChangePassphraseView: UIView {
         
     }
 
-    @IBAction func newPassphraseChanged(_ sender: Any) {
+    @IBAction func oldPassphraseChanged(_ sender: Any) {
+
+        oldPassphrase = oldPassphraseTextView.text ?? ""
+        if newPassphrase.count > 0 && oldPassphrase.count > 0 {
+            changePassphraseButton.isEnabled = true
+            changePassphraseButton.backgroundColor = PippipTheme.buttonColor
+        }
+        else {
+            changePassphraseButton.isEnabled = false
+            changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
+        }
         
-        if let newPassphrase = newPassphraseTextView.text {
+    }
+    
+    @IBAction func newPassphraseChanged(_ sender: Any) {
+
+        newPassphrase = newPassphraseTextView.text ?? ""
+        if newPassphrase.count > 0 && oldPassphrase.count > 0 {
+            changePassphraseButton.isEnabled = true
+            changePassphraseButton.backgroundColor = PippipTheme.buttonColor
+        }
+        else {
+            changePassphraseButton.isEnabled = false
+            changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
+        }
+
+/*        if let newPassphrase = newPassphraseTextView.text {
             if newPassphrase.utf8.count > 0 {
-                changePassphraseButton.isEnabled = true
-                changePassphraseButton.backgroundColor = PippipTheme.buttonColor
             }
             else {
                 changePassphraseButton.isEnabled = false
@@ -125,8 +147,6 @@ class ChangePassphraseView: UIView {
             }
         }
         else {
-            changePassphraseButton.isEnabled = false
-            changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
         }
         
         if let oldPassphrase = oldPassphraseTextView.text {
@@ -143,7 +163,7 @@ class ChangePassphraseView: UIView {
             changePassphraseButton.isEnabled = false
             changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
         }
-        
+  */
     }
     
 }

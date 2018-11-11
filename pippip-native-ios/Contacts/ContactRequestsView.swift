@@ -15,10 +15,9 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var titleLabel: UILabel!
     
-    var blurController: ControllerBlurProtocol!
+    var contactsViewController: ContactsViewController?
     var contactRequests: [ContactRequest]!
     var selected: ContactRequest?
-    //var acknowledgeRequestView: AcknowledgeRequestView?
     var blurView = GestureBlurView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
     var navigationController: UINavigationController?   // This is to satisfy the protocol. DO NOT USE!
 
@@ -35,7 +34,7 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
     }
 
     private func commonInit() {
-        
+
         Bundle.main.loadNibNamed("ContactRequestsView", owner: self, options: nil)
         addSubview(contentView)
         contentView.frame = self.bounds
@@ -64,28 +63,6 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
 
     }
     
-    func showAckRequestsView(contactRequest: ContactRequest) {
-        
-        /*
-        let frame = contentView.frame
-        let viewRect = CGRect(x: 0.0, y: 0.0,
-                              width: frame.width * PippipGeometry.ackRequestViewWidthRatio,
-                              height: frame.height * PippipGeometry.ackRequestViewHeightRatio)
-        acknowledgeRequestView = AcknowledgeRequestView(frame: viewRect)
-        acknowledgeRequestView!.blurController = self
-        acknowledgeRequestView!.alpha = 0.0
-        acknowledgeRequestView!.center = contentView.center
-        acknowledgeRequestView?.contactRequest = contactRequest
-        
-        addSubview(acknowledgeRequestView!)
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.blurView.alpha = 0.6
-            self.acknowledgeRequestView!.alpha = 1.0
-        })
-   */
-    }
-    
     func ackCanceled() {
         
         assert(Thread.isMainThread, "ackCanceled must be called from the main thread")
@@ -104,7 +81,7 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.blurController.blurView.alpha = 0.0
+            self.contactsViewController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
         })
@@ -227,25 +204,18 @@ extension ContactRequestsView: UITableViewDelegate, UITableViewDataSource  {
         case 1:
             guard let ackCell = tableView.dequeueReusableCell(withIdentifier: "AcknowledgeRequestCell") as? AcknowledgeRequestTableViewCell
                 else { return UITableViewCell() }
-            ackCell.configure(cellType: .accept, reqView: self)
+            ackCell.configure(cellType: .accept, reqView: self, viewController: contactsViewController)
             return ackCell
         case 2:
             guard let ackCell = tableView.dequeueReusableCell(withIdentifier: "AcknowledgeRequestCell") as? AcknowledgeRequestTableViewCell
                 else { return UITableViewCell() }
-            ackCell.configure(cellType: .reject, reqView: self)
+            ackCell.configure(cellType: .reject, reqView: self, viewController: contactsViewController)
             return ackCell
         case 3:
             guard let ackCell = tableView.dequeueReusableCell(withIdentifier: "AcknowledgeRequestCell") as? AcknowledgeRequestTableViewCell
                 else { return UITableViewCell() }
-            ackCell.configure(cellType: .ignore, reqView: self)
+            ackCell.configure(cellType: .ignore, reqView: self, viewController: contactsViewController)
             return ackCell
-            /*
-        case 4:
-            guard let ackCell = tableView.dequeueReusableCell(withIdentifier: "AcknowledgeRequestCell") as? AcknowledgeRequestTableViewCell
-                else { return UITableViewCell() }
-            ackCell.configure(cellType: .cancel, reqView: self)
-            return ackCell
- */
         default:
             return UITableViewCell()
         }
