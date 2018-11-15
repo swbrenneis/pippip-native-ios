@@ -271,9 +271,18 @@ class Configurator: NSObject {
 
     func whitelistIndexOf(publicId: String) -> Int? {
 
-        return privateWhitelist.index(where: {(entry) -> Bool in
-            return publicId == entry.publicId
-        })
+        do {
+            if privateWhitelist.count == 0 {
+                try loadWhitelist()
+            }
+            return privateWhitelist.index(where: {(entry) -> Bool in
+                return publicId == entry.publicId
+            })
+        }
+        catch {
+            DDLogError("Error loading whitelist: \(error.localizedDescription)")
+            return nil
+        }
 
     }
 

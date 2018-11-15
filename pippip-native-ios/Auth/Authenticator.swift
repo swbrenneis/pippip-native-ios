@@ -44,6 +44,7 @@ class Authenticator: NSObject {
         authView?.blurController?.blurView.alpha = 0.6
         authView?.alpha = 1.0
         authView?.center = viewController!.view.center
+        authView?.hideToastActivity()
 
         if AccountSession.instance.newAccount {
             authView?.setNewAccount()

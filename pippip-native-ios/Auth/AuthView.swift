@@ -164,7 +164,6 @@ class AuthView: UIView, ControllerBlurProtocol {
     
     private func biometricAuthenticate() {
         
-        AccountSession.instance.biometricsRunning = true
         if let passhrase = getKeychainPassphrase(uuid: config.uuid) {
             self.makeToastActivity(.center)
             if AccountSession.instance.needsServerAuth {
@@ -181,7 +180,6 @@ class AuthView: UIView, ControllerBlurProtocol {
                     authButton.isHidden = false
                 }
             }
-            AccountSession.instance.biometricsRunning = false
         }
         else {
             setSignIn()

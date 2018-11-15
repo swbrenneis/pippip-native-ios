@@ -48,8 +48,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     var messageManager = MessageManager()
     var sessionState = SessionState()
     var config = Configurator()
-    private var biometricsInProgress = false
-//    var firstRun = true
+    private var firstResume = true
     private var realAccountName: String?
     var accountName: String {
         get {
@@ -84,14 +83,6 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     var starting: Bool {
         get {
             return accountSessionState == .appStarted
-        }
-    }
-    var biometricsRunning: Bool {
-        get {
-            return biometricsInProgress
-        }
-        set {
-            biometricsInProgress = newValue
         }
     }
 
@@ -300,20 +291,35 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     @objc func resume() {
         
-        if accountSessionState == .willResume && !biometricsInProgress {
+        if accountSessionState == .willResume {
             accountSessionState = .active
-            if !self.didUpdate {
-                self.doUpdates()
-                self.didUpdate = true
-            }
             NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
+            DispatchQueue.main.async {
+                if UIApplication.shared.applicationIconBadgeNumber > 0 {
+                    self.doUpdates()
+                }
+            }
         }
-
+        /*
+        if accountSessionState == .willResume {
+            if firstResume {
+                firstResume = false
+                NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
+            }
+            else {
+                accountSessionState = .active
+                if !self.didUpdate {
+                    self.doUpdates()
+                    self.didUpdate = true
+                }
+            }
+        }
+*/
     }
     
     @objc func willSuspend() {
         
-        if accountSessionState == .active && !biometricsInProgress {
+        if accountSessionState == .active {
             accountSessionState = .willSuspend
             NotificationCenter.default.post(name: Notifications.AppWillSuspend, object: nil)
         }
@@ -325,6 +331,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         if accountSessionState == .willSuspend {
             accountSessionState = .suspended
             didUpdate = false
+            firstResume = true
             NotificationCenter.default.post(name: Notifications.AppSuspended, object: nil)
         }
 

@@ -136,25 +136,21 @@ class ContactManager: NSObject {
     
     func addRequests(requests: [[String: String]]) {
 
-//        var newRequests = [ContactRequest]()
         for request in requests {
             if let contactRequest = ContactRequest(request: request) {
                 let result = requestSet.insert(contactRequest)
                 if !result.inserted {
                     DDLogWarn("Duplicate request for public ID \(contactRequest.publicId)")
                 }
-//                if result.inserted {
-//                    newRequests.append(contactRequest)
-//                }
             }
         }
 
     }
 
     func addWhitelistEntry(publicId: String, directoryId: String?) throws {
-        
-        if let _ = config.whitelistIndexOf(publicId: publicId) {
-            throw ContactError(error: "Whitelist entry exists")
+
+        if whitelistIdExists(publicId: publicId) {
+            throw ContactError(error: "Whitelist ID \(publicId) exists")
         }
         let request = UpdateWhitelistRequest(id: publicId, action: "add")
         let delegate = UpdateWhitelistDelegate(request: request, updateType: .addEntry)
@@ -437,6 +433,17 @@ class ContactManager: NSObject {
         
     }
 
+    func whitelistIdExists(publicId: String) -> Bool {
+
+        if let _ = config.whitelistIndexOf(publicId: publicId) {
+            return true
+        }
+        else {
+            return false
+        }
+
+    }
+    
     // Notifications
 
     @objc func authComplete(_ notification: Notification) {

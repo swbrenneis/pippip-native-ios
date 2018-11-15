@@ -18,6 +18,7 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
     var contactsViewController: ContactsViewController?
     var contactRequests: [ContactRequest]!
     var selected: ContactRequest?
+    var config = Configurator()
     var blurView = GestureBlurView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
     var navigationController: UINavigationController?   // This is to satisfy the protocol. DO NOT USE!
 
@@ -124,8 +125,13 @@ extension ContactRequestsView: UITableViewDelegate, UITableViewDataSource  {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if let _ = selected {
-            return 4
+        if let contact = selected {
+            if ContactManager.instance.whitelistIdExists(publicId: contact.publicId) {
+                return config.contactPolicy == "whitelist" ? 2 : 4
+            }
+            else {
+                return 4
+            }
         }
         else {
             contactRequests = Array(ContactManager.instance.pendingRequests)
