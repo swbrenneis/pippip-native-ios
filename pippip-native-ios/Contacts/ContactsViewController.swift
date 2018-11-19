@@ -8,6 +8,7 @@
 
 import UIKit
 import ChameleonFramework
+import CocoaLumberjack
 
 class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
@@ -21,7 +22,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     var authenticator: Authenticator!
     var debugging = false
     var alertPresenter: AlertPresenter!
-    var contactList: [Contact]!
+    var contactList = [Contact]()
     var rightBarItems = [UIBarButtonItem]()
     var contactRequests = [ContactRequest]()
     var addContactView: AddContactView?
@@ -56,12 +57,6 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         self.navigationItem.rightBarButtonItems = rightBarItems
         self.navigationItem.title = "Contacts"
 
-        NotificationCenter.default.addObserver(self, selector: #selector(contactRequested(_:)),
-                                               name: Notifications.ContactRequested, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(contactDeleted(_:)),
-                                               name: Notifications.ContactDeleted, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(requestAcknowledged(_:)),
-                                               name: Notifications.RequestAcknowledged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(resetControllers(_:)),
                                                name: Notifications.ResetControllers, object: nil)
 
@@ -71,6 +66,12 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
         authenticator.viewWillAppear()
         alertPresenter.present = true
+        NotificationCenter.default.addObserver(self, selector: #selector(contactRequested(_:)),
+                                               name: Notifications.ContactRequested, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(contactDeleted(_:)),
+                                               name: Notifications.ContactDeleted, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(requestAcknowledged(_:)),
+                                               name: Notifications.RequestAcknowledged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestsUpdated(_:)),
                                                name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestStatusUpdated(_:)),
@@ -80,12 +81,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         NotificationCenter.default.addObserver(self, selector: #selector(directoryIdSet(_:)),
                                                name: Notifications.DirectoryIdSet, object: nil)
 
-        if config.showIgnoredContacts {
-            contactList = contactManager.contactList
-        }
-        else {
-            contactList = contactManager.visibleContactList
-        }
+        setContactList()
         contactRequests = Array(contactManager.pendingRequests)
         tableView.reloadData()
         DispatchQueue.global().async {
@@ -106,6 +102,9 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         authenticator.viewWillDisappear()
         addContactView?.dismiss()
         contactDetailView?.forceDismiss()
+        NotificationCenter.default.removeObserver(self, name: Notifications.ContactRequested, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.ContactDeleted, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.RequestAcknowledged, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestStatusUpdated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
@@ -123,6 +122,20 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+
+    func setContactList() {
+        
+        contactList.removeAll()
+        if config.showIgnoredContacts {
+            contactList.append(contentsOf: contactManager.allContacts)
+        }
+        else {
+            contactList.append(contentsOf: contactManager.pendingContactList)
+            contactList.append(contentsOf: contactManager.acceptedContactList)
+            contactList.append(contentsOf: contactManager.rejectedContactList)
+        }
+
     }
 
     func showContactDetailView(contact: Contact) {
@@ -190,7 +203,13 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
             }
             else {
                 addContactView?.dismiss()
-                contactManager.requestContact(publicId: publicId, directoryId: nil, retry: false)
+                do {
+                    try contactManager.requestContact(publicId: publicId, directoryId: nil, retry: false)
+                }
+                catch {
+                    DDLogError("Error sending contact request: \(error.localizedDescription)")
+                    alertPresenter.errorAlert(title: "Contact Request Error", message: "The request could not be sent")
+                }
             }
         }
         
@@ -285,9 +304,15 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
                 alertPresenter.errorAlert(title: "Add Contact Error", message: "That contact is already in your list")
             }
             else {
-                contactManager.requestContact(publicId: publicId, directoryId: response.directoryId, retry: false)
                 DispatchQueue.main.async {
                     self.addContactView?.dismiss()
+                }
+                do {
+                    try contactManager.requestContact(publicId: publicId, directoryId: response.directoryId, retry: false)
+                }
+                catch {
+                    DDLogError("Error sending contact request: \(error.localizedDescription)")
+                    alertPresenter.errorAlert(title: "Request Contact Error", message: "The request could not be sent")
                 }
             }
         }
@@ -322,10 +347,12 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
             if self.contactRequests.count == 0 {
                 self.tableView.deleteRows(at: [IndexPath(row: 0, section: 0)], with: .right)
             }
-            self.contactList.append(contact)
-            self.contactList = self.contactList.sorted()
-            guard let row = self.contactList.firstIndex(of: contact) else { return }
-            self.tableView.insertRows(at: [IndexPath(row: row, section: 1)], with: .left)
+            if self.config.showIgnoredContacts || contact.status != "ignored" {
+                self.contactList.append(contact)
+                self.contactList = self.contactList.sorted()
+                guard let row = self.contactList.firstIndex(of: contact) else { return }
+                self.tableView.insertRows(at: [IndexPath(row: row, section: 1)], with: .left)
+            }
         }
         
     }

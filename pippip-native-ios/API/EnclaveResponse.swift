@@ -57,8 +57,8 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
         }
 
         if sessionId != sessionState.sessionId || authToken != sessionState.authToken {
-            print("Current session ID: \(sessionState.sessionId)")
-            print("Current auth token: \(sessionState.authToken)")
+            DDLogInfo("Current session ID: \(sessionState.sessionId)")
+            DDLogInfo("Current auth token: \(sessionState.authToken)")
             return "Invalid authentication! Please sign off immediately!"
         }
 

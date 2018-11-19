@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPendingRequestsResponse> {
 
@@ -25,7 +26,7 @@ class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPending
         
         AsyncNotifier.notify(name: Notifications.GetRequestsComplete, object: nil)  // Notifies account session to proceed with status updates
         guard let requests = response.requests else { return }
-        print("\(requests.count) pending requests returned")
+        DDLogInfo("\(requests.count) pending requests returned")
         if requests.count > 0 {
             contactManager.addRequests(requests: requests)
             NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)

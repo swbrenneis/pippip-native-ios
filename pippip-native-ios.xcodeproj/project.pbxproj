@@ -195,6 +195,7 @@
 		55BFD36520CF18300084C555 /* DatabaseMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36420CF18300084C555 /* DatabaseMessage.swift */; };
 		55BFD36720D04C0D0084C555 /* AccountDeleter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36620D04C0D0084C555 /* AccountDeleter.swift */; };
 		55BFD36920D052FC0084C555 /* AccountSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36820D052FC0084C555 /* AccountSession.swift */; };
+		55C42DB521A21770007E0AF9 /* AutoAcceptCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C42DB421A21770007E0AF9 /* AutoAcceptCell.swift */; };
 		55C49BFA21402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C49BF921402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift */; };
 		55C49BFC2140303400EEED14 /* PippipTextMessagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C49BFB2140303400EEED14 /* PippipTextMessagePresenter.swift */; };
 		55C49BFE2141B25400EEED14 /* PippipTextCellStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C49BFD2141B25400EEED14 /* PippipTextCellStyle.swift */; };
@@ -537,6 +538,7 @@
 		55BFD36420CF18300084C555 /* DatabaseMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMessage.swift; sourceTree = "<group>"; };
 		55BFD36620D04C0D0084C555 /* AccountDeleter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDeleter.swift; sourceTree = "<group>"; };
 		55BFD36820D052FC0084C555 /* AccountSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSession.swift; sourceTree = "<group>"; };
+		55C42DB421A21770007E0AF9 /* AutoAcceptCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoAcceptCell.swift; sourceTree = "<group>"; };
 		55C49BF921402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessagePresenterBuilder.swift; sourceTree = "<group>"; };
 		55C49BFB2140303400EEED14 /* PippipTextMessagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessagePresenter.swift; sourceTree = "<group>"; };
 		55C49BFD2141B25400EEED14 /* PippipTextCellStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextCellStyle.swift; sourceTree = "<group>"; };
@@ -736,6 +738,7 @@
 			isa = PBXGroup;
 			children = (
 				5557B46A211E06E500FE1775 /* AddToWhitelistView.swift */,
+				55C42DB421A21770007E0AF9 /* AutoAcceptCell.swift */,
 				55AD26F52121CF1200FD8A9A /* ChangePassphraseView.swift */,
 				554D01CB207D9C2300C19373 /* ContactPolicyCell.swift */,
 				55B0DBB82048962400F6B29B /* CopyableLabel.h */,
@@ -1389,6 +1392,7 @@
 				5511E9AC20C1B6060080C0DF /* CryptoError.swift in Sources */,
 				557C2B652093CE7C0069336D /* PippipTextMessageInteractionHandler.swift in Sources */,
 				5592334A20667094008AEEAE /* AsyncNotifier.swift in Sources */,
+				55C42DB521A21770007E0AF9 /* AutoAcceptCell.swift in Sources */,
 				55187ECA20BE275700F94792 /* APIRequestProtocol.swift in Sources */,
 				55BFD36920D052FC0084C555 /* AccountSession.swift in Sources */,
 				55AA54E01FA14B1E00A7026B /* Unsigned32.cc in Sources */,

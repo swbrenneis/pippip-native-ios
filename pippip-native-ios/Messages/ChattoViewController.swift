@@ -68,8 +68,8 @@ class ChattoViewController: BaseChatViewController {
 
         alertPresenter.present = true
         authenticator.viewWillAppear()
-        if contact != nil {
-            dataSource = ChattoDataSource(conversation: ConversationCache.instance.getConversation(contactId: contact!.contactId))
+        if let theContact = contact {
+            dataSource = ChattoDataSource(conversation: ConversationCache.instance.getConversation(contactId: theContact.contactId))
             chatDataSource = dataSource
             self.navigationItem.title = contact!.displayName
         }

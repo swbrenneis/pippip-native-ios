@@ -132,6 +132,20 @@ class Configurator: NSObject {
             }
         }
     }
+    var autoAccept: Bool {
+        get {
+            let config = getConfig()
+            return config.autoAccept
+        }
+        set {
+            let config = getConfig()
+            let realm = try! Realm()
+            try! realm.write {
+                config.autoAccept = newValue
+                config.version = Configurator.currentVersion
+            }
+        }
+    }
 
     var sessionState = SessionState()
 

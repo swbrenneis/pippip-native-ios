@@ -21,5 +21,6 @@ class AccountConfig: Object {
     @objc dynamic var authenticated: Bool = false
     @objc dynamic var statusUpdates: Int = 0
     @objc dynamic var uuid: String = ""
+    @objc dynamic var autoAccept: Bool = false
 
 }

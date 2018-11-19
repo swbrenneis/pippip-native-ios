@@ -48,6 +48,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         items.append(LocalPassphraseCell.cellItem)
         items.append(LocalAuthCell.cellItem)
         items.append(ShowIgnoredCell.cellItem)
+        items.append(AutoAcceptCell.cellItem)
         items.append(ContactPolicyCell.cellItem)
         let policy = config.contactPolicy
         if policy != "public" {

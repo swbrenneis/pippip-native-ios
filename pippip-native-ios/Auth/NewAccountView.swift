@@ -53,7 +53,7 @@ class NewAccountView: UIView {
         let lockImageView = UIImageView(image: UIImage(named: "passphrase"))
         passphraseTextField.rightView = lockImageView
         passphraseTextField.rightViewMode = .always
-        createAccountButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
+        createAccountButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
         createAccountButton.isEnabled = false
         createAccountButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         cancelButton.backgroundColor = PippipTheme.cancelButtonColor
@@ -90,7 +90,7 @@ class NewAccountView: UIView {
             createAccountButton.isEnabled = true
         }
         else {
-            createAccountButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
+            createAccountButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
             createAccountButton.isEnabled = false
         }
 

@@ -42,14 +42,14 @@ class ConversationCache: NSObject {
         
     }
     
-    func getConversation(contactId: Int) -> Conversation {
+    func getConversation(contactId: Int) -> Conversation? {
         
         if let conversation = conversations[contactId] {
             return conversation
         }
         else {
             let contactManager = ContactManager.instance
-            let contact = contactManager.getContact(contactId: contactId)!
+            guard let contact = contactManager.getContact(contactId: contactId) else { return nil }
             let newConversation = Conversation(contact: contact, windowSize: 15)
             conversations[contactId] = newConversation
             return newConversation

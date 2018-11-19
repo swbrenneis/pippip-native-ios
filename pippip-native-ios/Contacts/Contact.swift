@@ -150,6 +150,7 @@ class Contact: NSObject, Comparable {
         }
         
         super.init()
+        directoryId = serverContact.directoryId
 
     }
 

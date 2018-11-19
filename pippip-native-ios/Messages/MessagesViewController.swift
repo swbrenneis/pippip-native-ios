@@ -220,10 +220,10 @@ class MessagesViewController: UIViewController {
     func getMostRecentMessages() {
         
         previews.removeAll()
-        let contactList = ContactManager.instance.contactList
+        let contactList = ContactManager.instance.acceptedContactList
         for contact in contactList {
             let conversation = ConversationCache.instance.getConversation(contactId: contact.contactId)
-            if let message = conversation.mostRecentMessage {
+            if let message = conversation?.mostRecentMessage {
                 previews.append(message)
             }
         }

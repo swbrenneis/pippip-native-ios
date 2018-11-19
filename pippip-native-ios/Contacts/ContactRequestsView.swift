@@ -125,13 +125,8 @@ extension ContactRequestsView: UITableViewDelegate, UITableViewDataSource  {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if let contact = selected {
-            if ContactManager.instance.whitelistIdExists(publicId: contact.publicId) {
-                return config.contactPolicy == "whitelist" ? 2 : 4
-            }
-            else {
-                return 4
-            }
+        if let _ = selected {
+            return 4
         }
         else {
             contactRequests = Array(ContactManager.instance.pendingRequests)

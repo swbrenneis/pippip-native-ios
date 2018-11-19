@@ -60,12 +60,13 @@ class Message: NSObject, Comparable {
         sequence = contact.currentSequence + 1
         contact.currentSequence = sequence
 
-        let contactManager = ContactManager.instance
         do {
-            try contactManager.updateContact(contact)
+            try ContactManager.instance.updateKeyInfo(contactId: contact.contactId,
+                                                      currentIndex: contact.currentIndex,
+                                                      currentSequence: contact.currentSequence)
         }
         catch {
-            print("Error updating contact: \(error)")
+            DDLogError("Error updating contact: \(error.localizedDescription)")
             return nil
         }
 

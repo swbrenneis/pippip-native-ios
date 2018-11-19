@@ -31,20 +31,12 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
         DDLogError("\(response.messages!.count) new messages returned")
         var textMessages = [TextMessage]()
         for message in response.messages! {
-            if let contact = contactManager.getContact(publicId: message.fromId!) {
-                if contact.status == "accepted" {
-                    if let textMessage = TextMessage(serverMessage: message) {
-                        textMessages.append(textMessage)
-                        contact.timestamp = textMessage.timestamp / 1000
-                        try! contactManager.updateContact(contact)
-                    }
-                    else {
-                        DDLogWarn("Invalid contact information in server message")
-                    }
-                }
+            if let textMessage = TextMessage(serverMessage: message) {
+                textMessages.append(textMessage)
+                try! contactManager.updateTimestamp(contactId: textMessage.contactId, timestamp: textMessage.timestamp)
             }
             else {
-                DDLogError("Invalid message sender: \(message.fromId!)")
+                DDLogWarn("Invalid contact information in server message")
             }
         }
         if !textMessages.isEmpty {

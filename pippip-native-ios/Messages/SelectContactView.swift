@@ -78,7 +78,7 @@ class SelectContactView: UIView {
             contactList.removeAll()
         }
         else if newLength == 1 || newLength < lastPartialLength {
-            newList.append(contentsOf: contactManager.searchContacts(fragment))
+            newList.append(contentsOf: contactManager.searchAcceptedContacts(fragment: fragment))
         }
         else {
             for contact in contactList {

@@ -51,7 +51,7 @@ class StorePassphraseView: UIView {
         let lockImageView = UIImageView(image: UIImage(named: "passphrase"))
         passphraseTextField.rightView = lockImageView
         passphraseTextField.rightViewMode = .always
-        storeButton.backgroundColor = PippipTheme.buttonColor
+        storeButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
         storeButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         cancelButton.backgroundColor = PippipTheme.cancelButtonColor
         cancelButton.setTitleColor(PippipTheme.cancelButtonTextColor, for: .normal)
@@ -154,4 +154,21 @@ class StorePassphraseView: UIView {
         
     }
     
+    @IBAction func passphraseChanged(_ sender: Any) {
+
+        if let passphrase = passphraseTextField.text {
+            if passphrase.count > 0 {
+                storeButton.backgroundColor = PippipTheme.buttonColor
+                storeButton.isEnabled = true
+            }
+            else {
+                storeButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
+                storeButton.isEnabled = false
+            }
+        }
+        else {
+            storeButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
+            storeButton.isEnabled = false
+        }
+    }
 }

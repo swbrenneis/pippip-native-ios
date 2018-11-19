@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class RequestContactDelegate: EnclaveDelegate<RequestContactRequest, RequestContactResponse> {
 
@@ -39,14 +40,14 @@ class RequestContactDelegate: EnclaveDelegate<RequestContactRequest, RequestCont
             }
             contact.directoryId = directoryId
             contact.status = response.result!
-            contactManager.addContact(contact)
-            NotificationCenter.default.post(name: Notifications.ContactRequested, object: contact)
+            contactManager.addPendingContact(contact)
+            AsyncNotifier.notify(name: Notifications.ContactRequested, object: contact)
         }
 
     }
     
     func contactRequestError(_ reason: String) {
-        print("Contact request error: \(reason)")
+        DDLogError("Contact request error: \(reason)")
     }
 
 }

@@ -14,30 +14,30 @@ class ChattoDataSource: ChatDataSourceProtocol {
 
     var hasMoreNext: Bool {
         get {
-            return conversation.canSlideDown()
+            return conversation?.canSlideDown() ?? false
         }
     }
     var hasMorePrevious: Bool {
         get {
-            return conversation.canSlideUp()
+            return conversation?.canSlideUp() ?? false
         }
     }
     var chatItems: [ChatItemProtocol] {
-        return conversation.items
+        return conversation?.items ?? [ChatItemProtocol]()
     }
     var visible: Bool = false {
         didSet {
-            conversation.visible = visible
+            conversation?.visible = visible
         }
     }
     var delegate: ChatDataSourceDelegateProtocol?
-    var conversation: Conversation
+    var conversation: Conversation?
 
-    init(conversation: Conversation) {
+    init(conversation: Conversation?) {
 
         self.conversation = conversation
         visible = true
-        conversation.visible = true
+        conversation?.visible = true
         addObservers()
 
     }
@@ -58,12 +58,12 @@ class ChattoDataSource: ChatDataSourceProtocol {
     }
 
     func loadNext() {
-        conversation.slideDown()
+        conversation?.slideDown()
         delegate?.chatDataSourceDidUpdate(self, updateType: .pagination)
     }
     
     func loadPrevious() {
-        conversation.slideUp()
+        conversation?.slideUp()
         delegate?.chatDataSourceDidUpdate(self, updateType: .pagination)
     }
     
@@ -75,7 +75,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
     
     func addTextMessage(_ textMessage: TextMessage) {
 
-        conversation.addTextMessage(textMessage)
+        conversation?.addTextMessage(textMessage)
         delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
 
     }
@@ -83,14 +83,14 @@ class ChattoDataSource: ChatDataSourceProtocol {
     func clearMessages() {
 
         assert(Thread.isMainThread, "clearMessages not called from main thread")
-        conversation.clearMessages()
+        conversation?.clearMessages()
         delegate?.chatDataSourceDidUpdate(self, updateType: .pagination)
 
     }
 
     func deleteMessage(messageId: Int64) {
         
-        conversation.deleteMessage(messageId)
+        conversation?.deleteMessage(messageId)
         delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
 
     }
@@ -108,7 +108,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
     func retryTextMessage(_ textMessage: TextMessage) {
 
         DispatchQueue.main.async {
-            self.conversation.retryTextMessage(textMessage)
+            self.conversation?.retryTextMessage(textMessage)
             self.delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
         }
 
@@ -120,7 +120,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
         
         guard let textMessage = notification.object as? TextMessage else { return }
         DispatchQueue.main.async {
-            self.conversation.updateChatItem(textMessage: textMessage)
+            self.conversation?.updateChatItem(textMessage: textMessage)
             self.delegate?.chatDataSourceDidUpdate(self, updateType: .reload)
         }
         
@@ -130,7 +130,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
         
         assert(Thread.isMainThread, "Message deleted notification must be sent from main thread")
         guard let textMessage = notification.object as? TextMessage else { return }
-        conversation.deleteMessage(textMessage.messageId)
+        conversation?.deleteMessage(textMessage.messageId)
         delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
         
     }
@@ -139,7 +139,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
         
         assert(Thread.isMainThread, "Message failed notification must be sent from main thread")
         guard let textMessage = notification.object as? TextMessage else { return }
-        conversation.messageFailed(textMessage.messageId)
+        conversation?.messageFailed(textMessage.messageId)
         delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
         
     }
@@ -149,7 +149,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
 
         assert(Thread.isMainThread, "Message sent notification must be sent from main thread")
         guard let messageId = notification.object as? Int64 else { return }
-        conversation.messageSent(messageId: messageId)
+        conversation?.messageSent(messageId: messageId)
         delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
 
     }
@@ -158,8 +158,8 @@ class ChattoDataSource: ChatDataSourceProtocol {
 
         guard let textMessages = notification.object as? [TextMessage] else { return }
         for message in textMessages {
-            if message.contactId == conversation.contact.contactId {
-                conversation.addTextMessage(message)
+            if message.contactId == conversation?.contact.contactId {
+                conversation?.addTextMessage(message)
             }
         }
         DispatchQueue.main.async {

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class AcknowledgeRequestDelegate: EnclaveDelegate<AcknowledgeRequest, AcknowledgeRequestResponse> {
 
@@ -32,18 +33,17 @@ class AcknowledgeRequestDelegate: EnclaveDelegate<AcknowledgeRequest, Acknowledg
             alertPresenter.errorAlert(title: "Contact Request Error", message: response.error!)
         }
         else {
-            let acknowledged = Contact(serverContact: response.acknowledged!)
-            if acknowledged.publicId == contactRequest.publicId {
+            guard let acknowledged = response.acknowledged else { return }
+            do {
                 acknowledged.directoryId = contactRequest.directoryId
-                contactManager.addContact(acknowledged)
+                let contact = try contactManager.addContact(serverContact: acknowledged)
                 contactManager.deleteContactRequest(contactRequest)
-                DispatchQueue.global().async {
-                    NotificationCenter.default.post(name: Notifications.RequestAcknowledged, object: acknowledged)
-                    NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
-                }
+                contactManager.contactAcknowledged(contact: contact)
+                AsyncNotifier.notify(name: Notifications.RequestAcknowledged, object: contact)
+                AsyncNotifier.notify(name: Notifications.SetContactBadge)
             }
-            else {
-                print("Invalid server response, invalid contact JSON")
+            catch {
+                DDLogError("Error adding acknowledged contact: \(error.localizedDescription)")
             }
         }
 

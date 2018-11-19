@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class ContactDetailView: UIView, Dismissable {
 
@@ -155,8 +156,14 @@ class ContactDetailView: UIView, Dismissable {
     
     @IBAction func resendRequestTapped(_ sender: Any) {
 
-        ContactManager.instance.requestContact(publicId: publicId, directoryId: nil, retry: true)
-        alertPresenter.successAlert(message: "The request was resent to this contact")
+        do {
+            try ContactManager.instance.requestContact(publicId: publicId, directoryId: nil, retry: true)
+            alertPresenter.successAlert(message: "The request was resent to this contact")
+        }
+        catch {
+            DDLogError("Error resending request: \(error.localizedDescription)")
+            alertPresenter.errorAlert(title: "Send Request Error", message: "The request could not be sent")
+        }
         
     }
 
