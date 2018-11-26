@@ -44,7 +44,7 @@ class ChangePassphraseView: UIView {
         
         titleLabel.backgroundColor = PippipTheme.lightBarColor
         titleLabel.textColor = PippipTheme.titleColor
-        changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
+        changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
         changePassphraseButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         changePassphraseButton.isEnabled = false
         cancelButton.backgroundColor = PippipTheme.cancelButtonColor

@@ -277,6 +277,13 @@ class ContactManager: NSObject {
         }
 
     }
+
+    func contactRequestExists(_ publicId: String) -> Bool {
+    
+        let request = ContactRequest(publicId: publicId, directoryId: nil)
+        return requestSet.contains(request)
+
+    }
     
     // Moves contacts from pending to the appropriate set
     func contactsAcknowledged(serverContacts: [ServerContact]) throws -> [Contact] {

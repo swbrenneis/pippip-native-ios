@@ -50,6 +50,10 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         rightBarItems.append(addContact)
         let editContacts = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editContacts(_:)))
         rightBarItems.append(editContacts)
+        #if targetEnvironment(simulator)
+        let pollButton = UIBarButtonItem(title: "Poll", style: .plain, target: self, action: #selector(pollServer(_ :)))
+        rightBarItems.append(pollButton)
+        #endif
         /*
         let deleteItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteContact(_:)))
         rightBarItems.append(deleteItem)
@@ -189,8 +193,12 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     
     func validateAndRequest(publicId: String, directoryId: String) {
         
+        addContactView?.dismiss()
         if directoryId == config.directoryId || publicId == sessionState.publicId {
             alertPresenter.errorAlert(title: "Add Contact Error", message: "Adding yourself is not allowed")
+        }
+        else if contactManager.contactRequestExists(publicId) {
+            alertPresenter.errorAlert(title: "Add Contact Error", message: "There is an existing request for that contact")
         }
         else if directoryId.count > 0 {
             NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
@@ -202,7 +210,6 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
                 alertPresenter.errorAlert(title: "Add Contact Error", message: "That contact is already in your list")
             }
             else {
-                addContactView?.dismiss()
                 do {
                     try contactManager.requestContact(publicId: publicId, directoryId: nil, retry: false)
                 }
@@ -235,6 +242,14 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         
     }
 
+    #if targetEnvironment(simulator)
+    @objc func pollServer(_ sender: Any) {
+        AccountSession.instance.doUpdates()
+    }
+    #endif
+    
+    // Notifications
+    
     @objc func appSuspended(_ notification: Notification) {
         
         requestsView?.dismiss()
@@ -298,15 +313,18 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
 
         guard let response = notification.object as? MatchDirectoryIdResponse else { return }
+        DispatchQueue.main.async {
+            self.addContactView?.dismiss()
+        }
         if response.result == "found" {
             guard let publicId = response.publicId else { return }
             if let _ = contactManager.getContact(publicId: publicId) {
                 alertPresenter.errorAlert(title: "Add Contact Error", message: "That contact is already in your list")
             }
+            else if contactManager.contactRequestExists(publicId) {
+                alertPresenter.errorAlert(title: "Add Contact Error", message: "There is an existing request for that contact")
+            }
             else {
-                DispatchQueue.main.async {
-                    self.addContactView?.dismiss()
-                }
                 do {
                     try contactManager.requestContact(publicId: publicId, directoryId: response.directoryId, retry: false)
                 }
@@ -344,7 +362,16 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         DispatchQueue.main.async {
             // Do these in order because both sections are validated after inserts and deletes to any section
             self.contactRequests = Array(self.contactManager.pendingRequests)
-            if self.contactRequests.count == 0 {
+            // Get the current number of rows in section zero
+            var requestSectionCount = 0
+            if let paths = self.tableView.indexPathsForVisibleRows {
+                for path in paths {
+                    if path.section == 0 {
+                        requestSectionCount = 1
+                    }
+                }
+            }
+            if self.contactRequests.count == 0 && requestSectionCount > 0 {
                 self.tableView.deleteRows(at: [IndexPath(row: 0, section: 0)], with: .right)
             }
             if self.config.showIgnoredContacts || contact.status != "ignored" {
