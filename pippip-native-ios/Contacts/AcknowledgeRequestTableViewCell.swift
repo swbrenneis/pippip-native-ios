@@ -65,7 +65,7 @@ class AcknowledgeRequestTableViewCell: UITableViewCell {
             acknowledgeButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
             break
         case .ignore:
-            acknowledgeButton.setTitle("Delete", for: .normal)
+            acknowledgeButton.setTitle("Hide", for: .normal)
             acknowledgeButton.backgroundColor = UIColor.flatGrayDark
             acknowledgeButton.setTitleColor(ContrastColorOf(UIColor.flatGrayDark, returnFlat: true), for: .normal)
             break
