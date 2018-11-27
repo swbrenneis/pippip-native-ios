@@ -182,6 +182,8 @@ class MessagesViewController: UIViewController {
                                                name: Notifications.SetContactBadge, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(conversationDeleted(_:)),
                                                name: Notifications.ConversationDeleted, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
+                                               name: Notifications.AppSuspended, object: nil)
 
     }
 
@@ -197,11 +199,13 @@ class MessagesViewController: UIViewController {
 
         alertPresenter.present = false
         authenticator.viewWillDisappear()
+        sidebar.dismissAnimated(true, completion: nil)
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AuthComplete, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.SetContactBadge, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.ConversationDeleted, object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
 
     }
 /*
@@ -286,6 +290,14 @@ class MessagesViewController: UIViewController {
 
     // Notifications
 
+    @objc func appSuspended(_ notification: Notification) {
+        
+        DispatchQueue.main.async {
+            self.sidebar.dismissAnimated(true, completion: nil)
+        }
+
+    }
+    
     @objc func authComplete(_ notification: Notification) {
         
         guard let success = notification.object as? Bool else { return }
