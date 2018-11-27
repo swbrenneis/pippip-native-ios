@@ -149,6 +149,7 @@ class ServerAuthenticator: NSObject {
             else {
                 self.doChallenge()
             }
+ 
         }
 
     }

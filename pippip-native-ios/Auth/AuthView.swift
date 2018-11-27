@@ -151,12 +151,17 @@ class AuthView: UIView, ControllerBlurProtocol {
         NotificationCenter.default.post(name: Notifications.AuthComplete, object: success)
         DispatchQueue.main.async {
             self.hideToastActivity()
-            self.authButton.isHidden = success
             if let message = reason {
                 self.alertPresenter.errorAlert(title: "Sign In Error", message: message)
             }
             if success {
                 self.dismiss()
+            }
+            else if self.config.useLocalAuth {
+                self.setBiometrics(showButton: true)
+            }
+            else {
+                self.setSignIn()
             }
         }
         
@@ -166,6 +171,7 @@ class AuthView: UIView, ControllerBlurProtocol {
         
         if let passhrase = getKeychainPassphrase(uuid: config.uuid) {
             self.makeToastActivity(.center)
+            self.authButton.isHidden = true
             if AccountSession.instance.needsServerAuth {
                 self.contactServerLabel.isHidden = false
                 serverAuthenticator = ServerAuthenticator(authView: self)
@@ -231,10 +237,18 @@ class AuthView: UIView, ControllerBlurProtocol {
         
     }
     
-    func setBiometrics() {
+    func setBiometrics(showButton: Bool) {
 
-        authButton.isHidden = true
+        authButton.isHidden = !showButton
         authType = .biometric
+        if showButton {
+            authButton.setTitle(PippipTheme.leadingLAType, for: .normal)
+            let screenWidth = self.bounds.width
+            let abWidth = screenWidth * PippipGeometry.biometricButtonWidthRatio
+            let abConstraint = (screenWidth - abWidth) / 2
+            authButtonLeading.constant = abConstraint
+            authButtonTrailing.constant = abConstraint
+        }
         
     }
     

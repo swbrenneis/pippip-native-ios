@@ -50,7 +50,7 @@ class Authenticator: NSObject {
             authView?.setNewAccount()
         }
         else if config.useLocalAuth {
-            authView?.setBiometrics()
+            authView?.setBiometrics(showButton: false)
         }
         else {
             authView?.setSignIn()
@@ -119,7 +119,12 @@ class Authenticator: NSObject {
         
         DispatchQueue.main.async {
             self.authView?.cancelAuthentication()
-            self.authView?.setSignIn()
+            if self.config.useLocalAuth {
+                self.authView?.setBiometrics(showButton: true)
+            }
+            else {
+                self.authView?.setSignIn()
+            }
         }
         
     }
