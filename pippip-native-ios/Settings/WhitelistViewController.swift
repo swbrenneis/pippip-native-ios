@@ -28,7 +28,7 @@ class WhitelistViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.navigationItem.title = "Permitted Contacts"
+        self.navigationItem.title = "Permitted IDs"
         
         self.view.backgroundColor = PippipTheme.viewColor
         let frame = self.view.bounds

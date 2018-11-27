@@ -199,6 +199,7 @@ class MessagesViewController: UIViewController {
 
         alertPresenter.present = false
         authenticator.viewWillDisappear()
+        sidebarOn = false
         sidebar.dismissAnimated(true, completion: nil)
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
@@ -293,6 +294,7 @@ class MessagesViewController: UIViewController {
     @objc func appSuspended(_ notification: Notification) {
         
         DispatchQueue.main.async {
+            self.sidebarOn = false
             self.sidebar.dismissAnimated(true, completion: nil)
         }
 
