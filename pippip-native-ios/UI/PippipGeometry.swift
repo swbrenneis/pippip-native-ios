@@ -19,6 +19,7 @@ class PippipGeometry: NSObject {
     static var signInViewHeightRatio: CGFloat!
     static var signInViewWidthRatio: CGFloat!
     static var signInViewOffset: CGFloat!
+    static var biometricButtonWidthRatio: CGFloat!
     static var verifyPassphraseViewHeightRatio: CGFloat!
     static var verifyPassphraseViewWidthRatio: CGFloat!
     static var verifyPassphraseViewOffset: CGFloat!
@@ -131,6 +132,7 @@ class PippipGeometry: NSObject {
         screenWidth = 640.0
         screenHeight = 1136.0
 
+        biometricButtonWidthRatio = 0.5
         newAccountButtonWidthRatio = 0.7
         newAccountViewWidthRatio = 0.8
         newAccountViewHeightRatio = 0.7
@@ -175,6 +177,7 @@ class PippipGeometry: NSObject {
         screenWidth = 750.0
         screenHeight = 1334.0
 
+        biometricButtonWidthRatio = 0.5
         newAccountButtonWidthRatio = 0.7
         newAccountViewWidthRatio = 0.8
         newAccountViewHeightRatio = 0.6
@@ -219,6 +222,7 @@ class PippipGeometry: NSObject {
         screenWidth = 1080.0
         screenHeight = 1920.0
         
+        biometricButtonWidthRatio = 0.5
         newAccountButtonWidthRatio = 0.6
         newAccountViewWidthRatio = 0.7
         newAccountViewHeightRatio = 0.6
@@ -263,6 +267,7 @@ class PippipGeometry: NSObject {
         screenWidth = 1125.0
         screenHeight = 2436.0
         
+        biometricButtonWidthRatio = 0.5
         newAccountButtonWidthRatio = 0.7
         newAccountViewWidthRatio = 0.7
         newAccountViewHeightRatio = 0.45
@@ -307,6 +312,7 @@ class PippipGeometry: NSObject {
         screenWidth = 828.0
         screenHeight = 1792.0
         
+        biometricButtonWidthRatio = 0.5
         newAccountButtonWidthRatio = 0.65
         newAccountViewWidthRatio = 0.75
         newAccountViewHeightRatio = 0.43
@@ -351,6 +357,7 @@ class PippipGeometry: NSObject {
         screenWidth = 1242.0
         screenHeight = 2688.0
         
+        biometricButtonWidthRatio = 0.5
         newAccountButtonWidthRatio = 0.65
         newAccountViewWidthRatio = 0.75
         newAccountViewHeightRatio = 0.43
