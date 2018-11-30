@@ -113,6 +113,7 @@
 		55721A2020C9F973008FE9F6 /* SetDirectoryIdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1F20C9F973008FE9F6 /* SetDirectoryIdDelegate.swift */; };
 		55721A2220C9FB52008FE9F6 /* UpdateWhitelistDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A2120C9FB52008FE9F6 /* UpdateWhitelistDelegate.swift */; };
 		5575D3C420618FD200593AF7 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5575D3C320618FD200593AF7 /* LocalAuthentication.framework */; };
+		557AE8BC21B096330064CEDB /* SessionObserverProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557AE8BB21B096330064CEDB /* SessionObserverProtocol.swift */; };
 		557C2B552093AF840069336D /* ChattoDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B542093AF840069336D /* ChattoDataSource.swift */; };
 		557C2B592093B8360069336D /* PippipTextMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B582093B8360069336D /* PippipTextMessageModel.swift */; };
 		557C2B5D2093C5080069336D /* PippipMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B5C2093C5080069336D /* PippipMessageModel.swift */; };
@@ -378,6 +379,7 @@
 		55721A1F20C9F973008FE9F6 /* SetDirectoryIdDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetDirectoryIdDelegate.swift; sourceTree = "<group>"; };
 		55721A2120C9FB52008FE9F6 /* UpdateWhitelistDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateWhitelistDelegate.swift; sourceTree = "<group>"; };
 		5575D3C320618FD200593AF7 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
+		557AE8BB21B096330064CEDB /* SessionObserverProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionObserverProtocol.swift; sourceTree = "<group>"; };
 		557C2B542093AF840069336D /* ChattoDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattoDataSource.swift; sourceTree = "<group>"; };
 		557C2B582093B8360069336D /* PippipTextMessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessageModel.swift; sourceTree = "<group>"; };
 		557C2B5C2093C5080069336D /* PippipMessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipMessageModel.swift; sourceTree = "<group>"; };
@@ -814,6 +816,7 @@
 				55187ED320BE4C8900F94792 /* ServerAuthorized.swift */,
 				5511E9B120C1EC830080C0DF /* ServerContact.swift */,
 				5511E9DF20C33C880080C0DF /* ServerMessage.swift */,
+				557AE8BB21B096330064CEDB /* SessionObserverProtocol.swift */,
 				55245F4020BCC9A100E6ECB6 /* SessionResponse.swift */,
 				55721A1D20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift */,
 				5511E9CF20C325DD0080C0DF /* SetContactPolicyRequest.swift */,
@@ -1380,6 +1383,7 @@
 				557C2B692093F5F50069336D /* TextMessageDecorator.swift in Sources */,
 				5511E9E420C3414C0080C0DF /* SendMessageResponse.swift in Sources */,
 				55AA55581FA14D7100A7026B /* HMAC.cc in Sources */,
+				557AE8BC21B096330064CEDB /* SessionObserverProtocol.swift in Sources */,
 				55BD804B2148A60F00D0B15D /* MessageDumpTableViewController.swift in Sources */,
 				55AA54DE1FA14B1E00A7026B /* ByteStreamCodec.cc in Sources */,
 				55169791209A4894002BB4C1 /* PreviewCell.swift in Sources */,

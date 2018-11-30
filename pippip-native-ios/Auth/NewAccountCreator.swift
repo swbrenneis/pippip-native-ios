@@ -9,7 +9,7 @@
 import UIKit
 import CocoaLumberjack
 
-class NewAccountCreator: NSObject {
+class NewAccountCreator: NSObject, SessionObserverProtocol {
 
     var passphrase = ""
     var accountName = ""
@@ -84,6 +84,24 @@ class NewAccountCreator: NSObject {
         
     }
 
+    func sessionStarted(sessionResponse: SessionResponse) {
+        
+        if sessionResponse.error != nil {
+            alertPresenter.errorAlert(title: "Session Error", message: sessionResponse.error!)
+        }
+        else {
+            sessionState.sessionId = sessionResponse.sessionId!
+            let pem = CKPEMCodec()
+            sessionState.serverPublicKey = pem.decodePublicKey(sessionResponse.serverPublicKey!)
+            var info = [AnyHashable: Any]()
+            info["progress"] = 0.5
+            DispatchQueue.global().async {
+                self.requestNewAccount()
+            }
+        }
+        
+    }
+    
     func setKeychainPassphrase(uuid: String, passphrase: String) -> Bool {
         
         let keychain = Keychain(service: Keychain.PIPPIP_TOKEN_SERVICE)
@@ -163,30 +181,8 @@ class NewAccountCreator: NSObject {
 
     @objc func parametersGenerated(_ notification: Notification) {
 
-        NotificationCenter.default.addObserver(self, selector: #selector(sessionStarted(_:)),
-                                               name: Notifications.SessionStarted, object: nil)
-        secommAPI.startSession()
+        secommAPI.startSession(sessionObserver: self)
 
     }
 
-    @objc func sessionStarted(_ notification: Notification) {
-        
-        NotificationCenter.default.removeObserver(self, name: Notifications.SessionStarted, object: nil)
-        guard let sessionResponse = notification.object as? SessionResponse else { return }
-        if sessionResponse.error != nil {
-            alertPresenter.errorAlert(title: "Session Error", message: sessionResponse.error!)
-        }
-        else {
-            sessionState.sessionId = sessionResponse.sessionId!
-            let pem = CKPEMCodec()
-            sessionState.serverPublicKey = pem.decodePublicKey(sessionResponse.serverPublicKey!)
-            var info = [AnyHashable: Any]()
-            info["progress"] = 0.5
-            DispatchQueue.global().async {
-                self.requestNewAccount()
-            }
-        }
-        
-    }
-    
 }

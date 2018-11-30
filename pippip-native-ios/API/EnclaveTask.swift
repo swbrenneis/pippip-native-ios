@@ -16,7 +16,7 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
     var secommAPI = SecommAPI()
     var alertPresenter = AlertPresenter()
     var request: EnclaveRequestProtocol!
-//    var authenticator = ServerAuthenticator()
+    var serverAuthenticator: ServerAuthenticator?
     var sessionState = SessionState()
 
     init(delegate: EnclaveDelegate<RequestT, ResponseT>) {
@@ -30,9 +30,17 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
     func responseComplete(_ response: EnclaveResponse) {
         
         if response.needsAuth! {
-            if !sessionState.reauth {
+//            if !sessionState.reauth {
+                // reauthentication latch
                 sessionState.reauth = true
-            }
+                AccountSession.instance.needsAuth()
+                DispatchQueue.global().async {
+                    NotificationCenter.default.addObserver(self, selector: #selector(self.reauthComplete(_:)),
+                                                           name: Notifications.ReauthComplete, object: nil)
+                    self.serverAuthenticator = ServerAuthenticator(authView: nil)
+                    self.serverAuthenticator!.reauthenticate()
+                }
+//            }
         }
         else {
             if let error = response.processResponse() {
@@ -79,21 +87,12 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
         
     }
 
-    // Authentication delegate
-    
-    func authenticated() {
-        
+    // Notification
+    @objc func reauthComplete(_ notification: Notification) {
+
+        NotificationCenter.default.removeObserver(self, name: Notifications.ReauthComplete, object: nil)
         sendRequest()
 
-    }
-
-    func authenticationFailed(reason: String) {
-        print("Reauthentication failure: \(reason)")
-        delegate?.requestError("Couldn't authenticate session")
-    }
-
-    func loggedOut() {
-        // Nothing to do
     }
 
 }

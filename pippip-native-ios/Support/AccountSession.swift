@@ -24,6 +24,7 @@ enum AccountSessionState {
 enum AuthState {
     case notAuthenticated       // No auth complete
     case serverAuthenticated    // Authentication with server done
+    case reauthenticating       // Server send needsAuth
     case loggedOut              // Server authenticated, app logged out
 }
 
@@ -185,7 +186,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     
     func doUpdates() {
 
-        if updateState == .idle && authState == .serverAuthenticated {
+        if updateState == .idle && authState != .notAuthenticated {
             updateState = .gettingMessages
             messageManager.getNewMessages()
         }
@@ -223,6 +224,13 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         let config = realm.objects(AccountConfig.self).first
         DDLogDebug("AccountConfig version \(config!.version)")
         
+    }
+
+    func needsAuth() {
+        
+        updateState = .idle
+        authState = .reauthenticating
+
     }
     
     func setDefaultConfig(accountName: String) {
@@ -274,6 +282,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         
     }
 
+    // App lifecycle
     @objc func appStarted() {
 
         accountSessionState = .appStarted
@@ -300,21 +309,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
                 }
             }
         }
-        /*
-        if accountSessionState == .willResume {
-            if firstResume {
-                firstResume = false
-                NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
-            }
-            else {
-                accountSessionState = .active
-                if !self.didUpdate {
-                    self.doUpdates()
-                    self.didUpdate = true
-                }
-            }
-        }
-*/
+
     }
     
     @objc func willSuspend() {
@@ -344,17 +339,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     }
     
     // Notifications
-/*
-    @objc func authComplete(_ notification: Notification) {
 
-        authState = .serverAuthenticated
-//        if accountSessionState != .wasSuspended {
-            doUpdates()
-//        }
-        accountSessionState = .active
-
-    }
-*/
     @objc func getMessagesComplete(_ notification: Notification) {
 
         if updateState == .gettingMessages && authState == .serverAuthenticated {

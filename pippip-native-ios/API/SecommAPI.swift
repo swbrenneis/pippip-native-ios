@@ -37,6 +37,7 @@ class SecommAPI: NSObject {
     }
 
     var alertPresenter = AlertPresenter()
+    var sessionObserver: SessionObserverProtocol?
 
     static func initializeAPI() {
 
@@ -116,8 +117,9 @@ class SecommAPI: NSObject {
 
     }
 
-    func startSession() {
+    func startSession(sessionObserver: SessionObserverProtocol) {
 
+        self.sessionObserver = sessionObserver
         let resource = SecommAPI.apiState.hostPath + SecommAPI.apiState.sessionPath
         if let url = URL(string: resource) {
             var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30.0)
@@ -131,7 +133,7 @@ class SecommAPI: NSObject {
                 }
                 else if let sessionResponse = response.result.value {
                     SecommAPI.apiState.sessionActive = true
-                    NotificationCenter.default.post(name: Notifications.SessionStarted, object: sessionResponse, userInfo: nil)
+                    sessionObserver.sessionStarted(sessionResponse: sessionResponse)
                 }
                 else {
                     DDLogError("Invalid server response in startSession")
