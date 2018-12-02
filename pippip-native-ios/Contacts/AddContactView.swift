@@ -70,6 +70,7 @@ class AddContactView: UIView {
             self.directoryIdTextField.resignFirstResponder()
             self.publicIdTextField.resignFirstResponder()
             self.removeFromSuperview()
+            self.contactsViewController?.addContactView = nil
         })
         
     }

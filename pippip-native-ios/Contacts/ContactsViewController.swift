@@ -254,6 +254,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         
         requestsView?.dismiss()
         contactDetailView?.dismiss()
+        addContactView?.dismiss()
 
     }
     
@@ -285,27 +286,6 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
             self.tableView.reloadSections(IndexSet(integer: 1), with: .top)
         }
   
-    }
-
-    // Debug only
-    @objc func deleteContact(_ sender: Any) {
-/*
-        let alert = PMAlertController(title: "Delete A Server Contact",
-                                      description: "Enter a directory ID or public ID",
-                                      image: nil,
-                                      style: PMAlertControllerStyle.alert)
-        alert.addTextField({ (textField) in
-            textField?.placeholder = "Directory ID"
-            textField?.autocorrectionType = .no
-            textField?.spellCheckingType = .no
-        })
-        alert.addAction(PMAlertAction(title: "Delete",
-                                      style: .default, action: { () in
-                                        self.contactManager.deleteServerContact(directoryId: alert.textFields[0].text ?? "")
-        }))
-        alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
-        self.present(alert, animated: true, completion: nil)
-*/
     }
 
     @objc func directoryIdMatched(_ notification: Notification) {
@@ -420,29 +400,52 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     
     @objc func addContact(_ item: Any) {
 
-        let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0,
-                              width: frame.width * PippipGeometry.addContactViewWidthRatio,
-                              height: frame.height * PippipGeometry.addContactViewHeightRatio)
-        addContactView = AddContactView(frame: viewRect)
-        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - PippipGeometry.addContactViewOffset)
-        addContactView?.center = viewCenter
-        addContactView?.alpha = 0.0
-        
-        addContactView?.contactsViewController = self
-
-        self.view.addSubview(self.addContactView!)
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.blurView.alpha = 0.6
-            self.addContactView?.alpha = 1.0
-        }, completion: { complete in
-            self.navigationController?.setNavigationBarHidden(PippipGeometry.addContactViewHideNavBar, animated: true)
-            self.addContactView?.directoryIdTextField.becomeFirstResponder()
-        })
+        if addContactView == nil {
+            let frame = self.view.bounds
+            let viewRect = CGRect(x: 0.0, y: 0.0,
+                                  width: frame.width * PippipGeometry.addContactViewWidthRatio,
+                                  height: frame.height * PippipGeometry.addContactViewHeightRatio)
+            addContactView = AddContactView(frame: viewRect)
+            let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - PippipGeometry.addContactViewOffset)
+            addContactView?.center = viewCenter
+            addContactView?.alpha = 0.0
+            
+            addContactView?.contactsViewController = self
+            
+            self.view.addSubview(self.addContactView!)
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.blurView.alpha = 0.6
+                self.addContactView?.alpha = 1.0
+            }, completion: { complete in
+                self.navigationController?.setNavigationBarHidden(PippipGeometry.addContactViewHideNavBar, animated: true)
+                self.addContactView?.directoryIdTextField.becomeFirstResponder()
+            })
+        }
         
     }
 
+    // Debug only
+    @objc func deleteContact(_ sender: Any) {
+        /*
+         let alert = PMAlertController(title: "Delete A Server Contact",
+         description: "Enter a directory ID or public ID",
+         image: nil,
+         style: PMAlertControllerStyle.alert)
+         alert.addTextField({ (textField) in
+         textField?.placeholder = "Directory ID"
+         textField?.autocorrectionType = .no
+         textField?.spellCheckingType = .no
+         })
+         alert.addAction(PMAlertAction(title: "Delete",
+         style: .default, action: { () in
+         self.contactManager.deleteServerContact(directoryId: alert.textFields[0].text ?? "")
+         }))
+         alert.addAction(PMAlertAction(title: "Cancel", style: .cancel))
+         self.present(alert, animated: true, completion: nil)
+         */
+    }
+    
     /*
     // MARK: - Navigation
 

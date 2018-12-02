@@ -79,50 +79,29 @@ class WhitelistViewController: UIViewController {
         authenticator.viewWillDisappear()
 
     }
-/*
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        
-        localAuth.viewDidDisappear()
-    
-    }
-*/
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 
     func addToWhitelist(publicId: String, directoryId: String?) {
-
-        if checkContactExists(publicId: publicId) {
+        
+        do {
+            try contactManager.addWhitelistEntry(publicId: publicId, directoryId: directoryId)
+            DispatchQueue.main.async {
+                self.addIdView?.dismiss()
+            }
+        }
+        catch {
+            DDLogError("Error adding ID to whitelist: \(error.localizedDescription)")
             self.alertPresenter.errorAlert(title: "Add Permitted ID Error",
-                                           message: "You already added that ID")
+                                           message: "This ID is already in your list")
             NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryAdded, object: nil)
         }
-        else {
-            do {
-                try contactManager.addWhitelistEntry(publicId: publicId, directoryId: directoryId)
-                DispatchQueue.main.async {
-                    self.addIdView?.dismiss()
-                }
-            }
-            catch {
-                DDLogError("Error adding ID to whitelist: \(error.localizedDescription)")
-                self.alertPresenter.errorAlert(title: "Add Permitted ID Error",
-                                               message: "An error occurred, please try again")
-                NotificationCenter.default.removeObserver(self, name: Notifications.WhitelistEntryAdded, object: nil)
-            }
-        }
+        
+    }
 
-    }
-    
-    func checkContactExists(publicId: String) -> Bool {
-        
-        guard let _ = config.whitelistIndexOf(publicId: publicId) else { return false }
-        return true
-        
-    }
-    
     func checkSelfAdd(directoryId: String?, publicId: String?) -> Bool {
         
         if let nick = directoryId {
@@ -164,25 +143,27 @@ class WhitelistViewController: UIViewController {
 
     @objc func addWhitelistEntry(_ sender: Any) {
 
-        let frame = self.view.bounds
-        let viewRect = CGRect(x: 0.0, y: 0.0,
-                              width: frame.width * PippipGeometry.addToWhitelistViewWidthRatio,
-                              height: frame.height * PippipGeometry.addToWhitelistViewHeightRatio)
-        addIdView = AddToWhitelistView(frame: viewRect)
-        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - PippipGeometry.addToWhitelistViewOffset)
-        addIdView?.center = viewCenter
-        addIdView?.alpha = 0.0
-        
-        addIdView?.whitelistViewController = self
-        
-        self.view.addSubview(self.addIdView!)
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.addIdView?.alpha = 1.0
-            self.blurView.alpha = 0.6
-        }, completion: { complete in
-            self.addIdView?.directoryIdTextField.becomeFirstResponder()
-        })
+        if addIdView == nil {
+            let frame = self.view.bounds
+            let viewRect = CGRect(x: 0.0, y: 0.0,
+                                  width: frame.width * PippipGeometry.addToWhitelistViewWidthRatio,
+                                  height: frame.height * PippipGeometry.addToWhitelistViewHeightRatio)
+            addIdView = AddToWhitelistView(frame: viewRect)
+            let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - PippipGeometry.addToWhitelistViewOffset)
+            addIdView?.center = viewCenter
+            addIdView?.alpha = 0.0
+            
+            addIdView?.whitelistViewController = self
+            
+            self.view.addSubview(self.addIdView!)
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.addIdView?.alpha = 1.0
+                self.blurView.alpha = 0.6
+            }, completion: { complete in
+                self.addIdView?.directoryIdTextField.becomeFirstResponder()
+            })
+        }
         
     }
 
@@ -250,7 +231,7 @@ class WhitelistViewController: UIViewController {
         }
         catch {
             DDLogError("Error adding whitelist entry: \(error.localizedDescription)")
-            alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "And error occurred, please try again")
+            alertPresenter.errorAlert(title: "Add Permitted ID Error", message: "An error occurred, please try again")
         }
 
     }
@@ -272,15 +253,7 @@ class WhitelistViewController: UIViewController {
         }
 
     }
-/*
-    @objc func localAuthComplete(_ notification: Notification) {
-        
-        DispatchQueue.main.async {
-            self.localAuth.showAuthView = false
-        }
-        
-    }
-*/
+
     @IBAction func done(_ sender: Any) {
 
         dismiss(animated: true, completion: nil)

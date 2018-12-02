@@ -216,7 +216,7 @@ class ContactManager: NSObject {
         delegate.publicId = publicId
         delegate.directoryId = directoryId
         let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>(delegate: delegate)
-        addTask.errorTitle = "Permitted Contact List Error"
+        addTask.errorTitle = "Permitted ID List Error"
         addTask.sendRequest(request)
         
     }

@@ -71,6 +71,7 @@ class AddToWhitelistView: UIView {
             self.directoryIdTextField.resignFirstResponder()
             self.publicIdTextField.resignFirstResponder()
             self.removeFromSuperview()
+            self.whitelistViewController?.addIdView = nil
         })
         
     }
