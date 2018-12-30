@@ -10,6 +10,7 @@ import Chatto
 import ChattoAdditions
 import ChameleonFramework
 import AudioToolbox
+import CocoaLumberjack
 
 class ChattoViewController: BaseChatViewController {
 
@@ -140,7 +141,7 @@ class ChattoViewController: BaseChatViewController {
                     textMessage.read = true
                     try textMessage.encrypt()
                     textMessage.timestamp = Int64(Date().timeIntervalSince1970 * 1000)
-                    self?.messageManager.sendMessage(textMessage: textMessage, retry: false)
+                    try self?.messageManager.sendMessage(textMessage: textMessage, retry: false)
                     self?.dataSource?.addTextMessage(textMessage)
                     DispatchQueue.main.async {
                         self?.chatInputBar.textView.resignFirstResponder()
@@ -149,11 +150,12 @@ class ChattoViewController: BaseChatViewController {
                     }
                 }
                 catch {
-                    // TODO: Show alert
-                    print("\(error)")
+                    DDLogError("Error while sending message: \(error.localizedDescription)")
                 }
             }
-            // TODO: report error
+            else {
+                DDLogError("Invalid text message")
+            }
         }
         return item
     }

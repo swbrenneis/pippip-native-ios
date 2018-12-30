@@ -11,8 +11,93 @@ import CocoaLumberjack
 
 class Contact: NSObject, Comparable {
     
-    static func < (lhs: Contact, rhs: Contact) -> Bool {
+    static let currentVersion: Float = 2.0
 
+    var version: Float = Contact.currentVersion
+    var contactId: Int = -1
+    var publicId: String?
+    private var realDirectoryId: String?
+    var directoryId: String? {
+        get {
+            return realDirectoryId
+        }
+        set {
+            if let did = newValue {
+                if did.utf8.count == 0 {
+                    realDirectoryId =  nil
+                }
+                else {
+                    realDirectoryId = did
+                }
+            }
+            else {
+                realDirectoryId = newValue
+            }
+        }
+    }
+    var displayName: String {
+        get {
+            if let did = realDirectoryId {
+                return did
+            }
+            else {
+                return publicId!
+            }
+        }
+    }
+    var status: String = "invalid"
+    var initialMessage: String?
+    var timestamp: Int64 = 0
+    var currentIndex: Int = 0
+    var currentSequence: Int64 = 1
+    var authData: Data?
+    var nonce: Data?
+    var messageKeys: [ Data ]?
+    override var hash: Int {
+        return contactId
+    }
+
+    override init() {
+        super.init()
+    }
+
+    init(contactId: Int) {
+
+        self.contactId = contactId
+        
+        super.init()
+
+    }
+    
+    // Contact ID must be added after init!!
+    init(serverContact: ServerContact) {
+
+        version = Contact.currentVersion
+        publicId = serverContact.publicId
+        realDirectoryId = serverContact.directoryId
+        status = serverContact.status!
+        currentIndex = 0
+        currentSequence = 1
+        timestamp = Int64(serverContact.timestamp!)
+        if status == "accepted" {
+            authData = Data(base64Encoded: serverContact.authData!)
+            nonce = Data(base64Encoded: serverContact.nonce!)
+            messageKeys = [Data]()
+            for key in serverContact.messageKeys! {
+                messageKeys?.append(Data(base64Encoded: key)!)
+            }
+        }
+        
+        super.init()
+
+    }
+
+    static func ==(lhs: Contact, rhs: Contact) -> Bool {
+        return lhs.contactId == rhs.contactId
+    }
+
+    static func < (lhs: Contact, rhs: Contact) -> Bool {
+        
         switch lhs.status {
         case "pending":
             switch rhs.status {
@@ -69,93 +154,9 @@ class Contact: NSObject, Comparable {
         default:
             DDLogError("Invalid contact status in comparator")
         }
-
+        
         return true
         
     }
-
-    static let currentVersion: Float = 2.0
-
-    var version: Float = Contact.currentVersion
-    var contactId: Int = 0
-    var publicId: String = ""
-    private var realDirectoryId: String?
-    var directoryId: String? {
-        get {
-            return realDirectoryId
-        }
-        set {
-            if let did = newValue {
-                if did.utf8.count == 0 {
-                    realDirectoryId =  nil
-                }
-                else {
-                    realDirectoryId = did
-                }
-            }
-            else {
-                realDirectoryId = newValue
-            }
-        }
-    }
-    var displayName: String {
-        get {
-            if let did = realDirectoryId {
-                return did
-            }
-            else {
-                return publicId
-            }
-        }
-    }
-    var status: String = "invalid"
-    var timestamp: Int64 = 0
-    var currentIndex: Int = 0
-    var currentSequence: Int64 = 1
-    var authData: Data?
-    var nonce: Data?
-    var messageKeys: [ Data ]?
-    override var hash: Int {
-        return contactId
-    }
-
-    override init() {
-        super.init()
-    }
-
-    init(contactId: Int) {
-
-        self.contactId = contactId
-        
-        super.init()
-
-    }
     
-    // Contact ID must be added after init!!
-    init(serverContact: ServerContact) {
-
-        version = Contact.currentVersion
-        publicId = serverContact.publicId!
-        status = serverContact.status!
-        currentIndex = 0
-        currentSequence = 1
-        timestamp = Int64(serverContact.timestamp!)
-        if status == "accepted" {
-            authData = Data(base64Encoded: serverContact.authData!)
-            nonce = Data(base64Encoded: serverContact.nonce!)
-            messageKeys = [Data]()
-            for key in serverContact.messageKeys! {
-                messageKeys?.append(Data(base64Encoded: key)!)
-            }
-        }
-        
-        super.init()
-        directoryId = serverContact.directoryId
-
-    }
-
-    static func ==(lhs: Contact, rhs: Contact) -> Bool {
-        return lhs.contactId == rhs.contactId
-    }
-
 }

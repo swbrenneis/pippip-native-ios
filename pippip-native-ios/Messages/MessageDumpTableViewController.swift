@@ -11,8 +11,6 @@ import ChameleonFramework
 
 class MessageDumpTableViewController: UITableViewController {
 
-    var contactManager = ContactManager.instance
-    var messageManager = MessageManager()
     var textMessages = [Int: [TextMessage]]()
     var contactIds = [Int]()
 
@@ -23,6 +21,7 @@ class MessageDumpTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         var newIndex: Int = 0
+        let messageManager = MessageManager()
         let messages = messageManager.allTextMessages()
         for message in messages {
             if let index = contactIds.index(of: message.contactId) {
@@ -54,7 +53,7 @@ class MessageDumpTableViewController: UITableViewController {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDumpContactCell", for: indexPath)
         let contactId = contactIds[indexPath.section / 2]
-        if let contact = contactManager.getContact(contactId: contactId) {
+        if let contact = ContactsModel.instance.getContact(contactId: contactId) {
             cell.backgroundColor = UIColor.flatTeal
             cell.textLabel?.text = contact.displayName
             cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)

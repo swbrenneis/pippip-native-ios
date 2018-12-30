@@ -22,7 +22,7 @@ class ContactDetailView: UIView, Dismissable {
     
     var contactsViewController: ContactsViewController?
     var tapGesture: UITapGestureRecognizer?
-    var publicId = ""
+//    var publicId = ""
     var newId: String?
     var alertPresenter = AlertPresenter()
     var contact: Contact?
@@ -71,12 +71,11 @@ class ContactDetailView: UIView, Dismissable {
     func dismiss() {
 
         if let directoryId = newId, newId != contact?.directoryId {    // Directory ID has been changed
-            let contactManager = ContactManager.instance
-            if let _ = contactManager.getPublicId(directoryId: directoryId) {
+            if let _ = ContactsModel.instance.getPublicId(directoryId: directoryId) {
                 showConfirmationView()
             }
             else {
-                contactManager.setDirectoryId(contactId: contact!.contactId, directoryId: directoryId)
+                ContactsModel.instance.setDirectoryId(contactId: contact!.contactId, directoryId: directoryId)
                 doDismiss()
             }
         }
@@ -98,12 +97,24 @@ class ContactDetailView: UIView, Dismissable {
         })
 
     }
+
+    func onError(error: String) {
+        DDLogError("Retry contact request error: \(error)")
+        alertPresenter.errorAlert(title: "Retry Contact Request Error", message: Strings.errorServerResponse)
+    }
+    
+    func onResponse(response: AddContactResponse) {
+        
+        if response.result! == AddContactResponse.RETRIED {
+            alertPresenter.successAlert(message: Strings.successRequestResent)
+        }
+
+    }
     
     func setDetail(contact: Contact) {
         
         assert(Thread.isMainThread)
         self.contact = contact
-        publicId = contact.publicId
         publicIdLabel.text = contact.publicId
         directoryIdTextField.text = contact.directoryId
         statusImageView.image = UIImage(named: contact.status)
@@ -157,7 +168,10 @@ class ContactDetailView: UIView, Dismissable {
     @IBAction func resendRequestTapped(_ sender: Any) {
 
         do {
-            try ContactManager.instance.requestContact(publicId: publicId, directoryId: nil, retry: true)
+            let contactManager = ContactManager()
+            try contactManager.requestContact(contact: contact!, retry: true,
+                                              onResponse: { response in self.onResponse(response: response) },
+                                              onError: {error in self.onError(error: error) })
             alertPresenter.successAlert(message: "The request was resent to this contact")
         }
         catch {
@@ -170,12 +184,11 @@ class ContactDetailView: UIView, Dismissable {
     @IBAction func directoryIdSet(_ sender: Any) {
         
         let newId = directoryIdTextField.text
-        let contactManager = ContactManager.instance
-        if let _ = contactManager.getPublicId(directoryId: newId!) {
+        if let _ = ContactsModel.instance.getPublicId(directoryId: newId!) {
             showConfirmationView()
         }
         else {
-            contactManager.setDirectoryId(contactId: contact!.contactId, directoryId: newId)
+            ContactsModel.instance.setDirectoryId(contactId: contact!.contactId, directoryId: newId)
         }
         directoryIdSetButton.isHidden = true
     

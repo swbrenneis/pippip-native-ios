@@ -34,6 +34,7 @@ class Configurator: NSObject {
         return privateWhitelist
     }
     private var privateWhitelist = [Entity]()
+/*
     var authenticated: Bool {
         get {
             let config = getConfig()
@@ -48,6 +49,7 @@ class Configurator: NSObject {
             }
         }
     }
+ */
     var useLocalAuth: Bool {
         get {
             let config = getConfig()
@@ -76,6 +78,9 @@ class Configurator: NSObject {
             }
         }
     }
+    
+    static let publicPolicy = "public"
+    static let whitelistPolicy = "whitelist"
     var contactPolicy: String {
         get {
             let config = getConfig()
@@ -147,7 +152,7 @@ class Configurator: NSObject {
         }
     }
 
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
 
     func addWhitelistEntry(_ entity: Entity) throws {
 

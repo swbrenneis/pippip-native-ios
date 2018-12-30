@@ -25,7 +25,7 @@ class AuthenticationRequest: NSObject, APIRequestProtocol {
     var sessionId: Int32?
     var authToken: Int64?
 
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
 
     override init() {
 

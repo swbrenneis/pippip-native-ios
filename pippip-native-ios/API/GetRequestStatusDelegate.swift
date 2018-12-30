@@ -10,9 +10,6 @@ import UIKit
 
 class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequestStatusResponse> {
 
-    var contactManager = ContactManager.instance
-//    var publicId: String?
-//    var retry: Bool
     var alertPresenter = AlertPresenter()
     var config = Configurator()
 
@@ -31,7 +28,7 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
         AsyncNotifier.notify(name: Notifications.GetStatusComplete, object: nil)
         if response.contacts!.count > 0 {
             do {
-                let updates = try contactManager.contactsAcknowledged(serverContacts: response.contacts!)
+                let updates = try ContactsModel.instance.contactsAcknowledged(serverContacts: response.contacts!)
                 print("\(updates.count) contacts updated")
                 config.statusUpdates = updates.count
                 NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updates)

@@ -6,7 +6,8 @@
 //  Copyright © 2018 seComm. All rights reserved.
 //
 
-import UIKit
+import Foundation
+import CocoaLumberjack
 
 class Conversation: NSObject {
 
@@ -39,6 +40,7 @@ class Conversation: NSObject {
             return messageList.last
         }
     }
+    var alertPresenter = AlertPresenter()
 
     init(contact: Contact, windowSize: Int) {
 
@@ -260,7 +262,13 @@ class Conversation: NSObject {
             }
         }
         messageManager.updateMessage(textMessage)
-        messageManager.sendMessage(textMessage: textMessage, retry: true)
+        do {
+            try messageManager.sendMessage(textMessage: textMessage, retry: true)
+        }
+        catch {
+            DDLogError("Error while retrying messgae: \(error.localizedDescription)")
+            alertPresenter.errorAlert(title: "Retry Message Error", message: Strings.errorInternal)
+        }
 
     }
 

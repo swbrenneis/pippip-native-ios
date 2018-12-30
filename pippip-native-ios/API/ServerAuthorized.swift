@@ -26,7 +26,7 @@ class ServerAuthorized: NSObject, APIRequestProtocol {
     var deviceToken: String?
     var developer: Bool?
     
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
 
     override init() {
 

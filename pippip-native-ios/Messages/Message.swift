@@ -27,13 +27,10 @@ class Message: NSObject, Comparable {
     var compressed = false
     var failed = false
 
-    var config = Configurator()
-    var contactManager = ContactManager.instance
-
     init?(serverMessage: ServerMessage) {
 
         ciphertext = Data(base64Encoded: serverMessage.body!)
-        if let cid = contactManager.getContactId(publicId: serverMessage.fromId!) {
+        if let cid = ContactsModel.instance.getContactId(publicId: serverMessage.fromId!) {
             contactId = cid
         }
         else {
@@ -61,7 +58,7 @@ class Message: NSObject, Comparable {
         contact.currentSequence = sequence
 
         do {
-            try ContactManager.instance.updateKeyInfo(contactId: contact.contactId,
+            try ContactsModel.instance.updateKeyInfo(contactId: contact.contactId,
                                                       currentIndex: contact.currentIndex,
                                                       currentSequence: contact.currentSequence)
         }

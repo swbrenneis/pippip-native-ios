@@ -11,8 +11,8 @@ import CocoaLumberjack
 
 class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPendingRequestsResponse> {
 
-    var contactManager = ContactManager.instance
-
+    var config = Configurator()
+    
     override init(request: GetPendingRequests) {
         super.init(request: request)
 
@@ -22,19 +22,43 @@ class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPending
 
     }
 
+    func autoAcknowledge(requests: [ContactRequest]) {
+        
+        for contactRequest in requests {
+            guard let puid = contactRequest.publicId else { continue }
+            if ContactsModel.instance.whitelistIdExists(publicId: puid) {
+                AutoAcknowledgement().acknowledge(publicId: puid)
+            }
+        }
+
+    }
+    
     func getComplete(response: GetPendingRequestsResponse) {
         
         AsyncNotifier.notify(name: Notifications.GetRequestsComplete, object: nil)  // Notifies account session to proceed with status updates
         guard let requests = response.requests else { return }
         DDLogInfo("\(requests.count) pending requests returned")
         if requests.count > 0 {
-            contactManager.addRequests(requests: requests)
+            var contactRequests = [ContactRequest]()
+            for pair in requests {
+                if let contactRequest = ContactRequest(request: pair) {
+                    contactRequests.append(contactRequest)
+                }
+                else {
+                    DDLogError("Invalid request returned, public ID missing")
+                }
+            }
+            ContactsModel.instance.addRequests(requests: contactRequests)
+            if config.contactPolicy == Configurator.whitelistPolicy {
+                autoAcknowledge(requests: contactRequests)
+            }
             NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
         }
         else {
-            contactManager.clearRequests()
+            ContactsModel.instance.clearRequests()
         }
-        NotificationCenter.default.post(name: Notifications.RequestsUpdated, object: contactManager.pendingRequests.count)
+        NotificationCenter.default.post(name: Notifications.RequestsUpdated,
+                                        object: ContactsModel.instance.pendingRequests.count)
 
     }
 

@@ -10,15 +10,14 @@ import UIKit
 import ChameleonFramework
 import CocoaLumberjack
 
-class ContactsViewController: UIViewController, ControllerBlurProtocol {
+class ContactsViewController: UIViewController, ControllerBlurProtocol, ObserverProtocol {
 
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var tableBottom: NSLayoutConstraint!
-    
-    var contactManager = ContactManager.instance
+
     var config = Configurator()
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
     var authenticator: Authenticator!
     var debugging = false
     var alertPresenter: AlertPresenter!
@@ -28,6 +27,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     var addContactView: AddContactView?
     var contactDetailView: ContactDetailView?
     var requestsView: ContactRequestsView?
+    var messageView: InitialMessageView?
     var blurView = GestureBlurView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
 
     override func viewDidLoad() {
@@ -70,12 +70,13 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
         authenticator.viewWillAppear()
         alertPresenter.present = true
+        ContactsModel.instance.addObserver(action: .acknowledged, observer: self)
+        ContactsModel.instance.addObserver(action: .requestsAdded, observer: self)
+        ContactsModel.instance.addObserver(action: .requestDeleted, observer: self)
         NotificationCenter.default.addObserver(self, selector: #selector(contactRequested(_:)),
                                                name: Notifications.ContactRequested, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(contactDeleted(_:)),
                                                name: Notifications.ContactDeleted, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(requestAcknowledged(_:)),
-                                               name: Notifications.RequestAcknowledged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestsUpdated(_:)),
                                                name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestStatusUpdated(_:)),
@@ -86,7 +87,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
                                                name: Notifications.DirectoryIdSet, object: nil)
 
         setContactList()
-        contactRequests = Array(contactManager.pendingRequests)
+        contactRequests = Array(ContactsModel.instance.pendingRequests)
         tableView.reloadData()
         DispatchQueue.global().async {
             if self.config.statusUpdates > 0 {
@@ -106,9 +107,11 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         authenticator.viewWillDisappear()
         addContactView?.dismiss()
         contactDetailView?.forceDismiss()
+        ContactsModel.instance.removeObserver(action: .acknowledged, observer: self)
+        ContactsModel.instance.removeObserver(action: .requestsAdded, observer: self)
+        ContactsModel.instance.removeObserver(action: .requestDeleted, observer: self)
         NotificationCenter.default.removeObserver(self, name: Notifications.ContactRequested, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.ContactDeleted, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.RequestAcknowledged, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestsUpdated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.RequestStatusUpdated, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
@@ -128,16 +131,62 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         // Dispose of any resources that can be recreated.
     }
 
-    func setContactList() {
+    func contactAcknowledged(contact: Contact) {
+
+        assert(Thread.isMainThread)
+        if config.showIgnoredContacts || contact.status != "ignored" {
+            contactList.append(contact)
+            contactList = contactList.sorted()
+            guard let row = contactList.firstIndex(of: contact) else { return }
+            tableView.insertRows(at: [IndexPath(row: row, section: 0)], with: .left)
+        }
         
-        contactList.removeAll()
-        if config.showIgnoredContacts {
-            contactList.append(contentsOf: contactManager.allContacts)
+    }
+    
+    func requestsUpdated() {
+/*
+        assert(Thread.isMainThread)
+        // Do these in order because both sections are validated after inserts and deletes to any section
+        let newRequests = Array(ContactsModel.instance.pendingRequests)
+
+        if newRequests.count == 0 {
+            contactRequests = newRequests
+            // Check to see if section 0 is visible
+            var requestSectionVisible = false
+            if let paths = tableView.indexPathsForVisibleRows {
+                for path in paths {
+                    if path.section == 0 {
+                        requestSectionVisible = true
+                    }
+                }
+            }
+            // Clear the section if the request list is empty
+            if requestSectionVisible {
+                tableView.deleteRows(at: [IndexPath(row: 0, section: 0)], with: .right)
+            }
+        }
+        else if contactRequests.count == 0 {
+            contactRequests = newRequests
+            // Insert the requests button row
+            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .left)
         }
         else {
-            contactList.append(contentsOf: contactManager.pendingContactList)
-            contactList.append(contentsOf: contactManager.acceptedContactList)
-            contactList.append(contentsOf: contactManager.rejectedContactList)
+            contactRequests = newRequests
+        }
+*/
+    }
+    
+    func setContactList() {
+        
+        let contactsModel = ContactsModel.instance
+        contactList.removeAll()
+        if config.showIgnoredContacts {
+            contactList.append(contentsOf: contactsModel.allContacts)
+        }
+        else {
+            contactList.append(contentsOf: contactsModel.pendingContactList)
+            contactList.append(contentsOf: contactsModel.acceptedContactList)
+            contactList.append(contentsOf: contactsModel.rejectedContactList)
         }
 
     }
@@ -187,30 +236,85 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         UIView.animate(withDuration: 0.3, animations: {
             self.blurView.alpha = 0.6
             self.requestsView!.alpha = 1.0
-        }, completion: nil)
+        }, completion: { complete in
+            self.messageView?.messageTextView.becomeFirstResponder()
+        })
 
     }
+
+    func showInitialMessageView(publicId: String?, directoryId: String?) {
+        
+        let frame = self.view.bounds
+        let viewRect = CGRect(x: 0.0, y: 0.0,
+                              width: frame.width * 0.9,
+                              height: frame.height * 0.4)
+        messageView = InitialMessageView(frame: viewRect)
+        messageView!.contactsViewController = self
+        messageView!.directoryId = directoryId
+        messageView!.publicId = publicId
+        let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - 60.0)
+        messageView!.center = viewCenter
+        messageView!.alpha = 0.0
+        
+        blurView.toDismiss = messageView
+        self.view.addSubview(messageView!)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.messageView!.alpha = 1.0
+        }, completion: { complete in
+        })
+        
+    }
     
+    func update(observable: ObservableProtocol, object: Any?) {
+        
+        if let contactAction = object as? ObservedContactAction {
+            DispatchQueue.main.async {
+                switch contactAction {
+                case .added:
+                    break
+                case .deleted:
+                    break
+                case .acknowledged(let contact):
+                    self.contactAcknowledged(contact: contact)
+                    break
+                case .requestsAdded:
+                    self.requestsUpdated()
+                    break
+                case .requestsDeleted:
+                    self.requestsUpdated()
+                    break
+                }
+            }
+        }
+    }
+/*
     func validateAndRequest(publicId: String, directoryId: String) {
         
         addContactView?.dismiss()
         if directoryId == config.directoryId || publicId == sessionState.publicId {
             alertPresenter.errorAlert(title: "Add Contact Error", message: "Adding yourself is not allowed")
         }
-        else if contactManager.contactRequestExists(publicId) {
+        else if ContactsModel.instance.contactRequestExists(publicId: publicId, directoryId: directoryId) {
             alertPresenter.errorAlert(title: "Add Contact Error", message: "There is an existing request for that contact")
         }
         else if directoryId.count > 0 {
-            NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
-                                                   name: Notifications.DirectoryIdMatched, object: nil)
-            self.contactManager.matchDirectoryId(directoryId: directoryId, publicId: nil)
+            let directoryManager = DirectoryManager()
+            directoryManager.matchDirectoryId(directoryId: directoryId, publicId: nil,
+                                              onResponse: { response -> Void in
+                                                self.directoryIdMatched(response: response)
+            },
+                                              onError: { error in
+                                                DDLogError("Match directory ID error: \(error)")
+            })
         }
         else if publicId.count > 0 {
-            if let _ = contactManager.getContact(publicId: publicId) {
+            if let _ = ContactsModel.instance.getContact(publicId: publicId) {
                 alertPresenter.errorAlert(title: "Add Contact Error", message: "That contact is already in your list")
             }
             else {
                 do {
+                    let contactManager = ContactManager()
                     try contactManager.requestContact(publicId: publicId, directoryId: nil, retry: false)
                 }
                 catch {
@@ -221,7 +325,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         }
         
     }
-    
+*/
     @objc func editContacts(_ sender: Any) {
 
         tableView.setEditing(true, animated: true)
@@ -270,14 +374,12 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         assert(index >= 0)
         DispatchQueue.main.async {
             self.contactList.remove(at: index)
-            self.tableView.deleteRows(at: [IndexPath(row: index, section: 1)], with: .left)
+            self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .left)
         }
         
     }
 
     @objc func contactRequested(_ notification: Notification) {
-
-        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
 
         guard let contact = notification.object as? Contact else { return }
         contactList.append(contact)
@@ -288,24 +390,22 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
   
     }
 
-    @objc func directoryIdMatched(_ notification: Notification) {
-
-        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
-
-        guard let response = notification.object as? MatchDirectoryIdResponse else { return }
+    func directoryIdMatched(response: MatchDirectoryIdResponse) {
+/*
         DispatchQueue.main.async {
             self.addContactView?.dismiss()
         }
         if response.result == "found" {
             guard let publicId = response.publicId else { return }
-            if let _ = contactManager.getContact(publicId: publicId) {
+            if let _ = ContactsModel.instance.getContact(publicId: publicId) {
                 alertPresenter.errorAlert(title: "Add Contact Error", message: "That contact is already in your list")
             }
-            else if contactManager.contactRequestExists(publicId) {
+            else if ContactsModel.instance.contactRequestExists(publicId, directoryId: <#String?#>) {
                 alertPresenter.errorAlert(title: "Add Contact Error", message: "There is an existing request for that contact")
             }
             else {
                 do {
+                    let contactManager = ContactManager()
                     try contactManager.requestContact(publicId: publicId, directoryId: response.directoryId, retry: false)
                 }
                 catch {
@@ -317,7 +417,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         else {
             alertPresenter.errorAlert(title: "Add Contact Error", message: "That directory ID doesn't exist")
         }
-        
+*/
     }
 
     @objc func directoryIdSet(_ notification: Notification) {
@@ -327,7 +427,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
             for index in 0..<self.contactList.count {
                 if contact.contactId == self.contactList[index].contactId {
                     self.contactList[index] = contact
-                    if let contactCell = self.tableView.cellForRow(at: IndexPath(row: index, section: 1)) as? ContactCell {
+                    if let contactCell = self.tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? ContactCell {
                         contactCell.displayNameLabel.text = contact.displayName
                     }
                 }
@@ -336,39 +436,10 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
     }
 
-    @objc func requestAcknowledged(_ notification: Notification) {
-
-        guard let contact = notification.object as? Contact else { return }
-        DispatchQueue.main.async {
-            // Do these in order because both sections are validated after inserts and deletes to any section
-            self.contactRequests = Array(self.contactManager.pendingRequests)
-            // Get the current number of rows in section zero
-            var requestSectionCount = 0
-            if let paths = self.tableView.indexPathsForVisibleRows {
-                for path in paths {
-                    if path.section == 0 {
-                        requestSectionCount = 1
-                    }
-                }
-            }
-            if self.contactRequests.count == 0 && requestSectionCount > 0 {
-                self.tableView.deleteRows(at: [IndexPath(row: 0, section: 0)], with: .right)
-            }
-            if self.config.showIgnoredContacts || contact.status != "ignored" {
-                self.contactList.append(contact)
-                self.contactList = self.contactList.sorted()
-                guard let row = self.contactList.firstIndex(of: contact) else { return }
-                self.tableView.insertRows(at: [IndexPath(row: row, section: 1)], with: .left)
-            }
-        }
-        
-    }
-
     @objc func requestsUpdated(_ notification: Notification) {
-
-        contactRequests = Array(contactManager.pendingRequests)
+        
         DispatchQueue.main.async {
-            self.tableView.reloadSections(IndexSet(integer: 0), with: .left)
+            self.requestsUpdated()
         }
 
     }
@@ -386,7 +457,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         contactList = contactList.sorted()
         config.statusUpdates = 0
         DispatchQueue.main.async {
-            self.tableView.reloadSections(IndexSet(integer: 1), with: .top)
+            self.tableView.reloadSections(IndexSet(integer: 0), with: .top)
         }
 
     }
@@ -419,7 +490,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
                 self.addContactView?.alpha = 1.0
             }, completion: { complete in
                 self.navigationController?.setNavigationBarHidden(PippipGeometry.addContactViewHideNavBar, animated: true)
-                self.addContactView?.directoryIdTextField.becomeFirstResponder()
+                self.addContactView?.contactIdText.becomeFirstResponder()
             })
         }
         
@@ -462,67 +533,41 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
 
-//        return contactRequests.count > 0 ? 2 : 1
-        return 2
+        return 1
 
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-        if section == 0 {
-            return contactRequests.count > 0 ? 1 : 0
-        }
-        else {
-            return contactList.count
-        }
+        return contactList.count
 
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        if indexPath.section == 0 && contactRequests.count > 0 {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "PendingRequestsCell", for: indexPath)
-                as? PendingRequestsCell else { return UITableViewCell() }
-            return cell
-        }
-        else if indexPath.section == 1 {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "ContactCell", for: indexPath)
-                as? ContactCell else { return UITableViewCell() }
-            cell.setTheme()
-            cell.configure(contact: contactList[indexPath.row])
-            return cell
-        }
-        else {
-            return UITableViewCell()
-        }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ContactCell", for: indexPath)
+            as? ContactCell else { return UITableViewCell() }
+        cell.setTheme()
+        cell.configure(contact: contactList[indexPath.row])
+        return cell
 
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-        if indexPath.section == 0 {
-            return 60.0
-        }
-        else {
-            return 70.0
-        }
+        return 70.0
 
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
 
-        return indexPath.section == 1
+        return true
 
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        if indexPath.section == 0 {
-            showContactRequestsView()
-        }
-        else {
-            showContactDetailView(contact: contactList[indexPath.row])
-        }
+        showContactDetailView(contact: contactList[indexPath.row])
 
     }
 
@@ -530,7 +575,15 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
                    forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {
-            contactManager.deleteContact(publicId: contactList[indexPath.row].publicId)
+            let contactManager = ContactManager()
+            let contact = contactList[indexPath.row]
+            if let publicId = contact.publicId {
+                // All contacts in the list should have public IDs
+                contactManager.deleteContact(publicId: publicId)
+            }
+            else {
+                DDLogError("Contact consistency error, public ID missing")
+            }
         }
         
     }

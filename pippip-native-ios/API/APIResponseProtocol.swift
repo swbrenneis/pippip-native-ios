@@ -23,10 +23,10 @@ protocol APIResponseProtocol: Mappable {
     var authToken: Int64? { get set }
     var postId: Int { get set }
 
-    func processResponse() -> String?
+    func processResponse() throws
 
 }
-
+/*
 class NullResponse: NSObject, APIResponseProtocol {
 
     var error: String?
@@ -47,3 +47,4 @@ class NullResponse: NSObject, APIResponseProtocol {
     }
 
 }
+*/

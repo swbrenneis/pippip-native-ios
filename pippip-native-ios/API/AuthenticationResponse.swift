@@ -19,7 +19,7 @@ class AuthenticationResponse: NSObject, APIResponseProtocol {
     var postId: Int = 0
 
     var alertPresenter = AlertPresenter()
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {
@@ -40,26 +40,21 @@ class AuthenticationResponse: NSObject, APIResponseProtocol {
 
     }
     
-    func processResponse() -> String? {
-
-        if let _ = error {
-            return error
-        }
+    func processResponse() throws {
 
         if let encoded = Data(base64Encoded: data!) {
             do {
                 let codec = CKRSACodec(data: encoded)
                 try codec.decrypt(sessionState.userPrivateKey!)
                 sessionState.serverAuthRandom = codec.getBlock()
-                return nil
             }
             catch {
                 DDLogError("Error decrypting authentication response: \(error.localizedDescription)")
-                return "Invalid response from server"
+                throw ServerResponseError.invalidServerResponse
             }
         }
         else {
-            return "Response encoding error"
+            throw ServerResponseError.invalidResponseEncoding
         }
 
     }

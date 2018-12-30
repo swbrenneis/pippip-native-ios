@@ -24,7 +24,7 @@ class EnclaveRequest: NSObject, APIRequestProtocol {
     var authToken: Int64?
     var request: String?
 
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
 
     override init() {
 

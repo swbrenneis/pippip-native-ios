@@ -9,8 +9,20 @@
 import UIKit
 import ObjectMapper
 
+enum DirectoryIdResult: String {
+    case added = "added"
+    case deleted = "deleted"
+    case in_use = "in_use"
+    case updated = "updated"
+}
+
 class SetDirectoryIdResponse: NSObject, EnclaveResponseProtocol {
 
+    static let added = "added"
+    static let deleted = "deleted"
+    static let in_use = "in_use"
+    static let updated = "updated"
+    
     var error: String?
     var result: String?
 

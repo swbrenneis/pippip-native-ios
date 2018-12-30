@@ -11,9 +11,8 @@ import CocoaLumberjack
 
 class DeleteContactDelegate: EnclaveDelegate<DeleteContactRequest, DeleteContactResponse> {
 
-    var contactManager = ContactManager.instance
-    var messageManager = MessageManager()
-
+    var alertPresenter = AlertPresenter()
+    
     override init(request: DeleteContactRequest) {
         super.init(request: request)
 
@@ -25,17 +24,27 @@ class DeleteContactDelegate: EnclaveDelegate<DeleteContactRequest, DeleteContact
 
     func deleteComplete(response: DeleteContactResponse) {
 
-        // If there are duplicates in the database, this will prevent crashes
-        // However, duplicates will require two separate deletes
-        let result = response.result ?? "invalid response"
+        guard let result = response.result else {
+            DDLogError("Invalid server response, missing result")
+            alertPresenter.errorAlert(title: "Delete Contact Error", message: Strings.errorServerResponse)
+            return
+        }
         DDLogInfo("Delete contact result: \(result)")
-        if let contact = contactManager.getContact(publicId: response.publicId!) {
-            contactManager.deleteContact(contact: contact)
-            messageManager.clearMessages(contactId: contact.contactId)
-            NotificationCenter.default.post(name: Notifications.ContactDeleted, object: contact.publicId)
+        if let contact = ContactsModel.instance.getContact(publicId: response.publicId!) {
+            do {
+                try ContactsModel.instance.deleteContact(contact: contact)
+                let messageManager = MessageManager()
+                messageManager.clearMessages(contactId: contact.contactId)
+                NotificationCenter.default.post(name: Notifications.ContactDeleted, object: contact.publicId)
+            }
+            catch {
+                DDLogError("Error while deleting contact: \(error.localizedDescription)")
+                alertPresenter.errorAlert(title: "Delete Contact Error", message: Strings.errorInternal)
+            }
         }
         else {
             DDLogError("Contact doesn't exist in local database")
+            alertPresenter.errorAlert(title: "Delete Contact Error", message: Strings.errorInternal)
         }
 
     }

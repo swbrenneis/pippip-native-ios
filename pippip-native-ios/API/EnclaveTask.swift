@@ -13,11 +13,11 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
 
     var delegate: EnclaveDelegate<RequestT, ResponseT>?
     var errorTitle: String?
-    var secommAPI = SecommAPI()
+    var secommAPI = SecommAPI.instance
     var alertPresenter = AlertPresenter()
     var request: EnclaveRequestProtocol!
     var serverAuthenticator: ServerAuthenticator?
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
 
     init(delegate: EnclaveDelegate<RequestT, ResponseT>) {
 
@@ -31,29 +31,35 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
         
         if response.needsAuth! {
 //            if !sessionState.reauth {
-                // reauthentication latch
-                sessionState.reauth = true
                 AccountSession.instance.needsAuth()
                 DispatchQueue.global().async {
                     NotificationCenter.default.addObserver(self, selector: #selector(self.reauthComplete(_:)),
                                                            name: Notifications.ReauthComplete, object: nil)
                     self.serverAuthenticator = ServerAuthenticator(authView: nil)
-                    self.serverAuthenticator!.reauthenticate()
+//                    self.serverAuthenticator!.reauthenticate()
                 }
 //            }
         }
         else {
-            if let error = response.processResponse() {
-                DDLogError("Enclave response error: \(error)")
-                self.delegate?.responseError(error)
+            do {
+                if let error = response.error {
+                    DDLogError("Enclave response error: \(error)")
+                    self.delegate?.responseError(error)
+                }
+                else {
+                    try response.processResponse()
+                    if let enclaveResponse = ResponseT(JSONString: response.json) {
+                        self.delegate?.requestComplete(enclaveResponse)
+                    }
+                    else {
+                        DDLogError("Invalid JSON response from server")
+                        DDLogError(response.json)
+                        self.delegate?.responseError("Invalid response from the server")
+                    }
+                }
             }
-            else if let enclaveResponse = ResponseT(JSONString: response.json) {
-                self.delegate?.requestComplete(enclaveResponse)
-            }
-            else {
-                DDLogError("Invalid JSON response from server")
-                DDLogError(response.json)
-                self.delegate?.responseError("Invalid response from the server")
+            catch {
+                self.delegate?.responseError(error.localizedDescription)
             }
         }
     

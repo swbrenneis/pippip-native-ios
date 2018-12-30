@@ -38,6 +38,7 @@
     }];
 #endif
 
+    [AccountSession.instance loadAccount];
     [AccountSession.instance appStarted];
     return YES;
 

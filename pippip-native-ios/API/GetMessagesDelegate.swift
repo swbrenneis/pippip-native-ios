@@ -11,9 +11,6 @@ import CocoaLumberjack
 
 class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesResponse> {
 
-    var contactManager = ContactManager.instance
-    var messageManager = MessageManager()
-
     override init(request: GetMessagesRequest) {
         super.init(request: request)
 
@@ -33,14 +30,15 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
         for message in response.messages! {
             if let textMessage = TextMessage(serverMessage: message) {
                 textMessages.append(textMessage)
-                try! contactManager.updateTimestamp(contactId: textMessage.contactId, timestamp: textMessage.timestamp)
+                try! ContactsModel.instance.updateTimestamp(contactId: textMessage.contactId, timestamp: textMessage.timestamp)
             }
             else {
                 DDLogWarn("Invalid contact information in server message")
             }
         }
         if !textMessages.isEmpty {
-            messageManager.addTextMessages(textMessages)
+            let messageManager = MessageManager()
+            MessagesModel.instance.addTextMessages(textMessages)
             messageManager.acknowledgeMessages(textMessages)
         }
 

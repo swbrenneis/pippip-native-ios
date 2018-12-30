@@ -25,7 +25,7 @@ class NewAccountRequest: NSObject, APIRequestProtocol {
     var publicId: String?
     var userPublicKey: String?
     
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
 
     override init() {
 

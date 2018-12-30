@@ -32,8 +32,8 @@
 		5511E9C620C2D1C20080C0DF /* GetPendingRequestsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9C520C2D1C20080C0DF /* GetPendingRequestsResponse.swift */; };
 		5511E9C820C2DFA10080C0DF /* MatchDirectoryIdRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9C720C2DFA10080C0DF /* MatchDirectoryIdRequest.swift */; };
 		5511E9CA20C2DFB30080C0DF /* MatchDirectoryIdResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9C920C2DFB30080C0DF /* MatchDirectoryIdResponse.swift */; };
-		5511E9CC20C301720080C0DF /* RequestContactRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9CB20C301710080C0DF /* RequestContactRequest.swift */; };
-		5511E9CE20C301850080C0DF /* RequestContactResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9CD20C301850080C0DF /* RequestContactResponse.swift */; };
+		5511E9CC20C301720080C0DF /* AddContactRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9CB20C301710080C0DF /* AddContactRequest.swift */; };
+		5511E9CE20C301850080C0DF /* AddContactResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9CD20C301850080C0DF /* AddContactResponse.swift */; };
 		5511E9D020C325DD0080C0DF /* SetContactPolicyRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9CF20C325DD0080C0DF /* SetContactPolicyRequest.swift */; };
 		5511E9D220C325F40080C0DF /* SetContactPolicyResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9D120C325F40080C0DF /* SetContactPolicyResponse.swift */; };
 		5511E9D420C32A3B0080C0DF /* SetDirectoryIdRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5511E9D320C32A3B0080C0DF /* SetDirectoryIdRequest.swift */; };
@@ -55,6 +55,9 @@
 		55187ED020BE427700F94792 /* ServerAuthChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55187ECF20BE427700F94792 /* ServerAuthChallenge.swift */; };
 		55187ED220BE4A1C00F94792 /* ClientAuthorized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55187ED120BE4A1C00F94792 /* ClientAuthorized.swift */; };
 		55187ED420BE4C8900F94792 /* ServerAuthorized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55187ED320BE4C8900F94792 /* ServerAuthorized.swift */; };
+		551CF2C621D44DD000B5F070 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551CF2C521D44DD000B5F070 /* APIError.swift */; };
+		551CF2C821D4613B00B5F070 /* ServerResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551CF2C721D4613B00B5F070 /* ServerResponseError.swift */; };
+		551CF2CA21D46AD800B5F070 /* ChallengeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551CF2C921D46AD800B5F070 /* ChallengeError.swift */; };
 		551DBDD320D40858005D88D0 /* QuickStart.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DBDD220D40858005D88D0 /* QuickStart.storyboard */; };
 		55206DA92075486000B0B246 /* SelectContactView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55206DA82075486000B0B246 /* SelectContactView.xib */; };
 		55206DAD20755E1500B0B246 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */; };
@@ -78,7 +81,6 @@
 		5538184E215D3679001061E7 /* pippip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5538184D215D3679001061E7 /* pippip.mp3 */; };
 		55381850216510F4001061E7 /* ShowIgnoredCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5538184F216510F4001061E7 /* ShowIgnoredCell.swift */; };
 		553A7BD21FBFF4020037A4E7 /* libgmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55AA556D1FA1527C00A7026B /* libgmp.a */; };
-		554D01C2207BE35400C19373 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C1207BE35400C19373 /* SessionState.swift */; };
 		554D01C4207C0CEC00C19373 /* UserVault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C3207C0CEC00C19373 /* UserVault.swift */; };
 		554D01C6207C54A900C19373 /* LocalPassphraseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C5207C54A900C19373 /* LocalPassphraseCell.swift */; };
 		554D01C8207D0E2500C19373 /* ContactManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D01C7207D0E2500C19373 /* ContactManager.swift */; };
@@ -98,19 +100,23 @@
 		5557B471211F0A2C00FE1775 /* DeleteAccountView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */; };
 		5557B473212066A700FE1775 /* VerifyPassphraseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5557B472212066A700FE1775 /* VerifyPassphraseView.swift */; };
 		5557B475212066CE00FE1775 /* VerifyPassphraseView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5557B474212066CE00FE1775 /* VerifyPassphraseView.xib */; };
+		555AC6EA21D6E7B50068C229 /* AuthenticationRequestStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555AC6E921D6E7B50068C229 /* AuthenticationRequestStep.swift */; };
+		555AC6EC21D6FB490068C229 /* AuthChallengeStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555AC6EB21D6FB490068C229 /* AuthChallengeStep.swift */; };
+		555AC6EE21D701080068C229 /* AuthorizedStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555AC6ED21D701080068C229 /* AuthorizedStep.swift */; };
+		555AC6F021D713870068C229 /* Reauthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555AC6EF21D713870068C229 /* Reauthenticator.swift */; };
+		555AC6F221D721520068C229 /* WhitelistError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555AC6F121D721520068C229 /* WhitelistError.swift */; };
+		555AC6F421D79D760068C229 /* MessagesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555AC6F321D79D760068C229 /* MessagesModel.swift */; };
+		555AC6F621D7A9E80068C229 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555AC6F521D7A9E80068C229 /* Strings.swift */; };
+		555AC6F821D7C4B80068C229 /* AutoAcknowledgement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555AC6F721D7C4B80068C229 /* AutoAcknowledgement.swift */; };
 		555B0D45204CD80000D99807 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 555B0D44204CD80000D99807 /* UserNotifications.framework */; };
 		55721A0A20C86876008FE9F6 /* EnclaveDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0920C86876008FE9F6 /* EnclaveDelegate.swift */; };
-		55721A0C20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0B20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift */; };
 		55721A0E20C97A5C008FE9F6 /* AcknowledgeMessagesDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0D20C97A5C008FE9F6 /* AcknowledgeMessagesDelegate.swift */; };
-		55721A1020C98111008FE9F6 /* AcknowledgeRequestDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0F20C98111008FE9F6 /* AcknowledgeRequestDelegate.swift */; };
 		55721A1220C98504008FE9F6 /* DeleteContactDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1120C98504008FE9F6 /* DeleteContactDelegate.swift */; };
 		55721A1420C9900F008FE9F6 /* GetMessagesDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1320C9900F008FE9F6 /* GetMessagesDelegate.swift */; };
 		55721A1620C9956E008FE9F6 /* GetPendingRequestsDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1520C9956E008FE9F6 /* GetPendingRequestsDelegate.swift */; };
 		55721A1820C99DEF008FE9F6 /* GetRequestStatusDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1720C99DEF008FE9F6 /* GetRequestStatusDelegate.swift */; };
-		55721A1A20C9A5F5008FE9F6 /* RequestContactDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1920C9A5F5008FE9F6 /* RequestContactDelegate.swift */; };
 		55721A1C20C9A88E008FE9F6 /* SendMessageDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1B20C9A88E008FE9F6 /* SendMessageDelegate.swift */; };
 		55721A1E20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1D20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift */; };
-		55721A2020C9F973008FE9F6 /* SetDirectoryIdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1F20C9F973008FE9F6 /* SetDirectoryIdDelegate.swift */; };
 		55721A2220C9FB52008FE9F6 /* UpdateWhitelistDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A2120C9FB52008FE9F6 /* UpdateWhitelistDelegate.swift */; };
 		5575D3C420618FD200593AF7 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5575D3C320618FD200593AF7 /* LocalAuthentication.framework */; };
 		557AE8BC21B096330064CEDB /* SessionObserverProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557AE8BB21B096330064CEDB /* SessionObserverProtocol.swift */; };
@@ -125,12 +131,13 @@
 		557C2B742096A03D0069336D /* PippipMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C2B732096A03D0069336D /* PippipMessageViewModel.swift */; };
 		5586B882206428A400641514 /* PublicIdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B881206428A400641514 /* PublicIdCell.swift */; };
 		5586B8852064826000641514 /* EditWhitelistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B8842064826000641514 /* EditWhitelistCell.swift */; };
-		5586B8872064882B00641514 /* SessionStateActual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B8862064882B00641514 /* SessionStateActual.swift */; };
+		5586B8872064882B00641514 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B8862064882B00641514 /* SessionState.swift */; };
 		5586B88C206493D000641514 /* HexCodec.m in Sources */ = {isa = PBXBuildFile; fileRef = 5586B88B206493D000641514 /* HexCodec.m */; };
 		5586B88E2064951000641514 /* ParameterGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B88D2064951000641514 /* ParameterGenerator.swift */; };
 		5586B8922064A7AF00641514 /* ErrorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B8912064A7AF00641514 /* ErrorDelegate.swift */; };
 		5586B8942065190B00641514 /* NotificationErrorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586B8932065190B00641514 /* NotificationErrorDelegate.swift */; };
 		5592334A20667094008AEEAE /* AsyncNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5592334920667094008AEEAE /* AsyncNotifier.swift */; };
+		55924C0E21D92CB7009568E7 /* MessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55924C0D21D92CB7009568E7 /* MessageError.swift */; };
 		5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5592A5881F8BBB4400F08BF5 /* AppDelegate.m */; };
 		5592A5921F8BBB4400F08BF5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5592A5901F8BBB4400F08BF5 /* Main.storyboard */; };
 		5592A5941F8BBB4400F08BF5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5592A5931F8BBB4400F08BF5 /* Assets.xcassets */; };
@@ -186,6 +193,9 @@
 		55AA55661FA14D7100A7026B /* Base64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55481FA14D7100A7026B /* Base64.cc */; };
 		55AA55671FA14D7100A7026B /* RSAPrivateKey.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA55491FA14D7100A7026B /* RSAPrivateKey.cc */; };
 		55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA554A1FA14D7100A7026B /* BigInteger.cc */; };
+		55AAEFE621D6C9C100BCEB8D /* AuthStepProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AAEFE521D6C9C100BCEB8D /* AuthStepProtocol.swift */; };
+		55AAEFE821D6C9F000BCEB8D /* AuthContextProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AAEFE721D6C9F000BCEB8D /* AuthContextProtocol.swift */; };
+		55AAEFEA21D6CF8A00BCEB8D /* StartSessionStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AAEFE921D6CF8A00BCEB8D /* StartSessionStep.swift */; };
 		55AD26F62121CF1200FD8A9A /* ChangePassphraseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AD26F52121CF1200FD8A9A /* ChangePassphraseView.swift */; };
 		55AD26FA2121CF9E00FD8A9A /* ChangePassphraseView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55AD26F92121CF9E00FD8A9A /* ChangePassphraseView.xib */; };
 		55B0DBBA2048962400F6B29B /* CopyableLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B0DBB92048962400F6B29B /* CopyableLabel.m */; };
@@ -196,6 +206,8 @@
 		55BFD36520CF18300084C555 /* DatabaseMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36420CF18300084C555 /* DatabaseMessage.swift */; };
 		55BFD36720D04C0D0084C555 /* AccountDeleter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36620D04C0D0084C555 /* AccountDeleter.swift */; };
 		55BFD36920D052FC0084C555 /* AccountSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD36820D052FC0084C555 /* AccountSession.swift */; };
+		55C0BF1521D82B29003A35E7 /* InitialMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C0BF1421D82B29003A35E7 /* InitialMessageView.swift */; };
+		55C0BF1721D82B79003A35E7 /* InitialMessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55C0BF1621D82B79003A35E7 /* InitialMessageView.xib */; };
 		55C42DB521A21770007E0AF9 /* AutoAcceptCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C42DB421A21770007E0AF9 /* AutoAcceptCell.swift */; };
 		55C49BFA21402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C49BF921402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift */; };
 		55C49BFC2140303400EEED14 /* PippipTextMessagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C49BFB2140303400EEED14 /* PippipTextMessagePresenter.swift */; };
@@ -212,6 +224,12 @@
 		55E06BF920BC6EA20034C652 /* iphone_send_sms.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 55E06BF720BC6EA20034C652 /* iphone_send_sms.mp3 */; };
 		55E06BFD20BC961D0034C652 /* SecommAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E06BFC20BC961D0034C652 /* SecommAPI.swift */; };
 		55E7593E20674DAE009BAA1C /* WhitelistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E7593D20674DAE009BAA1C /* WhitelistViewController.swift */; };
+		55E7D82221D3C35C00686159 /* EnclaveTaskObserverProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E7D82121D3C35B00686159 /* EnclaveTaskObserverProtocol.swift */; };
+		55E7D82821D3CE5C00686159 /* ObservableProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E7D82721D3CE5C00686159 /* ObservableProtocol.swift */; };
+		55E7D82A21D3CF4D00686159 /* ObserverProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E7D82921D3CF4D00686159 /* ObserverProtocol.swift */; };
+		55E7D82C21D3D00000686159 /* ContactsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E7D82B21D3D00000686159 /* ContactsModel.swift */; };
+		55E7D82E21D3DC4F00686159 /* DirectoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E7D82D21D3DC4F00686159 /* DirectoryManager.swift */; };
+		55E7D83021D3DDBF00686159 /* EnclaveRequester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E7D82F21D3DDBF00686159 /* EnclaveRequester.swift */; };
 		55E970A120AA82F7008C2F39 /* EnclaveRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970A020AA82F7008C2F39 /* EnclaveRequest.swift */; };
 		55E970A320AAE05E008C2F39 /* ClientAuthChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970A220AAE05E008C2F39 /* ClientAuthChallenge.swift */; };
 		55E970A520AAEF49008C2F39 /* AuthenticationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970A420AAEF49008C2F39 /* AuthenticationRequest.swift */; };
@@ -298,8 +316,8 @@
 		5511E9C520C2D1C20080C0DF /* GetPendingRequestsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPendingRequestsResponse.swift; sourceTree = "<group>"; };
 		5511E9C720C2DFA10080C0DF /* MatchDirectoryIdRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchDirectoryIdRequest.swift; sourceTree = "<group>"; };
 		5511E9C920C2DFB30080C0DF /* MatchDirectoryIdResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchDirectoryIdResponse.swift; sourceTree = "<group>"; };
-		5511E9CB20C301710080C0DF /* RequestContactRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestContactRequest.swift; sourceTree = "<group>"; };
-		5511E9CD20C301850080C0DF /* RequestContactResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestContactResponse.swift; sourceTree = "<group>"; };
+		5511E9CB20C301710080C0DF /* AddContactRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactRequest.swift; sourceTree = "<group>"; };
+		5511E9CD20C301850080C0DF /* AddContactResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactResponse.swift; sourceTree = "<group>"; };
 		5511E9CF20C325DD0080C0DF /* SetContactPolicyRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetContactPolicyRequest.swift; sourceTree = "<group>"; };
 		5511E9D120C325F40080C0DF /* SetContactPolicyResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetContactPolicyResponse.swift; sourceTree = "<group>"; };
 		5511E9D320C32A3B0080C0DF /* SetDirectoryIdRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetDirectoryIdRequest.swift; sourceTree = "<group>"; };
@@ -321,6 +339,9 @@
 		55187ECF20BE427700F94792 /* ServerAuthChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerAuthChallenge.swift; sourceTree = "<group>"; };
 		55187ED120BE4A1C00F94792 /* ClientAuthorized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientAuthorized.swift; sourceTree = "<group>"; };
 		55187ED320BE4C8900F94792 /* ServerAuthorized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerAuthorized.swift; sourceTree = "<group>"; };
+		551CF2C521D44DD000B5F070 /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
+		551CF2C721D4613B00B5F070 /* ServerResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerResponseError.swift; sourceTree = "<group>"; };
+		551CF2C921D46AD800B5F070 /* ChallengeError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeError.swift; sourceTree = "<group>"; };
 		551DBDD220D40858005D88D0 /* QuickStart.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = QuickStart.storyboard; sourceTree = "<group>"; };
 		55206DA82075486000B0B246 /* SelectContactView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectContactView.xib; sourceTree = "<group>"; };
 		55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
@@ -343,7 +364,6 @@
 		5536A68C206897D200B7E6D8 /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
 		5538184D215D3679001061E7 /* pippip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = pippip.mp3; sourceTree = "<group>"; };
 		5538184F216510F4001061E7 /* ShowIgnoredCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowIgnoredCell.swift; sourceTree = "<group>"; };
-		554D01C1207BE35400C19373 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
 		554D01C3207C0CEC00C19373 /* UserVault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserVault.swift; sourceTree = "<group>"; };
 		554D01C5207C54A900C19373 /* LocalPassphraseCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPassphraseCell.swift; sourceTree = "<group>"; };
 		554D01C7207D0E2500C19373 /* ContactManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactManager.swift; sourceTree = "<group>"; };
@@ -363,20 +383,24 @@
 		5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DeleteAccountView.xib; sourceTree = "<group>"; };
 		5557B472212066A700FE1775 /* VerifyPassphraseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyPassphraseView.swift; sourceTree = "<group>"; };
 		5557B474212066CE00FE1775 /* VerifyPassphraseView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VerifyPassphraseView.xib; sourceTree = "<group>"; };
+		555AC6E921D6E7B50068C229 /* AuthenticationRequestStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRequestStep.swift; sourceTree = "<group>"; };
+		555AC6EB21D6FB490068C229 /* AuthChallengeStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthChallengeStep.swift; sourceTree = "<group>"; };
+		555AC6ED21D701080068C229 /* AuthorizedStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizedStep.swift; sourceTree = "<group>"; };
+		555AC6EF21D713870068C229 /* Reauthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reauthenticator.swift; sourceTree = "<group>"; };
+		555AC6F121D721520068C229 /* WhitelistError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhitelistError.swift; sourceTree = "<group>"; };
+		555AC6F321D79D760068C229 /* MessagesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesModel.swift; sourceTree = "<group>"; };
+		555AC6F521D7A9E80068C229 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
+		555AC6F721D7C4B80068C229 /* AutoAcknowledgement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoAcknowledgement.swift; sourceTree = "<group>"; };
 		555B0D43204CA4E300D99807 /* pippip-native-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "pippip-native-ios.entitlements"; sourceTree = "<group>"; };
 		555B0D44204CD80000D99807 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		55721A0920C86876008FE9F6 /* EnclaveDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnclaveDelegate.swift; sourceTree = "<group>"; };
-		55721A0B20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchDirectoryIdDelegate.swift; sourceTree = "<group>"; };
 		55721A0D20C97A5C008FE9F6 /* AcknowledgeMessagesDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgeMessagesDelegate.swift; sourceTree = "<group>"; };
-		55721A0F20C98111008FE9F6 /* AcknowledgeRequestDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgeRequestDelegate.swift; sourceTree = "<group>"; };
 		55721A1120C98504008FE9F6 /* DeleteContactDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteContactDelegate.swift; sourceTree = "<group>"; };
 		55721A1320C9900F008FE9F6 /* GetMessagesDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMessagesDelegate.swift; sourceTree = "<group>"; };
 		55721A1520C9956E008FE9F6 /* GetPendingRequestsDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPendingRequestsDelegate.swift; sourceTree = "<group>"; };
 		55721A1720C99DEF008FE9F6 /* GetRequestStatusDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetRequestStatusDelegate.swift; sourceTree = "<group>"; };
-		55721A1920C9A5F5008FE9F6 /* RequestContactDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestContactDelegate.swift; sourceTree = "<group>"; };
 		55721A1B20C9A88E008FE9F6 /* SendMessageDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageDelegate.swift; sourceTree = "<group>"; };
 		55721A1D20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetContactPolicyDelegate.swift; sourceTree = "<group>"; };
-		55721A1F20C9F973008FE9F6 /* SetDirectoryIdDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetDirectoryIdDelegate.swift; sourceTree = "<group>"; };
 		55721A2120C9FB52008FE9F6 /* UpdateWhitelistDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateWhitelistDelegate.swift; sourceTree = "<group>"; };
 		5575D3C320618FD200593AF7 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		557AE8BB21B096330064CEDB /* SessionObserverProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionObserverProtocol.swift; sourceTree = "<group>"; };
@@ -392,13 +416,14 @@
 		5586B880206428A400641514 /* pippip-native-ios-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pippip-native-ios-Bridging-Header.h"; sourceTree = "<group>"; };
 		5586B881206428A400641514 /* PublicIdCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicIdCell.swift; sourceTree = "<group>"; };
 		5586B8842064826000641514 /* EditWhitelistCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditWhitelistCell.swift; sourceTree = "<group>"; };
-		5586B8862064882B00641514 /* SessionStateActual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStateActual.swift; sourceTree = "<group>"; };
+		5586B8862064882B00641514 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
 		5586B88A206493D000641514 /* HexCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HexCodec.h; sourceTree = "<group>"; };
 		5586B88B206493D000641514 /* HexCodec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HexCodec.m; sourceTree = "<group>"; };
 		5586B88D2064951000641514 /* ParameterGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterGenerator.swift; sourceTree = "<group>"; };
 		5586B8912064A7AF00641514 /* ErrorDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorDelegate.swift; sourceTree = "<group>"; };
 		5586B8932065190B00641514 /* NotificationErrorDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationErrorDelegate.swift; sourceTree = "<group>"; };
 		5592334920667094008AEEAE /* AsyncNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncNotifier.swift; sourceTree = "<group>"; };
+		55924C0D21D92CB7009568E7 /* MessageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageError.swift; sourceTree = "<group>"; };
 		5592A5841F8BBB4400F08BF5 /* pippip-native-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pippip-native-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5592A5871F8BBB4400F08BF5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		5592A5881F8BBB4400F08BF5 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -529,6 +554,9 @@
 		55AA554B1FA14D7100A7026B /* KeyPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyPair.h; sourceTree = "<group>"; };
 		55AA55691FA14E5900A7026B /* gmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmp.h; sourceTree = "<group>"; };
 		55AA556D1FA1527C00A7026B /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgmp.a; sourceTree = "<group>"; };
+		55AAEFE521D6C9C100BCEB8D /* AuthStepProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStepProtocol.swift; sourceTree = "<group>"; };
+		55AAEFE721D6C9F000BCEB8D /* AuthContextProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthContextProtocol.swift; sourceTree = "<group>"; };
+		55AAEFE921D6CF8A00BCEB8D /* StartSessionStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartSessionStep.swift; sourceTree = "<group>"; };
 		55AD26F52121CF1200FD8A9A /* ChangePassphraseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePassphraseView.swift; sourceTree = "<group>"; };
 		55AD26F92121CF9E00FD8A9A /* ChangePassphraseView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChangePassphraseView.xib; sourceTree = "<group>"; };
 		55B0DBB82048962400F6B29B /* CopyableLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CopyableLabel.h; sourceTree = "<group>"; };
@@ -540,6 +568,8 @@
 		55BFD36420CF18300084C555 /* DatabaseMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMessage.swift; sourceTree = "<group>"; };
 		55BFD36620D04C0D0084C555 /* AccountDeleter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDeleter.swift; sourceTree = "<group>"; };
 		55BFD36820D052FC0084C555 /* AccountSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSession.swift; sourceTree = "<group>"; };
+		55C0BF1421D82B29003A35E7 /* InitialMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialMessageView.swift; sourceTree = "<group>"; };
+		55C0BF1621D82B79003A35E7 /* InitialMessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InitialMessageView.xib; sourceTree = "<group>"; };
 		55C42DB421A21770007E0AF9 /* AutoAcceptCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoAcceptCell.swift; sourceTree = "<group>"; };
 		55C49BF921402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessagePresenterBuilder.swift; sourceTree = "<group>"; };
 		55C49BFB2140303400EEED14 /* PippipTextMessagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTextMessagePresenter.swift; sourceTree = "<group>"; };
@@ -557,6 +587,12 @@
 		55E06BF720BC6EA20034C652 /* iphone_send_sms.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = iphone_send_sms.mp3; sourceTree = "<group>"; };
 		55E06BFC20BC961D0034C652 /* SecommAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecommAPI.swift; sourceTree = "<group>"; };
 		55E7593D20674DAE009BAA1C /* WhitelistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhitelistViewController.swift; sourceTree = "<group>"; };
+		55E7D82121D3C35B00686159 /* EnclaveTaskObserverProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnclaveTaskObserverProtocol.swift; sourceTree = "<group>"; };
+		55E7D82721D3CE5C00686159 /* ObservableProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableProtocol.swift; sourceTree = "<group>"; };
+		55E7D82921D3CF4D00686159 /* ObserverProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserverProtocol.swift; sourceTree = "<group>"; };
+		55E7D82B21D3D00000686159 /* ContactsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsModel.swift; sourceTree = "<group>"; };
+		55E7D82D21D3DC4F00686159 /* DirectoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryManager.swift; sourceTree = "<group>"; };
+		55E7D82F21D3DDBF00686159 /* EnclaveRequester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnclaveRequester.swift; sourceTree = "<group>"; };
 		55E970A020AA82F7008C2F39 /* EnclaveRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnclaveRequest.swift; sourceTree = "<group>"; };
 		55E970A220AAE05E008C2F39 /* ClientAuthChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientAuthChallenge.swift; sourceTree = "<group>"; };
 		55E970A420AAEF49008C2F39 /* AuthenticationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRequest.swift; sourceTree = "<group>"; };
@@ -652,14 +688,21 @@
 		55579E582027638800131A54 /* Auth */ = {
 			isa = PBXGroup;
 			children = (
+				55AAEFE721D6C9F000BCEB8D /* AuthContextProtocol.swift */,
 				5506D7BD216BBD3D0042FE73 /* AuthenticatedControllerProtocol.swift */,
+				555AC6E921D6E7B50068C229 /* AuthenticationRequestStep.swift */,
 				55E970AC20AE6927008C2F39 /* Authenticator.swift */,
+				555AC6EB21D6FB490068C229 /* AuthChallengeStep.swift */,
+				555AC6ED21D701080068C229 /* AuthorizedStep.swift */,
+				55AAEFE521D6C9C100BCEB8D /* AuthStepProtocol.swift */,
 				55E970AA20AE2C11008C2F39 /* AuthView.swift */,
 				5506D7B7216AA85A0042FE73 /* Keychain.swift */,
 				55F2758C20C1A2CB002687C9 /* NewAccountCreator.swift */,
 				5557B45E211CCDD400FE1775 /* NewAccountView.swift */,
+				555AC6EF21D713870068C229 /* Reauthenticator.swift */,
 				55245F4220BCD62D00E6ECB6 /* ServerAuthenticator.swift */,
 				5557B45A211C9A1000FE1775 /* SignInView.swift */,
+				55AAEFE921D6CF8A00BCEB8D /* StartSessionStep.swift */,
 				554D01C3207C0CEC00C19373 /* UserVault.swift */,
 			);
 			path = Auth;
@@ -674,14 +717,15 @@
 				55FD018F20B102510028435E /* AlertPresenter.swift */,
 				5592334920667094008AEEAE /* AsyncNotifier.swift */,
 				55006BA620B48BA80040C2DD /* Configurator.swift */,
-				552F1C23217BA0BF00679E9B /* ContactError.swift */,
 				5511E9AB20C1B6060080C0DF /* CryptoError.swift */,
 				5586B8912064A7AF00641514 /* ErrorDelegate.swift */,
 				5586B8932065190B00641514 /* NotificationErrorDelegate.swift */,
 				5536A6822067559400B7E6D8 /* Notifications.swift */,
 				5586B88D2064951000641514 /* ParameterGenerator.swift */,
-				554D01C1207BE35400C19373 /* SessionState.swift */,
-				5586B8862064882B00641514 /* SessionStateActual.swift */,
+				5586B8862064882B00641514 /* SessionState.swift */,
+				555AC6F521D7A9E80068C229 /* Strings.swift */,
+				55E7D82721D3CE5C00686159 /* ObservableProtocol.swift */,
+				55E7D82921D3CF4D00686159 /* ObserverProtocol.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -691,16 +735,22 @@
 			children = (
 				55FD6C1C2186447A00B9C9BB /* AcknowledgeRequestTableViewCell.swift */,
 				5557B466211DE1D800FE1775 /* AddContactView.swift */,
+				555AC6F721D7C4B80068C229 /* AutoAcknowledgement.swift */,
 				55C88DCE20707F6B00D58BCA /* Contact.swift */,
 				55C8075E2174D7B900336028 /* ContactCell.swift */,
 				55C8075C2173BB2100336028 /* ContactDetailView.swift */,
+				552F1C23217BA0BF00679E9B /* ContactError.swift */,
 				554D01C7207D0E2500C19373 /* ContactManager.swift */,
 				55FEC68A21683323002132DC /* ContactRequestsView.swift */,
+				55E7D82B21D3D00000686159 /* ContactsModel.swift */,
 				5536A68C206897D200B7E6D8 /* ContactsViewController.swift */,
 				55BFD36020CE14A80084C555 /* DatabaseContact.swift */,
+				55E7D82D21D3DC4F00686159 /* DirectoryManager.swift */,
 				55F96ABE219730DD00F6E096 /* DuplicateIdConfirmationView.swift */,
 				55F96AB82195C80300F6E096 /* DuplicateIdView.swift */,
+				55C0BF1421D82B29003A35E7 /* InitialMessageView.swift */,
 				5593C941212B4EC80053011E /* PendingRequestsCell.swift */,
+				555AC6F121D721520068C229 /* WhitelistError.swift */,
 			);
 			path = Contacts;
 			sourceTree = "<group>";
@@ -732,6 +782,8 @@
 				55FEC6822166912A002132DC /* SelectContactView.swift */,
 				5500D171207455450016AC71 /* TextMessage.swift */,
 				557C2B682093F5F50069336D /* TextMessageDecorator.swift */,
+				555AC6F321D79D760068C229 /* MessagesModel.swift */,
+				55924C0D21D92CB7009568E7 /* MessageError.swift */,
 			);
 			path = Messages;
 			sourceTree = "<group>";
@@ -769,9 +821,10 @@
 				55721A0D20C97A5C008FE9F6 /* AcknowledgeMessagesDelegate.swift */,
 				5511E9D720C3367F0080C0DF /* AcknowledgeMessagesRequest.swift */,
 				5511E9D920C3369B0080C0DF /* AcknowledgeMessagesResponse.swift */,
-				55721A0F20C98111008FE9F6 /* AcknowledgeRequestDelegate.swift */,
 				5511E9B320C1F1C90080C0DF /* AcknowledgeRequest.swift */,
 				5511E9B520C1F49A0080C0DF /* AcknowledgeRequestResponse.swift */,
+				5511E9CB20C301710080C0DF /* AddContactRequest.swift */,
+				5511E9CD20C301850080C0DF /* AddContactResponse.swift */,
 				55187EC920BE275700F94792 /* APIRequestProtocol.swift */,
 				5511E9E520C40DA50080C0DF /* APIResponseDelegate.swift */,
 				55187ECB20BE2F0400F94792 /* APIResponseProtocol.swift */,
@@ -788,6 +841,7 @@
 				55F7B57C20BF22240083AE01 /* EnclaveResponse.swift */,
 				5511E9AF20C1E66E0080C0DF /* EnclaveResponseProtocol.swift */,
 				550007BB2078203B00103882 /* EnclaveTask.swift */,
+				55E7D82121D3C35B00686159 /* EnclaveTaskObserverProtocol.swift */,
 				55721A1320C9900F008FE9F6 /* GetMessagesDelegate.swift */,
 				5511E9DB20C33B780080C0DF /* GetMessagesRequest.swift */,
 				5511E9DD20C33B8D0080C0DF /* GetMessagesResponse.swift */,
@@ -798,16 +852,12 @@
 				5511E9BF20C2CE290080C0DF /* GetRequestStatusRequest.swift */,
 				5511E9C120C2CE3F0080C0DF /* GetRequestStatusResponse.swift */,
 				55E970A620AB07C6008C2F39 /* Logout.swift */,
-				55721A0B20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift */,
 				5511E9C720C2DFA10080C0DF /* MatchDirectoryIdRequest.swift */,
 				5511E9C920C2DFB30080C0DF /* MatchDirectoryIdResponse.swift */,
 				55F7B57E20BF35F50083AE01 /* NewAccountFinal.swift */,
 				55F7B58020BF364E0083AE01 /* NewAccountFinish.swift */,
 				55F7B58220BF36720083AE01 /* NewAccountRequest.swift */,
 				55F7B58420BF36930083AE01 /* NewAccountResponse.swift */,
-				55721A1920C9A5F5008FE9F6 /* RequestContactDelegate.swift */,
-				5511E9CB20C301710080C0DF /* RequestContactRequest.swift */,
-				5511E9CD20C301850080C0DF /* RequestContactResponse.swift */,
 				55E06BFC20BC961D0034C652 /* SecommAPI.swift */,
 				55721A1B20C9A88E008FE9F6 /* SendMessageDelegate.swift */,
 				5511E9E120C341300080C0DF /* SendMessageRequest.swift */,
@@ -821,7 +871,6 @@
 				55721A1D20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift */,
 				5511E9CF20C325DD0080C0DF /* SetContactPolicyRequest.swift */,
 				5511E9D120C325F40080C0DF /* SetContactPolicyResponse.swift */,
-				55721A1F20C9F973008FE9F6 /* SetDirectoryIdDelegate.swift */,
 				5511E9D320C32A3B0080C0DF /* SetDirectoryIdRequest.swift */,
 				5511E9D520C32A500080C0DF /* SetDirectoryIdResponse.swift */,
 				55214AC2214D650F0013B1EC /* SyncContact.swift */,
@@ -832,6 +881,10 @@
 				55721A2120C9FB52008FE9F6 /* UpdateWhitelistDelegate.swift */,
 				5511E9B720C1FF550080C0DF /* UpdateWhitelistRequest.swift */,
 				5511E9B920C209350080C0DF /* UpdateWhitelistResponse.swift */,
+				55E7D82F21D3DDBF00686159 /* EnclaveRequester.swift */,
+				551CF2C521D44DD000B5F070 /* APIError.swift */,
+				551CF2C721D4613B00B5F070 /* ServerResponseError.swift */,
+				551CF2C921D46AD800B5F070 /* ChallengeError.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -927,6 +980,7 @@
 				5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */,
 				55F96ABC219730B300F6E096 /* DuplicateIdConfirmationView.xib */,
 				55F96ABA2195C82600F6E096 /* DuplicateIdView.xib */,
+				55C0BF1621D82B79003A35E7 /* InitialMessageView.xib */,
 				5557B460211CCE4000FE1775 /* NewAccountView.xib */,
 				5557B464211CE41600FE1775 /* PassphraseAlertView.xib */,
 				55206DA82075486000B0B246 /* SelectContactView.xib */,
@@ -1241,6 +1295,7 @@
 				5592A5941F8BBB4400F08BF5 /* Assets.xcassets in Resources */,
 				5592A5921F8BBB4400F08BF5 /* Main.storyboard in Resources */,
 				552BC4642124BB9E00694CB4 /* Alert2ButtonView.xib in Resources */,
+				55C0BF1721D82B79003A35E7 /* InitialMessageView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1285,11 +1340,13 @@
 				"${BUILT_PRODUCTS_DIR}/Chatto/Chatto.framework",
 				"${BUILT_PRODUCTS_DIR}/ChattoAdditions/ChattoAdditions.framework",
 				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
+				"${BUILT_PRODUCTS_DIR}/DLRadioButton/DLRadioButton.framework",
 				"${BUILT_PRODUCTS_DIR}/DataCompression/DataCompression.framework",
 				"${BUILT_PRODUCTS_DIR}/DeviceKit/DeviceKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FrostedSidebar/FrostedSidebar.framework",
 				"${BUILT_PRODUCTS_DIR}/ImageSlideshow/ImageSlideshow.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
+				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
 				"${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
@@ -1304,11 +1361,13 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Chatto.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChattoAdditions.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DLRadioButton.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DataCompression.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeviceKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FrostedSidebar.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ImageSlideshow.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RKDropdownAlert.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
@@ -1355,6 +1414,7 @@
 				55721A1220C98504008FE9F6 /* DeleteContactDelegate.swift in Sources */,
 				55E029322093AAC00074B97F /* ChattoViewController.swift in Sources */,
 				557C2B5F2093C5530069336D /* PippipTextMessageViewModel.swift in Sources */,
+				55924C0E21D92CB7009568E7 /* MessageError.swift in Sources */,
 				55BFD36120CE14A80084C555 /* DatabaseContact.swift in Sources */,
 				554D01CA207D5BB000C19373 /* Conversation.swift in Sources */,
 				55AA555B1FA14D7100A7026B /* GCMCodec.cc in Sources */,
@@ -1370,14 +1430,16 @@
 				55CB280721305BB000F1E62D /* PippipMessageCollectionViewCellStyle.swift in Sources */,
 				55E7593E20674DAE009BAA1C /* WhitelistViewController.swift in Sources */,
 				5586B88E2064951000641514 /* ParameterGenerator.swift in Sources */,
+				55AAEFE621D6C9C100BCEB8D /* AuthStepProtocol.swift in Sources */,
 				552BC46D2124C00C00694CB4 /* ControllerBlurProtocol.swift in Sources */,
 				55721A1420C9900F008FE9F6 /* GetMessagesDelegate.swift in Sources */,
 				5516978F20994A01002BB4C1 /* MessagesHeadingCell.swift in Sources */,
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
 				5511E9C620C2D1C20080C0DF /* GetPendingRequestsResponse.swift in Sources */,
-				55721A2020C9F973008FE9F6 /* SetDirectoryIdDelegate.swift in Sources */,
+				551CF2C821D4613B00B5F070 /* ServerResponseError.swift in Sources */,
 				5511E9C420C2D1AC0080C0DF /* GetPendingRequests.swift in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
+				55E7D82221D3C35C00686159 /* EnclaveTaskObserverProtocol.swift in Sources */,
 				552F1C28217CAC2E00679E9B /* Dismissable.swift in Sources */,
 				557C2B592093B8360069336D /* PippipTextMessageModel.swift in Sources */,
 				557C2B692093F5F50069336D /* TextMessageDecorator.swift in Sources */,
@@ -1392,7 +1454,7 @@
 				55AA55001FA14C1300A7026B /* CKSHA1.mm in Sources */,
 				55AA54E11FA14B1E00A7026B /* Unsigned64.cc in Sources */,
 				55FD018620B0C6CD0028435E /* SettingsTableViewController.swift in Sources */,
-				5586B8872064882B00641514 /* SessionStateActual.swift in Sources */,
+				5586B8872064882B00641514 /* SessionState.swift in Sources */,
 				5511E9AC20C1B6060080C0DF /* CryptoError.swift in Sources */,
 				557C2B652093CE7C0069336D /* PippipTextMessageInteractionHandler.swift in Sources */,
 				5592334A20667094008AEEAE /* AsyncNotifier.swift in Sources */,
@@ -1400,15 +1462,16 @@
 				55187ECA20BE275700F94792 /* APIRequestProtocol.swift in Sources */,
 				55BFD36920D052FC0084C555 /* AccountSession.swift in Sources */,
 				55AA54E01FA14B1E00A7026B /* Unsigned32.cc in Sources */,
+				55E7D82C21D3D00000686159 /* ContactsModel.swift in Sources */,
 				5511E9E220C341300080C0DF /* SendMessageRequest.swift in Sources */,
 				5511E9DC20C33B780080C0DF /* GetMessagesRequest.swift in Sources */,
 				5557B45F211CCDD400FE1775 /* NewAccountView.swift in Sources */,
 				550007BC2078203B00103882 /* EnclaveTask.swift in Sources */,
+				555AC6F021D713870068C229 /* Reauthenticator.swift in Sources */,
 				55E06BFD20BC961D0034C652 /* SecommAPI.swift in Sources */,
 				554D01C6207C54A900C19373 /* LocalPassphraseCell.swift in Sources */,
 				5511E9E620C40DA50080C0DF /* APIResponseDelegate.swift in Sources */,
 				55AA54FE1FA14C1300A7026B /* CKSecureRandom.mm in Sources */,
-				55721A1A20C9A5F5008FE9F6 /* RequestContactDelegate.swift in Sources */,
 				55FA874E1FD5F10500FB96C0 /* CKHMAC.mm in Sources */,
 				5500D172207455450016AC71 /* TextMessage.swift in Sources */,
 				55AA54FD1FA14C1300A7026B /* CKRSACodec.mm in Sources */,
@@ -1418,12 +1481,14 @@
 				5511E9C020C2CE290080C0DF /* GetRequestStatusRequest.swift in Sources */,
 				55AA555A1FA14D7100A7026B /* PrivateKey.cc in Sources */,
 				5511E9BC20C2C4B20080C0DF /* DeleteContactRequest.swift in Sources */,
+				555AC6EA21D6E7B50068C229 /* AuthenticationRequestStep.swift in Sources */,
 				5511E9B020C1E66E0080C0DF /* EnclaveResponseProtocol.swift in Sources */,
 				55F7B58520BF36930083AE01 /* NewAccountResponse.swift in Sources */,
+				555AC6F421D79D760068C229 /* MessagesModel.swift in Sources */,
 				55169793209B7282002BB4C1 /* LocalAuthCell.swift in Sources */,
 				55AA555E1FA14D7100A7026B /* SHA384.cc in Sources */,
 				557C2B742096A03D0069336D /* PippipMessageViewModel.swift in Sources */,
-				5511E9CC20C301720080C0DF /* RequestContactRequest.swift in Sources */,
+				5511E9CC20C301720080C0DF /* AddContactRequest.swift in Sources */,
 				55C49BFE2141B25400EEED14 /* PippipTextCellStyle.swift in Sources */,
 				55E970A720AB07C6008C2F39 /* Logout.swift in Sources */,
 				554D01C8207D0E2500C19373 /* ContactManager.swift in Sources */,
@@ -1446,6 +1511,7 @@
 				55AA54DB1FA14B1E00A7026B /* ByteArrayOutputStream.cc in Sources */,
 				554D01CC207D9C2300C19373 /* ContactPolicyCell.swift in Sources */,
 				5592A5891F8BBB4400F08BF5 /* AppDelegate.m in Sources */,
+				55E7D82E21D3DC4F00686159 /* DirectoryManager.swift in Sources */,
 				554D01D020803BB200C19373 /* Message.swift in Sources */,
 				55AA54E21FA14B1E00A7026B /* Int64.cc in Sources */,
 				5511E9D220C325F40080C0DF /* SetContactPolicyResponse.swift in Sources */,
@@ -1455,6 +1521,7 @@
 				552F1C26217CA9C000679E9B /* GestureBlurView.swift in Sources */,
 				55BFD36520CF18300084C555 /* DatabaseMessage.swift in Sources */,
 				55AA55591FA14D7100A7026B /* SHA1.cc in Sources */,
+				555AC6F821D7C4B80068C229 /* AutoAcknowledgement.swift in Sources */,
 				55214AC5214D6D290013B1EC /* SyncResponse.swift in Sources */,
 				55AA55641FA14D7100A7026B /* RSACodec.cc in Sources */,
 				55006BA720B48BA80040C2DD /* Configurator.swift in Sources */,
@@ -1468,6 +1535,7 @@
 				55AA54FF1FA14C1300A7026B /* CKRSAPrivateKey.m in Sources */,
 				5511E9D820C3367F0080C0DF /* AcknowledgeMessagesRequest.swift in Sources */,
 				55721A1620C9956E008FE9F6 /* GetPendingRequestsDelegate.swift in Sources */,
+				555AC6F221D721520068C229 /* WhitelistError.swift in Sources */,
 				552F1C24217BA0BF00679E9B /* ContactError.swift in Sources */,
 				55AA54DF1FA14B1E00A7026B /* Int32.cc in Sources */,
 				55C8075F2174D7B900336028 /* ContactCell.swift in Sources */,
@@ -1475,13 +1543,14 @@
 				55F96AB92195C80300F6E096 /* DuplicateIdView.swift in Sources */,
 				55AA554E1FA14D7100A7026B /* GCM.cc in Sources */,
 				5586B882206428A400641514 /* PublicIdCell.swift in Sources */,
+				55C0BF1521D82B29003A35E7 /* InitialMessageView.swift in Sources */,
 				5524DBCE216A62720062DA1E /* PippipGeometry.swift in Sources */,
 				55F7B58120BF364E0083AE01 /* NewAccountFinish.swift in Sources */,
+				555AC6EE21D701080068C229 /* AuthorizedStep.swift in Sources */,
 				557C2B72209657FD0069336D /* ConversationCache.swift in Sources */,
 				5536A68D206897D200B7E6D8 /* ContactsViewController.swift in Sources */,
 				55AA554F1FA14D7100A7026B /* RSA.cc in Sources */,
 				55AA55521FA14D7100A7026B /* OAEPrsaes.cc in Sources */,
-				55721A0C20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift in Sources */,
 				55AA55611FA14D7100A7026B /* PKCS1rsassa.cc in Sources */,
 				5511E9D020C325DD0080C0DF /* SetContactPolicyRequest.swift in Sources */,
 				5586B88C206493D000641514 /* HexCodec.m in Sources */,
@@ -1498,8 +1567,10 @@
 				55E970B120B07D14008C2F39 /* PippipTableViewCell.swift in Sources */,
 				55AD26F62121CF1200FD8A9A /* ChangePassphraseView.swift in Sources */,
 				55AA55631FA14D7100A7026B /* RSAPrivateCrtKey.cc in Sources */,
+				55E7D82821D3CE5C00686159 /* ObservableProtocol.swift in Sources */,
 				5511E9B820C1FF550080C0DF /* UpdateWhitelistRequest.swift in Sources */,
 				55AA54DD1FA14B1E00A7026B /* ByteArray.cc in Sources */,
+				55E7D83021D3DDBF00686159 /* EnclaveRequester.swift in Sources */,
 				5586B8922064A7AF00641514 /* ErrorDelegate.swift in Sources */,
 				5557B46B211E06E500FE1775 /* AddToWhitelistView.swift in Sources */,
 				5511E9E020C33C880080C0DF /* ServerMessage.swift in Sources */,
@@ -1508,11 +1579,11 @@
 				5511E9BA20C209350080C0DF /* UpdateWhitelistResponse.swift in Sources */,
 				55206DB12076A5EA00B0B246 /* MessageManager.swift in Sources */,
 				5506D7BE216BBD3D0042FE73 /* AuthenticatedControllerProtocol.swift in Sources */,
+				551CF2C621D44DD000B5F070 /* APIError.swift in Sources */,
 				55AA55571FA14D7100A7026B /* DHKeyExchange.cc in Sources */,
-				55721A1020C98111008FE9F6 /* AcknowledgeRequestDelegate.swift in Sources */,
+				551CF2CA21D46AD800B5F070 /* ChallengeError.swift in Sources */,
 				55AA54FB1FA14C1300A7026B /* CKRSAPublicKey.m in Sources */,
 				55E970B320B07DAE008C2F39 /* PippipTheme.swift in Sources */,
-				554D01C2207BE35400C19373 /* SessionState.swift in Sources */,
 				55C49BFA21402E2A00EEED14 /* PippipTextMessagePresenterBuilder.swift in Sources */,
 				55AA55021FA14C1300A7026B /* CKRSAKeyPairGenerator.mm in Sources */,
 				55187ED420BE4C8900F94792 /* ServerAuthorized.swift in Sources */,
@@ -1525,6 +1596,7 @@
 				5511E9C220C2CE3F0080C0DF /* GetRequestStatusResponse.swift in Sources */,
 				5557B45B211C9A1000FE1775 /* SignInView.swift in Sources */,
 				55AA554D1FA14D7100A7026B /* RSAPublicKey.cc in Sources */,
+				55E7D82A21D3CF4D00686159 /* ObserverProtocol.swift in Sources */,
 				5511E9DA20C3369C0080C0DF /* AcknowledgeMessagesResponse.swift in Sources */,
 				55FD018E20B0D1930028435E /* DirectoryIdCell.swift in Sources */,
 				55AA55681FA14D7100A7026B /* BigInteger.cc in Sources */,
@@ -1541,18 +1613,22 @@
 				5557B46F211F09F200FE1775 /* DeleteAccountView.swift in Sources */,
 				55214AC9214D724D0013B1EC /* SyncContactsDelegate.swift in Sources */,
 				55CBAE601FD62E8D00C73A2B /* CKSignature.mm in Sources */,
+				555AC6F621D7A9E80068C229 /* Strings.swift in Sources */,
 				55214AC3214D650F0013B1EC /* SyncContact.swift in Sources */,
+				555AC6EC21D6FB490068C229 /* AuthChallengeStep.swift in Sources */,
 				55245F4320BCD62D00E6ECB6 /* ServerAuthenticator.swift in Sources */,
+				55AAEFE821D6C9F000BCEB8D /* AuthContextProtocol.swift in Sources */,
 				55AA55561FA14D7100A7026B /* PEMCodec.cc in Sources */,
 				552BC46B2124BCE800694CB4 /* Alert2ButtonView.swift in Sources */,
 				55721A1E20C9AF38008FE9F6 /* SetContactPolicyDelegate.swift in Sources */,
 				55CB2803212F389300F1E62D /* PippipTextMessageViewModelBuilder.swift in Sources */,
 				55F96ABF219730DD00F6E096 /* DuplicateIdConfirmationView.swift in Sources */,
 				55187ED020BE427700F94792 /* ServerAuthChallenge.swift in Sources */,
-				5511E9CE20C301850080C0DF /* RequestContactResponse.swift in Sources */,
+				5511E9CE20C301850080C0DF /* AddContactResponse.swift in Sources */,
 				55245F4120BCC9A100E6ECB6 /* SessionResponse.swift in Sources */,
 				55FD6C1E2186447A00B9C9BB /* AcknowledgeRequestTableViewCell.swift in Sources */,
 				557C2B6E20961DB10069336D /* SortedArray.swift in Sources */,
+				55AAEFEA21D6CF8A00BCEB8D /* StartSessionStep.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

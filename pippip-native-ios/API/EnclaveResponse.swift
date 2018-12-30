@@ -21,7 +21,7 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
     var json: String = ""
 
     let alertPresenter = AlertPresenter()
-    let sessionState = SessionState()
+    let sessionState = SessionState.instance
 
     required init?(map: Map) {
         if map.JSON["sessionId"] == nil {
@@ -50,16 +50,12 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
 
     }
     
-    func processResponse() -> String? {
-
-        if let _ = error {
-            return error
-        }
+    func processResponse() throws {
 
         if sessionId != sessionState.sessionId || authToken != sessionState.authToken {
             DDLogInfo("Current session ID: \(sessionState.sessionId)")
             DDLogInfo("Current auth token: \(sessionState.authToken)")
-            return "Invalid authentication! Please sign off immediately!"
+            throw ServerResponseError.invalidAuthentication
         }
 
         if let responseData = Data(base64Encoded: response!) {
@@ -67,15 +63,14 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
                 let codec = CKGCMCodec(data: responseData)
                 try codec.decrypt(sessionState.enclaveKey!, withAuthData: sessionState.authData!)
                 json = codec.getString()
-                return  nil
             }
             catch {
                 DDLogError("Error decrypting enclave response: \(error.localizedDescription)")
-                return "Invalid response from server"
+                throw ServerResponseError.invalidServerResponse
             }
         }
         else {
-            return "Server response encoding error"
+            throw ServerResponseError.invalidServerResponse
         }
 
     }

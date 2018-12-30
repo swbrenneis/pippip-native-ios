@@ -22,7 +22,7 @@ class ContactPolicyCell: PippipTableViewCell, MultiCellProtocol {
 
     static var cellItem: MultiCellItemProtocol = ContactPolicyCellItem()
     var viewController: UITableViewController?
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
     var config = Configurator()
     var currentPolicy = "whitelist"
     var alertPresenter = AlertPresenter()

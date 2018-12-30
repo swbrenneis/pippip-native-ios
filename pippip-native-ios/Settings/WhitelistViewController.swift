@@ -16,8 +16,7 @@ class WhitelistViewController: UIViewController {
     @IBOutlet weak var tableBottom: NSLayoutConstraint!
     
     var config = Configurator()
-    var contactManager = ContactManager.instance
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
     var wasReset = false
     var authenticator: Authenticator!
     var alertPresenter = AlertPresenter()
@@ -88,6 +87,7 @@ class WhitelistViewController: UIViewController {
     func addToWhitelist(publicId: String, directoryId: String?) {
         
         do {
+            let contactManager = ContactManager()
             try contactManager.addWhitelistEntry(publicId: publicId, directoryId: directoryId)
             DispatchQueue.main.async {
                 self.addIdView?.dismiss()
@@ -126,9 +126,14 @@ class WhitelistViewController: UIViewController {
 
         guard !self.checkSelfAdd(directoryId: directoryId, publicId: publicId) else { return }
         if let dId = directoryId {
-            NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
-                                                   name: Notifications.DirectoryIdMatched, object: nil)
-            contactManager.matchDirectoryId(directoryId: dId, publicId: nil)
+            let directoryManager = DirectoryManager()
+            directoryManager.matchDirectoryId(directoryId: dId, publicId: nil,
+                                              onResponse: { response in
+                                                self.directoryIdMatched(response: response)
+            },
+                                              onError: { error in
+                                                DDLogError("Match directory ID error: \(error)")
+            })
         }
         else if let pId = publicId {
             NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
@@ -189,10 +194,8 @@ class WhitelistViewController: UIViewController {
 
     // Notifications
     
-    @objc func directoryIdMatched(_ notification: Notification) {
+    func directoryIdMatched(response: MatchDirectoryIdResponse) {
         
-        NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
-        guard let response = notification.object as? MatchDirectoryIdResponse else { return }
         if response.result == "found" {
             if let publicId = response.publicId {
                 NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryAdded(_:)),
@@ -317,6 +320,7 @@ extension WhitelistViewController: UITableViewDelegate, UITableViewDataSource {
             NotificationCenter.default.addObserver(self, selector: #selector(whitelistEntryDeleted(_:)),
                                                    name: Notifications.WhitelistEntryDeleted, object: nil)
             let publicId = config.whitelist[indexPath.row].publicId
+            let contactManager = ContactManager()
             contactManager.deleteWhitelistEntry(publicId: publicId)
         }
 

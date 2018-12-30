@@ -8,8 +8,9 @@
 
 import UIKit
 import ChameleonFramework
+import CocoaLumberjack
 
-class DuplicateIdView: UIView {
+class DuplicateIdView: UIView, ObserverProtocol {
 
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -20,7 +21,9 @@ class DuplicateIdView: UIView {
     
     var contactRequestsView: ContactRequestsView?
     var contactRequest: ContactRequest?
-    
+    var alertPresenter = AlertPresenter()
+    var contact: Contact?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
@@ -54,6 +57,21 @@ class DuplicateIdView: UIView {
 
     }
     
+    func acknowledgeRequest(publicId: String) {
+        
+        let contactManager = ContactManager()
+        do {
+            try contactManager.acknowledgeRequest(publicId: publicId, response: "accept",
+                                                  onResponse: { response -> Void in self.onResponse(response: response) },
+                                                  onError: { error in self.onError(error: error) })
+        }
+        catch {
+            DDLogError("Acknowledge request error: \(error.localizedDescription)")
+            alertPresenter.errorAlert(title: "Contact Request Error", message: Strings.errorServerResponse)
+        }
+
+    }
+
     func dismiss() {
 
         UIView.animate(withDuration: 0.3, animations: {
@@ -66,11 +84,56 @@ class DuplicateIdView: UIView {
         
     }
     
+    func onError(error: String) {
+        DDLogError("Acknowledge request response error: \(error)")
+        alertPresenter.errorAlert(title: "Contact Request Error", message: Strings.errorServerResponse)
+    }
+    
+    func onResponse(response: AcknowledgeRequestResponse) {
+
+        if let error = response.error {
+            DDLogError("Acknowledge request response error: \(error)")
+            alertPresenter.errorAlert(title: "Contact Request Error", message: Strings.errorServerResponse)
+        }
+        else {
+            guard let acknowledged = response.acknowledged else {
+                alertPresenter.errorAlert(title: "Contact Request Error", message: Strings.errorInvalidResponse)
+                return
+            }
+            do {
+                contact = Contact(serverContact: acknowledged)
+                ContactsModel.instance.addObserver(action: .added, observer: self)
+                try ContactsModel.instance.addContact(contact: contact!)
+            }
+            catch {
+                DDLogError("Error adding acknowledged contact: \(error.localizedDescription)")
+                alertPresenter.errorAlert(title: "Contact Request Error", message: Strings.errorInternal)
+            }
+        }
+        
+    }
+
+    func update(observable: ObservableProtocol, object: Any?) {
+
+        guard let contactsModel = object as? ContactsModel else { return }
+        contactsModel.removeObserver(action: .added, observer: self)
+        do {
+            try contactsModel.contactAcknowledged(contact: contact!)
+            contactsModel.deleteContactRequest(contactRequest!)
+        }
+        catch {
+            DDLogError("Update error: \(error.localizedDescription)")
+            alertPresenter.errorAlert(title: "Contact Request Error", message: Strings.errorInternal)
+        }
+
+    }
+    
     @IBAction func changeIdTapped(_ sender: Any) {
         
         if var request = contactRequest {
+            guard let publicId = request.publicId else { return }
             request.directoryId = newIdTextField.text
-            ContactManager.instance.acknowledgeRequest(contactRequest: request, response: "accept")
+            acknowledgeRequest(publicId: publicId)
             dismiss()
         }
 
@@ -79,7 +142,8 @@ class DuplicateIdView: UIView {
     @IBAction func acceptIdTapped(_ sender: Any) {
         
         if let request = contactRequest {
-            ContactManager.instance.acknowledgeRequest(contactRequest: request, response: "accept")
+            guard let publicId = request.publicId else { return }
+            acknowledgeRequest(publicId: publicId)
             dismiss()
         }
         

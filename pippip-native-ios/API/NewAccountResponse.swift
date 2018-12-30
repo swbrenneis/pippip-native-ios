@@ -19,7 +19,7 @@ class NewAccountResponse: NSObject, APIResponseProtocol {
     var postId: Int = 0
 
     var alertPresenter = AlertPresenter()
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
     
     required init?(map: Map) {
         if map.JSON["sessionId"] == nil {
@@ -38,26 +38,21 @@ class NewAccountResponse: NSObject, APIResponseProtocol {
         
     }
     
-    func processResponse() -> String? {
-
-        if let _ = error {
-            return error
-        }
+    func processResponse() throws {
 
         if let encoded = Data(base64Encoded: data!) {
             do {
                 let codec = CKRSACodec(data: encoded)
                 try codec.decrypt(sessionState.userPrivateKey!)
                 sessionState.accountRandom = codec.getBlock()
-                return nil
             }
             catch {
                 DDLogError("Error decrypting new account response: \(error.localizedDescription)")
-                return "Invalid response from server"
+                throw ServerResponseError.invalidServerResponse
             }
         }
         else {
-            return "Server response encoding error"
+            throw ServerResponseError.invalidResponseEncoding
         }
         
     }

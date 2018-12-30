@@ -54,7 +54,7 @@ class TextMessage: Message {
 
         if cleartext == nil {
             guard let _ = ciphertext else { return }
-            if let contact = contactManager.getContact(contactId: contactId) {
+            if let contact = ContactsModel.instance.getContact(contactId: contactId) {
                 let ivGen = CKIVGenerator()
                 let iv = ivGen.generate(Int(sequence), withNonce: contact.nonce!)
                 let codec = CKGCMCodec(data: ciphertext!)
@@ -93,7 +93,7 @@ class TextMessage: Message {
 
     func encrypt() throws {
 
-        let contact = contactManager.getContact(contactId: contactId)!
+        let contact = ContactsModel.instance.getContact(contactId: contactId)!
         let ivGen = CKIVGenerator()
         let iv = ivGen.generate(Int(sequence), withNonce: contact.nonce!)
         let codec = CKGCMCodec()

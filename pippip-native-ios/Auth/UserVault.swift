@@ -10,8 +10,6 @@ import Foundation
 
 @objc class UserVault: NSObject {
 
-    var sessionState = SessionState()
-
     @objc func changePassphrase(accountName: String, oldPassphrase: String, newPassphrase: String) throws {
 
         let docsURLs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -58,6 +56,8 @@ import Foundation
         let codec = CKGCMCodec(data: vaultData)
         try codec.decrypt(vaultKey, withAuthData: authData)
 
+        let sessionState = SessionState.instance
+        
         sessionState.publicId = codec.getString()
         sessionState.accountRandom = codec.getBlock()
         sessionState.genpass = codec.getBlock()
@@ -81,6 +81,8 @@ import Foundation
             else { throw CryptoError(error: "Invalid passphrase encoding") }
         let vaultKey = digest.digest(authData)
 
+        let sessionState = SessionState.instance
+        
         let codec = CKGCMCodec()
         codec.put(sessionState.publicId!)
         codec.putBlock(sessionState.accountRandom!)

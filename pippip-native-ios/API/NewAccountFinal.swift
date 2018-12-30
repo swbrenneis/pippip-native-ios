@@ -17,7 +17,7 @@ class NewAccountFinal: NSObject, APIResponseProtocol {
     var postId: Int = 0
 
     var alertPresenter = AlertPresenter()
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
     
     required init?(map: Map) {
         if map.JSON["sessionId"] == nil {
@@ -36,14 +36,9 @@ class NewAccountFinal: NSObject, APIResponseProtocol {
         
     }
     
-    func processResponse() -> String? {
-
-        if let _ = error {
-            return error
-        }
+    func processResponse() throws {
 
         sessionState.authToken = authToken!
-        return nil
         
     }
     

@@ -11,6 +11,10 @@ import ObjectMapper
 
 class AcknowledgeRequest: NSObject, EnclaveRequestProtocol {
     
+    static let accept = "accept"
+    static let ignore = "ignore"
+    static let reject = "reject"
+    
     var method: String = "AcknowledgeRequest"
     var requestingId: String?
     // Remove after server release

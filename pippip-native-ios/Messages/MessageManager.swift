@@ -8,10 +8,10 @@
 
 import UIKit
 import RealmSwift
+import CocoaLumberjack
 
 class MessageManager: NSObject {
 
-    var contactManager = ContactManager.instance
     var config = Configurator()
 
     func acknowledgeMessages(_ textMessages: [TextMessage]) {
@@ -19,13 +19,18 @@ class MessageManager: NSObject {
         var triplets = [Triplet]()
         for textMessage in textMessages {
             if (textMessage.contactId != NSNotFound) {
-                let contact = contactManager.getContact(contactId: textMessage.contactId)!
-                let triplet = Triplet(publicId: contact.publicId, sequence: Int(textMessage.sequence),
-                                      timestamp: Int(textMessage.timestamp))
-                triplets.append(triplet)
+                if let contact = ContactsModel.instance.getContact(contactId: textMessage.contactId),
+                    let publicId = contact.publicId {
+                    let triplet = Triplet(publicId: publicId, sequence: Int(textMessage.sequence),
+                                          timestamp: Int(textMessage.timestamp))
+                    triplets.append(triplet)
+                }
+                else {
+                    DDLogError("Message consistency error, contact ID invalid or contact public ID missing")
+                }
             }
             else {
-                print("Contact for ID \(textMessage.contactId) not found")
+                DDLogError("Invalid message. Contact ID missing")
             }
         }
 
@@ -34,30 +39,6 @@ class MessageManager: NSObject {
         let messageTask = EnclaveTask<AcknowledgeMessagesRequest, AcknowledgeMessagesResponse>(delegate: delegate)
         messageTask.errorTitle = "Message Error"
         messageTask.sendRequest(request)
-
-    }
-
-    /*
-     * Adds incoming messages to the database and to their conversations
-     */
-    func addTextMessages(_ textMessages: [TextMessage]) {
-
-        let realm = try! Realm()
-        for textMessage in textMessages {
-            if getIdFromTuple(contactId: textMessage.contactId,
-                              sequence: textMessage.sequence,
-                              timestamp: textMessage.timestamp) == Int64(NSNotFound) {
-                let dbMessage = textMessage.encodeForDatabase()
-                dbMessage.messageId = config.newMessageId()
-                textMessage.messageId = dbMessage.messageId
-                try! realm.write {
-                    realm.add(dbMessage)
-                }
-            }
-            else {
-                print("Duplicate message ID")
-            }
-        }
 
     }
 
@@ -97,20 +78,6 @@ class MessageManager: NSObject {
         
     }
 
-    func getIdFromTuple(contactId: Int, sequence: Int64, timestamp: Int64) -> Int64 {
-
-        let realm = try! Realm()
-        let format = "contactId = %ld AND sequence = %lld AND timestamp = %lld"
-        if let dbMessage = realm.objects(DatabaseMessage.self).filter(format, contactId, sequence, timestamp).first {
-            return dbMessage.messageId
-        }
-        else {
-            return Int64(NSNotFound)
-
-        }
-
-    }
-    
     func getMessageCount(contactId: Int) -> Int {
 
         let realm = try! Realm()
@@ -184,14 +151,19 @@ class MessageManager: NSObject {
 
     }
 
-    func sendMessage(textMessage: TextMessage, retry: Bool) {
+    func sendMessage(textMessage: TextMessage, retry: Bool) throws {
 
         if (!retry) {
-            addTextMessages([textMessage])
+            MessagesModel.instance.addTextMessages([textMessage])
         }
 
-        let contact = contactManager.getContact(contactId: textMessage.contactId)!
-        let request = SendMessageRequest(message: textMessage.encodeForServer(publicId: contact.publicId))
+        guard let contact = ContactsModel.instance.getContact(contactId: textMessage.contactId) else {
+            throw MessageError.invalidContactId
+        }
+        guard let publicId = contact.publicId else {
+            throw ContactError.invalidPublicId
+        }
+        let request = SendMessageRequest(message: textMessage.encodeForServer(publicId: publicId))
         let delegate = SendMessageDelegate(request: request, textMessage: textMessage)
         let enclaveTask = EnclaveTask<SendMessageRequest, SendMessageResponse>(delegate: delegate)
         enclaveTask.errorTitle = "Message Error"

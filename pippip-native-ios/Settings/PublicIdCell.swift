@@ -23,7 +23,7 @@ class PublicIdCell: PippipTableViewCell, MultiCellProtocol {
     
     static var cellItem: MultiCellItemProtocol = PublicIdCellItem()
     var viewController: UITableViewController?
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
 
     override public var canBecomeFirstResponder: Bool {
         get {

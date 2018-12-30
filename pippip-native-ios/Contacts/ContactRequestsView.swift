@@ -67,7 +67,7 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
     func ackCanceled() {
         
         assert(Thread.isMainThread, "ackCanceled must be called from the main thread")
-        if ContactManager.instance.pendingRequests.count > 0 {
+        if ContactsModel.instance.pendingRequests.count > 0 {
             tableView.separatorStyle = .singleLine
             tableView.reloadSections(IndexSet(integer: 0), with: .left)
         }
@@ -104,7 +104,7 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
     @objc func requestAcknowledged(_ notification: Notification) {
         
         DispatchQueue.main.async {
-            if ContactManager.instance.pendingRequests.count > 0 {
+            if ContactsModel.instance.pendingRequests.count > 0 {
                 self.tableView.separatorStyle = .singleLine
                 self.tableView.reloadSections(IndexSet(integer: 0), with: .left)
             }
@@ -129,7 +129,7 @@ extension ContactRequestsView: UITableViewDelegate, UITableViewDataSource  {
             return 4
         }
         else {
-            contactRequests = Array(ContactManager.instance.pendingRequests)
+            contactRequests = Array(ContactsModel.instance.pendingRequests)
             return contactRequests.count
         }
         
@@ -205,17 +205,17 @@ extension ContactRequestsView: UITableViewDelegate, UITableViewDataSource  {
         case 1:
             guard let ackCell = tableView.dequeueReusableCell(withIdentifier: "AcknowledgeRequestCell") as? AcknowledgeRequestTableViewCell
                 else { return UITableViewCell() }
-            ackCell.configure(cellType: .accept, reqView: self, viewController: contactsViewController)
+            ackCell.configure(cellType: .accept, selected: selected!, viewController: contactsViewController)
             return ackCell
         case 2:
             guard let ackCell = tableView.dequeueReusableCell(withIdentifier: "AcknowledgeRequestCell") as? AcknowledgeRequestTableViewCell
                 else { return UITableViewCell() }
-            ackCell.configure(cellType: .reject, reqView: self, viewController: contactsViewController)
+            ackCell.configure(cellType: .reject, selected: selected!, viewController: contactsViewController)
             return ackCell
         case 3:
             guard let ackCell = tableView.dequeueReusableCell(withIdentifier: "AcknowledgeRequestCell") as? AcknowledgeRequestTableViewCell
                 else { return UITableViewCell() }
-            ackCell.configure(cellType: .ignore, reqView: self, viewController: contactsViewController)
+            ackCell.configure(cellType: .ignore, selected: selected!, viewController: contactsViewController)
             return ackCell
         default:
             return UITableViewCell()

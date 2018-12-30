@@ -35,7 +35,7 @@ enum UpdateState {
     case idle
 }
 
-class AccountSession: NSObject, UNUserNotificationCenterDelegate {
+@objc class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     static let production = true
     private static var theInstance: AccountSession?
@@ -45,15 +45,17 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     private var authState: AuthState
     private var updateState: UpdateState
     private var didUpdate = false                   // Update after suspend
-    var contactManager = ContactManager.instance
-    var messageManager = MessageManager()
-    var sessionState = SessionState()
-    var config = Configurator()
+//    var messageManager = MessageManager()
+//    var sessionState = SessionState.instance
+//    var config = Configurator()
     private var firstResume = true
     private var realAccountName: String?
     var accountName: String {
         get {
             return realAccountName!
+        }
+        set {
+            realAccountName = newValue
         }
     }
     var accountLoaded: Bool {
@@ -114,12 +116,8 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
         super.init()
 
-        //NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),
-        //                                       name: Notifications.AuthComplete, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(getStatusComplete(_:)),
                                                name: Notifications.GetStatusComplete, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(getRequestsComplete(_:)),
-                                               name: Notifications.GetRequestsComplete, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(getMessagesComplete(_:)),
                                                name: Notifications.GetMessagesComplete, object: nil)
 
@@ -135,7 +133,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     func accountDeleted() {
 
-        config.authenticated = false
+//        config.authenticated = false
         accountSessionState = .appStarted
         authState = .notAuthenticated
         updateState = .idle
@@ -152,6 +150,17 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     }
 
+    func autoAcknowledge(requests: [ContactRequest]) {
+        
+        for contactRequest in requests {
+            guard let puid = contactRequest.publicId else { continue }
+            if ContactsModel.instance.whitelistIdExists(publicId: puid) {
+                AutoAcknowledgement().acknowledge(publicId: puid)
+            }
+        }
+        
+    }
+    
     // DEBUG ONLY!
     private func deleteAccount(name: String) {
 
@@ -188,31 +197,47 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
         if updateState == .idle && authState != .notAuthenticated {
             updateState = .gettingMessages
+            let messageManager = MessageManager()
             messageManager.getNewMessages()
         }
 
     }
 
-    func loadAccount() throws {
+    func getRequestsComplete() {
         
-        let fileManager = FileManager.default
-        let documentDirectory = try fileManager.url(for: .documentDirectory,
-                                                    in: .userDomainMask,
-                                                    appropriateFor:nil,
-                                                    create:false)
-        let vaultsURL = documentDirectory.appendingPathComponent("PippipVaults")
-        let path = vaultsURL.path as NSString
-        if !fileManager.fileExists(atPath: path.expandingTildeInPath) {
-            try fileManager.createDirectory(at: vaultsURL, withIntermediateDirectories: false, attributes: nil)
+        if updateState == .gettingRequests && authState == .serverAuthenticated {
+            updateState = .gettingStatus
+            let contactManager = ContactManager()
+            contactManager.getRequestStatus()
         }
-        let vaults = try fileManager.contentsOfDirectory(at: vaultsURL,
-                                                         includingPropertiesForKeys: nil,
-                                                         options: .skipsHiddenFiles)
-        if !vaults.isEmpty {
-            // Debug delete bad accounts here
-            //deleteAccount(name: vaults[0].lastPathComponent)
-            realAccountName = vaults[0].lastPathComponent
-            loadConfig()
+        
+    }
+    
+    @objc func loadAccount() {
+        
+        do {
+            let fileManager = FileManager.default
+            let documentDirectory = try fileManager.url(for: .documentDirectory,
+                                                        in: .userDomainMask,
+                                                        appropriateFor:nil,
+                                                        create:false)
+            let vaultsURL = documentDirectory.appendingPathComponent("PippipVaults")
+            let path = vaultsURL.path as NSString
+            if !fileManager.fileExists(atPath: path.expandingTildeInPath) {
+                try fileManager.createDirectory(at: vaultsURL, withIntermediateDirectories: false, attributes: nil)
+            }
+            let vaults = try fileManager.contentsOfDirectory(at: vaultsURL,
+                                                             includingPropertiesForKeys: nil,
+                                                             options: .skipsHiddenFiles)
+            if !vaults.isEmpty {
+                // Debug delete bad accounts here
+                //deleteAccount(name: vaults[0].lastPathComponent)
+                realAccountName = vaults[0].lastPathComponent
+                loadConfig()
+            }
+        }
+        catch {
+            DDLogError("Unable to load account: \(error.localizedDescription)")
         }
         
     }
@@ -276,7 +301,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     func signOut() {
         
-        config.authenticated = false
+//        config.authenticated = false
         authState = .loggedOut
         NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
         
@@ -344,20 +369,43 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
         if updateState == .gettingMessages && authState == .serverAuthenticated {
             updateState = .gettingRequests
-            contactManager.getPendingRequests()
+            do {
+                let contactManager = ContactManager()
+                try contactManager.getPendingRequests(
+                    onResponse: { response -> Void in
+                        guard let requests = response.requests else { return }
+                        DDLogInfo("\(requests.count) pending requests returned")
+                        if requests.count > 0 {
+                            var contactRequests = [ContactRequest]()
+                            for pair in requests {
+                                if let contactRequest = ContactRequest(request: pair) {
+                                    contactRequests.append(contactRequest)
+                                }
+                            }
+                            ContactsModel.instance.addRequests(requests: contactRequests)
+                            if Configurator().contactPolicy == Configurator.whitelistPolicy {
+                                self.autoAcknowledge(requests: contactRequests)
+                            }
+                            NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
+                        }
+                        else {
+                            ContactsModel.instance.clearRequests()
+                        }
+                        self.getRequestsComplete()
+                },
+                    onError: { error in
+                        DDLogError("Get pending requests error: \(error)")
+                        self.getRequestsComplete()
+                })
+            }
+            catch {
+                DDLogError("Get pending requests error: \(error.localizedDescription)")
+                self.getRequestsComplete()
+            }
         }
  
     }
  
-    @objc func getRequestsComplete(_ notification: Notification) {
-
-        if updateState == .gettingRequests && authState == .serverAuthenticated {
-            updateState = .gettingStatus
-            contactManager.getRequestStatus()
-        }
-
-    }
-    
     @objc func getStatusComplete(_ notification: Notification) {
 
         if updateState == .gettingStatus {

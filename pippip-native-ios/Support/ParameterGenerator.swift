@@ -10,9 +10,9 @@ import Foundation
 
 @objc class ParameterGenerator: NSObject {
 
-    private var sessionState = SessionState()
+    private var sessionState = SessionState.instance
 
-    func generateParameters(_ accountName: String) {
+    func generateParameters(accountName: String) {
 
         let rnd: CKSecureRandom = CKSecureRandom()
         

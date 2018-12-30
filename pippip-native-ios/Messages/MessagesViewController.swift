@@ -26,7 +26,7 @@ class MessagesViewController: UIViewController {
     var settingsView: SettingsTableViewController!
     var previews = [TextMessage]()
     var searched = [Conversation]()
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
     var headingView: UIView!
     var wasReset = false
     var config = Configurator()
@@ -54,7 +54,6 @@ class MessagesViewController: UIViewController {
 
         PippipTheme.setTheme()
         PippipGeometry.setGeometry()
-        SecommAPI.initializeAPI()
         
         try! AccountSession.instance.loadAccount()
         authenticator = Authenticator(viewController: self)
@@ -169,7 +168,7 @@ class MessagesViewController: UIViewController {
         if AccountSession.instance.serverAuthenticated {
             getMostRecentMessages()
             tableView.reloadData()
-            let p = ContactManager.instance.pendingRequests.count
+            let p = ContactsModel.instance.pendingRequests.count
             let s = config.statusUpdates
             contactBadge.badgeValue = p + s
         }
@@ -225,7 +224,7 @@ class MessagesViewController: UIViewController {
     func getMostRecentMessages() {
         
         previews.removeAll()
-        let contactList = ContactManager.instance.acceptedContactList
+        let contactList = ContactsModel.instance.acceptedContactList
         for contact in contactList {
             let conversation = ConversationCache.instance.getConversation(contactId: contact.contactId)
             if let message = conversation?.mostRecentMessage {
@@ -308,7 +307,7 @@ class MessagesViewController: UIViewController {
             DispatchQueue.main.async {
                 self.getMostRecentMessages()
                 self.tableView.reloadData()
-                self.contactBadge.badgeValue =  ContactManager.instance.pendingRequests.count + self.config.statusUpdates
+                self.contactBadge.badgeValue =  ContactsModel.instance.pendingRequests.count + self.config.statusUpdates
             }
         }
         
@@ -352,7 +351,7 @@ class MessagesViewController: UIViewController {
     @objc func setContactBadge(_ notification: Notification) {
 
         DispatchQueue.main.async {
-            self.contactBadge.badgeValue = ContactManager.instance.pendingRequests.count + self.config.statusUpdates
+            self.contactBadge.badgeValue = ContactsModel.instance.pendingRequests.count + self.config.statusUpdates
         }
 
     }
@@ -442,7 +441,7 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
         let message = previews[indexPath.item]
         // This is code necessary to allow for a bug that stores a message before the contact
         // has been accepted. It can be removed when general beta begins.
-        if let contact = ContactManager.instance.getContact(contactId: message.contactId) {
+        if let contact = ContactsModel.instance.getContact(contactId: message.contactId) {
             if contact.status == "accepted" {
                 cell.configure(textMessage: message)
             }
@@ -462,7 +461,7 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
         self.view.endEditing(true)
         let contactId = previews[indexPath.item].contactId
         let viewController = ChattoViewController()
-        viewController.contact = ContactManager.instance.getContact(contactId: contactId)
+        viewController.contact = ContactsModel.instance.getContact(contactId: contactId)
         self.navigationController?.pushViewController(viewController, animated: true)
 
     }

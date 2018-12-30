@@ -35,10 +35,8 @@ class ClientAuthorized: NSObject, APIResponseProtocol {
 
     }
     
-    func processResponse() -> String? {
-
-        return error
-
+    func processResponse() throws {
+        // Nothing to do
     }
     
 

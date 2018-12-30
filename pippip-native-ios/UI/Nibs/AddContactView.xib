@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,9 +13,10 @@
             <connections>
                 <outlet property="addContactButton" destination="yR4-A1-aO2" id="Chr-1Y-j2f"/>
                 <outlet property="cancelButton" destination="55l-wK-MgV" id="fGM-H1-GSC"/>
+                <outlet property="contactIdText" destination="5Ad-yz-7yb" id="YEb-J0-eVY"/>
                 <outlet property="contentView" destination="iN0-l3-epB" id="7fz-1X-7VL"/>
-                <outlet property="directoryIdTextField" destination="5Ad-yz-7yb" id="nCA-jE-eRt"/>
-                <outlet property="publicIdTextField" destination="uCQ-ZR-dJV" id="Z84-zX-F6q"/>
+                <outlet property="directoryIdButton" destination="le9-bj-M3r" id="sOE-rO-dfF"/>
+                <outlet property="publicIdButton" destination="0ff-ij-yKO" id="yjt-qh-ebq"/>
                 <outlet property="titleLabel" destination="I9T-Q9-uUS" id="QLR-bK-6Go"/>
             </connections>
         </placeholder>
@@ -36,32 +37,82 @@
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="bOZ-BY-Y1d">
                     <rect key="frame" x="25" y="70" width="325" height="572"/>
                     <subviews>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter a directory or public ID" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QNO-09-Y8M">
-                            <rect key="frame" x="0.0" y="0.0" width="325" height="102.5"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <nil key="textColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Directory ID" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="5Ad-yz-7yb">
-                            <rect key="frame" x="0.0" y="117.5" width="325" height="102.5"/>
+                        <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="BvR-Km-NUW">
+                            <rect key="frame" x="0.0" y="0.0" width="325" height="131.66666666666666"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="le9-bj-M3r" customClass="DLRadioButton">
+                                    <rect key="frame" x="0.0" y="0.0" width="162.66666666666666" height="131.66666666666666"/>
+                                    <state key="normal" title="Directory ID">
+                                        <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    </state>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="iconSize">
+                                            <real key="value" value="20"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="indicatorSize">
+                                            <real key="value" value="10"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="iconStrokeWidth">
+                                            <real key="value" value="4"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="marginWidth">
+                                            <real key="value" value="8"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="color" keyPath="iconColor">
+                                            <color key="value" cocoaTouchSystemColor="darkTextColor"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="color" keyPath="indicatorColor">
+                                            <color key="value" cocoaTouchSystemColor="darkTextColor"/>
+                                        </userDefinedRuntimeAttribute>
+                                    </userDefinedRuntimeAttributes>
+                                    <connections>
+                                        <action selector="directoryIdSelected:" destination="-1" eventType="touchUpInside" id="HwG-n1-xTM"/>
+                                        <outletCollection property="otherButtons" destination="0ff-ij-yKO" id="bB6-4Q-SF9"/>
+                                    </connections>
+                                </button>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0ff-ij-yKO" customClass="DLRadioButton">
+                                    <rect key="frame" x="162.66666666666663" y="0.0" width="162.33333333333337" height="131.66666666666666"/>
+                                    <state key="normal" title="Public ID">
+                                        <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    </state>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="iconStrokeWidth">
+                                            <real key="value" value="4"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="iconSize">
+                                            <real key="value" value="20"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="color" keyPath="iconColor">
+                                            <color key="value" cocoaTouchSystemColor="darkTextColor"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="color" keyPath="indicatorColor">
+                                            <color key="value" cocoaTouchSystemColor="darkTextColor"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="indicatorSize">
+                                            <real key="value" value="10"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="marginWidth">
+                                            <real key="value" value="8"/>
+                                        </userDefinedRuntimeAttribute>
+                                    </userDefinedRuntimeAttributes>
+                                    <connections>
+                                        <action selector="publicIdSelected:" destination="-1" eventType="touchUpInside" id="voY-pF-Pyd"/>
+                                        <outletCollection property="otherButtons" destination="le9-bj-M3r" id="Ks7-dy-HO0"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                        </stackView>
+                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Contact ID" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="5Ad-yz-7yb">
+                            <rect key="frame" x="0.0" y="146.66666666666666" width="325" height="131.99999999999997"/>
                             <nil key="textColor"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                             <connections>
-                                <action selector="directoryIdChanged:" destination="-1" eventType="editingChanged" id="1i1-kN-3OM"/>
-                            </connections>
-                        </textField>
-                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Public ID" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="uCQ-ZR-dJV">
-                            <rect key="frame" x="0.0" y="235" width="325" height="102"/>
-                            <nil key="textColor"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
-                            <connections>
-                                <action selector="publicIdChanged:" destination="-1" eventType="editingChanged" id="QiD-T2-4kl"/>
+                                <action selector="contactIdChanged:" destination="-1" eventType="editingChanged" id="Wya-t2-dkL"/>
                             </connections>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yR4-A1-aO2">
-                            <rect key="frame" x="0.0" y="352" width="325" height="102.5"/>
+                            <rect key="frame" x="0.0" y="293.66666666666669" width="325" height="131.66666666666669"/>
                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                             <state key="normal" title="Add Contact"/>
                             <userDefinedRuntimeAttributes>
@@ -74,7 +125,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="55l-wK-MgV">
-                            <rect key="frame" x="0.0" y="469.5" width="325" height="102.5"/>
+                            <rect key="frame" x="0.0" y="440.33333333333331" width="325" height="131.66666666666669"/>
                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                             <state key="normal" title="Cancel"/>
                             <userDefinedRuntimeAttributes>

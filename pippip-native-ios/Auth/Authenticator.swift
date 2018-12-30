@@ -14,7 +14,7 @@ class Authenticator: NSObject {
 
     var viewController: UIViewController?
     var authView: AuthView?
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
     var config = Configurator()
     var signInView: SignInView?
     var alertPresenter = AlertPresenter()

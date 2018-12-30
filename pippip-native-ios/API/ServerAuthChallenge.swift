@@ -19,7 +19,7 @@ class ServerAuthChallenge: NSObject, APIResponseProtocol {
     var postId: Int = 0
 
     var alertPresenter = AlertPresenter()
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
 
     required init?(map: Map) {
         if map.JSON["sessionId"] == nil {
@@ -44,26 +44,20 @@ class ServerAuthChallenge: NSObject, APIResponseProtocol {
 
     }
     
-    func processResponse() -> String? {
+    func processResponse() throws {
 
-        if let _ = error {
-            return error
-        }
-
-        guard let sigData = Data(base64Encoded: signature!) else { return "Server response encoding error" }
-        guard let hmacData = Data(base64Encoded: hmac!) else { return "Server response encoding error" }
+        guard let sigData = Data(base64Encoded: signature!) else { throw ServerResponseError.invalidResponseEncoding }
+        guard let hmacData = Data(base64Encoded: hmac!) else { throw ServerResponseError.invalidResponseEncoding }
 
         let sig = CKSignature(sha256: ())
         if !sig.verify(sessionState.serverPublicKey!, withMessage: hmacData, withSignature: sigData) {
-            return "HMAC signature failed to verify"
+            throw ChallengeError.invalidSignature
         }
 
         if !validateHMAC(hmacData) {
-            return "HMAC failed to validate"
+            throw ChallengeError.notAuthenticated
         }
 
-        return nil
-        
     }
 
     func validateHMAC(_ hmacData: Data) -> Bool {

@@ -117,15 +117,17 @@ class AuthView: UIView, ControllerBlurProtocol {
 
     }
 
-    func accountCreated(success: Bool, _ reason: String?) {
+    func accountCreated(success: Bool, reason: String?) {
         
         DispatchQueue.main.async {
             self.hideToastActivity()
             self.authButton.isHidden = success
-            if let message = reason {
+            if success {
+                self.dismiss()
+            }
+            else if let message = reason {
                 self.alertPresenter.errorAlert(title: "New Account Error", message: message)
             }
-            self.dismiss()
         }
 
     }
@@ -146,6 +148,15 @@ class AuthView: UIView, ControllerBlurProtocol {
 
     }
     
+    func authenticated() {
+        
+        DispatchQueue.main.async {
+            self.hideToastActivity()
+            self.dismiss()
+        }
+        
+    }
+
     func authenticated(success: Bool, _ reason: String?) {
 
         NotificationCenter.default.post(name: Notifications.AuthComplete, object: success)

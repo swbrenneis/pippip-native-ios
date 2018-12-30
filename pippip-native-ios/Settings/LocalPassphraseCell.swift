@@ -24,7 +24,7 @@ class LocalPassphraseCell: PippipTableViewCell, MultiCellProtocol {
     static var cellItem: MultiCellItemProtocol = LocalPasswordCellItem()
     let obscured = "***********"
     var viewController: UITableViewController?
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
     var alertPresenter = AlertPresenter()
 
     override func awakeFromNib() {

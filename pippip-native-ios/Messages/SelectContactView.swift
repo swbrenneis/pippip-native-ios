@@ -18,7 +18,6 @@ class SelectContactView: UIView {
     @IBOutlet weak var searchTextWidth: NSLayoutConstraint!
     
     var contactList = [Contact]()
-    var contactManager = ContactManager.instance
     var lastPartialLength = 0
     var selected: Contact?
     var selectedRow: Int = -1
@@ -78,13 +77,14 @@ class SelectContactView: UIView {
             contactList.removeAll()
         }
         else if newLength == 1 || newLength < lastPartialLength {
-            newList.append(contentsOf: contactManager.searchAcceptedContacts(fragment: fragment))
+            newList.append(contentsOf: ContactsModel.instance.searchAcceptedContacts(fragment: fragment))
         }
         else {
             for contact in contactList {
-                let publicId = contact.publicId.uppercased()
-                if publicId.contains(fragment) {
-                    newList.append(contact)
+                if let publicId = contact.publicId?.uppercased() {
+                    if publicId.contains(fragment) {
+                        newList.append(contact)
+                    }
                 }
                 else if let directoryId = contact.directoryId?.uppercased() {
                     if directoryId.contains(fragment) {

@@ -48,8 +48,7 @@ class ConversationCache: NSObject {
             return conversation
         }
         else {
-            let contactManager = ContactManager.instance
-            guard let contact = contactManager.getContact(contactId: contactId) else { return nil }
+            guard let contact = ContactsModel.instance.getContact(contactId: contactId) else { return nil }
             let newConversation = Conversation(contact: contact, windowSize: 15)
             conversations[contactId] = newConversation
             return newConversation

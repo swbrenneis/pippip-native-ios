@@ -25,7 +25,7 @@ class ClientAuthChallenge: NSObject, APIRequestProtocol {
     var hmac: String?
     var signature: String?
     
-    var sessionState = SessionState()
+    var sessionState = SessionState.instance
 
     override init() {
         super.init()

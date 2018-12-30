@@ -21,9 +21,8 @@ struct Notifications {
     static let ContactRequested = NSNotification.Name("ContactRequested")
     static let ContactSelected = NSNotification.Name("ContactSelected")
     static let ConversationDeleted = NSNotification.Name("ConversationDeleted")
-    static let DirectoryIdMatched = NSNotification.Name("DirectoryIdMatched")
+    //static let DirectoryIdMatched = NSNotification.Name("DirectoryIdMatched")
     static let DirectoryIdSet = NSNotification.Name("DirectoryIdSet")       // Posted when contact directory ID set
-    static let DirectoryIdUpdated = NSNotification.Name("DirectoryIdUpdated")
     static let EnclaveRequestComplete = NSNotification.Name("EnclaveRequestComplete")
     static let GetMessagesComplete = NSNotification.Name("GetMessagesComplete")
     static let GetRequestsComplete = NSNotification.Name("GetRequestsComplete")
@@ -48,7 +47,6 @@ struct Notifications {
     static let RetryMessage = NSNotification.Name("RetryMessage")
     static let ServerUnavailable = NSNotification.Name("ServerUnavailable")
     static let SessionEnded = NSNotification.Name("SessionEnded")
-    //static let SessionStarted = NSNotification.Name("SessionStarted")
     static let SetContactBadge = NSNotification.Name("SetContactBadge")
     static let WhitelistEntryAdded = NSNotification.Name("WhitelistEntryAdded")
     static let WhitelistEntryDeleted = NSNotification.Name("WhitelistEntryDeleted")
