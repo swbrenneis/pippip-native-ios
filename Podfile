@@ -10,7 +10,7 @@ target 'pippip-native-ios' do
   pod 'RKDropdownAlert'
   pod 'FrostedSidebar'
   pod 'RealmSwift'
-  pod 'DataCompression'
+  pod 'DataCompression', '= 3.0.0'
   pod 'Chatto', '= 3.3.1'
   pod 'ChattoAdditions', '= 3.3.1'
   pod 'Sheriff'
