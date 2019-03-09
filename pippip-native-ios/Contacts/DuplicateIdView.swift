@@ -70,7 +70,7 @@ class DuplicateIdView: UIView {
         
         if var request = contactRequest {
             request.directoryId = newIdTextField.text
-            ContactManager.instance.acknowledgeRequest(contactRequest: request, response: "accept")
+            ContactManager().acknowledgeRequest(contactRequest: request, response: "accept")
             dismiss()
         }
 
@@ -79,7 +79,7 @@ class DuplicateIdView: UIView {
     @IBAction func acceptIdTapped(_ sender: Any) {
         
         if let request = contactRequest {
-            ContactManager.instance.acknowledgeRequest(contactRequest: request, response: "accept")
+            ContactManager().acknowledgeRequest(contactRequest: request, response: "accept")
             dismiss()
         }
         

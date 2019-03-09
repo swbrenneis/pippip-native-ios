@@ -42,7 +42,7 @@ class AcknowledgeRequestTableViewCell: UITableViewCell {
     func checkAndAccept(contactRequest: ContactRequest) -> Bool {
         
         guard let directoryId = contactRequest.directoryId else { return true }
-        if let _ = ContactManager.instance.getPublicId(directoryId: directoryId) {
+        if let _ = ContactsModel.instance.getPublicId(directoryId: directoryId) {
             showConfirmationView(contactRequest: contactRequest)
             return false
         }
@@ -110,22 +110,23 @@ class AcknowledgeRequestTableViewCell: UITableViewCell {
         reqView.selected = nil
         reqView.tableView.separatorStyle = .singleLine
         
-        if let _ = ContactManager.instance.getContact(publicId: request.publicId) {
+        if let _ = ContactsModel.instance.getContact(publicId: request.publicId) {
             alertPresent.errorAlert(title: "Acknowledge Contact Error", message: "This contact already exists in your contacts")
-            ContactManager.instance.deleteContactRequest(request)
+            ContactsModel.instance.deleteContactRequest(request)
         }
         else {
+            let contactManager = ContactManager()
             switch cellType! {
             case .accept:
                 if checkAndAccept(contactRequest: request) {
-                    ContactManager.instance.acknowledgeRequest(contactRequest: request, response: "accept")
+                    contactManager.acknowledgeRequest(contactRequest: request, response: "accept")
                 }
                 break
             case .ignore:
-                ContactManager.instance.acknowledgeRequest(contactRequest: request, response: "ignore")
+                contactManager.acknowledgeRequest(contactRequest: request, response: "ignore")
                 break
             case .reject:
-                ContactManager.instance.acknowledgeRequest(contactRequest: request, response: "reject")
+                contactManager.acknowledgeRequest(contactRequest: request, response: "reject")
                 break
             }
         }

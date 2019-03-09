@@ -8,12 +8,12 @@
 
 import UIKit
 import CocoaLumberjack
+import Promises
 
-class NewAccountCreator: NSObject, SessionObserverProtocol {
+class NewAccountCreator: NSObject {
 
     var passphrase = ""
     var accountName = ""
-    var secommAPI = SecommAPI()
     var alertPresenter = AlertPresenter()
     var sessionState = SessionState()
     var biometricsEnabled: Bool!
@@ -40,13 +40,13 @@ class NewAccountCreator: NSObject, SessionObserverProtocol {
                 if setKeychainPassphrase(uuid: config.uuid , passphrase: passphrase) {
                     authView.accountCreated(success: true, nil)
                     AccountSession.instance.accountCreated(accountName: accountName)
-                }
-                else {
+                } else {
                     authView.accountCreated(success: false, "Unable to store passphrase in keychain")
                 }
+            } else {
+                authView.accountCreated(success: true, nil)
             }
-        }
-        catch {
+        } catch {
             DDLogError("Store user vault error: \(error.localizedDescription)")
             authView.accountCreated(success: false, "Unable to store user vault")
         }
@@ -70,17 +70,23 @@ class NewAccountCreator: NSObject, SessionObserverProtocol {
 
     func doFinish() {
 
-        secommAPI.queuePost(delegate: APIResponseDelegate(request: NewAccountFinish(),
-                                                          responseComplete: self.accountFinishComplete,
-                                                          responseError: self.accountFinishError))
+        let promise: Promise<NewAccountFinal> = SecommAPI.instance.doPost(request: NewAccountFinish())
+        promise.then { response in
+            self.accountFinishComplete(response)
+        }.catch { error in
+            self.accountFinishError(error: error.localizedDescription)
+        }
         
     }
 
     func requestNewAccount() {
 
-        secommAPI.queuePost(delegate: APIResponseDelegate(request: NewAccountRequest(),
-                                                          responseComplete: self.accountRequestComplete,
-                                                          responseError: self.accountRequestError))
+        let promise: Promise<NewAccountResponse> = SecommAPI.instance.doPost(request: NewAccountRequest())
+        promise.then { response in
+            self.accountRequestComplete(response)
+        }.catch { error in
+            self.accountRequestError(error: error.localizedDescription)
+        }
         
     }
 
@@ -93,11 +99,7 @@ class NewAccountCreator: NSObject, SessionObserverProtocol {
             sessionState.sessionId = sessionResponse.sessionId!
             let pem = CKPEMCodec()
             sessionState.serverPublicKey = pem.decodePublicKey(sessionResponse.serverPublicKey!)
-            var info = [AnyHashable: Any]()
-            info["progress"] = 0.5
-            DispatchQueue.global().async {
-                self.requestNewAccount()
-            }
+            self.requestNewAccount()
         }
         
     }
@@ -137,15 +139,13 @@ class NewAccountCreator: NSObject, SessionObserverProtocol {
 
     func accountFinishComplete(_ accountFinal: NewAccountFinal) {
 
-        DispatchQueue.global(qos: .userInitiated).async {
-            if let error = accountFinal.processResponse() {
-                DDLogError("New account finish error: \(error)")
-                self.alertPresenter.errorAlert(title: "New Account Error", message: error)
-                self.authView.accountCreated(success: false, error)
-            }
-            else {
-                self.accountCreated()
-            }
+        if let error = accountFinal.processResponse() {
+            DDLogError("New account finish error: \(error)")
+            alertPresenter.errorAlert(title: "New Account Error", message: error)
+            authView.accountCreated(success: false, error)
+        }
+        else {
+            accountCreated()
         }
         
     }
@@ -181,7 +181,9 @@ class NewAccountCreator: NSObject, SessionObserverProtocol {
 
     @objc func parametersGenerated(_ notification: Notification) {
 
-        secommAPI.startSession(sessionObserver: self)
+        SecommAPI.instance.startSession(sessionComplete: { (sessionResponse) in
+            self.sessionStarted(sessionResponse: sessionResponse)
+        })
 
     }
 

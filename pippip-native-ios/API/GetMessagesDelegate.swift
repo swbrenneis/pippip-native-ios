@@ -11,7 +11,7 @@ import CocoaLumberjack
 
 class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesResponse> {
 
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
     var messageManager = MessageManager()
 
     override init(request: GetMessagesRequest) {
@@ -28,12 +28,12 @@ class GetMessagesDelegate: EnclaveDelegate<GetMessagesRequest, GetMessagesRespon
         if response.messages!.count == 0 {
             AsyncNotifier.notify(name: Notifications.GetMessagesComplete, object: nil)
         }
-        DDLogError("\(response.messages!.count) new messages returned")
+        DDLogInfo("\(response.messages!.count) new messages returned")
         var textMessages = [TextMessage]()
         for message in response.messages! {
             if let textMessage = TextMessage(serverMessage: message) {
                 textMessages.append(textMessage)
-                try! contactManager.updateTimestamp(contactId: textMessage.contactId, timestamp: textMessage.timestamp)
+                try! ContactsModel.instance.updateTimestamp(contactId: textMessage.contactId, timestamp: textMessage.timestamp)
             }
             else {
                 DDLogWarn("Invalid contact information in server message")

@@ -11,7 +11,7 @@ import CocoaLumberjack
 
 class DeleteContactDelegate: EnclaveDelegate<DeleteContactRequest, DeleteContactResponse> {
 
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
     var messageManager = MessageManager()
 
     override init(request: DeleteContactRequest) {
@@ -29,8 +29,8 @@ class DeleteContactDelegate: EnclaveDelegate<DeleteContactRequest, DeleteContact
         // However, duplicates will require two separate deletes
         let result = response.result ?? "invalid response"
         DDLogInfo("Delete contact result: \(result)")
-        if let contact = contactManager.getContact(publicId: response.publicId!) {
-            contactManager.deleteContact(contact: contact)
+        if let contact = ContactsModel.instance.getContact(publicId: response.publicId!) {
+            ContactsModel.instance.deleteContact(contact: contact)
             messageManager.clearMessages(contactId: contact.contactId)
             NotificationCenter.default.post(name: Notifications.ContactDeleted, object: contact.publicId)
         }

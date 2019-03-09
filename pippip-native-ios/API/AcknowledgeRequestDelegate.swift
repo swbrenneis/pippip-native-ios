@@ -12,7 +12,7 @@ import CocoaLumberjack
 class AcknowledgeRequestDelegate: EnclaveDelegate<AcknowledgeRequest, AcknowledgeRequestResponse> {
 
     var contactRequest: ContactRequest
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
     var alertPresenter = AlertPresenter()
 
     init(request: RequestT, contactRequest: ContactRequest) {
@@ -36,9 +36,9 @@ class AcknowledgeRequestDelegate: EnclaveDelegate<AcknowledgeRequest, Acknowledg
             guard let acknowledged = response.acknowledged else { return }
             do {
                 acknowledged.directoryId = contactRequest.directoryId
-                let contact = try contactManager.addContact(serverContact: acknowledged)
-                contactManager.deleteContactRequest(contactRequest)
-                contactManager.contactAcknowledged(contact: contact)
+                let contact = try ContactsModel.instance.addContact(serverContact: acknowledged)
+                ContactsModel.instance.deleteContactRequest(contactRequest)
+                ContactsModel.instance.contactAcknowledged(contact: contact)
                 AsyncNotifier.notify(name: Notifications.RequestAcknowledged, object: contact)
                 AsyncNotifier.notify(name: Notifications.SetContactBadge)
             }

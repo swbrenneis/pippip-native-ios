@@ -11,6 +11,7 @@ import Alamofire
 import AlamofireObjectMapper
 import ObjectMapper
 import CocoaLumberjack
+import Promises
 
 struct APIPost {
 
@@ -18,48 +19,107 @@ struct APIPost {
 
 }
 
-struct APIState {
-    
-    var hostPath: String = ""
+enum PostType {
+    case authenticator
+    case enclave
+}
+
+class SecommAPI {
+
+    static private var theInstance: SecommAPI?
+    //static var urlBase: String {
+    //    return SecommAPI.apiState.hostPath
+    //}
+
+    static var instance: SecommAPI {
+        return theInstance!
+    }
+    var alertPresenter = AlertPresenter()
+    var authHostPath: String = ""
+    var enclaveHostPath: String = ""
     var sessionPath: String = ""
     var postLock = NSLock()
     var sessionActive = false
     var postId: Int = 0
     var postQueue = [APIPost]()
 
-}
-
-class SecommAPI: NSObject {
-
-    static private var apiState = APIState()
-    static var urlBase: String {
-        return SecommAPI.apiState.hostPath
-    }
-
-    var alertPresenter = AlertPresenter()
-    var sessionObserver: SessionObserverProtocol?
-
     static func initializeAPI() {
 
+        theInstance = SecommAPI()
         if AccountSession.production {
-//            SecommAPI.apiState.hostPath = "https://api.secomm.org:8443/secomm-api-rest-2.0.1"
-//            SecommAPI.apiState.sessionPath = "/session-request"
-            SecommAPI.apiState.hostPath = "https://pippip.secomm.cc"
-            SecommAPI.apiState.sessionPath = "/authenticator/session-request"
+            theInstance?.authHostPath = "https://pippip.secomm.cc/authenticator"
+            theInstance?.enclaveHostPath = "https://pippip.secomm.cc/enclave"
         }
         else {
-            SecommAPI.apiState.hostPath = "https://dev.secomm.org:8443/secomm-api-rest-2.0.1"
-            SecommAPI.apiState.sessionPath = "/session-request"
+            theInstance?.authHostPath = "https://pippip.secomm.cc/test/authenticator"
+//            theInstance?.authHostPath = "https://dev.secomm.org:8443/pippip-auth/authenticator"
+            theInstance?.enclaveHostPath = "https://dev.secomm.org:8443/pippip-enclave/enclave"
         }
-        SecommAPI.apiState.sessionActive = true
+        theInstance?.sessionPath = "/session-request"
+        theInstance?.sessionActive = true
 
     }
 
+    private init() {
+        
+    }
+
+    func doPost<RequestT: APIRequestProtocol, ResponseT: APIResponseProtocol>(request: RequestT) -> Promise<ResponseT> {
+        
+        let promise = Promise<ResponseT> { (fulfill, reject) in
+            if !self.sessionActive {
+                reject(PostError.sessionNotActive)
+            }
+            
+            var resource: String
+            switch (request.postType) {
+            case .authenticator:
+                resource = self.authHostPath + request.path
+            case .enclave:
+                resource = self.enclaveHostPath + request.path
+            }
+            if let url = URL(string: resource) {
+                var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData,
+                                            timeoutInterval: request.timeout)
+                urlRequest.httpMethod = HTTPMethod.post.rawValue
+                urlRequest.setValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
+                urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+                urlRequest.httpBody = request.toJSONString()?.data(using: .utf8, allowLossyConversion: false)
+                Alamofire.request(urlRequest).responseObject { (response: DataResponse<ResponseT>) in
+                    //if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
+                    //    print("API response: \(utf8Text)")
+                    //}
+                    
+                    if let responseError = response.error {
+                        reject(responseError)
+                    } else if let postResponse = response.result.value {
+                        fulfill(postResponse)
+                    } else {
+                        reject(PostError.invalidServerResponse)
+                    }
+                }
+            }
+            else {
+                reject(PostError.invalidResource)
+            }
+        }
+
+        return promise
+        
+    }
+
+    /*
     func doPost<DelegateT: APIResponseDelegateProtocol>(delegate: DelegateT) {
 
-        guard SecommAPI.apiState.sessionActive else { return }
+        guard sessionActive else { return }
 
-        let resource = SecommAPI.apiState.hostPath + delegate.request.path
+        var resource: String
+        switch (delegate.postType) {
+        case .authenticator:
+            resource = authHostPath + delegate.request.path
+        case .enclave:
+            resource = enclaveHostPath + delegate.request.path
+        }
         if let url = URL(string: resource) {
             var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData,
                                         timeoutInterval: delegate.request.timeout)
@@ -99,43 +159,46 @@ class SecommAPI: NSObject {
 
     func nextPost() {
 
-        SecommAPI.apiState.postLock.lock()
-        SecommAPI.apiState.postQueue.remove(at: 0)
-        SecommAPI.apiState.postQueue.first?.ready(self)
-        SecommAPI.apiState.postLock.unlock()
+        postLock.lock()
+        postQueue.remove(at: 0)
+        postQueue.first?.ready(self)
+        postLock.unlock()
 
     }
 
     func queuePost<DelegateT: APIResponseDelegateProtocol>(delegate: DelegateT) {
 
-        if SecommAPI.apiState.sessionActive {
-            SecommAPI.apiState.postLock.lock()
-            SecommAPI.apiState.postQueue.append(APIPost(ready: delegate.ready))
-            if SecommAPI.apiState.postQueue.count == 1 {
-                SecommAPI.apiState.postQueue.first?.ready(self)
+        if sessionActive {
+            postLock.lock()
+            postQueue.append(APIPost(ready: delegate.ready))
+            if postQueue.count == 1 {
+                postQueue.first?.ready(self)
             }
-            SecommAPI.apiState.postLock.unlock()
+            postLock.unlock()
         }
 
     }
+*/
+    func startSession(sessionComplete: @escaping (SessionResponse) -> Void) {
 
-    func startSession(sessionObserver: SessionObserverProtocol) {
-
-        self.sessionObserver = sessionObserver
-        let resource = SecommAPI.apiState.hostPath + SecommAPI.apiState.sessionPath
+        let resource = authHostPath + sessionPath
         if let url = URL(string: resource) {
             var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30.0)
             urlRequest.httpMethod = HTTPMethod.get.rawValue
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
             Alamofire.request(urlRequest).responseObject { (response: DataResponse<SessionResponse>) in
+                //if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
+                //    print("API response: \(utf8Text)")
+                //}
+                
                 if response.error != nil {
                     self.alertPresenter.errorAlert(title: "Session Error", message: "Unable to establish session with server")
                     DDLogError("API session request failure: \(response.error!)")
                     AsyncNotifier.notify(name: Notifications.ServerUnavailable)
                 }
                 else if let sessionResponse = response.result.value {
-                    SecommAPI.apiState.sessionActive = true
-                    sessionObserver.sessionStarted(sessionResponse: sessionResponse)
+                    self.sessionActive = true
+                    sessionComplete(sessionResponse)
                 }
                 else {
                     DDLogError("Invalid server response in startSession")

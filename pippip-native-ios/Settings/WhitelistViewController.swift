@@ -16,7 +16,7 @@ class WhitelistViewController: UIViewController {
     @IBOutlet weak var tableBottom: NSLayoutConstraint!
     
     var config = Configurator()
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
     var sessionState = SessionState()
     var wasReset = false
     var authenticator: Authenticator!

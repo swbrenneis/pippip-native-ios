@@ -119,15 +119,16 @@ class AuthView: UIView, ControllerBlurProtocol {
 
     func accountCreated(success: Bool, _ reason: String?) {
         
-        DispatchQueue.main.async {
-            self.hideToastActivity()
-            self.authButton.isHidden = success
+        hideToastActivity()
+        if success {
+            dismiss()
+        } else {
             if let message = reason {
-                self.alertPresenter.errorAlert(title: "New Account Error", message: message)
+                alertPresenter.errorAlert(title: "New Account Error", message: message)
             }
-            self.dismiss()
+            showNewAccountView()
         }
-
+        
     }
 
     func authenticate() {
@@ -147,21 +148,19 @@ class AuthView: UIView, ControllerBlurProtocol {
     }
     
     func authenticated(success: Bool, _ reason: String?) {
-
+        
         NotificationCenter.default.post(name: Notifications.AuthComplete, object: success)
-        DispatchQueue.main.async {
-            self.hideToastActivity()
+        self.hideToastActivity()
+        if success {
+            dismiss()
+        } else {
             if let message = reason {
-                self.alertPresenter.errorAlert(title: "Sign In Error", message: message)
+                alertPresenter.errorAlert(title: "Sign In Error", message: message)
             }
-            if success {
-                self.dismiss()
-            }
-            else if self.config.useLocalAuth {
-                self.setBiometrics(showButton: true)
-            }
-            else {
-                self.setSignIn()
+            if self.config.useLocalAuth {
+                setBiometrics(showButton: true)
+            } else {
+                setSignIn()
             }
         }
         

@@ -23,6 +23,26 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="A contact with directory ID &quot;id&quot; already exists" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zu3-B3-n0h">
+                    <rect key="frame" x="24" y="82" width="327" height="41"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bWg-gG-HOO">
+                    <rect key="frame" x="24" y="147" width="327" height="37"/>
+                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                    <inset key="contentEdgeInsets" minX="0.0" minY="8" maxX="0.0" maxY="8"/>
+                    <state key="normal" title="Keep Duplicate"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="7"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="keepTapped:" destination="-1" eventType="touchUpInside" id="SmT-cC-MRD"/>
+                    </connections>
+                </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Duplicate Directory ID" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="56E-0t-Yaj">
                     <rect key="frame" x="0.0" y="20" width="375" height="50"/>
                     <constraints>
@@ -32,53 +52,35 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="wkT-FY-6BH">
-                    <rect key="frame" x="25" y="70" width="325" height="572"/>
-                    <subviews>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="A contact with directory ID &quot;id&quot; already exists" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zu3-B3-n0h">
-                            <rect key="frame" x="0.0" y="0.0" width="325" height="180.5"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <nil key="textColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bWg-gG-HOO">
-                            <rect key="frame" x="0.0" y="195.5" width="325" height="181"/>
-                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
-                            <state key="normal" title="Keep Duplicate"/>
-                            <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                    <integer key="value" value="7"/>
-                                </userDefinedRuntimeAttribute>
-                            </userDefinedRuntimeAttributes>
-                            <connections>
-                                <action selector="keepTapped:" destination="-1" eventType="touchUpInside" id="SmT-cC-MRD"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ah1-fB-eyJ">
-                            <rect key="frame" x="0.0" y="391.5" width="325" height="180.5"/>
-                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
-                            <state key="normal" title="Cancel"/>
-                            <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                    <integer key="value" value="7"/>
-                                </userDefinedRuntimeAttribute>
-                            </userDefinedRuntimeAttributes>
-                            <connections>
-                                <action selector="cancelTapped:" destination="-1" eventType="touchUpInside" id="6NP-m3-gJG"/>
-                            </connections>
-                        </button>
-                    </subviews>
-                </stackView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ah1-fB-eyJ">
+                    <rect key="frame" x="24" y="200" width="327" height="37"/>
+                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                    <inset key="contentEdgeInsets" minX="0.0" minY="8" maxX="0.0" maxY="8"/>
+                    <state key="normal" title="Cancel"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="7"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="cancelTapped:" destination="-1" eventType="touchUpInside" id="6NP-m3-gJG"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="wkT-FY-6BH" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="25" id="Dq1-Vx-CLV"/>
+                <constraint firstItem="bWg-gG-HOO" firstAttribute="top" secondItem="Zu3-B3-n0h" secondAttribute="bottom" constant="24" id="5gr-NU-qha"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Ah1-fB-eyJ" secondAttribute="trailing" constant="24" id="Gb2-1U-rAF"/>
+                <constraint firstItem="bWg-gG-HOO" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="24" id="NeT-Km-lH9"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="56E-0t-Yaj" secondAttribute="trailing" id="Oj3-TW-dAr"/>
                 <constraint firstItem="56E-0t-Yaj" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="Peg-kb-dVm"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="wkT-FY-6BH" secondAttribute="bottom" constant="25" id="Xht-b0-ihA"/>
-                <constraint firstItem="wkT-FY-6BH" firstAttribute="top" secondItem="56E-0t-Yaj" secondAttribute="bottom" id="gbB-bf-eKa"/>
+                <constraint firstItem="Ah1-fB-eyJ" firstAttribute="top" secondItem="bWg-gG-HOO" secondAttribute="bottom" constant="16" id="QDb-tG-HlL"/>
+                <constraint firstItem="Zu3-B3-n0h" firstAttribute="top" secondItem="56E-0t-Yaj" secondAttribute="bottom" constant="12" id="l0e-ae-Sl9"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Zu3-B3-n0h" secondAttribute="trailing" constant="24" id="rVY-fe-tTI"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="bWg-gG-HOO" secondAttribute="trailing" constant="24" id="sbD-KX-6IT"/>
                 <constraint firstItem="56E-0t-Yaj" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="vs4-nM-ErC"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="wkT-FY-6BH" secondAttribute="trailing" constant="25" id="zNL-8i-Axd"/>
+                <constraint firstItem="Zu3-B3-n0h" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="24" id="wKn-VC-IdW"/>
+                <constraint firstItem="Ah1-fB-eyJ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="24" id="yWJ-BJ-dEL"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>

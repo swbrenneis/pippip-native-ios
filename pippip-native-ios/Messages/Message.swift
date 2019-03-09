@@ -28,12 +28,12 @@ class Message: NSObject, Comparable {
     var failed = false
 
     var config = Configurator()
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
 
     init?(serverMessage: ServerMessage) {
 
         ciphertext = Data(base64Encoded: serverMessage.body!)
-        if let cid = contactManager.getContactId(publicId: serverMessage.fromId!) {
+        if let cid = ContactsModel.instance.getContactId(publicId: serverMessage.fromId!) {
             contactId = cid
         }
         else {
@@ -61,9 +61,9 @@ class Message: NSObject, Comparable {
         contact.currentSequence = sequence
 
         do {
-            try ContactManager.instance.updateKeyInfo(contactId: contact.contactId,
-                                                      currentIndex: contact.currentIndex,
-                                                      currentSequence: contact.currentSequence)
+            try ContactsModel.instance.updateKeyInfo(contactId: contact.contactId,
+                                                     currentIndex: contact.currentIndex,
+                                                     currentSequence: contact.currentSequence)
         }
         catch {
             DDLogError("Error updating contact: \(error.localizedDescription)")

@@ -8,6 +8,7 @@
 
 import UIKit
 import CocoaLumberjack
+import ChameleonFramework
 
 class ContactDetailView: UIView, Dismissable {
 
@@ -19,14 +20,33 @@ class ContactDetailView: UIView, Dismissable {
     @IBOutlet weak var resendRequestButton: UIButton!
     @IBOutlet weak var statusImageView: UIImageView!
     @IBOutlet weak var directoryIdSetButton: UIButton!
+    @IBOutlet weak var ignoreContactButton: UIButton!
+    @IBOutlet weak var showContactButton: UIButton!
     
     var contactsViewController: ContactsViewController?
     var tapGesture: UITapGestureRecognizer?
     var publicId = ""
     var newId: String?
     var alertPresenter = AlertPresenter()
-    var contact: Contact?
+    var contact: Contact! {
+        didSet {
+            if contact.status == "pending" {
+                resendRequestButton.isHidden = false
+                ignoreContactButton.isHidden = true
+                showContactButton.isHidden = true
+            } else if contact.status == "ignored" {
+                resendRequestButton.isHidden = true
+                ignoreContactButton.isHidden = true
+                showContactButton.isHidden = false
+            } else {
+                resendRequestButton.isHidden = true
+                ignoreContactButton.isHidden = false
+                showContactButton.isHidden = true
+            }
+        }
+    }
     var confirmationView: DuplicateIdConfirmationView?
+    var confirmHideShowView: ConfirmHideShowView?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -53,6 +73,9 @@ class ContactDetailView: UIView, Dismissable {
         directoryIdSetButton.backgroundColor = PippipTheme.buttonColor
         directoryIdSetButton.setTitleColor(PippipTheme.buttonTextColor, for: .normal)
         directoryIdSetButton.isHidden = true
+        
+        ignoreContactButton.backgroundColor = UIColor.flatGrayDark
+        ignoreContactButton.setTitleColor(ContrastColorOf(UIColor.flatGrayDark, returnFlat: true), for: .normal)
 
         tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewTapped(_:)))
         tapGesture!.numberOfTapsRequired = 1
@@ -61,37 +84,14 @@ class ContactDetailView: UIView, Dismissable {
 
     }
     
-    func forceDismiss() {
-
-        confirmationView?.dismiss()
-        doDismiss()
-
-    }
-    
     func dismiss() {
 
-        if let directoryId = newId, newId != contact?.directoryId {    // Directory ID has been changed
-            let contactManager = ContactManager.instance
-            if let _ = contactManager.getPublicId(directoryId: directoryId) {
-                showConfirmationView()
-            }
-            else {
-                contactManager.setDirectoryId(contactId: contact!.contactId, directoryId: directoryId)
-                doDismiss()
-            }
-        }
-        else {
-            doDismiss()
-        }
-    
-    }
-
-    private func doDismiss() {
-        
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
             self.contactsViewController?.blurView.alpha = 0.0
+            self.confirmationView?.dismiss()
+            self.confirmHideShowView?.dismiss()
         }, completion: { completed in
             self.contactsViewController?.blurView.toDismiss = nil
             self.directoryIdTextField.resignFirstResponder()
@@ -126,15 +126,15 @@ class ContactDetailView: UIView, Dismissable {
         if let viewController = contactsViewController {
             let bounds = viewController.view.bounds
             let width = bounds.width * 0.7
-            let height = bounds.height * 0.35
-            let viewRect = CGRect(x: 0.0, y: 0.0, width: width, height: height)
-            //var viewCenter = viewController.view.center
-            //viewCenter.y = viewCenter.y + height / 2
+            let viewRect = CGRect(x: 0.0, y: 0.0, width: width, height: 240.0)
             confirmationView = DuplicateIdConfirmationView(frame: viewRect)
             confirmationView?.center = viewController.view.center
             confirmationView?.contactDetailView = self
             confirmationView?.contact = contact
             confirmationView?.newId = directoryIdTextField.text
+            confirmationView?.layer.borderWidth = 2.0
+            confirmationView?.layer.borderColor = UIColor.flatGray.cgColor
+            confirmationView?.layer.cornerRadius = 7.0
             confirmationView?.alpha = 0.0
             
             viewController.view.addSubview(confirmationView!)
@@ -143,6 +143,36 @@ class ContactDetailView: UIView, Dismissable {
             UIView.animate(withDuration: 0.3, animations: {
                 viewController.blurView.alpha = 0.6
                 self.confirmationView?.alpha = 1.0
+            })
+        }
+        
+    }
+    
+    func showHideShowView(verb: String, action: @escaping () -> Void) {
+        
+        if let viewController = contactsViewController {
+            let bounds = viewController.view.bounds
+            let width = bounds.width * 0.7
+            let viewRect = CGRect(x: 0.0, y: 0.0, width: width, height: 120.0)
+            confirmHideShowView = ConfirmHideShowView(frame: viewRect)
+            confirmHideShowView?.center = viewController.view.center
+            if let directoryId = contact?.directoryId {
+                confirmHideShowView?.confirmLabel.text = verb + " " + directoryId + "?"
+            } else {
+                confirmHideShowView?.confirmLabel.text = verb + " this contact?"
+            }
+            confirmHideShowView?.action = action
+            confirmHideShowView?.layer.borderWidth = 2.0
+            confirmHideShowView?.layer.borderColor = UIColor.flatGray.cgColor
+            confirmHideShowView?.layer.cornerRadius = 7.0
+            confirmHideShowView?.alpha = 0.0
+            
+            viewController.view.addSubview(confirmHideShowView!)
+            viewController.blurView.toDismiss = nil
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                viewController.blurView.alpha = 0.6
+                self.confirmHideShowView?.alpha = 1.0
             })
         }
         
@@ -157,7 +187,7 @@ class ContactDetailView: UIView, Dismissable {
     @IBAction func resendRequestTapped(_ sender: Any) {
 
         do {
-            try ContactManager.instance.requestContact(publicId: publicId, directoryId: nil, retry: true)
+            try ContactManager().addContactRequest(publicId: contact.publicId, directoryId: nil, initialMessage: nil)
             alertPresenter.successAlert(message: "The request was resent to this contact")
         }
         catch {
@@ -170,12 +200,11 @@ class ContactDetailView: UIView, Dismissable {
     @IBAction func directoryIdSet(_ sender: Any) {
         
         let newId = directoryIdTextField.text
-        let contactManager = ContactManager.instance
-        if let _ = contactManager.getPublicId(directoryId: newId!) {
+        if let _ = ContactsModel.instance.getPublicId(directoryId: newId!) {
             showConfirmationView()
         }
         else {
-            contactManager.setDirectoryId(contactId: contact!.contactId, directoryId: newId)
+            ContactsModel.instance.setDirectoryId(contactId: contact!.contactId, directoryId: newId)
         }
         directoryIdSetButton.isHidden = true
     
@@ -183,8 +212,32 @@ class ContactDetailView: UIView, Dismissable {
 
     @IBAction func directoryIdChanged(_ sender: Any) {
         
+        if let directoryId = contact.directoryId {
+            if directoryIdTextField.text == directoryId {
+                directoryIdSetButton.isHidden = true
+            } else {
+                directoryIdSetButton.isHidden = false
+            }
+        } else {
+            directoryIdSetButton.isHidden = false
+        }
         newId = directoryIdTextField.text!
-//        directoryIdSetButton.isHidden = directoryId == contact!.directoryId
+        
+    }
+
+    @IBAction func ignoreContactTapped(_ sender: Any) {
+        
+        showHideShowView(verb: "Block", action: ({() in
+            ContactManager().hideContact(self.contact!)
+        }))
+        
+    }
+
+    @IBAction func showContactTapped(_ sender: Any) {
+        
+        showHideShowView(verb: "Allow", action: ({() in
+            ContactManager().showContact(self.contact!)
+        }))
         
     }
 

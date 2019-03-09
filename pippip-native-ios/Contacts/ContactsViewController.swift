@@ -16,7 +16,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var tableBottom: NSLayoutConstraint!
     
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
     var config = Configurator()
     var sessionState = SessionState()
     var authenticator: Authenticator!
@@ -86,7 +86,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
                                                name: Notifications.DirectoryIdSet, object: nil)
 
         setContactList()
-        contactRequests = Array(contactManager.pendingRequests)
+        contactRequests = ContactsModel.instance.pendingRequests
         tableView.reloadData()
         DispatchQueue.global().async {
             if self.config.statusUpdates > 0 {
@@ -132,12 +132,12 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         
         contactList.removeAll()
         if config.showIgnoredContacts {
-            contactList.append(contentsOf: contactManager.allContacts)
+            contactList.append(contentsOf: ContactsModel.instance.allContacts)
         }
         else {
-            contactList.append(contentsOf: contactManager.pendingContactList)
-            contactList.append(contentsOf: contactManager.acceptedContactList)
-            contactList.append(contentsOf: contactManager.rejectedContactList)
+            contactList.append(contentsOf: ContactsModel.instance.pendingContactList)
+            contactList.append(contentsOf: ContactsModel.instance.acceptedContactList)
+            contactList.append(contentsOf: ContactsModel.instance.rejectedContactList)
         }
 
     }
@@ -145,10 +145,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     func showContactDetailView(contact: Contact) {
         
         let frame = self.view.bounds
-        var heightRatio = PippipGeometry.contactDetailViewNoRetryRatio
-        if contact.status == "pending" {
-            heightRatio = PippipGeometry.contactDetailViewHeightRatio
-        }
+        let heightRatio = PippipGeometry.contactDetailViewHeightRatio
         let viewRect = CGRect(x: 0.0, y: 0.0,
                               width: frame.width * PippipGeometry.contactDetailViewWidthRatio,
                               height: frame.height * heightRatio!)
@@ -191,33 +188,21 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
     }
     
-    func validateAndRequest(publicId: String, directoryId: String) {
+    func validateAndRequest(publicId: String?, directoryId: String?) {
         
         addContactView?.dismiss()
         if directoryId == config.directoryId || publicId == sessionState.publicId {
             alertPresenter.errorAlert(title: "Add Contact Error", message: "Adding yourself is not allowed")
-        }
-        else if contactManager.contactRequestExists(publicId) {
-            alertPresenter.errorAlert(title: "Add Contact Error", message: "There is an existing request for that contact")
-        }
-        else if directoryId.count > 0 {
-            NotificationCenter.default.addObserver(self, selector: #selector(directoryIdMatched(_:)),
-                                                   name: Notifications.DirectoryIdMatched, object: nil)
-            self.contactManager.matchDirectoryId(directoryId: directoryId, publicId: nil)
-        }
-        else if publicId.count > 0 {
-            if let _ = contactManager.getContact(publicId: publicId) {
+        } else if let puid = publicId {
+            if ContactsModel.instance.contactRequestExists(puid) {
+                alertPresenter.errorAlert(title: "Add Contact Error", message: "There is an existing request for that contact")
+            } else if let _ = ContactsModel.instance.getContact(publicId: puid) {
                 alertPresenter.errorAlert(title: "Add Contact Error", message: "That contact is already in your list")
+            } else {
+                contactManager.addContactRequest(publicId: publicId, directoryId: directoryId, initialMessage: nil)
             }
-            else {
-                do {
-                    try contactManager.requestContact(publicId: publicId, directoryId: nil, retry: false)
-                }
-                catch {
-                    DDLogError("Error sending contact request: \(error.localizedDescription)")
-                    alertPresenter.errorAlert(title: "Contact Request Error", message: "The request could not be sent")
-                }
-            }
+        } else {
+            contactManager.addContactRequest(publicId: publicId, directoryId: directoryId, initialMessage: nil)
         }
         
     }
@@ -298,15 +283,15 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         }
         if response.result == "found" {
             guard let publicId = response.publicId else { return }
-            if let _ = contactManager.getContact(publicId: publicId) {
+            if let _ = ContactsModel.instance.getContact(publicId: publicId) {
                 alertPresenter.errorAlert(title: "Add Contact Error", message: "That contact is already in your list")
             }
-            else if contactManager.contactRequestExists(publicId) {
+            else if ContactsModel.instance.contactRequestExists(publicId) {
                 alertPresenter.errorAlert(title: "Add Contact Error", message: "There is an existing request for that contact")
             }
             else {
                 do {
-                    try contactManager.requestContact(publicId: publicId, directoryId: response.directoryId, retry: false)
+                    try contactManager.addContactRequest(publicId: publicId, directoryId: response.directoryId, initialMessage: nil)
                 }
                 catch {
                     DDLogError("Error sending contact request: \(error.localizedDescription)")
@@ -341,7 +326,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         guard let contact = notification.object as? Contact else { return }
         DispatchQueue.main.async {
             // Do these in order because both sections are validated after inserts and deletes to any section
-            self.contactRequests = Array(self.contactManager.pendingRequests)
+            self.contactRequests = ContactsModel.instance.pendingRequests
             // Get the current number of rows in section zero
             var requestSectionCount = 0
             if let paths = self.tableView.indexPathsForVisibleRows {
@@ -366,7 +351,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
     @objc func requestsUpdated(_ notification: Notification) {
 
-        contactRequests = Array(contactManager.pendingRequests)
+        contactRequests = ContactsModel.instance.pendingRequests
         DispatchQueue.main.async {
             self.tableView.reloadSections(IndexSet(integer: 0), with: .left)
         }

@@ -74,7 +74,7 @@ class DuplicateIdConfirmationView: UIView {
     
     @IBAction func keepTapped(_ sender: Any) {
 
-        ContactManager.instance.setDirectoryId(contactId: contact!.contactId, directoryId: newId)
+        ContactsModel.instance.setDirectoryId(contactId: contact!.contactId, directoryId: newId)
         contactDetailView?.forceDismiss()
         
     }

@@ -67,7 +67,7 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
     func ackCanceled() {
         
         assert(Thread.isMainThread, "ackCanceled must be called from the main thread")
-        if ContactManager.instance.pendingRequests.count > 0 {
+        if ContactsModel.instance.pendingRequests.count > 0 {
             tableView.separatorStyle = .singleLine
             tableView.reloadSections(IndexSet(integer: 0), with: .left)
         }
@@ -104,7 +104,7 @@ class ContactRequestsView: UIView, ControllerBlurProtocol {
     @objc func requestAcknowledged(_ notification: Notification) {
         
         DispatchQueue.main.async {
-            if ContactManager.instance.pendingRequests.count > 0 {
+            if ContactsModel.instance.pendingRequests.count > 0 {
                 self.tableView.separatorStyle = .singleLine
                 self.tableView.reloadSections(IndexSet(integer: 0), with: .left)
             }
@@ -129,7 +129,7 @@ extension ContactRequestsView: UITableViewDelegate, UITableViewDataSource  {
             return 4
         }
         else {
-            contactRequests = Array(ContactManager.instance.pendingRequests)
+            contactRequests = ContactsModel.instance.pendingRequests
             return contactRequests.count
         }
         

@@ -49,7 +49,7 @@ class AccountDeleter: NSObject {
 
         let config = Configurator()
         if let directoryId = config.directoryId {
-            ContactManager.instance.updateDirectoryId(newDirectoryId: nil, oldDirectoryId: directoryId)
+            ContactManager().updateDirectoryId(newDirectoryId: nil, oldDirectoryId: directoryId)
         }
 
     }

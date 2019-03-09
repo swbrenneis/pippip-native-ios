@@ -11,7 +11,7 @@ import CocoaLumberjack
 
 class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPendingRequestsResponse> {
 
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
 
     override init(request: GetPendingRequests) {
         super.init(request: request)
@@ -25,17 +25,22 @@ class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPending
     func getComplete(response: GetPendingRequestsResponse) {
         
         AsyncNotifier.notify(name: Notifications.GetRequestsComplete, object: nil)  // Notifies account session to proceed with status updates
-        guard let requests = response.requests else { return }
-        DDLogInfo("\(requests.count) pending requests returned")
-        if requests.count > 0 {
-            contactManager.addRequests(requests: requests)
-            NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
+        if let error = response.error {
+            DDLogError("Error while updating pending requests - \(error)")
+        } else {
+            guard let requests = response.requests else { return }
+            DDLogInfo("\(requests.count) pending requests returned")
+            if requests.count > 0 {
+                ContactsModel.instance.addRequests(requests: requests)
+                NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
+            }
+            else {
+                ContactsModel.instance.clearRequests()
+            }
+            NotificationCenter.default.post(name: Notifications.RequestsUpdated,
+                                            object: ContactsModel.instance.pendingRequests.count)
         }
-        else {
-            contactManager.clearRequests()
-        }
-        NotificationCenter.default.post(name: Notifications.RequestsUpdated, object: contactManager.pendingRequests.count)
-
+        
     }
 
     func getError(_ reason: String) {
@@ -44,3 +49,4 @@ class GetPendingRequestsDelegate: EnclaveDelegate<GetPendingRequests, GetPending
     }
 
 }
+ 

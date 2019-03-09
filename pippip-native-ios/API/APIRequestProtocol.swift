@@ -8,7 +8,7 @@
 
 import Foundation
 import ObjectMapper
-
+/*
 class APIRequestError: Error {
     
     private var errorString: String
@@ -21,9 +21,10 @@ class APIRequestError: Error {
     }
     
 }
-
+*/
 protocol APIRequestProtocol: Mappable {
 
+    var postType: PostType { get }
     var path: String { get }
     var timeout: Double { get }
     var sessionId: Int32? { set get }

@@ -11,14 +11,8 @@ import ObjectMapper
 
 class EnclaveRequest: NSObject, APIRequestProtocol {
 
-    var path: String {
-        if AccountSession.production {
-            return "/enclave/enclave-request"
-        }
-        else {
-            return "/enclave-request"
-        }
-    }
+    var path = "/enclave-request"
+    var postType: PostType = .enclave
     var timeout: Double = 10.0
     var sessionId: Int32?
     var authToken: Int64?

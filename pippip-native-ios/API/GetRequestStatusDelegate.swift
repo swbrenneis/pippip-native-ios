@@ -7,10 +7,11 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequestStatusResponse> {
 
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
 //    var publicId: String?
 //    var retry: Bool
     var alertPresenter = AlertPresenter()
@@ -29,28 +30,33 @@ class GetRequestStatusDelegate: EnclaveDelegate<GetRequestStatusRequest, GetRequ
     func getComplete(response: GetRequestStatusResponse) {
         
         AsyncNotifier.notify(name: Notifications.GetStatusComplete, object: nil)
-        if response.contacts!.count > 0 {
-            do {
-                let updates = try contactManager.contactsAcknowledged(serverContacts: response.contacts!)
-                print("\(updates.count) contacts updated")
-                config.statusUpdates = updates.count
-                NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updates)
-                NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
-                print("Status updated on \(updates.count) requests")
+        if let error = response.error {
+            DDLogError("Error while updating contact status - \(error)")
+        } else {
+            guard let contacts = response.contacts else { return }
+            if contacts.count > 0 {
+                do {
+                    let updates = try ContactsModel.instance.contactsAcknowledged(serverContacts: response.contacts!)
+                    print("\(updates.count) contacts updated")
+                    config.statusUpdates = updates.count
+                    NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updates)
+                    NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
+                    print("Status updated on \(updates.count) requests")
+                }
+                catch {
+                    DDLogError("Error updating contacts: \(error)")
+                }
             }
-            catch {
-                print("Error updating contacts: \(error)")
+            else {
+                DDLogInfo("No request status updates")
             }
-        }
-        else {
-            print("No request status updates")
         }
 
     }
 
     func getError(_ reason: String) {
         AsyncNotifier.notify(name: Notifications.GetStatusComplete, object: nil)
-        print("Get request status error: \(reason)")
+        DDLogError("Get request status error: \(reason)")
     }
 
 }

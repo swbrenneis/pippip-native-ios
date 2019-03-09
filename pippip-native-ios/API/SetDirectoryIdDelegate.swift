@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class SetDirectoryIdDelegate: EnclaveDelegate<SetDirectoryIdRequest, SetDirectoryIdResponse> {
 
@@ -24,7 +25,7 @@ class SetDirectoryIdDelegate: EnclaveDelegate<SetDirectoryIdRequest, SetDirector
     }
 
     func setError(_ reason: String) {
-        print("Set directory ID error: \(reason)")
+        DDLogError("Set directory ID error: \(reason)")
     }
 
 }

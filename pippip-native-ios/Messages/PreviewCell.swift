@@ -19,7 +19,7 @@ class PreviewCell: PippipTableViewCell {
     @IBOutlet weak var previewLabel: UILabel!
     @IBOutlet weak var timestampLabel: UILabel!
 
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
     var textMessage: TextMessage?
 
     override func awakeFromNib() {
@@ -43,7 +43,7 @@ class PreviewCell: PippipTableViewCell {
             NotificationCenter.default.addObserver(self, selector: #selector(cleartextAvailable(_:)),
                                                    name: Notifications.CleartextAvailable, object: nil)
             self.textMessage = textMessage
-            let contact = contactManager.getContact(contactId: textMessage.contactId)
+            let contact = ContactsModel.instance.getContact(contactId: textMessage.contactId)
             senderLabel.text = contact?.displayName
             timestampLabel.text = convertTimestamp(textMessage.timestamp) + " >"
             if textMessage.ciphertext!.count < 25 {
@@ -107,11 +107,5 @@ class PreviewCell: PippipTableViewCell {
         }
 
     }
-
-//    @objc func sessionEnded(_ notification: Notification) {
-//
-//        textMessage = nil
-//
-//    }
 
 }

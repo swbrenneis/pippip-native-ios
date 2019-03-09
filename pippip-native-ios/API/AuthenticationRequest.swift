@@ -11,15 +11,8 @@ import ObjectMapper
 
 class AuthenticationRequest: NSObject, APIRequestProtocol {
 
-    var path: String {
-        if AccountSession.production {
-            return "/authenticator/authentication-request"
-        }
-        else {
-            return "/authentication-request"
-        }
-    }
-
+    var path = "/authentication-request"
+    var postType: PostType = .authenticator
     var timeout: Double = 10.0
     var data: String?
     var sessionId: Int32?

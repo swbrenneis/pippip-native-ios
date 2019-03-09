@@ -37,7 +37,7 @@ enum UpdateState {
 
 class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
-    static let production = true
+    static let production = false
     private static var theInstance: AccountSession?
     
     @objc var deviceToken: Data?
@@ -45,7 +45,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     private var authState: AuthState
     private var updateState: UpdateState
     private var didUpdate = false                   // Update after suspend
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
     var messageManager = MessageManager()
     var sessionState = SessionState()
     var config = Configurator()
@@ -187,6 +187,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     func doUpdates() {
 
         if updateState == .idle && authState != .notAuthenticated {
+            didUpdate = true
             updateState = .gettingMessages
             messageManager.getNewMessages()
         }
@@ -304,9 +305,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
             accountSessionState = .active
             NotificationCenter.default.post(name: Notifications.AppResumed, object: nil)
             DispatchQueue.main.async {
-                if UIApplication.shared.applicationIconBadgeNumber > 0 {
-                    self.doUpdates()
-                }
+                self.doUpdates()
             }
         }
 
@@ -346,7 +345,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
             updateState = .gettingRequests
             contactManager.getPendingRequests()
         }
- 
+
     }
  
     @objc func getRequestsComplete(_ notification: Notification) {
@@ -372,7 +371,6 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
         print("Notification received")
-        didUpdate = true
         doUpdates()
         completionHandler(.badge)
 

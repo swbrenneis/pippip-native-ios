@@ -11,7 +11,7 @@ import ChameleonFramework
 
 class MessageDumpTableViewController: UITableViewController {
 
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
     var messageManager = MessageManager()
     var textMessages = [Int: [TextMessage]]()
     var contactIds = [Int]()
@@ -54,7 +54,7 @@ class MessageDumpTableViewController: UITableViewController {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDumpContactCell", for: indexPath)
         let contactId = contactIds[indexPath.section / 2]
-        if let contact = contactManager.getContact(contactId: contactId) {
+        if let contact = ContactsModel.instance.getContact(contactId: contactId) {
             cell.backgroundColor = UIColor.flatTeal
             cell.textLabel?.text = contact.displayName
             cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)

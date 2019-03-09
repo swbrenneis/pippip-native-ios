@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -14,10 +14,12 @@
                 <outlet property="contentView" destination="iN0-l3-epB" id="XBC-bk-oKX"/>
                 <outlet property="directoryIdSetButton" destination="iLR-CG-9Mi" id="AWf-cs-Epk"/>
                 <outlet property="directoryIdTextField" destination="WZx-yw-hbz" id="VHe-Tw-S27"/>
+                <outlet property="ignoreContactButton" destination="ibD-BA-ecg" id="ASA-S3-r9G"/>
                 <outlet property="lastSeenLabel" destination="Gj6-WV-dKT" id="yeV-UR-nPH"/>
                 <outlet property="lastSeenTitle" destination="xah-J9-ddF" id="HOx-Eu-V2g"/>
                 <outlet property="publicIdLabel" destination="TQi-A8-CzU" id="mOS-cv-gQ7"/>
                 <outlet property="resendRequestButton" destination="MO8-YB-QcQ" id="0iS-x1-6lo"/>
+                <outlet property="showContactButton" destination="8ad-tP-Teh" id="Z4h-hE-KaB"/>
                 <outlet property="statusImageView" destination="Bxq-22-taw" id="Wit-8M-1RG"/>
             </connections>
         </placeholder>
@@ -43,29 +45,25 @@
                     </constraints>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Public ID" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TQi-A8-CzU">
-                    <rect key="frame" x="20" y="60" width="417" height="17"/>
+                    <rect key="frame" x="20" y="62" width="417" height="17"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Last Seen" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xah-J9-ddF">
-                    <rect key="frame" x="20" y="87" width="75.5" height="21"/>
+                    <rect key="frame" x="20" y="91" width="75.5" height="20.5"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sep 30 2017 00:00 am" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gj6-WV-dKT">
-                    <rect key="frame" x="103.5" y="87" width="174.5" height="21"/>
+                    <rect key="frame" x="103.5" y="91" width="174.5" height="20.5"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MO8-YB-QcQ">
-                    <rect key="frame" x="111" y="120" width="235" height="35"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="35" id="3Pt-8e-cOn"/>
-                        <constraint firstAttribute="width" constant="235" id="840-cJ-WUd"/>
-                    </constraints>
+                    <rect key="frame" x="100" y="135.5" width="257" height="33"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <state key="normal" title="Resend Contact Request"/>
                     <userDefinedRuntimeAttributes>
@@ -92,26 +90,52 @@
                         <action selector="directoryIdSet:" destination="-1" eventType="touchUpInside" id="WPe-4p-UmK"/>
                     </connections>
                 </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8ad-tP-Teh">
+                    <rect key="frame" x="126" y="135.5" width="205" height="30"/>
+                    <state key="normal" title="Allow"/>
+                    <connections>
+                        <action selector="showContactTapped:" destination="-1" eventType="touchUpInside" id="BOg-s9-Bco"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ibD-BA-ecg">
+                    <rect key="frame" x="126" y="135.5" width="205" height="30"/>
+                    <state key="normal" title="Block"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="7"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="ignoreContactTapped:" destination="-1" eventType="touchUpInside" id="e9F-KD-Ywh"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="WZx-yw-hbz" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="20" id="5Zf-Q6-DTl"/>
                 <constraint firstItem="TQi-A8-CzU" firstAttribute="leading" secondItem="WZx-yw-hbz" secondAttribute="leading" id="5s3-an-mMn"/>
-                <constraint firstItem="xah-J9-ddF" firstAttribute="top" secondItem="TQi-A8-CzU" secondAttribute="bottom" constant="10" id="8XG-4s-g4S"/>
-                <constraint firstItem="MO8-YB-QcQ" firstAttribute="top" secondItem="Gj6-WV-dKT" secondAttribute="bottom" constant="12" id="A0E-P7-vrn"/>
+                <constraint firstItem="xah-J9-ddF" firstAttribute="top" secondItem="TQi-A8-CzU" secondAttribute="bottom" constant="12" id="8XG-4s-g4S"/>
+                <constraint firstItem="ibD-BA-ecg" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="126" id="8iB-Rv-wW4"/>
+                <constraint firstItem="MO8-YB-QcQ" firstAttribute="top" secondItem="Gj6-WV-dKT" secondAttribute="bottom" constant="24" id="8yD-s6-ESK"/>
+                <constraint firstItem="8ad-tP-Teh" firstAttribute="top" secondItem="Gj6-WV-dKT" secondAttribute="bottom" constant="24" id="Gcw-OC-kE9"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="MO8-YB-QcQ" secondAttribute="trailing" constant="100" id="JDW-YB-3VU"/>
                 <constraint firstItem="TQi-A8-CzU" firstAttribute="leading" secondItem="WZx-yw-hbz" secondAttribute="leading" id="Jk2-Kx-Z9l"/>
+                <constraint firstItem="MO8-YB-QcQ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="100" id="Jyg-bz-aJ6"/>
                 <constraint firstItem="xah-J9-ddF" firstAttribute="leading" secondItem="WZx-yw-hbz" secondAttribute="leading" id="K5Z-MJ-itG"/>
                 <constraint firstItem="iLR-CG-9Mi" firstAttribute="leading" secondItem="WZx-yw-hbz" secondAttribute="trailing" constant="30" id="Tyw-e7-fX1"/>
                 <constraint firstItem="Bxq-22-taw" firstAttribute="centerY" secondItem="iLR-CG-9Mi" secondAttribute="centerY" id="VGG-dK-4PH"/>
-                <constraint firstItem="MO8-YB-QcQ" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="XCO-Fm-saK"/>
+                <constraint firstItem="ibD-BA-ecg" firstAttribute="top" secondItem="Gj6-WV-dKT" secondAttribute="bottom" constant="24" id="Whn-8f-y9H"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Bxq-22-taw" secondAttribute="trailing" constant="20" id="b2V-LY-pmp"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="ibD-BA-ecg" secondAttribute="trailing" constant="126" id="daf-Rb-tbb"/>
                 <constraint firstItem="Bxq-22-taw" firstAttribute="trailing" secondItem="TQi-A8-CzU" secondAttribute="trailing" id="ddC-Ch-Tmq"/>
                 <constraint firstItem="WZx-yw-hbz" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="hNO-9P-Ysq"/>
                 <constraint firstItem="Gj6-WV-dKT" firstAttribute="leading" secondItem="xah-J9-ddF" secondAttribute="trailing" constant="8" id="muB-dV-lhu"/>
                 <constraint firstItem="Bxq-22-taw" firstAttribute="leading" secondItem="iLR-CG-9Mi" secondAttribute="trailing" constant="20" id="pTk-J9-UOa"/>
                 <constraint firstItem="Bxq-22-taw" firstAttribute="centerY" secondItem="WZx-yw-hbz" secondAttribute="centerY" id="qJo-SU-v0d"/>
-                <constraint firstItem="TQi-A8-CzU" firstAttribute="top" secondItem="WZx-yw-hbz" secondAttribute="bottom" constant="10" id="rXL-fB-Ulm"/>
+                <constraint firstItem="TQi-A8-CzU" firstAttribute="top" secondItem="WZx-yw-hbz" secondAttribute="bottom" constant="12" id="rXL-fB-Ulm"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="8ad-tP-Teh" secondAttribute="trailing" constant="126" id="t32-vy-y4W"/>
                 <constraint firstItem="Gj6-WV-dKT" firstAttribute="centerY" secondItem="xah-J9-ddF" secondAttribute="centerY" id="vSK-mo-F4A"/>
+                <constraint firstItem="8ad-tP-Teh" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="126" id="yUo-eG-zay"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>

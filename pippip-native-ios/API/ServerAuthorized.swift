@@ -11,14 +11,8 @@ import ObjectMapper
 
 class ServerAuthorized: NSObject, APIRequestProtocol {
     
-    var path: String {
-        if AccountSession.production {
-            return "/authenticator/authorized";
-        }
-        else {
-            return "/authorized";
-        }
-    }
+    var path = "/authorized";
+    var postType: PostType = .authenticator
     var timeout: Double = 10.0
     var sessionId: Int32?
     var authToken: Int64?

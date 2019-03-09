@@ -9,34 +9,28 @@
 import UIKit
 import ObjectMapper
 
-class RequestContactResponse: NSObject, EnclaveResponseProtocol {
+class AddContactResponse: NSObject, EnclaveResponseProtocol {
+
+    static let PENDING = "pending";
+    static let ID_NOT_FOUND = "ID not found";
+    static let CONTACT_UPDATED = "client updated";
 
     var error: String?
     var result: String?
     var requestedId: String?
-    var requestedContactId: String?
+    var directoryId: String?
     var timestamp: Int?
     var version: Double?
     
     required init?(map: Map) {
         if map.JSON["error"] == nil {
-            if map.JSON["result"] == nil {
+            guard let _ = map.JSON["result"] as? String else { return nil }
+            guard let _ =  map.JSON["timestamp"] as? Int else { return nil }
+            guard let _ = map.JSON["version"] as? Double else { return nil }
+            if version != 1.2 {
                 return nil
             }
-            if map.JSON["timestamp"] == nil {
-                return nil
-            }
-            guard let mversion = map.JSON["version"] as? Double else { return nil }
-            if mversion >= 1.1 {
-                if map.JSON["requestedId"] == nil {
-                    return nil
-                }
-            }
-            else {
-                if map.JSON["requestedContactId"] == nil {
-                    return nil
-                }
-            }
+            guard let _ =  map.JSON["requestedId"] as? String else { return nil }
         }
     }
 
@@ -44,7 +38,7 @@ class RequestContactResponse: NSObject, EnclaveResponseProtocol {
         error <- map["error"]
         result <- map["result"]
         requestedId <- map["requestedId"]
-        requestedContactId <- map["requestedContactId"]
+        directoryId <- map["directoryId"]
         timestamp <- map["timestamp"]
         version <- map["version"];
     }

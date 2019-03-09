@@ -8,11 +8,11 @@
 
 import UIKit
 import CocoaLumberjack
+import Promises
 
-class ServerAuthenticator: NSObject, SessionObserverProtocol {
+class ServerAuthenticator: NSObject {
 
     var alertPresenter = AlertPresenter()
-    var secommAPI = SecommAPI()
     var userVault = UserVault()
     var sessionState = SessionState()
     var authView: AuthView?
@@ -29,7 +29,9 @@ class ServerAuthenticator: NSObject, SessionObserverProtocol {
     func authenticate(passphrase: String) {
 
         if openVault(passphrase: passphrase) {
-            secommAPI.startSession(sessionObserver: self)
+            SecommAPI.instance.startSession(sessionComplete: { (sessionResponse) in
+                self.sessionStarted(sessionResponse: sessionResponse)
+            })
         }
         else {
             authView?.authenticated(success: false, "InvalidPassphrase")
@@ -40,23 +42,39 @@ class ServerAuthenticator: NSObject, SessionObserverProtocol {
     func reauthenticate() {
 
         reauth = true
-        secommAPI.startSession(sessionObserver: self)
+        SecommAPI.instance.startSession(sessionComplete: { (sessionResponse) in
+            self.sessionStarted(sessionResponse: sessionResponse)
+        })
 
     }
 
     func doAuthorized() {
 
-        secommAPI.queuePost(delegate: APIResponseDelegate(request: ServerAuthorized(),
-                                                          responseComplete: self.authorizedComplete,
-                                                          responseError: self.authorizedError))
+        let promise : Promise<ClientAuthorized> = SecommAPI.instance.doPost(request: ServerAuthorized())
+        promise.then { (response) in
+            self.authorizedComplete(response)
+        }.catch { error in
+            self.authorizedError(error: error.localizedDescription)
+        }
+//        SecommAPI.instance.queuePost(delegate: APIResponseDelegate(request: ServerAuthorized(),
+//                                                                   postType: .authenticator,
+//                                                                   responseComplete: self.authorizedComplete,
+//                                                                   responseError: self.authorizedError))
 
     }
 
     func doChallenge() {
 
-        secommAPI.queuePost(delegate: APIResponseDelegate(request: ClientAuthChallenge(),
-                                                          responseComplete: self.authChallengeComplete,
-                                                          responseError: self.authChallengeError))
+        let promise : Promise<ServerAuthChallenge> = SecommAPI.instance.doPost(request: ClientAuthChallenge())
+        promise.then { (response) in
+            self.authChallengeComplete(response)
+            }.catch { error in
+                self.authChallengeError(error: error.localizedDescription)
+        }
+//        SecommAPI.instance.queuePost(delegate: APIResponseDelegate(request: ClientAuthChallenge(),
+//                                                                   postType: .authenticator,
+//                                                                  responseComplete: self.authChallengeComplete,
+//                                                                  responseError: self.authChallengeError))
         
     }
 
@@ -80,9 +98,16 @@ class ServerAuthenticator: NSObject, SessionObserverProtocol {
 
     func requestAuth() {
 
-        secommAPI.queuePost(delegate: APIResponseDelegate(request: AuthenticationRequest(),
-                                                          responseComplete: self.authRequestComplete,
-                                                          responseError: self.authRequestError))
+        let promise : Promise<AuthenticationResponse> = SecommAPI.instance.doPost(request: AuthenticationRequest())
+        promise.then { (response) in
+            self.authRequestComplete(response)
+        }.catch { error in
+            self.authRequestError(error: error.localizedDescription)
+        }
+//        SecommAPI.instance.queuePost(delegate: APIResponseDelegate(request: AuthenticationRequest(),
+//                                                                   postType: .authenticator,
+//                                                                   responseComplete: self.authRequestComplete,
+//                                                                   responseError: self.authRequestError))
         
     }
 
@@ -124,7 +149,7 @@ class ServerAuthenticator: NSObject, SessionObserverProtocol {
     func authChallengeError(error: String) {
 
         DDLogError("Authentication challenge error: \(error)")
-        authView?.authenticated(success: false, error)
+        authView?.authenticated(success: false, Strings.errorAuthenticationFailed)
         sessionState.reauth = false
 
     }
@@ -154,7 +179,7 @@ class ServerAuthenticator: NSObject, SessionObserverProtocol {
     func authorizedError(error: String) {
 
         DDLogError("Authorization error: \(error)")
-        authView?.authenticated(success: false, error)
+        authView?.authenticated(success: false, Strings.errorAuthenticationFailed)
         sessionState.reauth = false
 
     }
@@ -179,7 +204,7 @@ class ServerAuthenticator: NSObject, SessionObserverProtocol {
     func authRequestError(error: String) {
         
         DDLogError("Authentication request error: \(error)")
-        authView?.authenticated(success: false, error)
+        authView?.authenticated(success: false, Strings.errorAuthenticationFailed)
         sessionState.reauth = false
 
     }

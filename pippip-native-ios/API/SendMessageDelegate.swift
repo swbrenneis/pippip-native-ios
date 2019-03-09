@@ -45,8 +45,8 @@ class SendMessageDelegate: EnclaveDelegate<SendMessageRequest, SendMessageRespon
             NotificationCenter.default.post(name: Notifications.MessageSent, object: self.textMessage.messageId)
         }
         do {
-            try ContactManager.instance.updateTimestamp(contactId: textMessage.contactId,
-                                                        timestamp: textMessage.timestamp)
+            try ContactsModel.instance.updateTimestamp(contactId: textMessage.contactId,
+                                                       timestamp: textMessage.timestamp)
         }
         catch {
             DDLogError("Error updating contact timestamp: \(error.localizedDescription)")

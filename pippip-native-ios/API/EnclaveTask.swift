@@ -8,12 +8,12 @@
 
 import UIKit
 import CocoaLumberjack
+import Promises
 
 class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponseProtocol>: NSObject {
 
     var delegate: EnclaveDelegate<RequestT, ResponseT>?
     var errorTitle: String?
-    var secommAPI = SecommAPI()
     var alertPresenter = AlertPresenter()
     var request: EnclaveRequestProtocol!
     var serverAuthenticator: ServerAuthenticator?
@@ -60,7 +60,7 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
     }
 
     func responseError(error: String) {
-        print("Enclave response error: \(error)")
+        DDLogError("Enclave response error: \(error)")
         delegate?.responseError(error)
     }
 
@@ -76,12 +76,14 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
         do {
             let enclaveRequest = EnclaveRequest()
             try enclaveRequest.setRequest(request)
-            secommAPI.queuePost(delegate: APIResponseDelegate(request: enclaveRequest,
-                                                              responseComplete: self.responseComplete,
-                                                              responseError: self.responseError))
-        }
-        catch {
-            print("Error sending enclave request: \(error)")
+            let promise: Promise<EnclaveResponse> = SecommAPI.instance.doPost(request: enclaveRequest)
+            promise.then { response in
+                self.responseComplete(response)
+            }.catch { error in
+                self.responseError(error: error.localizedDescription)
+            }
+        } catch {
+            DDLogError("Error sending enclave request: \(error)")
             delegate?.requestError("Unable to create request")
         }
         

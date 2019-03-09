@@ -11,7 +11,7 @@ import RealmSwift
 
 class MessageManager: NSObject {
 
-    var contactManager = ContactManager.instance
+    var contactManager = ContactManager()
     var config = Configurator()
 
     func acknowledgeMessages(_ textMessages: [TextMessage]) {
@@ -19,7 +19,7 @@ class MessageManager: NSObject {
         var triplets = [Triplet]()
         for textMessage in textMessages {
             if (textMessage.contactId != NSNotFound) {
-                let contact = contactManager.getContact(contactId: textMessage.contactId)!
+                let contact = ContactsModel.instance.getContact(contactId: textMessage.contactId)!
                 let triplet = Triplet(publicId: contact.publicId, sequence: Int(textMessage.sequence),
                                       timestamp: Int(textMessage.timestamp))
                 triplets.append(triplet)
@@ -190,7 +190,7 @@ class MessageManager: NSObject {
             addTextMessages([textMessage])
         }
 
-        let contact = contactManager.getContact(contactId: textMessage.contactId)!
+        let contact = ContactsModel.instance.getContact(contactId: textMessage.contactId)!
         let request = SendMessageRequest(message: textMessage.encodeForServer(publicId: contact.publicId))
         let delegate = SendMessageDelegate(request: request, textMessage: textMessage)
         let enclaveTask = EnclaveTask<SendMessageRequest, SendMessageResponse>(delegate: delegate)

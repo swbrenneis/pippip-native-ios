@@ -18,9 +18,6 @@ class AddContactView: UIView {
     @IBOutlet weak var cancelButton: UIButton!
     
     var contactsViewController: ContactsViewController?
-    var directoryId = ""
-    var publicId = ""
-    var publicIdValid = false
     var publicIdRegex: NSRegularExpression
 
     override init(frame: CGRect) {
@@ -74,11 +71,25 @@ class AddContactView: UIView {
         })
         
     }
+    
+    func validatePublicId(publicId: String?) -> Bool {
+
+        guard let puid = publicId else { return false }
+        let matches = publicIdRegex.matches(in: puid, options: [], range: NSRange(location: 0, length: puid.utf8.count))
+        return matches.count == 1 && puid.count == 40
+
+    }
 
     @IBAction func addContactTapped(_ sender: Any) {
     
-        let directoryId = directoryIdTextField.text ?? ""
-        let publicId = publicIdTextField.text ?? ""
+        var directoryId = directoryIdTextField.text
+        if let _ = directoryId, directoryId?.count == 0 {
+            directoryId = nil
+        }
+        var publicId = publicIdTextField.text
+        if let _ = publicId, publicId?.count == 0 {
+            publicId = nil
+        }
         directoryIdTextField.resignFirstResponder()
         publicIdTextField.resignFirstResponder()
         contactsViewController?.validateAndRequest(publicId: publicId, directoryId: directoryId)
@@ -93,12 +104,22 @@ class AddContactView: UIView {
     
     @IBAction func directoryIdChanged(_ sender: Any) {
 
-        directoryId = directoryIdTextField.text ?? ""
-        if (directoryId.count > 0 && publicId.count == 0) || (directoryId.count == 0 && publicIdValid)  {
+        let publicIdValid = validatePublicId(publicId: publicIdTextField.text)
+        if let directoryId = directoryIdTextField.text {
+            if (directoryId.count > 0 && !publicIdValid) || (directoryId.count == 0 && publicIdValid) {
+                addContactButton.isEnabled = true
+                addContactButton.backgroundColor = PippipTheme.buttonColor
+            } else {
+                addContactButton.isEnabled = false
+                addContactButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
+            }
+            if directoryId.count == 0 {
+                directoryIdTextField.text = nil
+            }
+        } else if publicIdValid {
             addContactButton.isEnabled = true
             addContactButton.backgroundColor = PippipTheme.buttonColor
-        }
-        else {
+        } else {
             addContactButton.isEnabled = false
             addContactButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
         }
@@ -107,18 +128,26 @@ class AddContactView: UIView {
     
     @IBAction func publicIdChanged(_ sender: Any) {
         
-        publicId = publicIdTextField.text ?? ""
-        let matches = publicIdRegex.matches(in: publicId, options: [], range: NSRange(location: 0, length: publicId.utf8.count))
-        publicIdValid = matches.count == 1
-        if (directoryId.count > 0 && publicId.count == 0) || (directoryId.count == 0 && publicIdValid)  {
+        let directoryId = directoryIdTextField.text ?? ""
+        if let publicId = publicIdTextField.text {
+            let publicIdValid = validatePublicId(publicId: publicId)
+            if (directoryId.count > 0 && publicId.count == 0) || (directoryId.count == 0 && publicIdValid)  {
+                addContactButton.isEnabled = true
+                addContactButton.backgroundColor = PippipTheme.buttonColor
+            } else {
+                addContactButton.isEnabled = false
+                addContactButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
+            }
+            if publicId.count == 0 {
+                publicIdTextField.text = nil
+            }
+        } else if let _ = directoryIdTextField {
             addContactButton.isEnabled = true
             addContactButton.backgroundColor = PippipTheme.buttonColor
-        }
-        else {
+        } else {
             addContactButton.isEnabled = false
             addContactButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
         }
-        
     }
 
 }
