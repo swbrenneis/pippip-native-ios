@@ -9,26 +9,22 @@
 import UIKit
 import ObjectMapper
 
-class ServerContact: NSObject, Mappable {
+class ServerContact: Mappable {
     
     var publicId: String?
     var directoryId: String?
     var status: String?
     var timestamp: Int?
+    var version: Float?
     var authData: String?
     var nonce: String?
     var messageKeys: [String]?
     
     required init?(map: Map) {
-        if map.JSON["publicId"] == nil {
-            return nil
-        }
-        if map.JSON["status"] == nil {
-            return nil
-        }
-        if map.JSON["timestamp"] == nil {
-            return nil
-        }
+        guard let _ = map.JSON["publicId"] as? String else { return nil }
+        guard let _ = map.JSON["status"] as? String else { return nil }
+        guard let _ = map.JSON["timestamp"] as? Int else { return nil }
+        guard let _ = map.JSON["version"] as? Float else { return nil }
     }
     
     func mapping(map: Map) {
@@ -37,6 +33,7 @@ class ServerContact: NSObject, Mappable {
         directoryId <- map["directoryId"]
         status <- map["status"]
         timestamp <- map["timestamp"]
+        version <- map["version"]
         authData <- map["authData"]
         nonce <- map["nonce"]
         messageKeys <- map["messageKeys"]

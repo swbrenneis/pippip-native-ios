@@ -14,6 +14,7 @@ class UpdateWhitelistRequest: EnclaveRequestProtocol {
     var method: String = "UpdateWhitelist"
     var id: String?
     var action: String?
+    var version: Float?
     
     init(id: String, action: String) {
         self.id = id
@@ -28,6 +29,7 @@ class UpdateWhitelistRequest: EnclaveRequestProtocol {
         method <- map["method"]
         id <- map["id"]
         action <- map["action"]
+        version <- map["version"]
     }
     
 }

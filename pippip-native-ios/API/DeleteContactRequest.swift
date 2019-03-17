@@ -13,6 +13,7 @@ class DeleteContactRequest: NSObject, EnclaveRequestProtocol {
     
     var method: String = "DeleteContact"
     var publicId: String?
+    var version: Float?
 
     init(publicId: String) {
         self.publicId = publicId
@@ -25,6 +26,7 @@ class DeleteContactRequest: NSObject, EnclaveRequestProtocol {
     func mapping(map: Map) {
         method <- map["method"]
         publicId <- map["publicId"]
+        version <- map["version"]
     }
 
 }

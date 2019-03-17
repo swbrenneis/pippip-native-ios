@@ -16,15 +16,12 @@ class NewAccountResponse: NSObject, APIResponseProtocol {
     var sessionId: Int32?
     var authToken: Int64?
     var data: String?
-    var postId: Int = 0
 
     var alertPresenter = AlertPresenter()
     var sessionState = SessionState()
     
     required init?(map: Map) {
-        if map.JSON["sessionId"] == nil {
-            return nil
-        }
+        guard let _ =  map.JSON["sessionId"] else { return nil }
         if map.JSON["error"] == nil &&  map.JSON["data"] == nil {
             return nil
         }
@@ -38,26 +35,19 @@ class NewAccountResponse: NSObject, APIResponseProtocol {
         
     }
     
-    func processResponse() -> String? {
+    func processResponse() throws {
 
-        if let _ = error {
-            return error
+        if let responseError = error {
+            throw APIResponseError.serverResponseError(error: responseError)
         }
 
         if let encoded = Data(base64Encoded: data!) {
-            do {
-                let codec = CKRSACodec(data: encoded)
-                try codec.decrypt(sessionState.userPrivateKey!)
-                sessionState.accountRandom = codec.getBlock()
-                return nil
-            }
-            catch {
-                DDLogError("Error decrypting new account response: \(error.localizedDescription)")
-                return "Invalid response from server"
-            }
+            let codec = CKRSACodec(data: encoded)
+            try codec.decrypt(sessionState.userPrivateKey!)
+            sessionState.accountRandom = codec.getBlock()
         }
         else {
-            return "Server response encoding error"
+            throw APIResponseError.invalidServerResponse
         }
         
     }

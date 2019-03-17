@@ -185,13 +185,13 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     }
     
     func doUpdates() {
-
+/*
         if updateState == .idle && authState != .notAuthenticated {
             didUpdate = true
             updateState = .gettingMessages
             messageManager.getNewMessages()
         }
-
+*/
     }
 
     func loadAccount() throws {
@@ -263,7 +263,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         var realmConfig = Realm.Configuration()
         realmConfig.fileURL = realmConfig.fileURL?.deletingLastPathComponent()
             .appendingPathComponent("\(realAccountName!).realm")
-        realmConfig.schemaVersion = 22
+        realmConfig.schemaVersion = 23
         realmConfig.migrationBlock = { (migration, oldSchemaVersion) in
             if oldSchemaVersion < 15 {
                 migration.enumerateObjects(ofType: AccountConfig.className()) { (oldObject, newObject) in

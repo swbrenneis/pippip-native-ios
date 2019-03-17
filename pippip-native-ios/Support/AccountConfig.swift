@@ -22,5 +22,6 @@ class AccountConfig: Object {
     @objc dynamic var statusUpdates: Int = 0
     @objc dynamic var uuid: String = ""
     @objc dynamic var autoAccept: Bool = false
+    @objc dynamic var v2FirstRun: Bool = true
 
 }

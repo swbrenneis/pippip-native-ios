@@ -9,7 +9,7 @@
 import UIKit
 import ObjectMapper
 
-class ServerAuthChallenge: NSObject, APIResponseProtocol {
+class ServerAuthChallenge: APIResponseProtocol {
 
     var error: String?
     var sessionId: Int32?
@@ -44,26 +44,24 @@ class ServerAuthChallenge: NSObject, APIResponseProtocol {
 
     }
     
-    func processResponse() -> String? {
+    func processResponse() throws {
 
-        if let _ = error {
-            return error
+        if let responseError = error {
+            throw APIResponseError.serverResponseError(error: responseError)
         }
 
-        guard let sigData = Data(base64Encoded: signature!) else { return "Server response encoding error" }
-        guard let hmacData = Data(base64Encoded: hmac!) else { return "Server response encoding error" }
+        guard let sigData = Data(base64Encoded: signature!) else { throw APIResponseError.invalidServerResponse }
+        guard let hmacData = Data(base64Encoded: hmac!) else { throw APIResponseError.invalidServerResponse }
 
         let sig = CKSignature(sha256: ())
         if !sig.verify(sessionState.serverPublicKey!, withMessage: hmacData, withSignature: sigData) {
-            return "HMAC signature failed to verify"
+            throw AuthenticationError.invalidSignature
         }
 
         if !validateHMAC(hmacData) {
-            return "HMAC failed to validate"
+            throw AuthenticationError.challengeFailed
         }
 
-        return nil
-        
     }
 
     func validateHMAC(_ hmacData: Data) -> Bool {

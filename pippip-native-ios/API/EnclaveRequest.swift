@@ -9,7 +9,7 @@
 import Foundation
 import ObjectMapper
 
-class EnclaveRequest: NSObject, APIRequestProtocol {
+class EnclaveRequest: APIRequestProtocol {
 
     var path = "/enclave-request"
     var postType: PostType = .enclave
@@ -20,12 +20,10 @@ class EnclaveRequest: NSObject, APIRequestProtocol {
 
     var sessionState = SessionState()
 
-    override init() {
+    init() {
 
         sessionId = sessionState.sessionId
         authToken = sessionState.authToken
-
-        super.init()
 
     }
 
@@ -48,11 +46,11 @@ class EnclaveRequest: NSObject, APIRequestProtocol {
                 request = encoded.base64EncodedString()
             }
             else {
-                throw EnclaveRequestError(errorString: codec.lastError!)
+                throw EnclaveError.cryptoError(error: codec.lastError!)
             }
         }
         else {
-            throw EnclaveRequestError(errorString: "Unable to encode request")
+            throw EnclaveError.encodingError
         }
 
     }

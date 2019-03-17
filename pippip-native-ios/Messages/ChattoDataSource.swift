@@ -75,7 +75,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
     
     func addTextMessage(_ textMessage: TextMessage) {
 
-        conversation?.addTextMessage(textMessage)
+        conversation?.addTextMessage(textMessage, initial: false)
         delegate?.chatDataSourceDidUpdate(self, updateType: .normal)
 
     }
@@ -159,7 +159,7 @@ class ChattoDataSource: ChatDataSourceProtocol {
         guard let textMessages = notification.object as? [TextMessage] else { return }
         for message in textMessages {
             if message.contactId == conversation?.contact.contactId {
-                conversation?.addTextMessage(message)
+                conversation?.addTextMessage(message, initial: false)
             }
         }
         DispatchQueue.main.async {

@@ -10,7 +10,7 @@ import UIKit
 import ObjectMapper
 import CocoaLumberjack
 
-class AuthenticationResponse: NSObject, APIResponseProtocol {
+class AuthenticationResponse: APIResponseProtocol {
     
     var error: String?
     var sessionId: Int32?
@@ -40,26 +40,19 @@ class AuthenticationResponse: NSObject, APIResponseProtocol {
 
     }
     
-    func processResponse() -> String? {
+    func processResponse() throws {
 
-        if let _ = error {
-            return error
+        if let responseError = error {
+            throw APIResponseError.serverResponseError(error: responseError)
         }
 
         if let encoded = Data(base64Encoded: data!) {
-            do {
-                let codec = CKRSACodec(data: encoded)
-                try codec.decrypt(sessionState.userPrivateKey!)
-                sessionState.serverAuthRandom = codec.getBlock()
-                return nil
-            }
-            catch {
-                DDLogError("Error decrypting authentication response: \(error.localizedDescription)")
-                return "Invalid response from server"
-            }
+            let codec = CKRSACodec(data: encoded)
+            try codec.decrypt(sessionState.userPrivateKey!)
+            sessionState.serverAuthRandom = codec.getBlock()
         }
         else {
-            return "Response encoding error"
+            throw APIResponseError.invalidServerResponse
         }
 
     }

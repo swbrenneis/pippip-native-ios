@@ -146,7 +146,21 @@ class Configurator: NSObject {
             }
         }
     }
-
+    var v2FirstRun: Bool {
+        get {
+            let config = getConfig()
+            return config.v2FirstRun
+        }
+        set {
+            let config = getConfig()
+            let realm = try! Realm()
+            try! realm.write {
+                config.v2FirstRun = newValue
+                config.version = Configurator.currentVersion
+            }
+        }
+    }
+    
     var sessionState = SessionState()
 
     func addWhitelistEntry(_ entity: Entity) throws {

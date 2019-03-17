@@ -10,7 +10,7 @@ import Foundation
 import CocoaLumberjack
 
 class SetContactStatusDelegate : EnclaveDelegate<SetContactStatusRequest, SetContactStatusResponse> {
-    
+ /*
     override init(request: SetContactStatusRequest) {
         super.init(request: request)
         
@@ -19,7 +19,7 @@ class SetContactStatusDelegate : EnclaveDelegate<SetContactStatusRequest, SetCon
         responseError = self.setError
         
     }
-    
+*/
     func setComplete(response: SetContactStatusResponse) {
         
         ContactsModel.instance.setContactStatus(publicId: response.publicId!, status: response.status!)

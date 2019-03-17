@@ -14,6 +14,7 @@ class SetDirectoryIdRequest: NSObject, EnclaveRequestProtocol {
     var method: String = "SetDirectoryId"
     var oldDirectoryId: String?
     var newDirectoryId: String?
+    var version: Float?
     
     init(oldDirectoryId: String, newDirectoryId: String) {
         self.oldDirectoryId = oldDirectoryId
@@ -28,6 +29,7 @@ class SetDirectoryIdRequest: NSObject, EnclaveRequestProtocol {
         method <- map["method"]
         oldDirectoryId <- map["oldDirectoryId"]
         newDirectoryId <- map["newDirectoryId"]
+        version <- map["version"]
     }
 
 }

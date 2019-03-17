@@ -139,13 +139,13 @@ class NewAccountCreator: NSObject {
 
     func accountFinishComplete(_ accountFinal: NewAccountFinal) {
 
-        if let error = accountFinal.processResponse() {
-            DDLogError("New account finish error: \(error)")
-            alertPresenter.errorAlert(title: "New Account Error", message: error)
-            authView.accountCreated(success: false, error)
-        }
-        else {
+        do {
+            try accountFinal.processResponse()
             accountCreated()
+        } catch {
+            DDLogError("New account finish error: \(error.localizedDescription)")
+            alertPresenter.errorAlert(title: "New Account Error", message: error.localizedDescription)
+            authView.accountCreated(success: false, error.localizedDescription)
         }
         
     }
@@ -157,15 +157,13 @@ class NewAccountCreator: NSObject {
 
     func accountRequestComplete(_ accountResponse: NewAccountResponse) {
 
-        DispatchQueue.global(qos: .userInitiated).async {
-            if let error = accountResponse.processResponse() {
-                DDLogError("New account request error: \(error)")
-                self.alertPresenter.errorAlert(title: "New Account Error", message: error)
-                self.authView.accountCreated(success: false, error)
-            }
-            else {
-                self.doFinish()
-            }
+        do {
+            try accountResponse.processResponse()
+            self.doFinish()
+        } catch {
+            DDLogError("New account request error: \(error.localizedDescription)")
+            self.alertPresenter.errorAlert(title: "New Account Error", message: error.localizedDescription)
+            self.authView.accountCreated(success: false, error.localizedDescription)
         }
         
     }

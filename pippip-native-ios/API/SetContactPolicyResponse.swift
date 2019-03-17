@@ -9,11 +9,13 @@
 import UIKit
 import ObjectMapper
 
-class SetContactPolicyResponse: NSObject, EnclaveResponseProtocol {
+class SetContactPolicyResponse: EnclaveResponseProtocol {
 
+    var json: String?
     var error: String?
     var policy: String?
     var result: String?
+    var version: Float?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {
@@ -26,10 +28,15 @@ class SetContactPolicyResponse: NSObject, EnclaveResponseProtocol {
         }
     }
 
+    required init?(jsonString: String) {
+        
+    }
+    
     func mapping(map: Map) {
         error <- map["error"]
         policy <- map["policy"]
         result <- map["result"]
+        version <- map["version"]
     }
 
 }

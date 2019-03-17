@@ -9,20 +9,27 @@
 import UIKit
 import ObjectMapper
 
-class GetPendingRequestsResponse: NSObject, EnclaveResponseProtocol {
+class GetPendingRequestsResponse: EnclaveResponseProtocol {
 
+    var json: String?
     var error: String?
     var requests: [[String: String]]?
+    var version: Float?
 
     required init?(map: Map) {
-        if map.JSON["error"] == nil && map.JSON["requests"] == nil {
-            return nil
+        if map.JSON["error"] == nil {
+            guard let _ = map.JSON["requests"] else { return nil }
         }
     }
 
+    required init?(jsonString: String) {
+        
+    }
+    
     func mapping(map: Map) {
         error <- map["error"]
         requests <- map["requests"]
+        version <- map["version"]
     }
 
 }

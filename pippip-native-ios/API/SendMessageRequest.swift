@@ -13,6 +13,7 @@ class SendMessageRequest: NSObject, EnclaveRequestProtocol {
 
     var method: String = "SendMessage"
     var message: ServerMessage?
+    var version: Float?
     
     init(message: ServerMessage) {
         self.message = message
@@ -25,6 +26,7 @@ class SendMessageRequest: NSObject, EnclaveRequestProtocol {
     func mapping(map: Map) {
         method <- map["method"]
         message <- map["message"]
+        version <- map["version"]
     }
 
 }

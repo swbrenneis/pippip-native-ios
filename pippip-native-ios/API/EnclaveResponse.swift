@@ -10,33 +10,24 @@ import UIKit
 import ObjectMapper
 import CocoaLumberjack
 
-class EnclaveResponse: NSObject, APIResponseProtocol {
+class EnclaveResponse: APIResponseProtocol {
 
     var sessionId: Int32?
     var authToken: Int64?
     var error: String?
     var response: String?
     var needsAuth: Bool?
-    var postId: Int = 0
     var json: String = ""
 
     let alertPresenter = AlertPresenter()
     let sessionState = SessionState()
 
     required init?(map: Map) {
-        if map.JSON["sessionId"] == nil {
-            return nil
-        }
-        if map.JSON["authToken"] == nil {
-            return nil
-        }
+        guard let _ = map.JSON["needsAuth"] else { return nil }
+        guard let _ =  map.JSON["sessionId"] else { return nil }
+        guard let _ = map.JSON["authToken"] else { return nil }
         if map.JSON["error"] == nil {
-            if map.JSON["response"] == nil {
-                return nil
-            }
-            if map.JSON["needsAuth"] == nil {
-                return nil
-            }
+            guard let _ = map.JSON["response"] else { return nil }
         }
     }
     
@@ -50,32 +41,25 @@ class EnclaveResponse: NSObject, APIResponseProtocol {
 
     }
     
-    func processResponse() -> String? {
+    func processResponse() throws {
 
-        if let _ = error {
-            return error
+        if let errorResponse = error {
+            throw APIResponseError.serverResponseError(error: errorResponse)
         }
-
+        
         if sessionId != sessionState.sessionId || authToken != sessionState.authToken {
             DDLogInfo("Current session ID: \(sessionState.sessionId)")
             DDLogInfo("Current auth token: \(sessionState.authToken)")
-            return "Invalid authentication! Please sign off immediately!"
+            throw APIResponseError.invalidAuth
         }
 
         if let responseData = Data(base64Encoded: response!) {
-            do {
-                let codec = CKGCMCodec(data: responseData)
-                try codec.decrypt(sessionState.enclaveKey!, withAuthData: sessionState.authData!)
-                json = codec.getString()
-                return  nil
-            }
-            catch {
-                DDLogError("Error decrypting enclave response: \(error.localizedDescription)")
-                return "Invalid response from server"
-            }
+            let codec = CKGCMCodec(data: responseData)
+            try codec.decrypt(sessionState.enclaveKey!, withAuthData: sessionState.authData!)
+            json = codec.getString()
         }
         else {
-            return "Server response encoding error"
+            throw APIResponseError.invalidServerResponse
         }
 
     }

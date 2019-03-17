@@ -14,6 +14,7 @@ class SetContactStatusRequest : EnclaveRequestProtocol {
     var method = "SetContactStatus"
     var publicId: String?
     var status: String?
+    var version: Float?
     
     init(publicId: String, status: String) {
         self.publicId = publicId
@@ -27,6 +28,7 @@ class SetContactStatusRequest : EnclaveRequestProtocol {
     func mapping(map: Map) {
         publicId <- map["publicId"]
         status <- map["status"]
+        version <- map["version"]
     }
     
     

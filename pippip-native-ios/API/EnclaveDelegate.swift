@@ -20,28 +20,29 @@ struct EnclaveResponseError: Error {
     }
 
 }
-*/
+
 protocol EnclaveDelegateProtocol {
 
     associatedtype RequestT
     associatedtype ResponseT
 
     var request: RequestT { get }
-    var requestComplete: ((ResponseT) -> Void)! { get }
-    var requestError: ((String) -> Void)! { get }
-    var responseError: ((String) -> Void)! { get }
+    func requestComplete(response: ResponseT)
+    func requestError(error: String)
+    func responseError(error: String)
 
 }
-
-class EnclaveDelegate<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponseProtocol>: EnclaveDelegateProtocol {
+*/
+class EnclaveDelegate<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponseProtocol> /*: EnclaveDelegateProtocol */ {
     
     var request: RequestT
-    var requestComplete: ((ResponseT) -> Void)!
-    var requestError: ((String) -> Void)!
-    var responseError: ((String) -> Void)!
 
     init(request: RequestT) {
         self.request = request
     }
+
+    func requestComplete(response: ResponseT) {}
+    func requestError(error: String) {}
+    func responseError(error: String) {}
 
 }

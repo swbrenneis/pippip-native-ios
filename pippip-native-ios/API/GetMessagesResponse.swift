@@ -9,25 +9,30 @@
 import UIKit
 import ObjectMapper
 
-class GetMessagesResponse: NSObject, EnclaveResponseProtocol {
+class GetMessagesResponse: EnclaveResponseProtocol {
 
+    var json: String?
     var error: String?
     var messages: [ServerMessage]?
     var rejected: [String]?
+    var version: Float?
 
     required init?(map: Map) {
-        if map.JSON["error"] == nil && map.JSON["messages"] == nil {
-            return nil
-        }
-        if map.JSON["error"] == nil && map.JSON["rejected"] == nil {
-            return nil
+        if map.JSON["error"] == nil {
+            guard let _ = map.JSON["messages"] else { return nil }
+            guard let _ = map.JSON["rejected"] else { return nil }
         }
     }
 
+    required init?(jsonString: String) {
+        
+    }
+    
     func mapping(map: Map) {
         error <- map["error"]
         messages <- map["messages"]
         rejected <- map["rejected"]
+        version <- map["version"]
     }
 
 }

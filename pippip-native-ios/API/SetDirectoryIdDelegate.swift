@@ -10,7 +10,7 @@ import UIKit
 import CocoaLumberjack
 
 class SetDirectoryIdDelegate: EnclaveDelegate<SetDirectoryIdRequest, SetDirectoryIdResponse> {
-
+/*
     override init(request: SetDirectoryIdRequest) {
         super.init(request: request)
 
@@ -19,7 +19,7 @@ class SetDirectoryIdDelegate: EnclaveDelegate<SetDirectoryIdRequest, SetDirector
         responseError = self.setError
 
     }
-
+*/
     func setComplete(response: SetDirectoryIdResponse) {
         NotificationCenter.default.post(name: Notifications.DirectoryIdUpdated, object: response)
     }

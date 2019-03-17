@@ -11,13 +11,16 @@ import Foundation
 struct Strings {
     
     // Error strings
-    static let errorRequestFailed = "The request could not be completed, please try again"
-    static let errorAuthenticationFailed = "Authentication failure, please try again"
+    static let errorRequestFailed = "The request could not be completed, please try again later"
+    static let errorAuthenticationFailed = "Authentication failure, please try again later"
     static let errorInvalidResponse = "The server sent an invalid response"
     static let errorInternal = "An application error occured, please try again"
     static let errorDuplicateContact = "This contact is already in your contact list"
     static let errorDuplicateRequest = "There is a pending request for that contact on the server"
     static let errorIdNotFound = "That directory ID does not exist"
+    
+    // Info strings
+    static let infoNeedsAuth = "Reauthentication needed"
     
     // Success strings
     static let successRequestResent = "The request has been sent"

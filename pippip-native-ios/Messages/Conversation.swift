@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class Conversation: NSObject {
 
@@ -57,7 +58,7 @@ class Conversation: NSObject {
 
     }
 
-    func addTextMessage(_ textMessage: TextMessage) {
+    func addTextMessage(_ textMessage: TextMessage, initial: Bool) {
         
         if messageMap[textMessage.messageId] == nil {
             messageList.insert(textMessage)
@@ -66,13 +67,14 @@ class Conversation: NSObject {
                 textMessage.read = true
                 messageManager.markMessageRead(messageId: textMessage.messageId)
             }
-            DispatchQueue.global().async {
-                textMessage.decrypt(notify: true)
+            if !initial {
+                DispatchQueue.global().async {
+                    textMessage.decrypt(notify: true)
+                }
             }
             items.append(PippipTextMessageModel(textMessage: textMessage))
-        }
-        else {
-            print("Duplicate messageId \(textMessage.messageId)")
+        } else {
+            DDLogError("Duplicate messageId \(textMessage.messageId)")
         }
         
     }
@@ -80,7 +82,7 @@ class Conversation: NSObject {
     func addTextMessages(_ textMessages: [TextMessage]) {
 
         for textMessage in textMessages {
-            addTextMessage(textMessage)
+            addTextMessage(textMessage, initial: false)
         }
 
     }
@@ -164,17 +166,6 @@ class Conversation: NSObject {
             }
             items.append(PippipTextMessageModel(textMessage: textMessage))
         }
-//        for textMessage in messageList {
-//            if textMessage.ciphertext!.count < 25 {
-//                textMessage.decrypt(notify: false)
-//            }
-//            else {
-//                DispatchQueue.global().async {
-//                    textMessage.decrypt(notify: true)
-//                }
-//            }
-//            items.append(PippipTextMessageModel(textMessage: textMessage))
-//        }
         windowPos = max(0, messageManager.messageCount(contactId: contact.contactId) - windowSize)
 
     }
@@ -310,7 +301,7 @@ class Conversation: NSObject {
                 items[index] = PippipTextMessageModel(textMessage: textMessage)
             }
             else {
-                print("Message not found in updateChatItem")
+                DDLogError("Message not found in updateChatItem")
             }
         }
 

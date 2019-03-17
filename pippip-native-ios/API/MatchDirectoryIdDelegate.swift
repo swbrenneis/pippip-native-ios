@@ -9,7 +9,7 @@
 import UIKit
 
 class MatchDirectoryIdDelegate: EnclaveDelegate<MatchDirectoryIdRequest, MatchDirectoryIdResponse> {
-
+/*
     override init(request: MatchDirectoryIdRequest) {
         super.init(request: request)
 
@@ -18,7 +18,7 @@ class MatchDirectoryIdDelegate: EnclaveDelegate<MatchDirectoryIdRequest, MatchDi
         responseError = self.matchError
 
     }
-    
+*/
     func matchComplete(response: MatchDirectoryIdResponse) {
         NotificationCenter.default.post(name: Notifications.DirectoryIdMatched, object: response)
     }

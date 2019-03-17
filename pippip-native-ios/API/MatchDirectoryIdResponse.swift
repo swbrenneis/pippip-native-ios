@@ -11,10 +11,12 @@ import ObjectMapper
 
 class MatchDirectoryIdResponse: NSObject, EnclaveResponseProtocol {
 
+    var json: String?
     var error: String?
     var result: String?
     var publicId: String?
     var directoryId: String?
+    var version: Float?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil && map.JSON["result"] == nil {
@@ -22,11 +24,16 @@ class MatchDirectoryIdResponse: NSObject, EnclaveResponseProtocol {
         }
     }
 
+    required init?(jsonString: String) {
+        
+    }
+    
     func mapping(map: Map) {
         error <- map["error"]
         result <- map["result"]
         publicId <- map["publicId"]
         directoryId <- map["directoryId"]
+        version <- map["version"]
     }
 
 }

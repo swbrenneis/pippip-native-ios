@@ -14,6 +14,7 @@ class MatchDirectoryIdRequest: NSObject, EnclaveRequestProtocol {
     var method: String = "MatchDirectoryId"
     var publicId: String?
     var directoryId: String?
+    var version: Float?
     
     init(publicId: String?, directoryId: String?) {
         self.publicId = publicId
@@ -28,6 +29,7 @@ class MatchDirectoryIdRequest: NSObject, EnclaveRequestProtocol {
         method <- map["method"]
         publicId <- map["publicId"]
         directoryId <- map["directoryId"]
+        version <- map["version"]
     }
 
 }

@@ -7,63 +7,30 @@
 //
 
 import UIKit
-import FrostedSidebar
 import ChameleonFramework
 import LocalAuthentication
 import Sheriff
 import MessageUI
-import ImageSlideshow
 
 class MessagesViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageSearch: UISearchBar!
     
-    var sidebar: FrostedSidebar!
-    var sidebarOn = false
-    var contactsView: ContactsViewController!
-    var conversationVew: ChattoViewController!
-    var settingsView: SettingsTableViewController!
     var previews = [TextMessage]()
     var searched = [Conversation]()
     var sessionState = SessionState()
     var headingView: UIView!
     var wasReset = false
     var config = Configurator()
-    var authenticator: Authenticator!
-    var alertPresenter: AlertPresenter!
+    var alertPresenter = AlertPresenter()
     var contactBarButton: UIBarButtonItem!
     var contactBadge = GIBadgeView()
-    var slideshow: ImageSlideshow!
-    let slides = [ImageSource(imageString: "quickstart01")!,
-                  ImageSource(imageString: "quickstart02")!,
-                  ImageSource(imageString: "quickstart03")!,
-                  ImageSource(imageString: "quickstart04")!,
-                  ImageSource(imageString: "quickstart05")!,
-                  ImageSource(imageString: "quickstart06")!,
-                  ImageSource(imageString: "quickstart07")!,
-                  ImageSource(imageString: "quickstart08")!,
-                  ImageSource(imageString: "quickstart09")!,
-                  ImageSource(imageString: "quickstart10")!,
-                  ImageSource(imageString: "quickstart11")!,
-                  ImageSource(imageString: "quickstart12")!,
-                  ImageSource(imageString: "quickstart13")!]
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        PippipTheme.setTheme()
-        PippipGeometry.setGeometry()
-        SecommAPI.initializeAPI()
-        
-        try! AccountSession.instance.loadAccount()
-        authenticator = Authenticator(viewController: self)
-
-        alertPresenter = AlertPresenter(view: self.view)
-        
         self.view.backgroundColor = PippipTheme.viewColor
-        self.navigationController?.navigationBar.barTintColor = PippipTheme.navBarColor
-        self.navigationController?.navigationBar.tintColor = PippipTheme.navBarTint
         messageSearch.backgroundImage = UIImage()
         messageSearch.backgroundColor = PippipTheme.lightBarColor
         messageSearch.barTintColor = PippipTheme.navBarColor
@@ -72,45 +39,8 @@ class MessagesViewController: UIViewController {
         headingView = UIView(frame: headingFrame)
         headingView.backgroundColor = .clear
 
-        let bounds = self.view.bounds
-        slideshow = ImageSlideshow(frame: bounds)
-        slideshow.setImageInputs(slides)
-        let recognizer = UITapGestureRecognizer(target: self, action: #selector(MessagesViewController.didTap))
-        slideshow.addGestureRecognizer(recognizer)
-        slideshow.alpha = 0.0
-        self.view.addSubview(slideshow)
-        
         // Do any additional setup after loading the view.
-        let sidebarImages = [ UIImage(named: "help")!, UIImage(named: "settings")!,
-                              UIImage(named: "exit")! ]
-        sidebar = FrostedSidebar(itemImages: sidebarImages, colors: nil, selectionStyle: .single)
-        sidebar.showFromRight = true
-        sidebar.itemBackgroundColor = .clear
-        sidebar.adjustForNavigationBar = true
-        sidebar.itemSize = CGSize(width: 130.0, height: 130.0)
-        contactsView = (self.storyboard?.instantiateViewController(withIdentifier: "ContactsViewController") as! ContactsViewController)
-        settingsView = (self.storyboard?.instantiateViewController(withIdentifier: "SettingsTableViewController") as! SettingsTableViewController)
-        sidebar.actionForIndex[0] = {
-            self.sidebarOn = false
-            self.sidebar.dismissAnimated(true, completion: nil)
-            UIView.animate(withDuration: 0.3, animations: {
-                self.slideshow.alpha = 1.0
-            }, completion: { (completed) in
-                self.navigationController?.setNavigationBarHidden(true, animated: true)
-            })
-        }
-        sidebar.actionForIndex[1] = {
-            self.sidebarOn = false
-            self.sidebar.dismissAnimated(true, completion: nil)
-            self.navigationController?.pushViewController(self.settingsView, animated: true)
-        }
-        sidebar.actionForIndex[2] = {
-            self.sidebarOn = false
-            self.sidebar.dismissAnimated(true, completion: nil)
-            AccountSession.instance.signOut()
-            self.authenticator.signOut()
-        }
-
+        /*
         var rightBarItems = [UIBarButtonItem]()
         let image = UIImage(named: "hamburgermenu")
         let hamburger = UIBarButtonItem(image: image, style: .plain, target: self,
@@ -123,7 +53,6 @@ class MessagesViewController: UIViewController {
         rightBarItems.append(pollButton)
         #endif
         self.navigationItem.rightBarButtonItems = rightBarItems
-        var leftBarItems = [UIBarButtonItem]()
         let composeImage = UIImage(named: "compose-small")?.withRenderingMode(.alwaysOriginal)
         let compose = UIBarButtonItem(image: composeImage, style: .plain,
                                       target: self, action: #selector(composeMessage(_:)))
@@ -136,10 +65,7 @@ class MessagesViewController: UIViewController {
         contactBarButton.customView?.addSubview(contactBadge)
         contactBarButton.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self,
                                                                                  action: #selector(showContacts(_:))))
-        leftBarItems.append(compose)
-        leftBarItems.append(contactBarButton)
-        self.navigationItem.leftBarButtonItems = leftBarItems
-
+*/
         tableView.delegate = self
         tableView.dataSource = self
         messageSearch.delegate = self
@@ -153,7 +79,6 @@ class MessagesViewController: UIViewController {
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
-        authenticator.viewWillAppear()
 
         if wasReset {
             wasReset = false
@@ -182,15 +107,6 @@ class MessagesViewController: UIViewController {
                                                name: Notifications.SetContactBadge, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(conversationDeleted(_:)),
                                                name: Notifications.ConversationDeleted, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
-                                               name: Notifications.AppSuspended, object: nil)
-
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        authenticator.viewDidAppear()
 
     }
 
@@ -198,15 +114,11 @@ class MessagesViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
-        authenticator.viewWillDisappear()
-        sidebarOn = false
-        sidebar.dismissAnimated(true, completion: nil)
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AuthComplete, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.SetContactBadge, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.ConversationDeleted, object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notifications.AppSuspended, object: nil)
 
     }
 /*
@@ -245,28 +157,18 @@ class MessagesViewController: UIViewController {
 
     }
 
-    @objc func didTap() {
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.slideshow.alpha = 0.0
-        }, completion: { (completed) in
-            self.navigationController?.setNavigationBarHidden(false, animated: true)
-        })
-
-    }
-    
     #if targetEnvironment(simulator)
     @objc func pollServer(_ sender: Any) {
         AccountSession.instance.doUpdates()
     }
     #endif
-
+/*
     @objc func showContacts(_ item: Any) {
 
         self.navigationController?.pushViewController(self.contactsView, animated: true)
 
     }
-
+*/
     @objc func showMessageDump(_ item: Any) {
         
         let dumpView = self.storyboard?.instantiateViewController(withIdentifier: "MessageDumpTableViewController")
@@ -275,31 +177,6 @@ class MessagesViewController: UIViewController {
 
     }
 
-    @objc func showSidebar(_ item: Any) {
-
-        self.view.endEditing(true)
-        if sidebarOn {
-            sidebarOn = false
-            sidebar.dismissAnimated(true, completion: nil)
-        }
-        else {
-            sidebarOn = true
-            sidebar.showInViewController(self, animated: true)
-        }
-
-    }
-
-    // Notifications
-
-    @objc func appSuspended(_ notification: Notification) {
-        
-        DispatchQueue.main.async {
-            self.sidebarOn = false
-            self.sidebar.dismissAnimated(true, completion: nil)
-        }
-
-    }
-    
     @objc func authComplete(_ notification: Notification) {
         
         guard let success = notification.object as? Bool else { return }

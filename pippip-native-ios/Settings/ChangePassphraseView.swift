@@ -138,32 +138,6 @@ class ChangePassphraseView: UIView {
             changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.5)
         }
 
-/*        if let newPassphrase = newPassphraseTextView.text {
-            if newPassphrase.utf8.count > 0 {
-            }
-            else {
-                changePassphraseButton.isEnabled = false
-                changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
-            }
-        }
-        else {
-        }
-        
-        if let oldPassphrase = oldPassphraseTextView.text {
-            if oldPassphrase.utf8.count > 0 {
-                changePassphraseButton.isEnabled = true
-                changePassphraseButton.backgroundColor = PippipTheme.buttonColor
-            }
-            else {
-                changePassphraseButton.isEnabled = false
-                changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
-            }
-        }
-        else {
-            changePassphraseButton.isEnabled = false
-            changePassphraseButton.backgroundColor = PippipTheme.buttonColor.withAlphaComponent(0.7)
-        }
-  */
     }
     
 }

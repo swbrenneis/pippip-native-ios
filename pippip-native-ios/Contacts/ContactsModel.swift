@@ -64,7 +64,7 @@ class ContactsModel {
     private init() {
         loadContacts()
     }
-
+/*
     func addContact(serverContact: ServerContact) throws -> Contact {
         
         let contact = Contact(serverContact: serverContact)
@@ -100,8 +100,8 @@ class ContactsModel {
         return contact
         
     }
-    
-    func addPendingContact(_ contact: Contact) {
+*/
+    func addContact(_ contact: Contact) {
         
         if contactMap[contact.publicId] != nil {
             DDLogError("Duplicate contact: \(contact.displayName)")
@@ -110,7 +110,15 @@ class ContactsModel {
             contact.contactId = config.newContactId()
             contactMap[contact.publicId] = contact
             contactIdMap[contact.contactId] = contact
-            pendingContactSet.insert(contact)
+            // This function inserts contacts returned from the server, so the status will never be
+            // IGNORED
+            if contact.status == Contact.PENDING {
+                pendingContactSet.insert(contact)
+            } else if contact.status == Contact.ACCEPTED {
+                acceptedContactSet.insert(contact)
+            } else if contact.status == Contact.REJECTED {
+                rejectedContactSet.insert(contact)
+            }
             
             do {
                 let encoded = try encodeContact(contact)
@@ -124,7 +132,7 @@ class ContactsModel {
                 }
             }
             catch {
-                DDLogError("Error adding contact: \(error)")
+                DDLogError("Error adding contact: \(error.localizedDescription)")
             }
         }
         
@@ -173,7 +181,7 @@ class ContactsModel {
         
     }
     
-    func contactAcknowledged(contact: Contact) {
+    func contactAcknowledged(contact: Contact, request: ContactRequest) {
         
         contactMap[contact.publicId] = contact
         contactIdMap[contact.contactId] = contact
@@ -193,6 +201,8 @@ class ContactsModel {
         default:
             DDLogError("Invalid contact status: \(contact.status)")
         }
+        
+        requestSet.remove(request)
         
         let realm = try! Realm()
         if let dbContact = realm.objects(DatabaseContact.self).filter("contactId = %ld", contact.contactId).first {

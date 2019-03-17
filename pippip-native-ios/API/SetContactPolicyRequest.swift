@@ -13,6 +13,7 @@ class SetContactPolicyRequest: NSObject, EnclaveRequestProtocol {
 
     var method: String = "SetContactPolicy"
     var policy: String?
+    var version: Float?
     
     init(policy: String) {
         self.policy = policy
@@ -25,6 +26,7 @@ class SetContactPolicyRequest: NSObject, EnclaveRequestProtocol {
     func mapping(map: Map) {
         method <- map["method"]
         policy <- map["policy"]
+        version <- map["version"]
     }
 
 }

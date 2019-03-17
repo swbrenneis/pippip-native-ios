@@ -14,10 +14,10 @@ class AddContactRequest: NSObject, EnclaveRequestProtocol {
     var method: String = "AddContactRequest"
     var publicId: String?
     var directoryId: String?
-    var initialMessage: String?
+    var initialMessage: Bool?
     var version: Float?
 
-    init(publicId: String?, directoryId: String?, initialMessage: String?) {
+    init(publicId: String?, directoryId: String?, initialMessage: Bool?) {
         self.publicId = publicId
         self.directoryId = directoryId
         self.initialMessage = initialMessage
@@ -33,6 +33,7 @@ class AddContactRequest: NSObject, EnclaveRequestProtocol {
         publicId <- map["publicId"]
         directoryId <- map["directoryId"]
         initialMessage <- map["initialMessage"]
+        version <- map["version"]
     }
 
 }

@@ -13,6 +13,7 @@ class GetRequestStatusRequest: NSObject, EnclaveRequestProtocol {
 
     var method: String = "GetRequestStatus"
     var requestedIds: [String]?
+    var version: Float?
 
     init(requestedIds: [String]) {
         self.requestedIds = requestedIds
@@ -25,6 +26,7 @@ class GetRequestStatusRequest: NSObject, EnclaveRequestProtocol {
     func mapping(map: Map) {
         method <- map["method"]
         requestedIds <- map["requestedIds"]
+        version <- map["version"]
     }
 
 }

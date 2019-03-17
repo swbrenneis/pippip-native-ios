@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import CocoaLumberjack
 
 class MessageManager: NSObject {
 
@@ -30,10 +31,10 @@ class MessageManager: NSObject {
         }
 
         let request = AcknowledgeMessagesRequest(messages: triplets)
-        let delegate = AcknowledgeMessagesDelegate(request: request, textMessages: textMessages)
-        let messageTask = EnclaveTask<AcknowledgeMessagesRequest, AcknowledgeMessagesResponse>(delegate: delegate)
+//        let delegate = AcknowledgeMessagesDelegate(request: request, textMessages: textMessages)
+        let messageTask = EnclaveTask<AcknowledgeMessagesRequest, AcknowledgeMessagesResponse>()
         messageTask.errorTitle = "Message Error"
-        messageTask.sendRequest(request)
+        messageTask.sendRequest(request: request)
 
     }
 
@@ -121,11 +122,34 @@ class MessageManager: NSObject {
 
     func getNewMessages() {
 
-        let request = GetMessagesRequest()
-        let delegate = GetMessagesDelegate(request: request)
-        let messageTask = EnclaveTask<GetMessagesRequest, GetMessagesResponse>(delegate: delegate)
-        messageTask.errorTitle = "Message Error"
-        messageTask.sendRequest(request)
+        let messageTask = EnclaveTask<GetMessagesRequest, GetMessagesResponse>()
+        messageTask.sendRequest(request: GetMessagesRequest())
+        .then({ response in
+            if response.messages!.count == 0 {
+                // If non-zero, we have to acknowledge the messages before we move on to
+                // pending requests
+                AsyncNotifier.notify(name: Notifications.GetMessagesComplete, object: nil)
+            }
+            DDLogInfo("\(response.messages!.count) new messages returned")
+            var textMessages = [TextMessage]()
+            for message in response.messages! {
+                if let textMessage = TextMessage(serverMessage: message) {
+                    textMessages.append(textMessage)
+                    try! ContactsModel.instance.updateTimestamp(contactId: textMessage.contactId, timestamp: textMessage.timestamp)
+                }
+                else {
+                    DDLogWarn("Invalid contact information in server message")
+                }
+            }
+            if !textMessages.isEmpty {
+                self.addTextMessages(textMessages)
+                self.acknowledgeMessages(textMessages)
+            }
+        })
+        .catch({ error in
+            NotificationCenter.default.post(name: Notifications.GetMessagesComplete, object: nil)
+            DDLogError("Get messages error: \(error.localizedDescription)")
+        })
 
     }
 
@@ -192,10 +216,10 @@ class MessageManager: NSObject {
 
         let contact = ContactsModel.instance.getContact(contactId: textMessage.contactId)!
         let request = SendMessageRequest(message: textMessage.encodeForServer(publicId: contact.publicId))
-        let delegate = SendMessageDelegate(request: request, textMessage: textMessage)
-        let enclaveTask = EnclaveTask<SendMessageRequest, SendMessageResponse>(delegate: delegate)
+        //let delegate = SendMessageDelegate(request: request, textMessage: textMessage)
+        let enclaveTask = EnclaveTask<SendMessageRequest, SendMessageResponse>()
         enclaveTask.errorTitle = "Message Error"
-        enclaveTask.sendRequest(request)
+        enclaveTask.sendRequest(request: request)
 
     }
 

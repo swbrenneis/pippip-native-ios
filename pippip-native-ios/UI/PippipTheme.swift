@@ -11,7 +11,7 @@ import ChameleonFramework
 import Toast_Swift
 import DeviceKit
 
-class PippipTheme: NSObject {
+class PippipTheme {
 
     static var viewColor: UIColor!
     static var splashColor: UIColor!
@@ -19,6 +19,8 @@ class PippipTheme: NSObject {
     static var buttonTextColor: UIColor!
     static var cancelButtonColor: UIColor!
     static var cancelButtonTextColor: UIColor!
+    static var rejectButtonColor: UIColor!
+    static var rejectButtonTextColor: UIColor!
     static var navBarColor: UIColor!
     static var navBarTint: UIColor!
     static var viewTextColor: UIColor!
@@ -54,6 +56,8 @@ class PippipTheme: NSObject {
         buttonTextColor = ContrastColorOf(buttonColor, returnFlat: true)
         cancelButtonColor = UIColor.flatTealDark.withAlphaComponent(0.3)
         cancelButtonTextColor = UIColor.flatBlack
+        rejectButtonColor = UIColor.flatOrangeDark
+        rejectButtonTextColor = ContrastColorOf(rejectButtonColor, returnFlat: true)
         navBarColor = UIColor.flatTealDark
         navBarTint = ContrastColorOf(navBarColor, returnFlat: false)
         lightBarColor = UIColor.flatTealDark.withAlphaComponent(0.25)
@@ -64,6 +68,7 @@ class PippipTheme: NSObject {
         incomingTextColor = UIColor.flatBlack
         outgoingMessageBubbleColor = UIColor.flatTealDark
         outgoingTextColor = ContrastColorOf(outgoingMessageBubbleColor, returnFlat: true)
+        
 
         var style = ToastStyle()
         style.backgroundColor = UIColor.flatTealDark

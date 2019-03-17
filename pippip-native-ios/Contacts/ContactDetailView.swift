@@ -187,7 +187,7 @@ class ContactDetailView: UIView, Dismissable {
     @IBAction func resendRequestTapped(_ sender: Any) {
 
         do {
-            try ContactManager().addContactRequest(publicId: contact.publicId, directoryId: nil, initialMessage: nil)
+            try ContactManager().addContactRequest(publicId: contact.publicId, directoryId: nil, pendingMessage: nil)
             alertPresenter.successAlert(message: "The request was resent to this contact")
         }
         catch {

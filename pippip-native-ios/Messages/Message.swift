@@ -26,6 +26,7 @@ class Message: NSObject, Comparable {
     var timestamp: Int64 = 0
     var compressed = false
     var failed = false
+    var initial = false
 
     var config = Configurator()
     var contactManager = ContactManager()

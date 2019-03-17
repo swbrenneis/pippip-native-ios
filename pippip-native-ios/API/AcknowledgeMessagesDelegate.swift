@@ -10,9 +10,9 @@ import UIKit
 
 class AcknowledgeMessagesDelegate: EnclaveDelegate<AcknowledgeMessagesRequest, AcknowledgeMessagesResponse> {
 
-    var textMessages: [TextMessage]
+    var textMessages: [TextMessage]!
     var messageManager = MessageManager()
-
+/*
     init(request: AcknowledgeMessagesRequest, textMessages: [TextMessage]) {
 
         self.textMessages = textMessages
@@ -24,7 +24,7 @@ class AcknowledgeMessagesDelegate: EnclaveDelegate<AcknowledgeMessagesRequest, A
         responseError = self.ackError
 
     }
-
+*/
     func ackComplete(response: AcknowledgeMessagesResponse) {
 
         AsyncNotifier.notify(name: Notifications.GetMessagesComplete, object: nil)

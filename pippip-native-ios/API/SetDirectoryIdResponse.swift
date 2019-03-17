@@ -10,9 +10,11 @@ import UIKit
 import ObjectMapper
 
 class SetDirectoryIdResponse: NSObject, EnclaveResponseProtocol {
-
+    
+    var json: String?
     var error: String?
     var result: String?
+    var version: Float?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil && map.JSON["result"] == nil {
@@ -20,9 +22,14 @@ class SetDirectoryIdResponse: NSObject, EnclaveResponseProtocol {
         }
     }
 
+    required init?(jsonString: String) {
+        
+    }
+    
     func mapping(map: Map) {
         error <- map["error"]
         result <- map["result"]
+        version <- map["version"]
     }
 
 }

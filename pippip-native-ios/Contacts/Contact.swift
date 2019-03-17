@@ -11,6 +11,11 @@ import CocoaLumberjack
 
 class Contact: NSObject, Comparable {
     
+    static let ACCEPTED = "accepted"
+    static let PENDING = "pending"
+    static let IGNORED = "ignored"
+    static let REJECTED = "rejected"
+    
     static func < (lhs: Contact, rhs: Contact) -> Bool {
 
         switch lhs.status {
@@ -77,6 +82,7 @@ class Contact: NSObject, Comparable {
     static let currentVersion: Float = 2.0
 
     var version: Float = Contact.currentVersion
+    var pendingMessage: String?
     var contactId: Int = 0
     var publicId: String = ""
     private var realDirectoryId: String?
@@ -120,37 +126,40 @@ class Contact: NSObject, Comparable {
     }
 
     override init() {
+        version = Contact.currentVersion
         super.init()
     }
 
     init(contactId: Int) {
 
         self.contactId = contactId
+        version = Contact.currentVersion
         
         super.init()
 
     }
     
     // Contact ID must be added after init!!
-    init(serverContact: ServerContact) {
+    init?(serverContact: ServerContact?) {
 
+        guard let contact = serverContact else { return nil }
         version = Contact.currentVersion
-        publicId = serverContact.publicId!
-        status = serverContact.status!
+        publicId = contact.publicId!
+        status = contact.status!
         currentIndex = 0
         currentSequence = 1
-        timestamp = Int64(serverContact.timestamp!)
+        timestamp = Int64(contact.timestamp!)
         if status == "accepted" {
-            authData = Data(base64Encoded: serverContact.authData!)
-            nonce = Data(base64Encoded: serverContact.nonce!)
+            authData = Data(base64Encoded: contact.authData!)
+            nonce = Data(base64Encoded: contact.nonce!)
             messageKeys = [Data]()
-            for key in serverContact.messageKeys! {
+            for key in contact.messageKeys! {
                 messageKeys?.append(Data(base64Encoded: key)!)
             }
         }
         
         super.init()
-        directoryId = serverContact.directoryId
+        directoryId = contact.directoryId
 
     }
 

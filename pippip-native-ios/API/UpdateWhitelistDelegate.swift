@@ -13,10 +13,10 @@ enum WhitelistUpdateType { case addEntry, deleteEntry }
 
 class UpdateWhitelistDelegate: EnclaveDelegate<UpdateWhitelistRequest, UpdateWhitelistResponse> {
 
-    var updateType: WhitelistUpdateType
+    var updateType: WhitelistUpdateType?
     var publicId: String!
     var directoryId: String?
-    
+    /*
     init(request: UpdateWhitelistRequest, updateType: WhitelistUpdateType) {
         
         self.updateType = updateType
@@ -27,9 +27,9 @@ class UpdateWhitelistDelegate: EnclaveDelegate<UpdateWhitelistRequest, UpdateWhi
         responseError = self.updateError
 
     }
-
+*/
     func updateComplete(response: UpdateWhitelistResponse) {
-        
+/*
         switch updateType {
         case .addEntry:
             if  response.action == "add", response.result == "added" || response.result == "exists" {
@@ -58,7 +58,7 @@ class UpdateWhitelistDelegate: EnclaveDelegate<UpdateWhitelistRequest, UpdateWhi
             }
             break
         }
- 
+*/
     }
 
     func updateError(_ reason: String) {

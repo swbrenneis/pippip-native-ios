@@ -9,21 +9,13 @@
 import Foundation
 import ObjectMapper
 
-enum ResponseErrors { case timedout, invalidServerResponse, invalidSession, invalidAuthToken, invalidRequest }
-
-enum APIResponseError: Error {
-    case unknown
-    case responseError(error: String)
-}
-
 protocol APIResponseProtocol: Mappable {
 
-    var error: String? { get set }
-    var sessionId: Int32? { get set }
-    var authToken: Int64? { get set }
-    var postId: Int { get set }
+    var error: String? { get }
+    var sessionId: Int32? { get }
+    var authToken: Int64? { get }
 
-    func processResponse() -> String?
+    func processResponse() throws
 
 }
 
@@ -32,7 +24,6 @@ class NullResponse: NSObject, APIResponseProtocol {
     var error: String?
     var sessionId: Int32?
     var authToken: Int64?
-    var postId: Int = 0
 
     required init?(map: Map) {
         
@@ -42,8 +33,7 @@ class NullResponse: NSObject, APIResponseProtocol {
         error <- map["error"]
     }
 
-    func processResponse() -> String? {
-        return error
+    func processResponse() throws {
     }
 
 }

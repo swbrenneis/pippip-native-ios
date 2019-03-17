@@ -13,10 +13,10 @@ import CocoaLumberjack
 class SendMessageDelegate: EnclaveDelegate<SendMessageRequest, SendMessageResponse> {
 
     static var sendSoundId: SystemSoundID = 0
-    var textMessage: TextMessage
+    var textMessage: TextMessage!
     var messageManager = MessageManager()
     //var contactManager = ContactManager.instance
-
+/*
     init(request: SendMessageRequest, textMessage: TextMessage) {
         
         self.textMessage = textMessage
@@ -34,7 +34,7 @@ class SendMessageDelegate: EnclaveDelegate<SendMessageRequest, SendMessageRespon
         }
 
     }
-
+*/
     func sendComplete(response: SendMessageResponse) {
         
         textMessage.timestamp = Int64(response.timestamp!)

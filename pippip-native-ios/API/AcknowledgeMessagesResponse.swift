@@ -11,18 +11,25 @@ import ObjectMapper
 
 class AcknowledgeMessagesResponse: NSObject, EnclaveResponseProtocol {
 
+    var json: String?
     var error: String?
     var exceptions: [Triplet]?
+    var version: Float?
 
     required init?(map: Map) {
-        if map.JSON["error"] == nil && map.JSON["exceptions"] == nil {
-            return nil
+        if map.JSON["error"] == nil {
+            guard let _ = map.JSON["exceptions"] else { return nil }
         }
     }
 
+    required init?(jsonString: String) {
+        
+    }
+    
     func mapping(map: Map) {
         error <- map["error"]
         exceptions <- map["exceptions"]
+        version <- map["version"]
     }
 
 }

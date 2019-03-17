@@ -9,29 +9,36 @@
 import UIKit
 import ObjectMapper
 
-class SendMessageResponse: NSObject, EnclaveResponseProtocol {
+class SendMessageResponse: EnclaveResponseProtocol {
 
+    var json: String?
     var error: String?
     var result: String?
     var publicId: String?
     var sequence: Int?
     var timestamp: Int?
+    var version: Float?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {
-            if map.JSON["result"] == nil || map.JSON["publicId"] == nil || map.JSON["sequence"] == nil
-                || map.JSON["timestamp"] == nil {
-                return nil
-            }
+            guard let _ = map.JSON["result"] else { return nil }
+            guard let _ = map.JSON["publicId"] else { return nil }
+            guard let _ = map.JSON["sequence"]  else { return nil }
+            guard let _ = map.JSON["timestamp"]  else { return nil }
         }
     }
 
+    required init?(jsonString: String) {
+        
+    }
+    
     func mapping(map: Map) {
         error <- map["error"]
         result <- map["result"]
         publicId <- map["publicId"]
         sequence <- map["sequence"]
         timestamp <- map["timestamp"]
+        version <- map["version"]
     }
 
 }

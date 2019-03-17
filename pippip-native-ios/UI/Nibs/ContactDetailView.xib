@@ -63,7 +63,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MO8-YB-QcQ">
-                    <rect key="frame" x="100" y="135.5" width="257" height="33"/>
+                    <rect key="frame" x="50" y="135.5" width="357" height="33"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <state key="normal" title="Resend Contact Request"/>
                     <userDefinedRuntimeAttributes>
@@ -118,9 +118,9 @@
                 <constraint firstItem="ibD-BA-ecg" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="126" id="8iB-Rv-wW4"/>
                 <constraint firstItem="MO8-YB-QcQ" firstAttribute="top" secondItem="Gj6-WV-dKT" secondAttribute="bottom" constant="24" id="8yD-s6-ESK"/>
                 <constraint firstItem="8ad-tP-Teh" firstAttribute="top" secondItem="Gj6-WV-dKT" secondAttribute="bottom" constant="24" id="Gcw-OC-kE9"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="MO8-YB-QcQ" secondAttribute="trailing" constant="100" id="JDW-YB-3VU"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="MO8-YB-QcQ" secondAttribute="trailing" constant="50" id="JDW-YB-3VU"/>
                 <constraint firstItem="TQi-A8-CzU" firstAttribute="leading" secondItem="WZx-yw-hbz" secondAttribute="leading" id="Jk2-Kx-Z9l"/>
-                <constraint firstItem="MO8-YB-QcQ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="100" id="Jyg-bz-aJ6"/>
+                <constraint firstItem="MO8-YB-QcQ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="50" id="Jyg-bz-aJ6"/>
                 <constraint firstItem="xah-J9-ddF" firstAttribute="leading" secondItem="WZx-yw-hbz" secondAttribute="leading" id="K5Z-MJ-itG"/>
                 <constraint firstItem="iLR-CG-9Mi" firstAttribute="leading" secondItem="WZx-yw-hbz" secondAttribute="trailing" constant="30" id="Tyw-e7-fX1"/>
                 <constraint firstItem="Bxq-22-taw" firstAttribute="centerY" secondItem="iLR-CG-9Mi" secondAttribute="centerY" id="VGG-dK-4PH"/>

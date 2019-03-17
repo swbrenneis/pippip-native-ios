@@ -23,7 +23,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     var debugging = false
     var alertPresenter: AlertPresenter!
     var contactList = [Contact]()
-    var rightBarItems = [UIBarButtonItem]()
+//    var rightBarItems = [UIBarButtonItem]()
     var contactRequests = [ContactRequest]()
     var addContactView: AddContactView?
     var contactDetailView: ContactDetailView?
@@ -45,7 +45,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         self.tableView.dataSource = self
 
         authenticator = Authenticator(viewController: self)
-
+/*
         let addContact = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addContact(_:)))
         rightBarItems.append(addContact)
         let editContacts = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editContacts(_:)))
@@ -54,12 +54,13 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         let pollButton = UIBarButtonItem(title: "Poll", style: .plain, target: self, action: #selector(pollServer(_ :)))
         rightBarItems.append(pollButton)
         #endif
+ */
         /*
         let deleteItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteContact(_:)))
         rightBarItems.append(deleteItem)
          */
-        self.navigationItem.rightBarButtonItems = rightBarItems
-        self.navigationItem.title = "Contacts"
+//        self.navigationItem.rightBarButtonItems = rightBarItems
+//        self.navigationItem.title = "Contacts"
 
         NotificationCenter.default.addObserver(self, selector: #selector(resetControllers(_:)),
                                                name: Notifications.ResetControllers, object: nil)
@@ -128,6 +129,33 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         // Dispose of any resources that can be recreated.
     }
 
+    func addContact() {
+        
+        if addContactView == nil {
+            let frame = self.view.bounds
+            let viewRect = CGRect(x: 0.0, y: 0.0,
+                                  width: frame.width * PippipGeometry.addContactViewWidthRatio,
+                                  height: frame.height * PippipGeometry.addContactViewHeightRatio)
+            addContactView = AddContactView(frame: viewRect)
+            let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - PippipGeometry.addContactViewOffset)
+            addContactView?.center = viewCenter
+            addContactView?.alpha = 0.0
+            
+            addContactView?.contactsViewController = self
+            
+            self.view.addSubview(self.addContactView!)
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.blurView.alpha = 0.6
+                self.addContactView?.alpha = 1.0
+            }, completion: { complete in
+                self.navigationController?.setNavigationBarHidden(PippipGeometry.addContactViewHideNavBar, animated: true)
+                self.addContactView?.directoryIdTextField.becomeFirstResponder()
+            })
+        }
+        
+    }
+    
     func setContactList() {
         
         contactList.removeAll()
@@ -199,14 +227,14 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
             } else if let _ = ContactsModel.instance.getContact(publicId: puid) {
                 alertPresenter.errorAlert(title: "Add Contact Error", message: "That contact is already in your list")
             } else {
-                contactManager.addContactRequest(publicId: publicId, directoryId: directoryId, initialMessage: nil)
+                contactManager.addContactRequest(publicId: publicId, directoryId: directoryId, pendingMessage: nil)
             }
         } else {
-            contactManager.addContactRequest(publicId: publicId, directoryId: directoryId, initialMessage: nil)
+            contactManager.addContactRequest(publicId: publicId, directoryId: directoryId, pendingMessage: nil)
         }
         
     }
-    
+/*
     @objc func editContacts(_ sender: Any) {
 
         tableView.setEditing(true, animated: true)
@@ -226,7 +254,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         self.navigationItem.rightBarButtonItems = rightBarItems
         
     }
-
+*/
     #if targetEnvironment(simulator)
     @objc func pollServer(_ sender: Any) {
         AccountSession.instance.doUpdates()
@@ -272,7 +300,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         }
   
     }
-
+/*
     @objc func directoryIdMatched(_ notification: Notification) {
 
         NotificationCenter.default.removeObserver(self, name: Notifications.DirectoryIdMatched, object: nil)
@@ -290,13 +318,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
                 alertPresenter.errorAlert(title: "Add Contact Error", message: "There is an existing request for that contact")
             }
             else {
-                do {
-                    try contactManager.addContactRequest(publicId: publicId, directoryId: response.directoryId, initialMessage: nil)
-                }
-                catch {
-                    DDLogError("Error sending contact request: \(error.localizedDescription)")
-                    alertPresenter.errorAlert(title: "Request Contact Error", message: "The request could not be sent")
-                }
+                contactManager.addContactRequest(publicId: publicId, directoryId: response.directoryId, initialMessage: nil)
             }
         }
         else {
@@ -304,7 +326,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         }
         
     }
-
+*/
     @objc func directoryIdSet(_ notification: Notification) {
         
         guard let contact = notification.object as? Contact else { return }
@@ -383,33 +405,6 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
     }
     
-    @objc func addContact(_ item: Any) {
-
-        if addContactView == nil {
-            let frame = self.view.bounds
-            let viewRect = CGRect(x: 0.0, y: 0.0,
-                                  width: frame.width * PippipGeometry.addContactViewWidthRatio,
-                                  height: frame.height * PippipGeometry.addContactViewHeightRatio)
-            addContactView = AddContactView(frame: viewRect)
-            let viewCenter = CGPoint(x: self.view.center.x, y: self.view.center.y - PippipGeometry.addContactViewOffset)
-            addContactView?.center = viewCenter
-            addContactView?.alpha = 0.0
-            
-            addContactView?.contactsViewController = self
-            
-            self.view.addSubview(self.addContactView!)
-            
-            UIView.animate(withDuration: 0.3, animations: {
-                self.blurView.alpha = 0.6
-                self.addContactView?.alpha = 1.0
-            }, completion: { complete in
-                self.navigationController?.setNavigationBarHidden(PippipGeometry.addContactViewHideNavBar, animated: true)
-                self.addContactView?.directoryIdTextField.becomeFirstResponder()
-            })
-        }
-        
-    }
-
     // Debug only
     @objc func deleteContact(_ sender: Any) {
         /*
@@ -466,8 +461,8 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         if indexPath.section == 0 && contactRequests.count > 0 {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "PendingRequestsCell", for: indexPath)
-                as? PendingRequestsCell else { return UITableViewCell() }
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "NewRequestsCell", for: indexPath)
+                as? NewRequestsTableViewCell else { return UITableViewCell() }
             return cell
         }
         else if indexPath.section == 1 {
@@ -503,9 +498,10 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         if indexPath.section == 0 {
-            showContactRequestsView()
-        }
-        else {
+            NotificationCenter.default.post(name: Notifications.SetNavBarTitle, object: "Contact Requests")
+            let cell = tableView.cellForRow(at: indexPath)
+            performSegue(withIdentifier: "ContactRequestsSegue", sender: cell)
+        } else {
             showContactDetailView(contact: contactList[indexPath.row])
         }
 

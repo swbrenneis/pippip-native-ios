@@ -12,9 +12,12 @@ import ObjectMapper
 class GetPendingRequests: NSObject, EnclaveRequestProtocol {
 
     var method: String = "GetPendingRequests"
+    var version: Float?
     
     override init() {
         super.init()
+        
+        version = 1.0
     }
     
     required init?(map: Map) {
@@ -23,6 +26,7 @@ class GetPendingRequests: NSObject, EnclaveRequestProtocol {
 
     func mapping(map: Map) {
         method <- map["method"]
+        version <- map["version"]
     }
 
 }

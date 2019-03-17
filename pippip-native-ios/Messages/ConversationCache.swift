@@ -56,11 +56,19 @@ class ConversationCache: NSObject {
         
     }
     
+    func initialMessage(textMessage: TextMessage, contact: Contact) {
+        
+        let newConversation = Conversation(contact: contact, windowSize: 15)
+        conversations[contact.contactId] = newConversation
+        newConversation.addTextMessage(textMessage, initial: true)
+
+    }
+    
     func newMessages(textMessages: [TextMessage]) {
 
         for textMessage in textMessages {
             if let conversation = conversations[textMessage.contactId] {
-                conversation.addTextMessage(textMessage)
+                conversation.addTextMessage(textMessage, initial: false)
             }
             else {
                 print("Invalid contact ID \(textMessage.contactId)")

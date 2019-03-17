@@ -45,6 +45,7 @@ class AcknowledgeMessagesRequest: NSObject, EnclaveRequestProtocol {
 
     var method: String = "AcknowledgeMessages"
     var messages: [Triplet]?
+    var version: Float?
 
     init(messages: [Triplet]) {
         self.messages = messages
@@ -57,6 +58,7 @@ class AcknowledgeMessagesRequest: NSObject, EnclaveRequestProtocol {
     func mapping(map: Map) {
         method <- map["method"]
         messages <- map["messages"]
+        version <- map["version"]
     }
 
 }

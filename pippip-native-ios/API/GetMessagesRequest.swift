@@ -12,6 +12,7 @@ import ObjectMapper
 class GetMessagesRequest: NSObject, EnclaveRequestProtocol {
 
     var method: String = "GetMessages"
+    var version: Float?
     
     override init() {
         super.init()
@@ -23,6 +24,7 @@ class GetMessagesRequest: NSObject, EnclaveRequestProtocol {
 
     func mapping(map: Map) {
         method <- map["method"]
+        version <- map["version"]
     }
 
 }
