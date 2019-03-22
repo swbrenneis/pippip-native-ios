@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="InitialMessageView" customModule="pippip_native_ios" customModuleProvider="target">
+            <connections>
+                <outlet property="acceptButton" destination="aW6-9U-nDu" id="Jwg-r2-KSX"/>
+                <outlet property="contentView" destination="iN0-l3-epB" id="Bpr-mj-QpH"/>
+                <outlet property="hideButton" destination="ykG-ef-ePX" id="EXx-SR-gxv"/>
+                <outlet property="laterButton" destination="s7u-FZ-Qgy" id="e5v-he-FKn"/>
+                <outlet property="rejectButton" destination="ijN-eI-Ahp" id="zOC-2m-s77"/>
+                <outlet property="titleLabel" destination="wy9-Ak-BTR" id="fLF-Ui-4uu"/>
+                <outlet property="viewButton" destination="Uy6-Lv-c7B" id="emg-iW-LZF"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="437" height="267"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You have a new message from someone" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wy9-Ak-BTR">
+                    <rect key="frame" x="24" y="12" width="389" height="60"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="60" id="Lhd-hm-Wy3"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="cXo-sV-erH">
+                    <rect key="frame" x="12" y="84" width="413" height="45"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aW6-9U-nDu">
+                            <rect key="frame" x="0.0" y="0.0" width="132.5" height="45"/>
+                            <state key="normal" title="Accept"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="7"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="acceptTapped:" destination="-1" eventType="touchUpInside" id="wKK-ki-Dhi"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ykG-ef-ePX">
+                            <rect key="frame" x="140.5" y="0.0" width="132" height="45"/>
+                            <state key="normal" title="Hide"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="7"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="hideTapped:" destination="-1" eventType="touchUpInside" id="4NH-F0-Jqc"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ijN-eI-Ahp">
+                            <rect key="frame" x="280.5" y="0.0" width="132.5" height="45"/>
+                            <state key="normal" title="Reject"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="7"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="rejectTapped:" destination="-1" eventType="touchUpInside" id="ySY-dK-UaA"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="45" id="nyZ-Pp-Ib0"/>
+                    </constraints>
+                </stackView>
+                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="caa-VV-flS">
+                    <rect key="frame" x="24" y="141" width="389" height="45"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Uy6-Lv-c7B">
+                            <rect key="frame" x="0.0" y="0.0" width="190.5" height="45"/>
+                            <state key="normal" title="View"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="7"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="viewTapped:" destination="-1" eventType="touchUpInside" id="pHJ-nW-BrH"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s7u-FZ-Qgy">
+                            <rect key="frame" x="198.5" y="0.0" width="190.5" height="45"/>
+                            <state key="normal" title="Later"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="7"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="laterTapped:" destination="-1" eventType="touchUpInside" id="igF-fC-1EB"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="45" id="316-De-S7b"/>
+                    </constraints>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="wy9-Ak-BTR" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="24" id="AVq-73-X56"/>
+                <constraint firstItem="cXo-sV-erH" firstAttribute="top" secondItem="wy9-Ak-BTR" secondAttribute="bottom" constant="12" id="Eau-98-BFD"/>
+                <constraint firstItem="wy9-Ak-BTR" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="12" id="KuA-dg-Itq"/>
+                <constraint firstItem="caa-VV-flS" firstAttribute="top" secondItem="cXo-sV-erH" secondAttribute="bottom" constant="12" id="L0A-Yq-Bop"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="wy9-Ak-BTR" secondAttribute="trailing" constant="24" id="L8O-UD-hcF"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="caa-VV-flS" secondAttribute="trailing" constant="24" id="OlY-7t-W7Q"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="cXo-sV-erH" secondAttribute="trailing" constant="12" id="REb-1Z-Dkd"/>
+                <constraint firstItem="cXo-sV-erH" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="12" id="g5H-IJ-ZEj"/>
+                <constraint firstItem="caa-VV-flS" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="24" id="zXM-kz-ami"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="160.80000000000001" y="-175.86206896551727"/>
+        </view>
+    </objects>
+</document>
