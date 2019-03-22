@@ -45,7 +45,7 @@ class AcknowledgeMessagesRequest: NSObject, EnclaveRequestProtocol {
 
     var method: String = "AcknowledgeMessages"
     var messages: [Triplet]?
-    var version: Float?
+    var version: Double?
 
     init(messages: [Triplet]) {
         self.messages = messages

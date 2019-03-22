@@ -14,7 +14,7 @@ class AcknowledgeRequestResponse: EnclaveResponseProtocol {
     var json: String?
     var error: String?
     var acknowledged: ServerContact?
-    var version: Float?
+    var version: Double?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {

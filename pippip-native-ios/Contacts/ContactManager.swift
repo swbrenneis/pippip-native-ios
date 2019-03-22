@@ -138,7 +138,7 @@ class ContactManager {
                 if let error = response.error {
                     DDLogError("Error while updating pending requests - \(error)")
                 } else {
-                    guard let requests = response.requests else { return }
+                    guard let requests = response.serverRequests else { return }
                     DDLogInfo("\(requests.count) pending requests returned")
                     if requests.count > 0 {
                         ContactsModel.instance.addRequests(requests: requests)
@@ -178,7 +178,6 @@ class ContactManager {
                     do {
                         let updates = try ContactsModel.instance.contactsAcknowledged(serverContacts: response.contacts!)
                         print("\(updates.count) contacts updated")
-                        Configurator().statusUpdates = updates.count
                         NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updates)
                         NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
                         print("Status updated on \(updates.count) requests")

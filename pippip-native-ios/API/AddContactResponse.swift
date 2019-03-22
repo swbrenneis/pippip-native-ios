@@ -20,7 +20,7 @@ class AddContactResponse: EnclaveResponseProtocol {
     var result: String?
     var contact: ServerContact?
     var timestamp: Int?
-    var version: Float?
+    var version: Double?
     
     required init?(map: Map) {
         if map.JSON["error"] == nil {

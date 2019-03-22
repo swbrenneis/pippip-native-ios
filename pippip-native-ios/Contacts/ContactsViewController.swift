@@ -29,11 +29,15 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
     var contactDetailView: ContactDetailView?
     var requestsView: ContactRequestsView?
     var blurView = GestureBlurView(effect: UIBlurEffect(style: UIBlurEffect.Style.dark))
+    var initialMessageListener: InitialMessageListener?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         alertPresenter = AlertPresenter(view: self.view)
+        
+        initialMessageListener = InitialMessageListener(viewController: self)
+        
         self.view.backgroundColor = PippipTheme.viewColor
         let frame = self.view.bounds
         blurView.frame = frame
@@ -71,6 +75,9 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
         authenticator.viewWillAppear()
         alertPresenter.present = true
+        initialMessageListener?.listening(true)
+        initialMessageListener?.presentView()
+        
         NotificationCenter.default.addObserver(self, selector: #selector(contactRequested(_:)),
                                                name: Notifications.ContactRequested, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(contactDeleted(_:)),
@@ -89,7 +96,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         setContactList()
         contactRequests = ContactsModel.instance.pendingRequests
         tableView.reloadData()
-        DispatchQueue.global().async {
+/*        DispatchQueue.global().async {
             if self.config.statusUpdates > 0 {
                 let suffix: String = self.config.statusUpdates > 1 ? "updates" : "update"
                 let message = "You have \(self.config.statusUpdates) contact status \(suffix)"
@@ -98,12 +105,13 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
             self.config.statusUpdates = 0
             NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
         }
-
+*/
     }
 
     override func viewWillDisappear(_ animated: Bool) {
 
         alertPresenter.present = false
+        initialMessageListener?.listening(false)
         authenticator.viewWillDisappear()
         addContactView?.dismiss()
         contactDetailView?.forceDismiss()
@@ -391,7 +399,6 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
             }
         }
         contactList = contactList.sorted()
-        config.statusUpdates = 0
         DispatchQueue.main.async {
             self.tableView.reloadSections(IndexSet(integer: 1), with: .top)
         }

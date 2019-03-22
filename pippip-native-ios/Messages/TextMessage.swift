@@ -13,7 +13,7 @@ class TextMessage: Message {
 
     var cleartext: String?
 
-    init?(text: String, contact: Contact) {
+    init(text: String, contact: Contact) {
 
         cleartext = text
 

@@ -15,7 +15,7 @@ class SetContactStatusResponse : EnclaveResponseProtocol {
     var publicId: String?
     var status: String?
     var error: String?
-    var version: Float?
+    var version: Double?
     
     required init?(map: Map) {
         guard let _ = map.JSON["publicId"] else { return nil }

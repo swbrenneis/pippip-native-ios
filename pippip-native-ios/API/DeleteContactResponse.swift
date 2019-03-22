@@ -15,7 +15,7 @@ class DeleteContactResponse: EnclaveResponseProtocol {
     var error: String?
     var publicId: String?
     var result: String?
-    var version: Float?
+    var version: Double?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {

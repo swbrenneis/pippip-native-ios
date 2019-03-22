@@ -31,8 +31,12 @@ class ContactsModel {
     private var contactMap = [String: Contact]()
     private var contactIdMap = [Int: Contact]()
     private var requestSet = Set<ContactRequest>()
+    private var initialMessageSet = Set<ContactRequest>()
     var pendingRequests: [ContactRequest] {
         return Array(requestSet)
+    }
+    var initialMessageRequests: [ContactRequest] {
+        return Array(initialMessageSet)
     }
     var acceptedContactList: [Contact] {
         return acceptedContactSet.sorted()
@@ -138,11 +142,11 @@ class ContactsModel {
         
     }
     
-    func addRequests(requests: [[String: String]]) {
+    func addRequests(requests: [ServerContactRequest]) {
         
         var toAck = [ContactRequest]()
-        for pair in requests {
-            guard let contactRequest = ContactRequest(request: pair) else { continue }
+        for request in requests {
+            guard let contactRequest = ContactRequest(request: request) else { continue }
             if config.contactPolicy == "whitelist" && config.autoAccept && whitelistIdExists(publicId: contactRequest.publicId) {
                 toAck.append(contactRequest)
             }
@@ -152,6 +156,9 @@ class ContactsModel {
                     DDLogWarn("Duplicate request for public ID \(contactRequest.publicId)")
                 }
             }
+            if contactRequest.initialMessage {
+                initialMessageSet.insert(contactRequest)
+            }
         }
         
         if !toAck.isEmpty {
@@ -160,6 +167,10 @@ class ContactsModel {
                     ContactManager().acknowledgeRequest(contactRequest: request, response: "accept")
                 }
             }
+        }
+
+        if !initialMessageSet.isEmpty {
+            AsyncNotifier.notify(name: Notifications.InitialMessages)
         }
         
     }
@@ -188,16 +199,12 @@ class ContactsModel {
         switch contact.status {
         case "accepted":
             acceptedContactSet.insert(contact)
-            break
         case "rejected":
             rejectedContactSet.insert(contact)
-            break
         case "ignored":
             ignoredContactSet.insert(contact)
-            break
         case "pending":
             pendingContactSet.insert(contact)
-            break
         default:
             DDLogError("Invalid contact status: \(contact.status)")
         }
@@ -235,7 +242,7 @@ class ContactsModel {
                 contact.status = serverContact.status!
                 contact.timestamp = Int64(serverContact.timestamp!)
                 switch contact.status {
-                case "accepted":
+                case Contact.ACCEPTED:
                     acceptedContactSet.insert(contact)
                     contact.authData = Data(base64Encoded: serverContact.authData!)
                     contact.nonce = Data(base64Encoded: serverContact.nonce!)
@@ -244,11 +251,16 @@ class ContactsModel {
                         messageKeys.append(Data(base64Encoded: key)!)
                     }
                     contact.messageKeys = messageKeys
-                    break
-                case "ignored":
-                    ignoredContactSet.insert(contact)
-                    break
-                case "rejected":
+                case Contact.PENDING:
+                    // This means that there was an initial message and the
+                    // recipient chose to view it without acting on it
+                    DispatchQueue.global(qos: .background).async {
+                        if let initialMessage = contact.pendingMessage {
+                            let messageManager = MessageManager();
+                            messageManager.sendPendingMessage(initialMessage)
+                        }
+                    }
+                case Contact.REJECTED:
                     rejectedContactSet.insert(contact)
                     break
                 default:
@@ -465,6 +477,11 @@ class ContactsModel {
         let realm = try! Realm()
         let dbContacts = realm.objects(DatabaseContact.self)
         for dbContact in dbContacts {
+            /*
+            try! realm.write {
+                realm.delete(dbContact)
+            }
+            */
             do {
                 let contact = try decodeContact(dbContact.encoded!)
                 contact.contactId = dbContact.contactId
@@ -491,7 +508,10 @@ class ContactsModel {
             }
         }
         mapContacts()
-        
+        if config.v2FirstRun {
+            migrateContacts()
+        }
+
     }
     
 }
@@ -504,6 +524,11 @@ extension ContactsModel {
         let codec = CKGCMCodec(data: encoded)
         try codec.decrypt(sessionState.contactsKey!, withAuthData: sessionState.authData!)
         let contact = Contact()
+        
+        let firstRun = config.v2FirstRun
+        if !firstRun {
+            contact.version = Float(codec.getString())!
+        }
         contact.publicId = codec.getString()
         contact.status = codec.getString()
         let directoryId = codec.getString()
@@ -511,6 +536,12 @@ extension ContactsModel {
             contact.directoryId = directoryId
         }
         contact.timestamp = codec.getLong()
+        if !firstRun {
+            let pendingMessage = codec.getString()
+            if pendingMessage.count > 0 {
+                contact.pendingMessage = pendingMessage
+            }
+        }
         let count = codec.getLong()
         if count > 0 {
             contact.messageKeys = [Data]()
@@ -530,10 +561,12 @@ extension ContactsModel {
     func encodeContact(_ contact: Contact) throws -> Data {
         
         let codec = CKGCMCodec()
+        codec.put(contact.version.description)
         codec.put(contact.publicId)
         codec.put(contact.status)
         codec.put(contact.directoryId ?? "")
         codec.putLong(contact.timestamp)
+        codec.put(contact.pendingMessage ?? "")
         if contact.messageKeys != nil {
             codec.putLong(Int64(contact.messageKeys!.count))
             for key in contact.messageKeys! {
@@ -568,6 +601,18 @@ extension ContactsModel {
             else {
                 DDLogError("Contact \(contact.displayName) not found in database")
             }
+        }
+        
+    }
+
+    private func migrateContacts() {
+
+        do {
+            try updateDatabaseContacts(allContacts)
+            config.v2FirstRun = false
+            loadContacts()
+        } catch {
+            DDLogError("Contact migration error: \(error.localizedDescription)")
         }
         
     }

@@ -14,6 +14,7 @@ class MessageManager: NSObject {
 
     var contactManager = ContactManager()
     var config = Configurator()
+    var alertPresenter = AlertPresenter()
 
     func acknowledgeMessages(_ textMessages: [TextMessage]) {
 
@@ -223,6 +224,30 @@ class MessageManager: NSObject {
 
     }
 
+    func sendPendingMessage(message: String, recipient: String) {
+        
+        let request = SendPendingMessageRequest(recipient: recipient, message: message)
+        let enclaveTask = EnclaveTask<SendPendingMessageRequest, SendPendingMessageResponse>()
+        enclaveTask.sendRequest(request: request)
+            .then({ response in
+                if let error = response.error {
+                    DDLogError("Error sending pending message: \(error)")
+                } else {
+                    guard let contact = ContactsModel.instance.getContact(publicId: recipient) else { return }
+                    if contact.status == Contact.ACCEPTED {
+                        let textMessage = TextMessage(text: message, contact: contact)
+                        try! textMessage.encrypt()
+                        let conversation = ConversationCache.instance.getConversation(contactId: contact.contactId)
+                        conversation?.addTextMessage(textMessage, initial: true)
+                    }
+                }
+            })
+            .catch({ error in
+                DDLogError("Error sending pending message: \(error.localizedDescription)")
+            })
+    
+    }
+    
     func updateMessage(_ message: Message) {
 
         let realm = try! Realm()

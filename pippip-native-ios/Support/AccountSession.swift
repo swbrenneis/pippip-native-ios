@@ -135,7 +135,6 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     func accountDeleted() {
 
-        config.authenticated = false
         accountSessionState = .appStarted
         authState = .notAuthenticated
         updateState = .idle
@@ -185,13 +184,13 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     }
     
     func doUpdates() {
-/*
+
         if updateState == .idle && authState != .notAuthenticated {
             didUpdate = true
             updateState = .gettingMessages
             messageManager.getNewMessages()
         }
-*/
+
     }
 
     func loadAccount() throws {
@@ -263,11 +262,18 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         var realmConfig = Realm.Configuration()
         realmConfig.fileURL = realmConfig.fileURL?.deletingLastPathComponent()
             .appendingPathComponent("\(realAccountName!).realm")
-        realmConfig.schemaVersion = 23
+        realmConfig.schemaVersion = 24
         realmConfig.migrationBlock = { (migration, oldSchemaVersion) in
             if oldSchemaVersion < 15 {
                 migration.enumerateObjects(ofType: AccountConfig.className()) { (oldObject, newObject) in
                     newObject!["directoryId"] = oldObject!["nickname"]
+                }
+            }
+            if oldSchemaVersion < 24 {
+                migration.enumerateObjects(ofType: AccountConfig.className()) { (oldObject, newObject) in
+                    if let _ = newObject?["v2FirstRun"] {
+                        newObject?["v2FirstRun"] = true
+                    }
                 }
             }
         }
@@ -277,7 +283,6 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     func signOut() {
         
-        config.authenticated = false
         authState = .loggedOut
         NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
         

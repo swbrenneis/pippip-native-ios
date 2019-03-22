@@ -32,6 +32,7 @@ class PippipTheme {
     static var incomingTextColor: UIColor!
     static var outgoingMessageBubbleColor: UIColor!
     static var outgoingTextColor: UIColor!
+    static var viewBorderColor: UIColor!
 
     static var darkCellColor: UIColor!
     static var mediumCellColor: UIColor!
@@ -68,7 +69,7 @@ class PippipTheme {
         incomingTextColor = UIColor.flatBlack
         outgoingMessageBubbleColor = UIColor.flatTealDark
         outgoingTextColor = ContrastColorOf(outgoingMessageBubbleColor, returnFlat: true)
-        
+        viewBorderColor = UIColor.flatGrayDark
 
         var style = ToastStyle()
         style.backgroundColor = UIColor.flatTealDark

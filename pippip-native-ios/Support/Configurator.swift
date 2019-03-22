@@ -34,20 +34,6 @@ class Configurator: NSObject {
         return privateWhitelist
     }
     private var privateWhitelist = [Entity]()
-    var authenticated: Bool {
-        get {
-            let config = getConfig()
-            return config.authenticated
-        }
-        set {
-            let config = getConfig()
-            let realm = try! Realm()
-            try! realm.write {
-                config.authenticated = newValue
-                config.version = Configurator.currentVersion
-            }
-        }
-    }
     var useLocalAuth: Bool {
         get {
             let config = getConfig()
@@ -100,20 +86,6 @@ class Configurator: NSObject {
             let realm = try! Realm()
             try! realm.write {
                 config.directoryId = newValue
-                config.version = Configurator.currentVersion
-            }
-        }
-    }
-    var statusUpdates: Int {
-        get {
-            let config = getConfig()
-            return config.statusUpdates
-        }
-        set {
-            let config = getConfig()
-            let realm = try! Realm()
-            try! realm.write {
-                config.statusUpdates = newValue
                 config.version = Configurator.currentVersion
             }
         }

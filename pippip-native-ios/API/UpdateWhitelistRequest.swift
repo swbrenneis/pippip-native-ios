@@ -14,7 +14,7 @@ class UpdateWhitelistRequest: EnclaveRequestProtocol {
     var method: String = "UpdateWhitelist"
     var id: String?
     var action: String?
-    var version: Float?
+    var version: Double?
     
     init(id: String, action: String) {
         self.id = id

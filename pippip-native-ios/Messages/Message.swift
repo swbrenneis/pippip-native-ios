@@ -50,7 +50,7 @@ class Message: NSObject, Comparable {
 
     }
 
-    init?(contact: Contact) {
+    init(contact: Contact) {
 
         contactId = contact.contactId
         keyIndex = contact.currentIndex + 1
@@ -65,10 +65,8 @@ class Message: NSObject, Comparable {
             try ContactsModel.instance.updateKeyInfo(contactId: contact.contactId,
                                                      currentIndex: contact.currentIndex,
                                                      currentSequence: contact.currentSequence)
-        }
-        catch {
+        } catch {
             DDLogError("Error updating contact: \(error.localizedDescription)")
-            return nil
         }
 
     }

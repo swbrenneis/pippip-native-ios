@@ -14,7 +14,7 @@ class GetRequestStatusResponse: NSObject, EnclaveResponseProtocol {
     var json: String?
     var error: String?
     var contacts: [ServerContact]?
-    var version: Float?
+    var version: Double?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {

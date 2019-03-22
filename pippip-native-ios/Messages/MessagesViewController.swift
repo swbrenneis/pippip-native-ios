@@ -26,6 +26,7 @@ class MessagesViewController: UIViewController {
     var alertPresenter = AlertPresenter()
     var contactBarButton: UIBarButtonItem!
     var contactBadge = GIBadgeView()
+    var initialMessageListener: InitialMessageListener?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +40,8 @@ class MessagesViewController: UIViewController {
         headingView = UIView(frame: headingFrame)
         headingView.backgroundColor = .clear
 
+        initialMessageListener = InitialMessageListener(viewController: self)
+        
         // Do any additional setup after loading the view.
         /*
         var rightBarItems = [UIBarButtonItem]()
@@ -79,6 +82,7 @@ class MessagesViewController: UIViewController {
         super.viewWillAppear(animated)
 
         alertPresenter.present = true
+        initialMessageListener?.listening(true)
 
         if wasReset {
             wasReset = false
@@ -94,9 +98,7 @@ class MessagesViewController: UIViewController {
         if AccountSession.instance.serverAuthenticated {
             getMostRecentMessages()
             tableView.reloadData()
-            let p = ContactsModel.instance.pendingRequests.count
-            let s = config.statusUpdates
-            contactBadge.badgeValue = p + s
+            contactBadge.badgeValue = ContactsModel.instance.pendingRequests.count
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
@@ -114,6 +116,7 @@ class MessagesViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
+        initialMessageListener?.listening(false)
 
         NotificationCenter.default.removeObserver(self, name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notifications.AuthComplete, object: nil)
@@ -185,7 +188,7 @@ class MessagesViewController: UIViewController {
             DispatchQueue.main.async {
                 self.getMostRecentMessages()
                 self.tableView.reloadData()
-                self.contactBadge.badgeValue =  ContactsModel.instance.pendingRequests.count + self.config.statusUpdates
+                self.contactBadge.badgeValue =  ContactsModel.instance.pendingRequests.count
             }
         }
         
@@ -229,7 +232,7 @@ class MessagesViewController: UIViewController {
     @objc func setContactBadge(_ notification: Notification) {
 
         DispatchQueue.main.async {
-            self.contactBadge.badgeValue = ContactsModel.instance.pendingRequests.count + self.config.statusUpdates
+            self.contactBadge.badgeValue = ContactsModel.instance.pendingRequests.count
         }
 
     }

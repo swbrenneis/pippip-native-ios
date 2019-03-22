@@ -50,6 +50,10 @@ class MessagesContainerViewController: UIViewController {
             controllerContainer.addSubview(controller.view)
             addChild(controller)
             controller.didMove(toParent: self)
+            UIView.animate(withDuration: 0.3, animations: {
+                self.currentController?.view.alpha = 0.0
+                controller.view.alpha = 1.0
+            })
             currentController = controller
         case .preview:
             guard let controller = decorator?.previewController else { return }
@@ -58,6 +62,10 @@ class MessagesContainerViewController: UIViewController {
             controllerContainer.addSubview(controller.view)
             addChild(controller)
             controller.didMove(toParent: self)
+            UIView.animate(withDuration: 0.3, animations: {
+                self.currentController?.view.alpha = 0.0
+                controller.view.alpha = 1.0
+            })
             currentController = controller
         }
         

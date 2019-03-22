@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ConfirmHideShowView: UIView {
+class ConfirmHideShowView: UIView, Dismissable {
 
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var confirmLabel: UILabel!

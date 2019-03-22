@@ -12,6 +12,6 @@ import ObjectMapper
 protocol EnclaveRequestProtocol: Mappable {
 
     var method: String { get set }
-    var version: Float? { get set }
+    var version: Double? { get set }
 
 }

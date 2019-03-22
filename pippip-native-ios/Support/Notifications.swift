@@ -28,6 +28,7 @@ struct Notifications {
     static let GetMessagesComplete = NSNotification.Name("GetMessagesComplete")
     static let GetRequestsComplete = NSNotification.Name("GetRequestsComplete")
     static let GetStatusComplete = NSNotification.Name("GetStatusComplete")
+    static let InitialMessages = NSNotification.Name("InitialMessages")
     static let MessageBubbleTapped = NSNotification.Name("MessageBubbleTapped")
     static let MessageDeleted = NSNotification.Name("MessageDeleted")
     static let MessageFailed = NSNotification.Name("MessageFailed")

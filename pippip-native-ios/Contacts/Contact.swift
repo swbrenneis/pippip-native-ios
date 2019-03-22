@@ -81,7 +81,7 @@ class Contact: NSObject, Comparable {
 
     static let currentVersion: Float = 2.0
 
-    var version: Float = Contact.currentVersion
+    var version: Float
     var pendingMessage: String?
     var contactId: Int = 0
     var publicId: String = ""
@@ -126,7 +126,7 @@ class Contact: NSObject, Comparable {
     }
 
     override init() {
-        version = Contact.currentVersion
+        version = 0
         super.init()
     }
 
@@ -150,10 +150,11 @@ class Contact: NSObject, Comparable {
         currentSequence = 1
         timestamp = Int64(contact.timestamp!)
         if status == "accepted" {
+            guard let keys = contact.messageKeys else { return nil }
             authData = Data(base64Encoded: contact.authData!)
             nonce = Data(base64Encoded: contact.nonce!)
             messageKeys = [Data]()
-            for key in contact.messageKeys! {
+            for key in keys {
                 messageKeys?.append(Data(base64Encoded: key)!)
             }
         }

@@ -33,7 +33,6 @@ class NewAccountCreator: NSObject {
             try storeVault()
             AccountSession.instance.setDefaultConfig(accountName: accountName)
             let config = Configurator()
-            config.authenticated = true
             config.useLocalAuth = biometricsEnabled
             config.uuid = NSUUID().uuidString
             if biometricsEnabled {

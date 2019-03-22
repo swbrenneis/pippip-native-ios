@@ -14,7 +14,7 @@ class SetDirectoryIdResponse: NSObject, EnclaveResponseProtocol {
     var json: String?
     var error: String?
     var result: String?
-    var version: Float?
+    var version: Double?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil && map.JSON["result"] == nil {

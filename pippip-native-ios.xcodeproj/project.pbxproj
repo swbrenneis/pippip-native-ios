@@ -73,6 +73,12 @@
 		552F1C24217BA0BF00679E9B /* ContactError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552F1C23217BA0BF00679E9B /* ContactError.swift */; };
 		552F1C26217CA9C000679E9B /* GestureBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552F1C25217CA9C000679E9B /* GestureBlurView.swift */; };
 		552F1C28217CAC2E00679E9B /* Dismissable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552F1C27217CAC2E00679E9B /* Dismissable.swift */; };
+		5534F949223F096B00BF5029 /* ServerContactRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5534F948223F096B00BF5029 /* ServerContactRequest.swift */; };
+		5534F94B223FC8FB00BF5029 /* InitialMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5534F94A223FC8FB00BF5029 /* InitialMessageView.swift */; };
+		5534F94D223FCC7800BF5029 /* InitialMessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5534F94C223FCC7800BF5029 /* InitialMessageView.xib */; };
+		5534F94F223FD20700BF5029 /* InitialMessageListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5534F94E223FD20700BF5029 /* InitialMessageListener.swift */; };
+		5534F9512242EEBA00BF5029 /* SendPendingMessageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5534F9502242EEBA00BF5029 /* SendPendingMessageRequest.swift */; };
+		5534F9532242F2D200BF5029 /* SendPendingMessageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5534F9522242F2D200BF5029 /* SendPendingMessageResponse.swift */; };
 		5536A6832067559400B7E6D8 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A6822067559400B7E6D8 /* Notifications.swift */; };
 		5536A68D206897D200B7E6D8 /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5536A68C206897D200B7E6D8 /* ContactsViewController.swift */; };
 		5538184E215D3679001061E7 /* pippip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5538184D215D3679001061E7 /* pippip.mp3 */; };
@@ -102,7 +108,6 @@
 		55721A0A20C86876008FE9F6 /* EnclaveDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0920C86876008FE9F6 /* EnclaveDelegate.swift */; };
 		55721A0C20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0B20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift */; };
 		55721A0E20C97A5C008FE9F6 /* AcknowledgeMessagesDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A0D20C97A5C008FE9F6 /* AcknowledgeMessagesDelegate.swift */; };
-		55721A1220C98504008FE9F6 /* DeleteContactDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1120C98504008FE9F6 /* DeleteContactDelegate.swift */; };
 		55721A1420C9900F008FE9F6 /* GetMessagesDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1320C9900F008FE9F6 /* GetMessagesDelegate.swift */; };
 		55721A1C20C9A88E008FE9F6 /* SendMessageDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1B20C9A88E008FE9F6 /* SendMessageDelegate.swift */; };
 		55721A2020C9F973008FE9F6 /* SetDirectoryIdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55721A1F20C9F973008FE9F6 /* SetDirectoryIdDelegate.swift */; };
@@ -348,6 +353,12 @@
 		552F1C23217BA0BF00679E9B /* ContactError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactError.swift; sourceTree = "<group>"; };
 		552F1C25217CA9C000679E9B /* GestureBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureBlurView.swift; sourceTree = "<group>"; };
 		552F1C27217CAC2E00679E9B /* Dismissable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dismissable.swift; sourceTree = "<group>"; };
+		5534F948223F096B00BF5029 /* ServerContactRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerContactRequest.swift; sourceTree = "<group>"; };
+		5534F94A223FC8FB00BF5029 /* InitialMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialMessageView.swift; sourceTree = "<group>"; };
+		5534F94C223FCC7800BF5029 /* InitialMessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InitialMessageView.xib; sourceTree = "<group>"; };
+		5534F94E223FD20700BF5029 /* InitialMessageListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialMessageListener.swift; sourceTree = "<group>"; };
+		5534F9502242EEBA00BF5029 /* SendPendingMessageRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendPendingMessageRequest.swift; sourceTree = "<group>"; };
+		5534F9522242F2D200BF5029 /* SendPendingMessageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendPendingMessageResponse.swift; sourceTree = "<group>"; };
 		5536A6822067559400B7E6D8 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		5536A68C206897D200B7E6D8 /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
 		5538184D215D3679001061E7 /* pippip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = pippip.mp3; sourceTree = "<group>"; };
@@ -377,7 +388,6 @@
 		55721A0920C86876008FE9F6 /* EnclaveDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnclaveDelegate.swift; sourceTree = "<group>"; };
 		55721A0B20C952EC008FE9F6 /* MatchDirectoryIdDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchDirectoryIdDelegate.swift; sourceTree = "<group>"; };
 		55721A0D20C97A5C008FE9F6 /* AcknowledgeMessagesDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgeMessagesDelegate.swift; sourceTree = "<group>"; };
-		55721A1120C98504008FE9F6 /* DeleteContactDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteContactDelegate.swift; sourceTree = "<group>"; };
 		55721A1320C9900F008FE9F6 /* GetMessagesDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMessagesDelegate.swift; sourceTree = "<group>"; };
 		55721A1B20C9A88E008FE9F6 /* SendMessageDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageDelegate.swift; sourceTree = "<group>"; };
 		55721A1F20C9F973008FE9F6 /* SetDirectoryIdDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetDirectoryIdDelegate.swift; sourceTree = "<group>"; };
@@ -725,6 +735,8 @@
 				55BFD36020CE14A80084C555 /* DatabaseContact.swift */,
 				55F96ABE219730DD00F6E096 /* DuplicateIdConfirmationView.swift */,
 				55F96AB82195C80300F6E096 /* DuplicateIdView.swift */,
+				5534F94E223FD20700BF5029 /* InitialMessageListener.swift */,
+				5534F94A223FC8FB00BF5029 /* InitialMessageView.swift */,
 				55EBC02722391BA90052C15B /* NewRequestsTableViewCell.swift */,
 				55EBC02322389BD70052C15B /* RequestsTableViewController.swift */,
 				55EBC0252238A4790052C15B /* RequestsTableViewCell.swift */,
@@ -812,7 +824,6 @@
 				55187ECD20BE2F8600F94792 /* AuthenticationResponse.swift */,
 				55E970A220AAE05E008C2F39 /* ClientAuthChallenge.swift */,
 				55187ED120BE4A1C00F94792 /* ClientAuthorized.swift */,
-				55721A1120C98504008FE9F6 /* DeleteContactDelegate.swift */,
 				5511E9BB20C2C4B20080C0DF /* DeleteContactRequest.swift */,
 				5511E9BD20C2C57C0080C0DF /* DeleteContactResponse.swift */,
 				55721A0920C86876008FE9F6 /* EnclaveDelegate.swift */,
@@ -841,9 +852,12 @@
 				55721A1B20C9A88E008FE9F6 /* SendMessageDelegate.swift */,
 				5511E9E120C341300080C0DF /* SendMessageRequest.swift */,
 				5511E9E320C3414C0080C0DF /* SendMessageResponse.swift */,
+				5534F9502242EEBA00BF5029 /* SendPendingMessageRequest.swift */,
+				5534F9522242F2D200BF5029 /* SendPendingMessageResponse.swift */,
 				55187ECF20BE427700F94792 /* ServerAuthChallenge.swift */,
 				55187ED320BE4C8900F94792 /* ServerAuthorized.swift */,
 				5511E9B120C1EC830080C0DF /* ServerContact.swift */,
+				5534F948223F096B00BF5029 /* ServerContactRequest.swift */,
 				5511E9DF20C33C880080C0DF /* ServerMessage.swift */,
 				557D25BC222DF5C10064E6F3 /* ServerResponseError.swift */,
 				55245F4020BCC9A100E6ECB6 /* SessionResponse.swift */,
@@ -954,6 +968,7 @@
 				5557B470211F0A2C00FE1775 /* DeleteAccountView.xib */,
 				55F96ABC219730B300F6E096 /* DuplicateIdConfirmationView.xib */,
 				55F96ABA2195C82600F6E096 /* DuplicateIdView.xib */,
+				5534F94C223FCC7800BF5029 /* InitialMessageView.xib */,
 				5557B460211CCE4000FE1775 /* NewAccountView.xib */,
 				5557B464211CE41600FE1775 /* PassphraseAlertView.xib */,
 				55206DA82075486000B0B246 /* SelectContactView.xib */,
@@ -1253,6 +1268,7 @@
 				5557B469211DE2DD00FE1775 /* AddContactView.xib in Resources */,
 				5557B46D211E087000FE1775 /* AddToWhitelistView.xib in Resources */,
 				55C8075B2173BAE400336028 /* ContactDetailView.xib in Resources */,
+				5534F94D223FCC7800BF5029 /* InitialMessageView.xib in Resources */,
 				551DBDD320D40858005D88D0 /* QuickStart.storyboard in Resources */,
 				5557B461211CCE4000FE1775 /* NewAccountView.xib in Resources */,
 				55206DA92075486000B0B246 /* SelectContactView.xib in Resources */,
@@ -1383,7 +1399,6 @@
 				55C49BFC2140303400EEED14 /* PippipTextMessagePresenter.swift in Sources */,
 				55AA554C1FA14D7100A7026B /* DigestBase.cc in Sources */,
 				55B17DAF20A1492600DA16DE /* MessagesViewController.swift in Sources */,
-				55721A1220C98504008FE9F6 /* DeleteContactDelegate.swift in Sources */,
 				55A4244C2237D12500DB20CF /* MessagesContainerViewController.swift in Sources */,
 				557D25C1222DFE920064E6F3 /* SetContactStatusRequest.swift in Sources */,
 				550F998B2226E3E700E6D81F /* ContactRequest.swift in Sources */,
@@ -1414,6 +1429,7 @@
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
 				5511E9C620C2D1C20080C0DF /* GetPendingRequestsResponse.swift in Sources */,
 				55721A2020C9F973008FE9F6 /* SetDirectoryIdDelegate.swift in Sources */,
+				5534F9532242F2D200BF5029 /* SendPendingMessageResponse.swift in Sources */,
 				5511E9C420C2D1AC0080C0DF /* GetPendingRequests.swift in Sources */,
 				55AA54DC1FA14B1E00A7026B /* Unsigned16.cc in Sources */,
 				552F1C28217CAC2E00679E9B /* Dismissable.swift in Sources */,
@@ -1476,7 +1492,9 @@
 				55E970AD20AE6927008C2F39 /* Authenticator.swift in Sources */,
 				55AA55551FA14D7100A7026B /* SHA512.cc in Sources */,
 				5511E9B220C1EC830080C0DF /* ServerContact.swift in Sources */,
+				5534F949223F096B00BF5029 /* ServerContactRequest.swift in Sources */,
 				55AA54FA1FA14C1300A7026B /* CKPEMCodec.mm in Sources */,
+				5534F94F223FD20700BF5029 /* InitialMessageListener.swift in Sources */,
 				55AA555C1FA14D7100A7026B /* AES.cc in Sources */,
 				55F7B57F20BF35F50083AE01 /* NewAccountFinal.swift in Sources */,
 				559F29DC2236ED5600DC077E /* InitialViewController.swift in Sources */,
@@ -1537,6 +1555,7 @@
 				55AA55631FA14D7100A7026B /* RSAPrivateCrtKey.cc in Sources */,
 				5511E9B820C1FF550080C0DF /* UpdateWhitelistRequest.swift in Sources */,
 				55AA54DD1FA14B1E00A7026B /* ByteArray.cc in Sources */,
+				5534F94B223FC8FB00BF5029 /* InitialMessageView.swift in Sources */,
 				5586B8922064A7AF00641514 /* ErrorDelegate.swift in Sources */,
 				5557B46B211E06E500FE1775 /* AddToWhitelistView.swift in Sources */,
 				5511E9E020C33C880080C0DF /* ServerMessage.swift in Sources */,
@@ -1561,6 +1580,7 @@
 				55AA55601FA14D7100A7026B /* IosSecureRandom.cc in Sources */,
 				55B0DBBA2048962400F6B29B /* CopyableLabel.m in Sources */,
 				5511E9C220C2CE3F0080C0DF /* GetRequestStatusResponse.swift in Sources */,
+				5534F9512242EEBA00BF5029 /* SendPendingMessageRequest.swift in Sources */,
 				5557B45B211C9A1000FE1775 /* SignInView.swift in Sources */,
 				55AA554D1FA14D7100A7026B /* RSAPublicKey.cc in Sources */,
 				5511E9DA20C3369C0080C0DF /* AcknowledgeMessagesResponse.swift in Sources */,

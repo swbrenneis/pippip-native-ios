@@ -14,7 +14,7 @@ class SetDirectoryIdRequest: NSObject, EnclaveRequestProtocol {
     var method: String = "SetDirectoryId"
     var oldDirectoryId: String?
     var newDirectoryId: String?
-    var version: Float?
+    var version: Double?
     
     init(oldDirectoryId: String, newDirectoryId: String) {
         self.oldDirectoryId = oldDirectoryId

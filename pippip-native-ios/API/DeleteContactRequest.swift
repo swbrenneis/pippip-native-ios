@@ -13,7 +13,7 @@ class DeleteContactRequest: NSObject, EnclaveRequestProtocol {
     
     var method: String = "DeleteContact"
     var publicId: String?
-    var version: Float?
+    var version: Double?
 
     init(publicId: String) {
         self.publicId = publicId

@@ -12,7 +12,7 @@ import ObjectMapper
 class GetMessagesRequest: NSObject, EnclaveRequestProtocol {
 
     var method: String = "GetMessages"
-    var version: Float?
+    var version: Double?
     
     override init() {
         super.init()

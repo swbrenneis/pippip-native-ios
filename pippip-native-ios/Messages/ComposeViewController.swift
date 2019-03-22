@@ -133,6 +133,7 @@ class ComposeViewController: UIViewController {
             } else {
                 sendToDirectoryId(name)
             }
+            decorator?.viewMode = .preview
         }
 
     }

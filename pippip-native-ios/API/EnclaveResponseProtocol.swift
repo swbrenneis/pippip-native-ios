@@ -12,7 +12,7 @@ import ObjectMapper
 protocol EnclaveResponseProtocol: Mappable {
     
     var error: String? { get }
-    var version: Float? { get set }
+    var version: Double? { get set }
     var json: String? { get }
 
     init?(jsonString: String)

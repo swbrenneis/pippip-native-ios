@@ -15,7 +15,7 @@ class SetContactPolicyResponse: EnclaveResponseProtocol {
     var error: String?
     var policy: String?
     var result: String?
-    var version: Float?
+    var version: Double?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {

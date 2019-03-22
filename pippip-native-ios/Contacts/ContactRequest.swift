@@ -12,6 +12,7 @@ struct ContactRequest: Hashable {
     
     var directoryId: String?
     var publicId: String
+    var initialMessage: Bool
     var hashValue: Int {
         return publicId.hashValue
     }
@@ -28,15 +29,16 @@ struct ContactRequest: Hashable {
         
         self.publicId = publicId
         self.directoryId = directoryId
-        
+        self.initialMessage = false
+
     }
     
-    init?(request: [String: String]) {
+    init?(request: ServerContactRequest) {
         
-        guard let puid = request["publicId"] else { return nil }
-        publicId = puid
-        directoryId = request["directoryId"]
-        
+        publicId = request.requestingId!
+        directoryId = request.requestingDirectoryId
+        initialMessage = request.initialMessage!
+
     }
     
     static func ==(lhs: ContactRequest, rhs: ContactRequest) -> Bool {

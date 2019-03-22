@@ -157,8 +157,6 @@ class ServerAuthenticator: NSObject {
         
         do {
             try authorized.processResponse()
-            let config = Configurator()
-            config.authenticated = true
             sessionState.sessionId = authorized.sessionId!
             sessionState.authToken = authorized.authToken!
             AccountSession.instance.authenticated()
