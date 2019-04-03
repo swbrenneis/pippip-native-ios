@@ -47,6 +47,7 @@ class InitialViewController: UITabBarController {
         PippipTheme.setTheme()
         PippipGeometry.setGeometry()
         SecommAPI.initializeAPI()
+        AccountSession.initialViewController = self
         
         try! AccountSession.instance.loadAccount()
         authenticator = Authenticator(viewController: self)
@@ -156,6 +157,10 @@ class InitialViewController: UITabBarController {
         alertPresenter.present = false
         authenticator?.viewWillDisappear()
 
+    }
+    
+    func accountDeleted() {
+        authenticator?.accountDeleted()
     }
     
     func setMessagesNavBarItems() {

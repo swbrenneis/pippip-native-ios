@@ -10,13 +10,14 @@ import Foundation
 import ObjectMapper
 
 class SetContactStatusResponse : EnclaveResponseProtocol {
-
+    
     var json: String?
     var publicId: String?
     var status: String?
     var error: String?
-    var version: Float?
-    
+    var version: Double?
+    var timestamp: Int64?
+
     required init?(map: Map) {
         guard let _ = map.JSON["publicId"] else { return nil }
         guard let _ = map.JSON["status"] else { return nil }

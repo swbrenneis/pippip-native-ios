@@ -71,7 +71,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        authenticator.viewWillAppear()
+        //authenticator.viewWillAppear()
         alertPresenter.present = true
 
         if wasReset {
@@ -88,7 +88,7 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
         super.viewWillDisappear(animated)
 
         alertPresenter.present = false
-        authenticator.viewWillDisappear()
+        //authenticator.viewWillDisappear()
 
         verifyPassphraseView?.dismiss()
         storePassphraseView?.dismiss()

@@ -12,7 +12,7 @@ import ObjectMapper
 class GetPendingRequests: NSObject, EnclaveRequestProtocol {
 
     var method: String = "GetPendingRequests"
-    var version: Float?
+    var version: Double?
     
     override init() {
         super.init()

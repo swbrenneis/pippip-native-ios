@@ -19,15 +19,15 @@ class AddContactResponse: EnclaveResponseProtocol {
     var error: String?
     var result: String?
     var contact: ServerContact?
-    var timestamp: Int?
-    var version: Float?
+    var timestamp: Int64?
+    var version: Double?
     
     required init?(map: Map) {
         if map.JSON["error"] == nil {
             guard let _ = map.JSON["result"] as? String else { return nil }
-            guard let _ =  map.JSON["timestamp"] as? Int else { return nil }
-            guard let _ = map.JSON["version"] as? Double else { return nil }
         }
+        guard let _ = map.JSON["timestamp"] as? Int64 else { return nil }
+        guard let _ = map.JSON["version"] as? Double else { return nil }
     }
 
     required init?(jsonString: String) {

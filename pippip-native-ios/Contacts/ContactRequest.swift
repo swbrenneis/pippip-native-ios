@@ -11,36 +11,46 @@ import Foundation
 struct ContactRequest: Hashable {
     
     var directoryId: String?
-    var publicId: String
+    var requestingId: String
+    var requestedId: String
     var hashValue: Int {
-        return publicId.hashValue
+        return requestingId.hashValue
     }
     var displayId: String {
         if directoryId != nil {
             return directoryId!
         }
         else {
-            return publicId
+            return requestingId
         }
     }
     
+    var sessionState = SessionState()
+    
+
     init(publicId: String, directoryId: String?) {
         
-        self.publicId = publicId
+        self.requestingId = publicId
         self.directoryId = directoryId
+        requestedId = ""
         
     }
-    
-    init?(request: [String: String]) {
+
+    init?(request: ServerContactRequest) {
         
-        guard let puid = request["publicId"] else { return nil }
-        publicId = puid
-        directoryId = request["directoryId"]
+        guard let puid = request.requestingId else { return nil }
+        requestingId = puid
+        directoryId = request.requestingDirectoryId
+        guard let rqid = request.requestedId else { return nil }
+        requestedId = rqid
+        if requestedId != sessionState.publicId! {
+            return nil
+        }
         
     }
     
     static func ==(lhs: ContactRequest, rhs: ContactRequest) -> Bool {
-        return lhs.publicId == rhs.publicId
+        return lhs.requestingId == rhs.requestingId
     }
     
 }

@@ -18,10 +18,8 @@ class AccountConfig: Object {
     @objc dynamic var whitelist: Data?
     @objc dynamic var showIgnoredContacts: Bool = false
     @objc dynamic var useLocalAuth: Bool = true
-    @objc dynamic var authenticated: Bool = false
-    @objc dynamic var statusUpdates: Int = 0
     @objc dynamic var uuid: String = ""
     @objc dynamic var autoAccept: Bool = false
-    @objc dynamic var v2FirstRun: Bool = true
+    @objc dynamic var v1_0Contacts: Bool = false
 
 }

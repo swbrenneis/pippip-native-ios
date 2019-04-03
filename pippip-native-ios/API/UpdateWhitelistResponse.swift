@@ -16,7 +16,8 @@ class UpdateWhitelistResponse: EnclaveResponseProtocol {
     var id: String?
     var result: String?
     var action: String?
-    var version: Float?
+    var version: Double?
+    var timestamp: Int64?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {

@@ -27,6 +27,13 @@ class Authenticator: NSObject {
 
     }
     
+    func accountDeleted() {
+        
+        showAuthView()
+        authView?.setNewAccount()
+        
+    }
+    
     func showAuthView() {
 
         assert(Thread.isMainThread)

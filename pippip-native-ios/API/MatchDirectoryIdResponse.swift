@@ -16,7 +16,8 @@ class MatchDirectoryIdResponse: NSObject, EnclaveResponseProtocol {
     var result: String?
     var publicId: String?
     var directoryId: String?
-    var version: Float?
+    var version: Double?
+    var timestamp: Int64?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil && map.JSON["result"] == nil {

@@ -13,7 +13,7 @@ class SetContactPolicyRequest: NSObject, EnclaveRequestProtocol {
 
     var method: String = "SetContactPolicy"
     var policy: String?
-    var version: Float?
+    var version: Double?
     
     init(policy: String) {
         self.policy = policy

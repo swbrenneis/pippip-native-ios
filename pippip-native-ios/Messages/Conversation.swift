@@ -65,7 +65,7 @@ class Conversation: NSObject {
             messageMap[textMessage.messageId] = textMessage
             if visible {
                 textMessage.read = true
-                messageManager.markMessageRead(messageId: textMessage.messageId)
+                MessagesModel.instance.markMessageRead(messageId: textMessage.messageId)
             }
             if !initial {
                 DispatchQueue.global().async {
@@ -105,7 +105,7 @@ class Conversation: NSObject {
         messageMap.removeAll()
         windowPos = 0
         items.removeAll()
-        messageManager.clearMessages(contactId: contact.contactId)
+        MessagesModel.instance.clearMessages(contactId: contact.contactId)
 
     }
 
@@ -116,7 +116,7 @@ class Conversation: NSObject {
                 messageList.remove(at: index)
                 items.remove(at: index - windowPos)
             }
-            messageManager.deleteMessage(messageId: messageId)
+            MessagesModel.instance.deleteMessage(messageId: messageId)
         }
 
     }
@@ -152,7 +152,7 @@ class Conversation: NSObject {
 
     func loadInitialMessages() {
 
-        let messages = messageManager.mostRecentMessages(contactId: contact.contactId, count: windowSize)
+        let messages = MessagesModel.instance.mostRecentMessages(contactId: contact.contactId, count: windowSize)
         for textMessage in messages {
             messageMap[textMessage.messageId] = textMessage
             messageList.insert(textMessage)
@@ -166,16 +166,16 @@ class Conversation: NSObject {
             }
             items.append(PippipTextMessageModel(textMessage: textMessage))
         }
-        windowPos = max(0, messageManager.messageCount(contactId: contact.contactId) - windowSize)
+        windowPos = max(0, MessagesModel.instance.messageCount(contactId: contact.contactId) - windowSize)
 
     }
 
     func loadPreviousMessages() {
 
         if windowPos > 0 {
-            let count = min(windowSize, messageManager.messageCount(contactId: contact.contactId) - messageList.count)
+            let count = min(windowSize, MessagesModel.instance.messageCount(contactId: contact.contactId) - messageList.count)
             windowPos = max(0, windowPos-windowSize)
-            let messages = messageManager.getTextMessages(contactId: contact.contactId, pos: windowPos, count: count)
+            let messages = MessagesModel.instance.getTextMessages(contactId: contact.contactId, pos: windowPos, count: count)
             for message in messages {
                 messageMap[message.messageId] = message
                 messageList.insert(message)
@@ -209,7 +209,7 @@ class Conversation: NSObject {
                 for message in self.messageList {
                     if !message.read {
                         message.read = true
-                        self.messageManager.markMessageRead(messageId: message.messageId)
+                        MessagesModel.instance.markMessageRead(messageId: message.messageId)
                     }
                 }
             }
@@ -221,7 +221,7 @@ class Conversation: NSObject {
 
         guard let message = messageMap[messageId] else { return }
         message.failed = true
-        messageManager.updateMessage(message)
+        MessagesModel.instance.updateMessage(message)
         for index in 0..<items.count {
             if items[index].message.messageId == messageId {
                 items[index] = PippipTextMessageModel(textMessage: message)
@@ -250,7 +250,7 @@ class Conversation: NSObject {
                 items[index] = PippipTextMessageModel(textMessage: textMessage)
             }
         }
-        messageManager.updateMessage(textMessage)
+        MessagesModel.instance.updateMessage(textMessage)
         messageManager.sendMessage(textMessage: textMessage, retry: true)
 
     }

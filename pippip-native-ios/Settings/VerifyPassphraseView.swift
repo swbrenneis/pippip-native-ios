@@ -17,7 +17,6 @@ class VerifyPassphraseView: UIView {
     @IBOutlet weak var verifyButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
 
-    var settingsViewController: SettingsTableViewController?
     var alertPresenter = AlertPresenter()
     
     override init(frame: CGRect) {
@@ -59,7 +58,7 @@ class VerifyPassphraseView: UIView {
             accountDeleter.deleteAccount()
             AccountSession.instance.accountDeleted()
             dismiss()
-            settingsViewController?.accountDeleted()
+            AccountSession.initialViewController?.accountDeleted()
         }
         else {
             self.alertPresenter.errorAlert(title: "Invalid Passphrase",
@@ -73,7 +72,7 @@ class VerifyPassphraseView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.settingsViewController?.blurView.alpha = 0.0
+//            self.initialViewController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
         })
@@ -85,7 +84,7 @@ class VerifyPassphraseView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            self.settingsViewController?.blurView.alpha = 0.0
+//            self.settingsViewController?.blurView.alpha = 0.0
         }, completion: { completed in
             self.removeFromSuperview()
             self.verifyandDelete()
@@ -95,13 +94,7 @@ class VerifyPassphraseView: UIView {
     
     @IBAction func cancelButton(_ sender: Any) {
 
-        UIView.animate(withDuration: 0.3, animations: {
-            self.center.y = 0.0
-            self.alpha = 0.0
-            self.settingsViewController?.blurView.alpha = 0.0
-        }, completion: { completed in
-            self.removeFromSuperview()
-        })
+            dismiss()
         
     }
 

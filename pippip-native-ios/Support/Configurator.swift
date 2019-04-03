@@ -28,26 +28,12 @@ struct Entity {
 
 class Configurator: NSObject {
 
-    static let currentVersion: Float = 2.3
+    static let currentVersion: Float = 2.4
 
     var whitelist: [Entity] {
         return privateWhitelist
     }
     private var privateWhitelist = [Entity]()
-    var authenticated: Bool {
-        get {
-            let config = getConfig()
-            return config.authenticated
-        }
-        set {
-            let config = getConfig()
-            let realm = try! Realm()
-            try! realm.write {
-                config.authenticated = newValue
-                config.version = Configurator.currentVersion
-            }
-        }
-    }
     var useLocalAuth: Bool {
         get {
             let config = getConfig()
@@ -104,20 +90,6 @@ class Configurator: NSObject {
             }
         }
     }
-    var statusUpdates: Int {
-        get {
-            let config = getConfig()
-            return config.statusUpdates
-        }
-        set {
-            let config = getConfig()
-            let realm = try! Realm()
-            try! realm.write {
-                config.statusUpdates = newValue
-                config.version = Configurator.currentVersion
-            }
-        }
-    }
     var uuid: String {
         get {
             let config = getConfig()
@@ -146,19 +118,23 @@ class Configurator: NSObject {
             }
         }
     }
-    var v2FirstRun: Bool {
+    var v1_0Contacts: Bool {
         get {
             let config = getConfig()
-            return config.v2FirstRun
+            return config.v1_0Contacts
         }
         set {
             let config = getConfig()
             let realm = try! Realm()
             try! realm.write {
-                config.v2FirstRun = newValue
+                config.v1_0Contacts = newValue
                 config.version = Configurator.currentVersion
             }
         }
+    }
+    var version: Float {
+        let config = getConfig()
+        return config.version
     }
     
     var sessionState = SessionState()

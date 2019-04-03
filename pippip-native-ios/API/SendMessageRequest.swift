@@ -13,7 +13,7 @@ class SendMessageRequest: NSObject, EnclaveRequestProtocol {
 
     var method: String = "SendMessage"
     var message: ServerMessage?
-    var version: Float?
+    var version: Double?
     
     init(message: ServerMessage) {
         self.message = message

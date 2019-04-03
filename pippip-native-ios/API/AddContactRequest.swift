@@ -15,7 +15,7 @@ class AddContactRequest: NSObject, EnclaveRequestProtocol {
     var publicId: String?
     var directoryId: String?
     var initialMessage: Bool?
-    var version: Float?
+    var version: Double?
 
     init(publicId: String?, directoryId: String?, initialMessage: Bool?) {
         self.publicId = publicId

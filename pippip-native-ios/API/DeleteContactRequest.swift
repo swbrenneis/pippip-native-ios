@@ -12,11 +12,12 @@ import ObjectMapper
 class DeleteContactRequest: NSObject, EnclaveRequestProtocol {
     
     var method: String = "DeleteContact"
-    var publicId: String?
-    var version: Float?
+    var requestedId: String?
+    var version: Double?
 
-    init(publicId: String) {
-        self.publicId = publicId
+    init(requestedId: String) {
+        self.requestedId = requestedId
+        version = 1.0
     }
 
     required init?(map: Map) {
@@ -25,7 +26,7 @@ class DeleteContactRequest: NSObject, EnclaveRequestProtocol {
 
     func mapping(map: Map) {
         method <- map["method"]
-        publicId <- map["publicId"]
+        requestedId <- map["requestedId"]
         version <- map["version"]
     }
 

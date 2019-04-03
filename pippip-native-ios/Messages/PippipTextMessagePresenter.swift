@@ -29,7 +29,7 @@ class PippipTextMessagePresenter: TextMessagePresenter<PippipTextMessageViewMode
         }
         else if action == cutSelector {
             let message = self.messageViewModel.textMessage.message
-            messageManager.deleteMessage(messageId: message.messageId)
+            MessagesModel.instance.deleteMessage(messageId: message.messageId)
             NotificationCenter.default.post(name: Notifications.MessageDeleted, object: message)
         }
         else {

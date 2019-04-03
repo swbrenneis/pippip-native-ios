@@ -17,7 +17,7 @@ class ContactManager {
     
     func acknowledgeRequest(contactRequest: ContactRequest, response: String) {
 
-        let request = AcknowledgeRequest(requestingId: contactRequest.publicId, response: response)
+        let request = AcknowledgeRequest(requestingId: contactRequest.requestingId, response: response)
         let ackTask = EnclaveTask<AcknowledgeRequest, AcknowledgeRequestResponse>()
         ackTask.sendRequest(request: request)
             .then({ response in
@@ -27,6 +27,10 @@ class ContactManager {
                 } else {
                     if let acknowledged = response.acknowledged,
                         let contact = Contact(serverContact: acknowledged) {
+                        if contact.status == Contact.IGNORED {
+                            // Server doesn't return directory ID for ignored contacts
+                            contact.directoryId = contactRequest.directoryId
+                        }
                         ContactsModel.instance.addContact(contact)
                         ContactsModel.instance.contactAcknowledged(contact: contact, request: contactRequest)
                         self.alertPresenter.successAlert(message: "This contact request has been \(contact.status)")
@@ -82,18 +86,30 @@ class ContactManager {
             throw ContactError(error: "Whitelist ID \(publicId) exists")
         }
         let request = UpdateWhitelistRequest(id: publicId, action: "add")
-//        let delegate = UpdateWhitelistDelegate(request: request, updateType: .addEntry)
-//        delegate.publicId = publicId
-//        delegate.directoryId = directoryId
-//        let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>(delegate: delegate)
-//        addTask.errorTitle = "Permitted ID List Error"
-//        addTask.sendRequest(request)
+        let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>()
+        addTask.sendRequest(request: request)
+            .then({ response in
+                if  response.action == "add", response.result == "added" || response.result == "exists" {
+                    var userInfo = [String: Any]()
+                    userInfo["publicId"] = publicId
+                    if directoryId != nil {
+                        userInfo["directoryId"] = directoryId
+                    }
+                    NotificationCenter.default.post(name: Notifications.WhitelistEntryAdded, object: nil, userInfo: userInfo)
+                }
+                else {
+                    DDLogError("Invalid response from server to add whitelist entry update")
+                }
+            })
+            .catch({ error in
+                DDLogError("Update whitelist error: \(error.localizedDescription)")
+            })
         
     }
     
     func deleteContact(publicId: String) {
         
-        let request = DeleteContactRequest(publicId: publicId)
+        let request = DeleteContactRequest(requestedId: publicId)
         let deleteTask = EnclaveTask<DeleteContactRequest, DeleteContactResponse>()
         deleteTask.sendRequest(request: request)
         .then({ response in
@@ -101,9 +117,9 @@ class ContactManager {
             // However, duplicates will require two separate deletes
             let result = response.result ?? "invalid response"
             DDLogInfo("Delete contact result: \(result)")
-            if let contact = ContactsModel.instance.getContact(publicId: response.publicId!) {
+            if let contact = ContactsModel.instance.getContact(publicId: response.requestedId!) {
                 ContactsModel.instance.deleteContact(contact: contact)
-                MessageManager().clearMessages(contactId: contact.contactId)
+                MessagesModel.instance.clearMessages(contactId: contact.contactId)
                 NotificationCenter.default.post(name: Notifications.ContactDeleted, object: contact.publicId)
             }
             else {
@@ -120,11 +136,24 @@ class ContactManager {
     func deleteWhitelistEntry(publicId: String) {
 
         let request = UpdateWhitelistRequest(id: publicId, action: "delete")
-//        let delegate = UpdateWhitelistDelegate(request: request, updateType: .deleteEntry)
-//        delegate.publicId = publicId
-//        let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>(delegate: delegate)
-//        addTask.errorTitle = "Permitted Contact List Error"
-//        addTask.sendRequest(request)
+        let addTask = EnclaveTask<UpdateWhitelistRequest, UpdateWhitelistResponse>()
+        addTask.sendRequest(request: request)
+            .then({ response in
+                if  response.action == "delete", response.result == "deleted" || response.result == "not found" {
+                    var userInfo = [String: Any]()
+                    userInfo["publicId"] = publicId
+//                    if directoryId != nil {
+//                        userInfo["directoryId"] = directoryId
+//                    }
+                    NotificationCenter.default.post(name: Notifications.WhitelistEntryDeleted, object: nil, userInfo: userInfo)
+                }
+                else {
+                    DDLogError("Invalid response from server to delete whitelist entry update")
+                }
+            })
+            .catch({ error in
+                DDLogError("Update whitelist error: \(error.localizedDescription)")
+            })
 
     }
     
@@ -138,7 +167,7 @@ class ContactManager {
                 if let error = response.error {
                     DDLogError("Error while updating pending requests - \(error)")
                 } else {
-                    guard let requests = response.requests else { return }
+                    guard let requests = response.serverRequests else { return }
                     DDLogInfo("\(requests.count) pending requests returned")
                     if requests.count > 0 {
                         ContactsModel.instance.addRequests(requests: requests)
@@ -178,7 +207,7 @@ class ContactManager {
                     do {
                         let updates = try ContactsModel.instance.contactsAcknowledged(serverContacts: response.contacts!)
                         print("\(updates.count) contacts updated")
-                        Configurator().statusUpdates = updates.count
+//                        Configurator().statusUpdates = updates.count
                         NotificationCenter.default.post(name: Notifications.RequestStatusUpdated, object: updates)
                         NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
                         print("Status updated on \(updates.count) requests")
@@ -203,18 +232,55 @@ class ContactManager {
     func hideContact(_ contact: Contact) {
         
         let request = SetContactStatusRequest(publicId: sessionState.publicId!, status: "ignored")
+        let hideTask = EnclaveTask<SetContactStatusRequest, SetContactStatusResponse>()
+        hideTask.sendRequest(request: request)
+            .then({ response in
+                ContactsModel.instance.setContactStatus(publicId: response.publicId!, status: response.status!)
+            })
+            .catch({ error in
+                DDLogError("Error setting contact status - \(error.localizedDescription)")
+            })
+    
     }
     
     func matchDirectoryId(directoryId: String?, publicId: String?) {
 
         let request = MatchDirectoryIdRequest(publicId: publicId, directoryId: directoryId)
-//        let delegate = MatchDirectoryIdDelegate(request: request)
-//        let matchTask = EnclaveTask<MatchDirectoryIdRequest, MatchDirectoryIdResponse>(delegate: delegate)
-//        matchTask.errorTitle = "Directory ID Error"
-//        matchTask.sendRequest(request)
+        let matchTask = EnclaveTask<MatchDirectoryIdRequest, MatchDirectoryIdResponse>()
+        matchTask.sendRequest(request: request)
+            .then({ response in
+                NotificationCenter.default.post(name: Notifications.DirectoryIdMatched, object: response)
+            })
+            .catch({ error in
+                DDLogError("Match directory ID error: \(error.localizedDescription)")
+            })
         
     }
 
+    // Assumes existing contact validation has been done
+    func retryContactRequest(publicId: String?, directoryId: String?) {
+        
+        let request = AddContactRequest(publicId: publicId, directoryId: directoryId, initialMessage: nil)
+        let reqTask = EnclaveTask<AddContactRequest, AddContactResponse>()
+        reqTask.sendRequest(request: request)
+            .then( { response in
+                if response.result == AddContactResponse.PENDING || response.result == AddContactResponse.CONTACT_UPDATED {
+                    if let _ = Contact(serverContact: response.contact) {
+                        self.alertPresenter.successAlert(message: "The request has been sent")
+                    } else {
+                        self.alertPresenter.errorAlert(title: "Server Error", message: Strings.errorInvalidResponse)
+                    }
+                } else {
+                    self.alertPresenter.errorAlert(title: "Server Error", message: Strings.errorInvalidResponse)
+                }
+            })
+            .catch({ error in
+                DDLogError("Add contact error - \(error.localizedDescription)")
+                self.alertPresenter.errorAlert(title: "Add Contact Error", message: Strings.errorRequestFailed)
+            })
+        
+    }
+    
     func setContactPolicy(_ policy: String) {
         
         let request = SetContactPolicyRequest(policy: policy)
@@ -232,28 +298,29 @@ class ContactManager {
 
     func showContact(_ contact: Contact) {
         
+        let request = SetContactStatusRequest(publicId: sessionState.publicId!, status: "pending")
+        let showTask = EnclaveTask<SetContactStatusRequest, SetContactStatusResponse>()
+        showTask.sendRequest(request: request)
+            .then({ response in
+                ContactsModel.instance.setContactStatus(publicId: response.publicId!, status: response.status!)
+            })
+            .catch({ error in
+                DDLogError("Error setting contact status - \(error.localizedDescription)")
+            })
+        
     }
-/*
-    func syncContacts(contacts: [Contact], action: String) {
-
-        let syncRequest = SyncContactsRequest()
-        for contact in contacts {
-            syncRequest.contacts?.append(SyncContact(contact: contact, action: "add"))
-        }
-        let delegate = SyncContactsDelegate(request: syncRequest)
-        let setTask = EnclaveTask<SyncContactsRequest, SyncContactsResponse>(delegate: delegate)
-        setTask.errorTitle = "Contact Sync Error"
-        setTask.sendRequest(syncRequest)
-
-    }
-*/
+    
     func updateDirectoryId(newDirectoryId: String?, oldDirectoryId: String?) {
 
         let request = SetDirectoryIdRequest(oldDirectoryId: oldDirectoryId ?? "", newDirectoryId: newDirectoryId ?? "")
-        let delegate = SetDirectoryIdDelegate(request: request)
-//        let setTask = EnclaveTask<SetDirectoryIdRequest, SetDirectoryIdResponse>(delegate: delegate)
-//        setTask.errorTitle = "Directory ID Error"
-//        setTask.sendRequest(request)
+        let setTask = EnclaveTask<SetDirectoryIdRequest, SetDirectoryIdResponse>()
+        setTask.sendRequest(request: request)
+            .then({ response in
+                NotificationCenter.default.post(name: Notifications.DirectoryIdUpdated, object: response)
+            })
+            .catch({ error in
+                DDLogError("Set directory ID error: \(error.localizedDescription)")
+            })
         
     }
 

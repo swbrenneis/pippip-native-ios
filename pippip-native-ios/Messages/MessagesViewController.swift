@@ -94,9 +94,9 @@ class MessagesViewController: UIViewController {
         if AccountSession.instance.serverAuthenticated {
             getMostRecentMessages()
             tableView.reloadData()
-            let p = ContactsModel.instance.pendingRequests.count
-            let s = config.statusUpdates
-            contactBadge.badgeValue = p + s
+//            let p = ContactsModel.instance.pendingRequests.count
+//            let s = config.statusUpdates
+            contactBadge.badgeValue = ContactsModel.instance.pendingRequests.count
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
@@ -139,7 +139,7 @@ class MessagesViewController: UIViewController {
         previews.removeAll()
         let contactList = ContactsModel.instance.acceptedContactList
         for contact in contactList {
-            let conversation = ConversationCache.instance.getConversation(contactId: contact.contactId)
+            let conversation = MessagesModel.instance.getConversation(contactId: contact.contactId)
             if let message = conversation?.mostRecentMessage {
                 previews.append(message)
             }
@@ -169,14 +169,6 @@ class MessagesViewController: UIViewController {
 
     }
 */
-    @objc func showMessageDump(_ item: Any) {
-        
-        let dumpView = self.storyboard?.instantiateViewController(withIdentifier: "MessageDumpTableViewController")
-            as! MessageDumpTableViewController
-        self.navigationController?.pushViewController(dumpView, animated: true)
-
-    }
-
     @objc func authComplete(_ notification: Notification) {
         
         guard let success = notification.object as? Bool else { return }
@@ -185,7 +177,7 @@ class MessagesViewController: UIViewController {
             DispatchQueue.main.async {
                 self.getMostRecentMessages()
                 self.tableView.reloadData()
-                self.contactBadge.badgeValue =  ContactsModel.instance.pendingRequests.count + self.config.statusUpdates
+                self.contactBadge.badgeValue =  ContactsModel.instance.pendingRequests.count /* + self.config.statusUpdates */
             }
         }
         
@@ -220,7 +212,7 @@ class MessagesViewController: UIViewController {
     
     @objc func resetControllers(_ notification: Notification) {
 
-        ConversationCache.instance.clearCache()
+        MessagesModel.instance.clearCache()
         previews.removeAll()
         wasReset = true
 
@@ -229,7 +221,7 @@ class MessagesViewController: UIViewController {
     @objc func setContactBadge(_ notification: Notification) {
 
         DispatchQueue.main.async {
-            self.contactBadge.badgeValue = ContactsModel.instance.pendingRequests.count + self.config.statusUpdates
+            self.contactBadge.badgeValue = ContactsModel.instance.pendingRequests.count /* + self.config.statusUpdates */
         }
 
     }
@@ -276,7 +268,7 @@ extension MessagesViewController: UISearchBarDelegate {
 
     func searchCache(_ fragment: String) {
 
-        searched = ConversationCache.instance.searchConversations(fragment: fragment)
+        searched = MessagesModel.instance.searchConversations(fragment: fragment)
         previews.removeAll()
         for conversation in searched {
             previews.append(conversation.findMessageText(fragment)!)
@@ -353,7 +345,7 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
         
         if editingStyle == .delete {
             let preview = previews[indexPath.row]
-            ConversationCache.instance.deleteConversation(contactId: preview.contactId)
+            MessagesModel.instance.deleteConversation(contactId: preview.contactId)
         }
         
     }

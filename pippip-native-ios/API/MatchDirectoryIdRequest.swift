@@ -14,7 +14,7 @@ class MatchDirectoryIdRequest: NSObject, EnclaveRequestProtocol {
     var method: String = "MatchDirectoryId"
     var publicId: String?
     var directoryId: String?
-    var version: Float?
+    var version: Double?
     
     init(publicId: String?, directoryId: String?) {
         self.publicId = publicId

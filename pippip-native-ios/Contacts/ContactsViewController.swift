@@ -69,7 +69,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
     override func viewWillAppear(_ animated: Bool) {
 
-        authenticator.viewWillAppear()
+        //authenticator.viewWillAppear()
         alertPresenter.present = true
         NotificationCenter.default.addObserver(self, selector: #selector(contactRequested(_:)),
                                                name: Notifications.ContactRequested, object: nil)
@@ -89,6 +89,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
         setContactList()
         contactRequests = ContactsModel.instance.pendingRequests
         tableView.reloadData()
+        /*
         DispatchQueue.global().async {
             if self.config.statusUpdates > 0 {
                 let suffix: String = self.config.statusUpdates > 1 ? "updates" : "update"
@@ -97,14 +98,14 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
             }
             self.config.statusUpdates = 0
             NotificationCenter.default.post(name: Notifications.SetContactBadge, object: nil)
-        }
+        } */
 
     }
 
     override func viewWillDisappear(_ animated: Bool) {
 
         alertPresenter.present = false
-        authenticator.viewWillDisappear()
+        //authenticator.viewWillDisappear()
         addContactView?.dismiss()
         contactDetailView?.forceDismiss()
         NotificationCenter.default.removeObserver(self, name: Notifications.ContactRequested, object: nil)
@@ -391,7 +392,7 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
             }
         }
         contactList = contactList.sorted()
-        config.statusUpdates = 0
+//        config.statusUpdates = 0
         DispatchQueue.main.async {
             self.tableView.reloadSections(IndexSet(integer: 1), with: .top)
         }

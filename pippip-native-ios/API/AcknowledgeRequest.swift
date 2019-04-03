@@ -13,14 +13,11 @@ class AcknowledgeRequest: NSObject, EnclaveRequestProtocol {
     
     var method: String = "AcknowledgeRequest"
     var requestingId: String?
-    // Remove after server release
-    var id: String?
     var response: String?
-    var version: Float?
+    var version: Double?
 
     init(requestingId: String, response: String) {
         self.requestingId = requestingId
-        self.id = requestingId
         self.response = response
         version = 1.1
     }
@@ -32,7 +29,6 @@ class AcknowledgeRequest: NSObject, EnclaveRequestProtocol {
     func mapping(map: Map) {
         method <- map["method"]
         requestingId <- map["requestingId"]
-        id <- map["id"]
         response <- map["response"]
         version <- map["version"]
     }

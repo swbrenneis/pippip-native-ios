@@ -13,7 +13,7 @@ class GetRequestStatusRequest: NSObject, EnclaveRequestProtocol {
 
     var method: String = "GetRequestStatus"
     var requestedIds: [String]?
-    var version: Float?
+    var version: Double?
 
     init(requestedIds: [String]) {
         self.requestedIds = requestedIds

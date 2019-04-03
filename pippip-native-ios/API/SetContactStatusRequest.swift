@@ -14,7 +14,7 @@ class SetContactStatusRequest : EnclaveRequestProtocol {
     var method = "SetContactStatus"
     var publicId: String?
     var status: String?
-    var version: Float?
+    var version: Double?
     
     init(publicId: String, status: String) {
         self.publicId = publicId

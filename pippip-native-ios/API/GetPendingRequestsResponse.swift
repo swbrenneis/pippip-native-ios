@@ -13,13 +13,16 @@ class GetPendingRequestsResponse: EnclaveResponseProtocol {
 
     var json: String?
     var error: String?
-    var requests: [[String: String]]?
-    var version: Float?
+    var serverRequests: [ServerContactRequest]?
+    var version: Double?
+    var timestamp: Int64?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {
-            guard let _ = map.JSON["requests"] else { return nil }
+            guard let _ = map.JSON["serverRequests"] else { return nil }
         }
+        guard let _ = map.JSON["version"] else { return nil }
+        guard let _ = map.JSON["timestamp"] else { return nil }
     }
 
     required init?(jsonString: String) {
@@ -28,7 +31,7 @@ class GetPendingRequestsResponse: EnclaveResponseProtocol {
     
     func mapping(map: Map) {
         error <- map["error"]
-        requests <- map["requests"]
+        serverRequests <- map["serverRequests"]
         version <- map["version"]
     }
 

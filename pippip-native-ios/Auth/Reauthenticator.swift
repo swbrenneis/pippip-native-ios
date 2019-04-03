@@ -7,17 +7,36 @@
 //
 
 import Foundation
+import CocoaLumberjack
 
-class Reauthenticator<RequestT: EnclaveRequestProtocol> : ServerAuthenticator {
+class Reauthenticator<RequestT: EnclaveRequestProtocol,ResponseT: EnclaveResponseProtocol> : ServerAuthenticator {
 
-    var request: RequestT
+    var task: EnclaveTask<RequestT, ResponseT>
     
-    init(request: RequestT) {
-        self.request = request
+    init(task: EnclaveTask<RequestT, ResponseT>) {
+        self.task = task
         super.init(authView: nil)
     }
 
     func authenticate() {
         
+        SecommAPI.instance.startSession(sessionComplete: { (sessionResponse) in
+            self.sessionStarted(sessionResponse: sessionResponse)
+        })
+
     }
+
+    override func authorizedComplete(_ authorized: ClientAuthorized) {
+        
+        do {
+            try authorized.processResponse()
+            sessionState.sessionId = authorized.sessionId!
+            sessionState.authToken = authorized.authToken!
+            task.resendRequest()
+        } catch {
+            DDLogError("Client authorization error : \(error.localizedDescription)")
+        }
+        
+    }
+    
 }

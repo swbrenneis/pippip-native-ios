@@ -177,7 +177,7 @@ extension ContactRequestsView: UITableViewDelegate, UITableViewDataSource  {
         guard let requestCell = tableView.dequeueReusableCell(withIdentifier: "ContactRequestCell") as? ContactTableViewCell
             else { return UITableViewCell() }
         let request = contactRequests[indexPath.item]
-        requestCell.publicIdLabel.text = request.publicId
+        requestCell.publicIdLabel.text = request.requestingId
         if let directoryId = request.directoryId {
             requestCell.directoryIdLabel.text = directoryId
         }
@@ -194,7 +194,7 @@ extension ContactRequestsView: UITableViewDelegate, UITableViewDataSource  {
         case 0:
             guard let requestCell = tableView.dequeueReusableCell(withIdentifier: "ContactRequestCell") as? ContactTableViewCell
                 else { return UITableViewCell() }
-            requestCell.publicIdLabel.text = selected!.publicId
+            requestCell.publicIdLabel.text = selected!.requestingId
             if let directoryId = selected!.directoryId {
                 requestCell.directoryIdLabel.text = directoryId
             }

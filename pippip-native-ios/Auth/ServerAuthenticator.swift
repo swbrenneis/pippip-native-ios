@@ -39,15 +39,6 @@ class ServerAuthenticator: NSObject {
 
     }
 
-    func reauthenticate() {
-
-        reauth = true
-        SecommAPI.instance.startSession(sessionComplete: { (sessionResponse) in
-            self.sessionStarted(sessionResponse: sessionResponse)
-        })
-
-    }
-
     func doAuthorized() {
 
         let promise : Promise<ClientAuthorized> = SecommAPI.instance.doPost(request: ServerAuthorized())
@@ -157,8 +148,8 @@ class ServerAuthenticator: NSObject {
         
         do {
             try authorized.processResponse()
-            let config = Configurator()
-            config.authenticated = true
+//            let config = Configurator()
+//            config.authenticated = true
             sessionState.sessionId = authorized.sessionId!
             sessionState.authToken = authorized.authToken!
             AccountSession.instance.authenticated()

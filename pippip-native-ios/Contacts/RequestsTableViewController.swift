@@ -45,7 +45,7 @@ class RequestsTableViewController: UITableViewController {
         guard let contact = notification.object as? Contact else { return }
         var tmp = [ContactRequest]()
         for request in requests! {
-            if request.publicId != contact.publicId {
+            if request.requestingId != contact.publicId {
                 tmp.append(request)
             }
         }

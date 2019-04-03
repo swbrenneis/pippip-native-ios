@@ -74,9 +74,9 @@ class ComposeViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: Notifications.ContactRequested, object: nil)
         
         guard let contact = notification.object as? Contact else { return }
-        let textMessage = TextMessage(text: messageTextField.text!, contact: contact)
-        textMessage?.messageId = config.newMessageId()
-        ConversationCache.instance.initialMessage(textMessage: textMessage!, contact: contact)
+//        let textMessage = TextMessage(text: messageTextField.text!, contact: contact)
+//        textMessage?.messageId = config.newMessageId()
+//        MessagesModel.instance.initialMessage(textMessage: textMessage!, contact: contact)
         DispatchQueue.main.async {
             let controller = ChattoViewController()
             controller.contact = contact

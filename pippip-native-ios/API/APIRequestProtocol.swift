@@ -8,20 +8,7 @@
 
 import Foundation
 import ObjectMapper
-/*
-class APIRequestError: Error {
-    
-    private var errorString: String
-    var localizedDescription: String {
-        return errorString
-    }
-    
-    init(errorString: String) {
-        self.errorString = errorString
-    }
-    
-}
-*/
+
 protocol APIRequestProtocol: Mappable {
 
     var postType: PostType { get }

@@ -30,14 +30,18 @@ class ContactDetailView: UIView, Dismissable {
     var alertPresenter = AlertPresenter()
     var contact: Contact! {
         didSet {
-            if contact.status == "pending" {
+            if contact.status == Contact.PENDING {
                 resendRequestButton.isHidden = false
                 ignoreContactButton.isHidden = true
                 showContactButton.isHidden = true
-            } else if contact.status == "ignored" {
+            } else if contact.status == Contact.IGNORED {
                 resendRequestButton.isHidden = true
                 ignoreContactButton.isHidden = true
                 showContactButton.isHidden = false
+            } else if contact.status == Contact.REJECTED {
+                resendRequestButton.isHidden = true
+                ignoreContactButton.isHidden = true
+                showContactButton.isHidden = true
             } else {
                 resendRequestButton.isHidden = true
                 ignoreContactButton.isHidden = false
@@ -185,15 +189,8 @@ class ContactDetailView: UIView, Dismissable {
     }
     
     @IBAction func resendRequestTapped(_ sender: Any) {
-
-        do {
-            try ContactManager().addContactRequest(publicId: contact.publicId, directoryId: nil, pendingMessage: nil)
-            alertPresenter.successAlert(message: "The request was resent to this contact")
-        }
-        catch {
-            DDLogError("Error resending request: \(error.localizedDescription)")
-            alertPresenter.errorAlert(title: "Send Request Error", message: "The request could not be sent")
-        }
+        
+        ContactManager().retryContactRequest(publicId: contact.publicId, directoryId: nil)
         
     }
 

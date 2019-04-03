@@ -79,7 +79,7 @@ class Contact: NSObject, Comparable {
         
     }
 
-    static let currentVersion: Float = 2.0
+    static let currentVersion: Float = 2.4
 
     var version: Float = Contact.currentVersion
     var pendingMessage: String?
@@ -115,6 +115,7 @@ class Contact: NSObject, Comparable {
         }
     }
     var status: String = "invalid"
+    var previousStatus: String = "invalid"
     var timestamp: Int64 = 0
     var currentIndex: Int = 0
     var currentSequence: Int64 = 1

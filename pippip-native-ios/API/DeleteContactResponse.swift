@@ -13,13 +13,14 @@ class DeleteContactResponse: EnclaveResponseProtocol {
 
     var json: String?
     var error: String?
-    var publicId: String?
+    var requestedId: String?
     var result: String?
-    var version: Float?
+    var version: Double?
+    var timestamp: Int64?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {
-            guard let _ = map.JSON["publicId"] else { return nil }
+            guard let _ = map.JSON["requestedId"] else { return nil }
             guard let _ = map.JSON["result"] else { return nil }
         }
     }
@@ -30,7 +31,7 @@ class DeleteContactResponse: EnclaveResponseProtocol {
     
     func mapping(map: Map) {
         error <- map["error"]
-        publicId <- map["publicId"]
+        requestedId <- map["requestedId"]
         result <- map["result"]
         version <- map["version"]
     }

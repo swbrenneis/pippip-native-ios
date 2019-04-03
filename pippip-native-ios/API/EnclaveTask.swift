@@ -14,7 +14,9 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
 
     var errorTitle: String?
     var alertPresenter = AlertPresenter()
-    var reauthenticator: Reauthenticator<RequestT>?
+    var reauthenticator: Reauthenticator<RequestT, ResponseT>?
+    var request: RequestT?
+    var promise: Promise<ResponseT>?
     var serverAuthenticator: ServerAuthenticator?
     var sessionState = SessionState()
 
@@ -38,11 +40,38 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
 
     }
     
+    func resendRequest() {
+        
+        do {
+            let enclaveRequest = EnclaveRequest()
+            try enclaveRequest.setRequest(request!)
+            let apiPromise: Promise<EnclaveResponse> = SecommAPI.instance.doPost(request: enclaveRequest)
+            apiPromise.then { response in
+                do {
+                    let methodResponse = try self.processResponse(response: response)
+                    self.promise?.fulfill(methodResponse)
+                } catch EnclaveError.needsAuthentication {
+                    // Not really an exception, reauthentication is happening asynchronously on the main thread
+                    DDLogInfo(Strings.infoNeedsAuth)
+                } catch {
+                    self.promise?.reject(error)
+                }
+            } .catch { error in
+                self.promise?.reject(error)
+            }
+        } catch {
+            DDLogError("Error sending enclave request: \(error.localizedDescription)")
+            promise?.reject(error)
+        }
+
+    }
+    
     func sendRequest(request: RequestT) -> Promise<ResponseT> {
 
-        reauthenticator = Reauthenticator(request: request)
-        
-        let promise = Promise<ResponseT> { (fulfill, reject) in
+        reauthenticator = Reauthenticator(task: self)
+
+        self.request = request
+        promise = Promise<ResponseT> { (fulfill, reject) in
             do {
                 let enclaveRequest = EnclaveRequest()
                 try enclaveRequest.setRequest(request)
@@ -67,7 +96,7 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
             }
 
         }
-        return promise
+        return promise!
 
     }
 

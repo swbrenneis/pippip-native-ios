@@ -39,6 +39,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     static let production = false
     private static var theInstance: AccountSession?
+    static var initialViewController: InitialViewController?
     
     @objc var deviceToken: Data?
     private var accountSessionState: AccountSessionState
@@ -135,7 +136,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     func accountDeleted() {
 
-        config.authenticated = false
+//        config.authenticated = false
         accountSessionState = .appStarted
         authState = .notAuthenticated
         updateState = .idle
@@ -185,13 +186,13 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
     }
     
     func doUpdates() {
-/*
+
         if updateState == .idle && authState != .notAuthenticated {
             didUpdate = true
             updateState = .gettingMessages
             messageManager.getNewMessages()
         }
-*/
+
     }
 
     func loadAccount() throws {
@@ -263,11 +264,16 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
         var realmConfig = Realm.Configuration()
         realmConfig.fileURL = realmConfig.fileURL?.deletingLastPathComponent()
             .appendingPathComponent("\(realAccountName!).realm")
-        realmConfig.schemaVersion = 23
+        realmConfig.schemaVersion = 26
         realmConfig.migrationBlock = { (migration, oldSchemaVersion) in
             if oldSchemaVersion < 15 {
                 migration.enumerateObjects(ofType: AccountConfig.className()) { (oldObject, newObject) in
                     newObject!["directoryId"] = oldObject!["nickname"]
+                }
+            }
+            if oldSchemaVersion < 26 {
+                migration.enumerateObjects(ofType: AccountConfig.className()) { (oldObject, newObject) in
+                    newObject!["v1_0Contacts"] = false
                 }
             }
         }
@@ -277,7 +283,7 @@ class AccountSession: NSObject, UNUserNotificationCenterDelegate {
 
     func signOut() {
         
-        config.authenticated = false
+//        config.authenticated = false
         authState = .loggedOut
         NotificationCenter.default.post(name: Notifications.SessionEnded, object: nil)
         

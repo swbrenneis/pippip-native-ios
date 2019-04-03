@@ -110,7 +110,7 @@ class AcknowledgeRequestTableViewCell: UITableViewCell {
         reqView.selected = nil
         reqView.tableView.separatorStyle = .singleLine
         
-        if let _ = ContactsModel.instance.getContact(publicId: request.publicId) {
+        if let _ = ContactsModel.instance.getContact(publicId: request.requestingId) {
             alertPresent.errorAlert(title: "Acknowledge Contact Error", message: "This contact already exists in your contacts")
             ContactsModel.instance.deleteContactRequest(request)
         }

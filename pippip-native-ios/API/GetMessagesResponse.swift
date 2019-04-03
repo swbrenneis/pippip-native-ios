@@ -15,7 +15,8 @@ class GetMessagesResponse: EnclaveResponseProtocol {
     var error: String?
     var messages: [ServerMessage]?
     var rejected: [String]?
-    var version: Float?
+    var version: Double?
+    var timestamp: Int64?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {

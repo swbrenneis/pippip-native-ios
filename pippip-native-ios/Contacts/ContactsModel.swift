@@ -138,18 +138,18 @@ class ContactsModel {
         
     }
     
-    func addRequests(requests: [[String: String]]) {
+    func addRequests(requests: [ServerContactRequest]) {
         
         var toAck = [ContactRequest]()
-        for pair in requests {
-            guard let contactRequest = ContactRequest(request: pair) else { continue }
-            if config.contactPolicy == "whitelist" && config.autoAccept && whitelistIdExists(publicId: contactRequest.publicId) {
+        for request in requests {
+            guard let contactRequest = ContactRequest(request: request) else { continue }
+            if config.contactPolicy == "whitelist" && config.autoAccept && whitelistIdExists(publicId: contactRequest.requestingId) {
                 toAck.append(contactRequest)
             }
             else {
                 let result = requestSet.insert(contactRequest)
                 if !result.inserted {
-                    DDLogWarn("Duplicate request for public ID \(contactRequest.publicId)")
+                    DDLogWarn("Duplicate request for public ID \(contactRequest.requestingId)")
                 }
             }
         }
@@ -338,6 +338,46 @@ class ContactsModel {
         
     }
     
+    func loadContacts() {
+
+        migrateContacts()
+        
+        acceptedContactSet.removeAll()
+        rejectedContactSet.removeAll()
+        ignoredContactSet.removeAll()
+        pendingContactSet.removeAll()
+        let realm = try! Realm()
+        let dbContacts = realm.objects(DatabaseContact.self)
+        for dbContact in dbContacts {
+            do {
+                let contact = try decodeContact(dbContact.encoded!)
+                contact.contactId = dbContact.contactId
+                contact.version = dbContact.version
+                switch contact.status {
+                case "accepted":
+                    acceptedContactSet.insert(contact)
+                    break
+                case "rejected":
+                    rejectedContactSet.insert(contact)
+                    break
+                case "ignored":
+                    ignoredContactSet.insert(contact)
+                    break
+                case "pending":
+                    pendingContactSet.insert(contact)
+                    break
+                default:
+                    DDLogError("Invalid contact status: \(contact.status)")
+                }
+            }
+            catch {
+                DDLogError("Error decoding contact: \(error.localizedDescription)")
+            }
+        }
+        mapContacts()
+
+    }
+    
     func mapContacts() {
         
         contactMap.removeAll()
@@ -346,6 +386,14 @@ class ContactsModel {
             contactIdMap[contact.contactId] = contact
         }
         
+    }
+    
+    func migrateContacts() {
+        
+        if !config.v1_0Contacts {
+            migrateContactsv1_0()
+        }
+
     }
     
     func searchAcceptedContacts(fragment: String) -> [Contact] {
@@ -407,6 +455,16 @@ class ContactsModel {
     
     func setContactStatus(publicId: String, status: String) {
         
+        guard let contact = contactMap[publicId] else { return }
+        contact.previousStatus = contact.status
+        contact.status = status
+        let realm = try! Realm()
+        if let dbContact = realm.objects(DatabaseContact.self).filter("contactId = %ld", contact.contactId).first {
+            try! realm.write {
+                dbContact.encoded = try encodeContact(contact)
+            }
+        }
+
     }
     
     func setDirectoryId(contactId: Int, directoryId: String?) {
@@ -424,6 +482,20 @@ class ContactsModel {
             DDLogError("Contact \(contact.displayName) not found in database")
         }
         
+    }
+
+    // Used for migration
+    func storeContacts(_ contacts: [Contact]) {
+        
+        let realm = try! Realm()
+        for contact in contacts {
+            if let dbContact = realm.objects(DatabaseContact.self).filter("contactId = %ld", contact.contactId).first {
+                try! realm.write {
+                    dbContact.encoded = try encodeContact(contact)
+                }
+                AsyncNotifier.notify(name: Notifications.DirectoryIdSet, object: contact)
+            }
+        }
     }
     
     func updateKeyInfo(contactId: Int, currentIndex: Int, currentSequence: Int64) throws {
@@ -454,52 +526,34 @@ class ContactsModel {
         
     }
     
-    // Notifications
-    
-    func loadContacts() {
-        
-        acceptedContactSet.removeAll()
-        rejectedContactSet.removeAll()
-        ignoredContactSet.removeAll()
-        pendingContactSet.removeAll()
-        let realm = try! Realm()
-        let dbContacts = realm.objects(DatabaseContact.self)
-        for dbContact in dbContacts {
-            do {
-                let contact = try decodeContact(dbContact.encoded!)
-                contact.contactId = dbContact.contactId
-                contact.version = dbContact.version
-                switch contact.status {
-                case "accepted":
-                    acceptedContactSet.insert(contact)
-                    break
-                case "rejected":
-                    rejectedContactSet.insert(contact)
-                    break
-                case "ignored":
-                    ignoredContactSet.insert(contact)
-                    break
-                case "pending":
-                    pendingContactSet.insert(contact)
-                    break
-                default:
-                    DDLogError("Invalid contact status: \(contact.status)")
-                }
-            }
-            catch {
-                DDLogError("Error decoding contact: \(error)")
-            }
-        }
-        mapContacts()
-        
-    }
-    
 }
 
 // Database and encoding functions
 extension ContactsModel {
     
-    func decodeContact(_ encoded: Data) throws -> Contact {
+    func migrateContactsv1_0() {
+        
+        do {
+            var contacts = [Contact]()
+            let realm = try! Realm()
+            let dbContacts = realm.objects(DatabaseContact.self)
+            for dbContact in dbContacts {
+                let contact = try decodeContactv0(dbContact.encoded!)
+                contact.contactId = dbContact.contactId
+                contact.version = 1.0
+                contact.previousStatus = contact.status
+                contacts.append(contact)                
+            }
+            storeContacts(contacts)
+            config.v1_0Contacts = true
+        } catch {
+            DDLogError("Error decoding contact: \(error.localizedDescription)")
+            DDLogError("Contacts not migrated")
+        }
+
+    }
+
+    func decodeContactv0(_ encoded: Data) throws -> Contact {
         
         let codec = CKGCMCodec(data: encoded)
         try codec.decrypt(sessionState.contactsKey!, withAuthData: sessionState.authData!)
@@ -527,11 +581,44 @@ extension ContactsModel {
         
     }
     
+    func decodeContact(_ encoded: Data) throws -> Contact {
+        
+        let codec = CKGCMCodec(data: encoded)
+        try codec.decrypt(sessionState.contactsKey!, withAuthData: sessionState.authData!)
+        let contact = Contact()
+        let version = codec.getString()
+        contact.version = Float(version)!
+        contact.publicId = codec.getString()
+        contact.status = codec.getString()
+        contact.previousStatus = codec.getString()
+        let directoryId = codec.getString()
+        if directoryId.utf8.count > 0 {
+            contact.directoryId = directoryId
+        }
+        contact.timestamp = codec.getLong()
+        let count = codec.getLong()
+        if count > 0 {
+            contact.messageKeys = [Data]()
+            while contact.messageKeys!.count < count {
+                contact.messageKeys!.append(codec.getBlock())
+            }
+            contact.authData = codec.getBlock()
+            contact.nonce = codec.getBlock()
+            contact.currentIndex = Int(codec.getLong())
+            contact.currentSequence = codec.getLong()
+        }
+        
+        return contact
+        
+    }
+    
     func encodeContact(_ contact: Contact) throws -> Data {
         
         let codec = CKGCMCodec()
+        codec.put(contact.version.description)
         codec.put(contact.publicId)
         codec.put(contact.status)
+        codec.put(contact.previousStatus)
         codec.put(contact.directoryId ?? "")
         codec.putLong(contact.timestamp)
         if contact.messageKeys != nil {

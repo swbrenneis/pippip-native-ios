@@ -16,8 +16,8 @@ class SendMessageResponse: EnclaveResponseProtocol {
     var result: String?
     var publicId: String?
     var sequence: Int?
-    var timestamp: Int?
-    var version: Float?
+    var timestamp: Int64?
+    var version: Double?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {

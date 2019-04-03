@@ -50,9 +50,9 @@ class DeleteAccountView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.center.y = 0.0
             self.alpha = 0.0
-            if blurViewOff {
-                self.settingsViewController?.blurView.alpha = 0.0
-            }
+//            if blurViewOff {
+//                self.settingsViewController?.blurView.alpha = 0.0
+//            }
         }, completion: { completed in
             self.removeFromSuperview()
         })
@@ -70,7 +70,6 @@ class DeleteAccountView: UIView {
         verifyPassphraseView.center = CGPoint(x: viewController.view.center.x,
                                               y: viewController.view.center.y - PippipGeometry.verifyPassphraseViewOffset)
         verifyPassphraseView.alpha = 0.0
-        verifyPassphraseView.settingsViewController = settingsViewController
         settingsViewController?.verifyPassphraseView = verifyPassphraseView
         
         settingsViewController?.view.addSubview(verifyPassphraseView)

@@ -14,12 +14,15 @@ class AcknowledgeMessagesResponse: NSObject, EnclaveResponseProtocol {
     var json: String?
     var error: String?
     var exceptions: [Triplet]?
-    var version: Float?
+    var version: Double?
+    var timestamp: Int64?
 
     required init?(map: Map) {
         if map.JSON["error"] == nil {
             guard let _ = map.JSON["exceptions"] else { return nil }
         }
+        guard let _ = map.JSON["version"] else { return nil }
+        guard let _ = map.JSON["timestamp"] else { return nil }
     }
 
     required init?(jsonString: String) {
@@ -30,6 +33,7 @@ class AcknowledgeMessagesResponse: NSObject, EnclaveResponseProtocol {
         error <- map["error"]
         exceptions <- map["exceptions"]
         version <- map["version"]
+        timestamp <- map["timestamp"]
     }
 
 }
