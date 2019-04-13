@@ -25,8 +25,8 @@ class EnclaveTask<RequestT: EnclaveRequestProtocol, ResponseT: EnclaveResponsePr
         if response.needsAuth! {
             sessionState.reauth = true
             AccountSession.instance.needsAuth()
-            DispatchQueue.main.sync {
-                reauthenticator?.authenticate()
+            DispatchQueue.main.async {
+                self.reauthenticator?.authenticate()
             }
             throw EnclaveError.needsAuthentication
         }

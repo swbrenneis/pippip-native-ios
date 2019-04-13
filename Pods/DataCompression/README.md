@@ -18,6 +18,15 @@
  * watchOS deployment target **>= 2.0**
 
 
+#### Swift version support
+| Library Version | Swift Version |
+|-----------------|---------------|
+| 3.4.0           | 5.0           |
+| 3.1.0           | 4.2           |
+| 3.0.0           | 3.0 -> 4.1    |
+| 2.0.1           | < 3.0         |
+
+
 ## Usage example
 
 ### Try all algorithms and compare the compression ratio 
@@ -59,8 +68,8 @@ assert(data == inflated)
 ##### Data in gzip format ([RFC-1952](https://www.ietf.org/rfc/rfc1952.txt)) can be handled with `.gzip()` and `.gunzip()`
 ```
 let data: Data! = "https://www.ietf.org/rfc/rfc1952.txt".data(using: .utf8)
-let gzipped: Data! = data.zip()
-let gunzipped: Data? = gzipped.unzip()
+let gzipped: Data! = data.gzip()
+let gunzipped: Data? = gzipped.gunzip()
 assert(data == gunzipped)
 ```
 *Note: Compressed data in gzip format will always be 18 bytes larger than raw deflated data and will append/perform a crc32 checksum based data integrity test .*
@@ -125,6 +134,30 @@ $ pod install
 You then will need to add `import DataCompression` at the top of your swift source files to use the extension.
 
 
+#### Carthage
+
+**Note:** DataCompression versions < 3.3.0 are not compatible with carthage. That means Swift 5 only.
+
+To integrate DataCompression into your Xcode project using Carthage, add it as a dependency to your `Cartfile`. Just add:
+```
+github "mw99/DataCompression"
+```
+
+You will then have to add the framework paths in the `carthage copy-frameworks` run script phase of your Xcode project.
+The paths may differ depending on you have setup your project in relation to Carthage.
+
+##### Input:
+```
+$(SRCROOT)/Carthage/Build/iOS/DataCompression.framework
+```
+##### Output:
+```
+$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/DataCompression.framework
+```
+
+You then will need to add `import DataCompression` at the top of your swift source files to use the extension.
+
+
 #### Swift Package Manager
 
 To integrate DataCompression into your Xcode project using the swift package manager, add it as a dependency to your `Package.swift` file:
@@ -155,6 +188,20 @@ You only need one file located at `Sources/DataCompression.swift`. Drag and drop
 
 
 ## Change log / Upgrading guide
+
+
+##### Version `3.3.0` to `3.4.0`
+- Swift 5 release had further deprecation warnings than in the Swift 5 beta. Fixed.
+
+##### Version `3.2.0` to `3.3.0`
+- Added support for Carthage
+
+##### Version `3.1.0` to `3.2.0`
+- Podspec swift version set to **5.0**
+- Library file structure updated to fit the new swift package manager layout
+
+##### Version `3.0.0` to `3.1.0`
+- Podspec swift version set to **4.2**
 
 ##### Version `2.0.X` to `3.0.0`
 

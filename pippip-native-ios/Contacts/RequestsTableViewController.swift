@@ -18,6 +18,8 @@ class RequestsTableViewController: UITableViewController {
         self.view.backgroundColor = PippipTheme.viewColor
         self.tableView.backgroundColor = PippipTheme.viewColor
         
+        self.navigationItem.title = "Contact Requests"
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {

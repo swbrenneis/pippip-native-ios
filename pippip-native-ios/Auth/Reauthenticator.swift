@@ -32,6 +32,7 @@ class Reauthenticator<RequestT: EnclaveRequestProtocol,ResponseT: EnclaveRespons
             try authorized.processResponse()
             sessionState.sessionId = authorized.sessionId!
             sessionState.authToken = authorized.authToken!
+            AccountSession.instance.authenticated()
             task.resendRequest()
         } catch {
             DDLogError("Client authorization error : \(error.localizedDescription)")

@@ -123,15 +123,13 @@ class ServerAuthenticator: NSObject {
 
     func authChallengeComplete(_ authChallenge: ServerAuthChallenge) {
         
-        DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                try authChallenge.processResponse()
-                self.doAuthorized()
-            } catch {
-                DDLogError("Authentication challenge error: \(error.localizedDescription)")
-                self.alertPresenter.errorAlert(title: "Sign In Error", message: error.localizedDescription)
-                self.authView?.authenticated(success: false, error.localizedDescription)
-            }
+        do {
+            try authChallenge.processResponse()
+            doAuthorized()
+        } catch {
+            DDLogError("Authentication challenge error: \(error.localizedDescription)")
+            alertPresenter.errorAlert(title: "Sign In Error", message: error.localizedDescription)
+            authView?.authenticated(success: false, error.localizedDescription)
         }
 
     }
@@ -157,7 +155,7 @@ class ServerAuthenticator: NSObject {
         } catch {
             authView?.authenticated(success: false, error.localizedDescription)
             DDLogError("Client authorization error : \(error.localizedDescription)")
-            self.alertPresenter.errorAlert(title: "Sign In Error", message: Strings.errorAuthenticationFailed)
+            alertPresenter.errorAlert(title: "Sign In Error", message: Strings.errorAuthenticationFailed)
         }
 
     }
@@ -174,11 +172,11 @@ class ServerAuthenticator: NSObject {
 
         do {
             try authResponse.processResponse()
-            self.doChallenge()
+            doChallenge()
         } catch {
             DDLogError("Authentication request error: \(error.localizedDescription)")
-            self.authView?.authenticated(success: false, error.localizedDescription)
-            self.alertPresenter.errorAlert(title: "Sign In Error", message: error.localizedDescription)
+            authView?.authenticated(success: false, error.localizedDescription)
+            alertPresenter.errorAlert(title: "Sign In Error", message: error.localizedDescription)
         }
 
     }
@@ -190,22 +188,5 @@ class ServerAuthenticator: NSObject {
         sessionState.reauth = false
 
     }
-/*
-    private func reauthComplete(_ authorized: ClientAuthorized) {
-        
-        if let error = authorized.processResponse() {
-            DDLogError("Client authorization error : \(error)")
-        }
-        else {
-            let config = Configurator()
-            config.authenticated = true
-            sessionState.sessionId = authorized.sessionId!
-            sessionState.authToken = authorized.authToken!
-            AccountSession.instance.authenticated()
-            NotificationCenter.default.post(name: Notifications.ReauthComplete, object: nil)
-        }
-        sessionState.reauth = false
 
-    }
-*/
 }

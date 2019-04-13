@@ -498,11 +498,7 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        if indexPath.section == 0 {
-            NotificationCenter.default.post(name: Notifications.SetNavBarTitle, object: "Contact Requests")
-            let cell = tableView.cellForRow(at: indexPath)
-            performSegue(withIdentifier: "ContactRequestsSegue", sender: cell)
-        } else {
+        if indexPath.section == 1 {
             showContactDetailView(contact: contactList[indexPath.row])
         }
 
