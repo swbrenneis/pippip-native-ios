@@ -3,7 +3,7 @@
  * REALM CONFIDENTIAL
  * __________________
  *
- *  [2011] - [2013] Realm Inc
+ *  [2011] - [2016] Realm Inc
  *  All Rights Reserved.
  *
  * NOTICE:  All information contained herein is, and remains
@@ -17,18 +17,33 @@
  * from Realm Incorporated.
  *
  **************************************************************************/
-#ifndef REALM_SYNC_VERSION_HPP
-#define REALM_SYNC_VERSION_HPP
 
-#include <realm/util/features.h>
+#ifndef REALM_UTIL_TIMESTAMP_LOGGER_HPP
+#define REALM_UTIL_TIMESTAMP_LOGGER_HPP
 
-#define REALM_SYNC_VER_MAJOR 3
-#define REALM_SYNC_VER_MINOR 15
-#define REALM_SYNC_VER_PATCH 1
-#define REALM_SYNC_PRODUCT_NAME "realm-sync"
+#include <realm/util/logger.hpp>
+#include <realm/util/timestamp_formatter.hpp>
 
-#define REALM_SYNC_VER_STRING REALM_QUOTE(REALM_SYNC_VER_MAJOR) "." \
-    REALM_QUOTE(REALM_SYNC_VER_MINOR) "." REALM_QUOTE(REALM_SYNC_VER_PATCH)
-#define REALM_SYNC_VER_CHUNK "[" REALM_SYNC_PRODUCT_NAME "-" REALM_SYNC_VER_STRING "]"
 
-#endif // REALM_SYNC_VERSION_HPP
+namespace realm {
+namespace util {
+
+class TimestampStderrLogger : public RootLogger {
+public:
+    using Precision = TimestampFormatter::Precision;
+    using Config    = TimestampFormatter::Config;
+
+    explicit TimestampStderrLogger(Config = {});
+
+protected:
+    void do_log(Logger::Level, std::string message) override;
+
+private:
+    TimestampFormatter m_formatter;
+};
+
+
+} // namespace util
+} // namespace realm
+
+#endif // REALM_UTIL_TIMESTAMP_LOGGER_HPP
