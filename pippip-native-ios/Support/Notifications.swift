@@ -48,8 +48,8 @@ struct Notifications {
     static let RetryMessage = NSNotification.Name("RetryMessage")
     static let ServerUnavailable = NSNotification.Name("ServerUnavailable")
     static let SessionEnded = NSNotification.Name("SessionEnded")
-    static let SetNavBarTitle = NSNotification.Name("SetNavBarTitle")
     static let SetContactBadge = NSNotification.Name("SetContactBadge")
+    static let SetNavBarTitle = NSNotification.Name("SetNavBarTitle")
     static let WhitelistEntryAdded = NSNotification.Name("WhitelistEntryAdded")
     static let WhitelistEntryDeleted = NSNotification.Name("WhitelistEntryDeleted")
 

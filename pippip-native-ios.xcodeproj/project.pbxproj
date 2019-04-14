@@ -59,6 +59,7 @@
 		55187ED020BE427700F94792 /* ServerAuthChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55187ECF20BE427700F94792 /* ServerAuthChallenge.swift */; };
 		55187ED220BE4A1C00F94792 /* ClientAuthorized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55187ED120BE4A1C00F94792 /* ClientAuthorized.swift */; };
 		55187ED420BE4C8900F94792 /* ServerAuthorized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55187ED320BE4C8900F94792 /* ServerAuthorized.swift */; };
+		551CDB982262307100815637 /* AddContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551CDB972262307100815637 /* AddContactTableViewCell.swift */; };
 		551DBDD320D40858005D88D0 /* QuickStart.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DBDD220D40858005D88D0 /* QuickStart.storyboard */; };
 		55206DA92075486000B0B246 /* SelectContactView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55206DA82075486000B0B246 /* SelectContactView.xib */; };
 		55206DAD20755E1500B0B246 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */; };
@@ -133,7 +134,6 @@
 		559F29D62235505900DC077E /* EnclaveError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559F29D52235505900DC077E /* EnclaveError.swift */; };
 		559F29D82235585300DC077E /* APIResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559F29D72235585300DC077E /* APIResponseError.swift */; };
 		559F29DA2235690300DC077E /* AuthenticationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559F29D92235690300DC077E /* AuthenticationError.swift */; };
-		55A4244C2237D12500DB20CF /* MessagesContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A4244B2237D12500DB20CF /* MessagesContainerViewController.swift */; };
 		55A4244E22380FB100DB20CF /* ComposeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A4244D22380FB100DB20CF /* ComposeViewController.swift */; };
 		55AA54DA1FA14B1E00A7026B /* ByteArrayInputStream.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA54C61FA14B1D00A7026B /* ByteArrayInputStream.cc */; };
 		55AA54DB1FA14B1E00A7026B /* ByteArrayOutputStream.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55AA54CA1FA14B1D00A7026B /* ByteArrayOutputStream.cc */; };
@@ -217,7 +217,6 @@
 		55E970B120B07D14008C2F39 /* PippipTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970B020B07D14008C2F39 /* PippipTableViewCell.swift */; };
 		55E970B320B07DAE008C2F39 /* PippipTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E970B220B07DAE008C2F39 /* PippipTheme.swift */; };
 		55E970B720B09DD2008C2F39 /* ContactTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E970B620B09DD2008C2F39 /* ContactTableViewCell.xib */; };
-		55EBC0222238459B0052C15B /* MessagesContainerDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EBC0212238459B0052C15B /* MessagesContainerDecorator.swift */; };
 		55EBC02422389BD70052C15B /* RequestsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EBC02322389BD70052C15B /* RequestsTableViewController.swift */; };
 		55EBC0262238A4790052C15B /* RequestsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EBC0252238A4790052C15B /* RequestsTableViewCell.swift */; };
 		55EBC02822391BA90052C15B /* NewRequestsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EBC02722391BA90052C15B /* NewRequestsTableViewCell.swift */; };
@@ -324,6 +323,7 @@
 		55187ECF20BE427700F94792 /* ServerAuthChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerAuthChallenge.swift; sourceTree = "<group>"; };
 		55187ED120BE4A1C00F94792 /* ClientAuthorized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientAuthorized.swift; sourceTree = "<group>"; };
 		55187ED320BE4C8900F94792 /* ServerAuthorized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerAuthorized.swift; sourceTree = "<group>"; };
+		551CDB972262307100815637 /* AddContactTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactTableViewCell.swift; sourceTree = "<group>"; };
 		551DBDD220D40858005D88D0 /* QuickStart.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = QuickStart.storyboard; sourceTree = "<group>"; };
 		55206DA82075486000B0B246 /* SelectContactView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectContactView.xib; sourceTree = "<group>"; };
 		55206DAC20755E1500B0B246 /* ContactTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
@@ -405,7 +405,6 @@
 		559F29D52235505900DC077E /* EnclaveError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnclaveError.swift; sourceTree = "<group>"; };
 		559F29D72235585300DC077E /* APIResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponseError.swift; sourceTree = "<group>"; };
 		559F29D92235690300DC077E /* AuthenticationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationError.swift; sourceTree = "<group>"; };
-		55A4244B2237D12500DB20CF /* MessagesContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesContainerViewController.swift; sourceTree = "<group>"; };
 		55A4244D22380FB100DB20CF /* ComposeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeViewController.swift; sourceTree = "<group>"; };
 		55AA54C11FA14B1D00A7026B /* BadParameterException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BadParameterException.h; sourceTree = "<group>"; };
 		55AA54C21FA14B1D00A7026B /* OutOfRangeException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutOfRangeException.h; sourceTree = "<group>"; };
@@ -561,7 +560,6 @@
 		55E970B020B07D14008C2F39 /* PippipTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTableViewCell.swift; sourceTree = "<group>"; };
 		55E970B220B07DAE008C2F39 /* PippipTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PippipTheme.swift; sourceTree = "<group>"; };
 		55E970B620B09DD2008C2F39 /* ContactTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactTableViewCell.xib; sourceTree = "<group>"; };
-		55EBC0212238459B0052C15B /* MessagesContainerDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesContainerDecorator.swift; sourceTree = "<group>"; };
 		55EBC02322389BD70052C15B /* RequestsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestsTableViewController.swift; sourceTree = "<group>"; };
 		55EBC0252238A4790052C15B /* RequestsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestsTableViewCell.swift; sourceTree = "<group>"; };
 		55EBC02722391BA90052C15B /* NewRequestsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewRequestsTableViewCell.swift; sourceTree = "<group>"; };
@@ -692,6 +690,7 @@
 			isa = PBXGroup;
 			children = (
 				55FD6C1C2186447A00B9C9BB /* AcknowledgeRequestTableViewCell.swift */,
+				551CDB972262307100815637 /* AddContactTableViewCell.swift */,
 				5557B466211DE1D800FE1775 /* AddContactView.swift */,
 				550F998222264BB900E6D81F /* ConfirmHideShowView.swift */,
 				55C88DCE20707F6B00D58BCA /* Contact.swift */,
@@ -722,8 +721,6 @@
 				55BFD36420CF18300084C555 /* DatabaseMessage.swift */,
 				554D01CF20803BB200C19373 /* Message.swift */,
 				55206DB02076A5EA00B0B246 /* MessageManager.swift */,
-				55EBC0212238459B0052C15B /* MessagesContainerDecorator.swift */,
-				55A4244B2237D12500DB20CF /* MessagesContainerViewController.swift */,
 				5516978E20994A01002BB4C1 /* MessagesHeadingCell.swift */,
 				552E6255224657B200FB3DBA /* MessagesModel.swift */,
 				55B17DAE20A1492600DA16DE /* MessagesViewController.swift */,
@@ -1279,6 +1276,7 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-pippip-native-ios/Pods-pippip-native-ios-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/AlamofireObjectMapper/AlamofireObjectMapper.framework",
+				"${BUILT_PRODUCTS_DIR}/AutoInsetter/AutoInsetter.framework",
 				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
 				"${BUILT_PRODUCTS_DIR}/Chatto/Chatto.framework",
 				"${BUILT_PRODUCTS_DIR}/ChattoAdditions/ChattoAdditions.framework",
@@ -1288,18 +1286,21 @@
 				"${BUILT_PRODUCTS_DIR}/FrostedSidebar/FrostedSidebar.framework",
 				"${BUILT_PRODUCTS_DIR}/ImageSlideshow/ImageSlideshow.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
+				"${BUILT_PRODUCTS_DIR}/Pageboy/Pageboy.framework",
 				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
 				"${BUILT_PRODUCTS_DIR}/PromisesSwift/Promises.framework",
 				"${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/Sheriff/Sheriff.framework",
+				"${BUILT_PRODUCTS_DIR}/Tabman/Tabman.framework",
 				"${BUILT_PRODUCTS_DIR}/Toast-Swift/Toast_Swift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireObjectMapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AutoInsetter.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChameleonFramework.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Chatto.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChattoAdditions.framework",
@@ -1309,12 +1310,14 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FrostedSidebar.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ImageSlideshow.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pageboy.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Promises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RKDropdownAlert.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sheriff.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Tabman.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toast_Swift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1353,7 +1356,6 @@
 				55C49BFC2140303400EEED14 /* PippipTextMessagePresenter.swift in Sources */,
 				55AA554C1FA14D7100A7026B /* DigestBase.cc in Sources */,
 				55B17DAF20A1492600DA16DE /* MessagesViewController.swift in Sources */,
-				55A4244C2237D12500DB20CF /* MessagesContainerViewController.swift in Sources */,
 				557D25C1222DFE920064E6F3 /* SetContactStatusRequest.swift in Sources */,
 				550F998B2226E3E700E6D81F /* ContactRequest.swift in Sources */,
 				557D25C7223003B80064E6F3 /* Strings.swift in Sources */,
@@ -1377,7 +1379,6 @@
 				5586B88E2064951000641514 /* ParameterGenerator.swift in Sources */,
 				552BC46D2124C00C00694CB4 /* ControllerBlurProtocol.swift in Sources */,
 				552E6256224657B200FB3DBA /* MessagesModel.swift in Sources */,
-				55EBC0222238459B0052C15B /* MessagesContainerDecorator.swift in Sources */,
 				5516978F20994A01002BB4C1 /* MessagesHeadingCell.swift in Sources */,
 				55AA555D1FA14D7100A7026B /* PublicKey.cc in Sources */,
 				5511E9C620C2D1C20080C0DF /* GetPendingRequestsResponse.swift in Sources */,
@@ -1437,6 +1438,7 @@
 				559F29D62235505900DC077E /* EnclaveError.swift in Sources */,
 				55AA555F1FA14D7100A7026B /* DERCodec.cc in Sources */,
 				55E970AD20AE6927008C2F39 /* Authenticator.swift in Sources */,
+				551CDB982262307100815637 /* AddContactTableViewCell.swift in Sources */,
 				55AA55551FA14D7100A7026B /* SHA512.cc in Sources */,
 				5511E9B220C1EC830080C0DF /* ServerContact.swift in Sources */,
 				55AA54FA1FA14C1300A7026B /* CKPEMCodec.mm in Sources */,

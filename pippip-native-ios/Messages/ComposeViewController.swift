@@ -20,7 +20,6 @@ class ComposeViewController: UIViewController {
     var messageManager = MessageManager()
     var config = Configurator()
     var lastPartialLength = 0
-    var decorator: MessagesContainerDecorator?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +34,8 @@ class ComposeViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        NotificationCenter.default.post(name: Notifications.SetNavBarTitle, object: "Compose Message")
         
         searchText.becomeFirstResponder()
         

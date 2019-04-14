@@ -99,6 +99,8 @@ class MessagesViewController: UIViewController {
             contactBadge.badgeValue = ContactsModel.instance.pendingRequests.count
         }
         
+        NotificationCenter.default.post(name: Notifications.SetNavBarTitle, object: "Message Previews")
+
         NotificationCenter.default.addObserver(self, selector: #selector(newMessages(_:)),
                                                name: Notifications.NewMessages, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(authComplete(_:)),

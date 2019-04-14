@@ -79,6 +79,8 @@ class SettingsTableViewController: UITableViewController, ControllerBlurProtocol
             tableView.reloadData()
         }
 
+        NotificationCenter.default.post(name: Notifications.SetNavBarTitle, object: "Settings")
+
         NotificationCenter.default.addObserver(self, selector: #selector(policyChanged(_:)),
                                                name: Notifications.PolicyChanged, object: nil)
 

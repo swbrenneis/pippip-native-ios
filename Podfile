@@ -11,8 +11,6 @@ target 'pippip-native-ios' do
   pod 'FrostedSidebar'
   pod 'RealmSwift'
   pod 'DataCompression'
-#  pod 'Chatto', '= 3.3.1'
-#  pod 'ChattoAdditions', '= 3.3.1'
   pod 'Chatto'
   pod 'ChattoAdditions'
   pod 'Sheriff'
@@ -22,6 +20,7 @@ target 'pippip-native-ios' do
   pod 'CocoaLumberjack/Swift'
   pod 'Toast-Swift', '~> 4.0.0'
   pod 'PromisesSwift', '~> 1.2.7'
+  pod 'Tabman', '~> 2.3'
 
   target 'pippip-native-iosTests' do
     inherit! :search_paths

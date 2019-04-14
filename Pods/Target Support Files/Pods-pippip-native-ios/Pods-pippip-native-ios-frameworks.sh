@@ -145,6 +145,7 @@ strip_invalid_archs() {
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/AlamofireObjectMapper/AlamofireObjectMapper.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/AutoInsetter/AutoInsetter.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Chatto/Chatto.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ChattoAdditions/ChattoAdditions.framework"
@@ -154,17 +155,20 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/FrostedSidebar/FrostedSidebar.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ImageSlideshow/ImageSlideshow.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Pageboy/Pageboy.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PromisesSwift/Promises.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Sheriff/Sheriff.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Tabman/Tabman.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Toast-Swift/Toast_Swift.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/AlamofireObjectMapper/AlamofireObjectMapper.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/AutoInsetter/AutoInsetter.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Chatto/Chatto.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ChattoAdditions/ChattoAdditions.framework"
@@ -174,12 +178,14 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/FrostedSidebar/FrostedSidebar.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ImageSlideshow/ImageSlideshow.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Pageboy/Pageboy.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PromisesSwift/Promises.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Sheriff/Sheriff.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Tabman/Tabman.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Toast-Swift/Toast_Swift.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then

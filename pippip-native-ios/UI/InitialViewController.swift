@@ -10,17 +10,19 @@ import UIKit
 import FrostedSidebar
 import ImageSlideshow
 import ChameleonFramework
+import Tabman
+import Pageboy
 
-class InitialViewController: UITabBarController {
-    
-//    var messagesContainerViewController: MessagesContainerViewController?
-    var composeController: UIViewController?
+class InitialViewController: TabmanViewController {
+
+    var messagesPreviewController: MessagesViewController?
+    var composeViewController: ComposeViewController?
     var contactsViewController: ContactsViewController?
     var settingsViewController: SettingsTableViewController?
     var authenticator: Authenticator?
     var alertPresenter = AlertPresenter()
     var tabTag: Int = 1
-    var messagesDecorator = MessagesContainerDecorator()
+    //var messagesDecorator = MessagesContainerDecorator()
     
 //    var menuSidebar: FrostedSidebar?
  //   var sidebarOn = false
@@ -48,76 +50,37 @@ class InitialViewController: UITabBarController {
         PippipGeometry.setGeometry()
         SecommAPI.initializeAPI()
         AccountSession.initialViewController = self
-        
+
         try! AccountSession.instance.loadAccount()
         authenticator = Authenticator(viewController: self)
 
         self.navigationController?.navigationBar.barTintColor = PippipTheme.navBarColor
         self.navigationController?.navigationBar.tintColor = PippipTheme.navBarTint
-        self.tabBar.tintColor = PippipTheme.viewTextColor
-        self.tabBar.barTintColor = PippipTheme.viewColor
+        self.navigationItem.title = "Message Previews"
         
-        contactsViewController = (self.storyboard?.instantiateViewController(withIdentifier: "ContactsViewController") as! ContactsViewController)
-        contactsViewController?.tabBarItem = UITabBarItem(title: "Contacts", image: UIImage(named: "contacts-small"), tag: 2)
-        contactsViewController?.title = "Contacts"
-        settingsViewController = (self.storyboard?.instantiateViewController(withIdentifier: "SettingsTableViewController") as! SettingsTableViewController)
-        settingsViewController?.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(named: "settings-small"), tag: 3)
-        settingsViewController?.title = "Settings"
+        contactsViewController = self.storyboard?.instantiateViewController(withIdentifier: "ContactsViewController") as? ContactsViewController
+        settingsViewController = self.storyboard?.instantiateViewController(withIdentifier: "SettingsTableViewController") as? SettingsTableViewController
+        messagesPreviewController = self.storyboard?.instantiateViewController(withIdentifier: "MessagesViewController") as? MessagesViewController
+        composeViewController = self.storyboard?.instantiateViewController(withIdentifier: "ComposeViewController") as? ComposeViewController
 
-        let messagesContainerViewController = self.storyboard?.instantiateViewController(withIdentifier: "MessagesContainerViewController") as? MessagesContainerViewController
-        messagesContainerViewController?.tabBarItem = UITabBarItem(title: "Messages", image: UIImage(named: "messages-small"), tag: 1)
-        messagesContainerViewController?.title = "Messages"
-        let messagesPreviewController = self.storyboard?.instantiateViewController(withIdentifier: "MessagesViewController") as? MessagesViewController
-        let composeViewController = self.storyboard?.instantiateViewController(withIdentifier: "ComposeViewController") as? ComposeViewController
-        messagesDecorator.containerController = messagesContainerViewController
-        messagesDecorator.previewController = messagesPreviewController
-        messagesDecorator.composeController = composeViewController
-        messagesDecorator.initialController = self
-        messagesDecorator.viewMode = .preview
-        messagesContainerViewController?.decorator = messagesDecorator
-        composeViewController?.decorator = messagesDecorator
-        messagesContainerViewController?.decorator = messagesDecorator
-
-        let controllers = [ messagesContainerViewController!, contactsViewController!, settingsViewController! ]
-        self.viewControllers = controllers
-/*
-        let sidebarImages = [ UIImage(named: "help")!, UIImage(named: "settings")!,
-                              UIImage(named: "exit")! ]
-        let sidebar = FrostedSidebar(itemImages: sidebarImages, colors: nil, selectionStyle: .single)
-        sidebar.showFromRight = true
-        sidebar.itemBackgroundColor = .clear
-        sidebar.adjustForNavigationBar = true
-        sidebar.itemSize = CGSize(width: 130.0, height: 130.0)
-        sidebar.actionForIndex[0] = {
-            self.sidebarOn = false
-            self.menuSidebar?.dismissAnimated(true, completion: nil)
-            UIView.animate(withDuration: 0.3, animations: {
-                self.slideshow.alpha = 1.0
-            }, completion: { (completed) in
-                self.navigationController?.setNavigationBarHidden(true, animated: true)
-            })
-        }
-        sidebar.actionForIndex[1] = {
-            self.sidebarOn = false
-            self.menuSidebar?.dismissAnimated(true, completion: nil)
-            //self.navigationController?.pushViewController(self.settingsView, animated: true)
-        }
-        sidebar.actionForIndex[2] = {
-            self.sidebarOn = false
-            self.menuSidebar?.dismissAnimated(true, completion: nil)
-            AccountSession.instance.signOut()
-            //self.authenticator.signOut()
-        }
-        menuSidebar = sidebar
-        let bounds = self.view.bounds
-        slideshow = ImageSlideshow(frame: bounds)
-        slideshow.setImageInputs(slides)
-        let recognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
-        slideshow.addGestureRecognizer(recognizer)
-        slideshow.alpha = 0.0
-        self.view.addSubview(slideshow)
-  */
-
+        self.dataSource = self
+        // Create bar
+        let bar = TMBar.ButtonBar()
+        bar.backgroundView.style = .flat(color: PippipTheme.viewColor)
+        bar.indicator.tintColor = PippipTheme.navBarColor
+        bar.layout.transitionStyle = .snap // Customize
+        bar.layout.contentInset = UIEdgeInsets(top: 8.0, left: 12.0, bottom: 8.0, right: 12.0)
+        bar.layout.interButtonSpacing = 12.0
+        bar.buttons.customize({button in
+            button.tintColor = PippipTheme.navBarColor.withAlphaComponent(0.5)
+            button.selectedTintColor = PippipTheme.navBarColor
+            button.backgroundColor = PippipTheme.lightBarColor
+            button.layer.cornerRadius = 7.0
+            button.contentInset = UIEdgeInsets(top: 8.0, left: 10.0, bottom: 8.0, right: 10.0)
+        })
+        // Add to view
+        addBar(bar, dataSource: self, at: .bottom)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(appSuspended(_:)),
                                                name: Notifications.AppSuspended, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(setNavBarTitle(_:)),
@@ -129,7 +92,7 @@ class InitialViewController: UITabBarController {
         
         authenticator?.viewWillAppear()
         alertPresenter.present = true
-
+/*
         switch tabTag {
         case 1:
             messagesDecorator.setNavBarItems()
@@ -140,7 +103,7 @@ class InitialViewController: UITabBarController {
         default:
             break
         }
-        
+  */
 
     }
 
@@ -204,7 +167,7 @@ class InitialViewController: UITabBarController {
     // Selectors
 
     @objc func composeMessage(_ sender: Any) {
-        messagesDecorator.viewMode = .compose
+//        messagesDecorator.viewMode = .compose
         setComposeNavBarItems()
     }
     
@@ -213,7 +176,7 @@ class InitialViewController: UITabBarController {
     }
     
     @objc func cancelCompose(_ sender: Any) {
-        messagesDecorator.viewMode = .preview
+//        messagesDecorator.viewMode = .preview
         setMessagesNavBarItems()
     }
     
@@ -263,24 +226,55 @@ class InitialViewController: UITabBarController {
 
 }
 
-// Tab bar delegate
-extension InitialViewController {
+extension InitialViewController : PageboyViewControllerDataSource, TMBarDataSource {
     
-    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-
-        tabTag = item.tag
+    func barItem(for bar: TMBar, at index: Int) -> TMBarItemable {
         
-        switch tabTag {
+        let item = TMBarItem(title: "lolwut?")
+        switch index {
+        case 0:
+            item.title = "Messages"
+            item.image = UIImage(named: "messages-small")
         case 1:
-            setMessagesNavBarItems()
+            item.title = "Compose"
+            item.image = UIImage(named: "compose-small")
         case 2:
-            setContactsNavBarItems()
+            item.title = "Contacts"
+            item.image = UIImage(named: "contacts-small")
         case 3:
-            setSettingsNavBarItems()
+            item.title = "Settings"
+            item.image = UIImage(named: "settings-small")
         default:
             break
         }
+        return item
         
+    }
+
+    func numberOfViewControllers(in pageboyViewController: PageboyViewController) -> Int {
+        return 4
+    }
+    
+    func viewController(for pageboyViewController: PageboyViewController, at index: PageboyViewController.PageIndex) -> UIViewController? {
+        
+        switch index {
+        case 0:
+            return messagesPreviewController
+        case 1:
+            return composeViewController
+        case 2:
+            return contactsViewController
+        case 3:
+            return settingsViewController
+        default:
+            return nil
+        }
+
+    }
+    
+    func defaultPage(for pageboyViewController: PageboyViewController) -> PageboyViewController.Page? {
+//        return .first
+        return nil
     }
 
 }

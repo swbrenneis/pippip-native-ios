@@ -71,6 +71,9 @@ class ContactsViewController: UIViewController, ControllerBlurProtocol {
 
         //authenticator.viewWillAppear()
         alertPresenter.present = true
+        
+        NotificationCenter.default.post(name: Notifications.SetNavBarTitle, object: "Contacts")
+
         NotificationCenter.default.addObserver(self, selector: #selector(contactRequested(_:)),
                                                name: Notifications.ContactRequested, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(contactDeleted(_:)),
@@ -443,18 +446,21 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
 
-//        return contactRequests.count > 0 ? 2 : 1
-        return 2
+        return 3
 
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-        if section == 0 {
+        switch section {
+        case 0:
             return contactRequests.count > 0 ? 1 : 0
-        }
-        else {
+        case 1:
+            return 1
+        case 2:
             return contactList.count
+        default:
+            return 0
         }
 
     }
@@ -465,8 +471,11 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "NewRequestsCell", for: indexPath)
                 as? NewRequestsTableViewCell else { return UITableViewCell() }
             return cell
-        }
-        else if indexPath.section == 1 {
+        } else if indexPath.section == 1 {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "AddContactCell", for: indexPath)
+                as? AddContactTableViewCell else { return UITableViewCell() }
+            return cell
+        } else if indexPath.section == 2 {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "ContactCell", for: indexPath)
                 as? ContactCell else { return UITableViewCell() }
             cell.setTheme()
@@ -481,24 +490,26 @@ extension ContactsViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-        if indexPath.section == 0 {
-            return 60.0
+        if indexPath.section == 2 {
+            return 70.0
         }
         else {
-            return 70.0
+            return 60.0
         }
 
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
 
-        return indexPath.section == 1
+        return indexPath.section == 2
 
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         if indexPath.section == 1 {
+            addContact()
+        } else if indexPath.section == 2 {
             showContactDetailView(contact: contactList[indexPath.row])
         }
 
